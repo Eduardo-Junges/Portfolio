@@ -41,6 +41,64 @@ proporção, não o número.
 
 O material bruto (`_privado/`, `CONTEUDO.md`) **nunca é versionado**. Ver `.gitignore`.
 
+## Como publicar uma alteração
+
+O site se atualiza sozinho: a Vercel observa a branch `main` no GitHub e, a cada commit que
+chega lá, refaz o build e publica. Leva cerca de um minuto e não precisa de nenhuma ação no
+painel dela.
+
+**Se o build falhar, nada vai ao ar** — a versão anterior continua publicada. Errar o
+frontmatter de um projeto não derruba o site; só impede a atualização.
+
+Pelo terminal, três comandos depois de salvar os arquivos:
+
+```
+git add -A
+git commit -m "descrição curta do que mudou"
+git push
+```
+
+Pelo navegador, sem instalar nada: abrir o arquivo no GitHub, clicar no lápis, editar,
+e usar **Commit changes** no fim da página. O efeito é idêntico.
+
+## Como adicionar um projeto
+
+Criar um arquivo novo em `src/content/projetos/`, com extensão `.mdx`. O nome do arquivo
+vira o endereço: `meu-projeto.mdx` → `/projetos/meu-projeto`.
+
+```mdx
+---
+titulo: 'Nome do projeto'
+subtitulo: 'Uma linha explicando o que ele faz'
+resumo: >-
+  Dois ou três períodos. É o que aparece no card da home.
+categoria: 'sistemas'      # automacao | ia | dados | financas | processos | sistemas | desenvolvimento | produto
+contexto: 'proprio'        # proprio (projeto seu) | empresa (feito no trabalho)
+autoria: 'construi'        # liderei | construi | arquitetei | participei | especifiquei | apoiei
+autoriaDetalhe: >-
+  O que exatamente foi seu. Campo obrigatório, e de propósito.
+inicio: 2026-03-01
+precisaoInicio: 'mes'      # mes (exibe "mar/2026") | ano (exibe "2026") | oculto (não exibe data)
+status: 'ativo'            # planejamento | ativo | aperfeicoamento | concluido | pausado
+ferramentas:               # pelo menos uma
+  - 'Python'
+metricas:                  # opcional — só números reais; sem eles a seção não aparece
+  - valor: '163'
+    rotulo: 'testes automatizados'
+destaque: true             # opcional — peso visual maior no índice
+---
+
+## Um título
+
+O texto do projeto em markdown normal.
+```
+
+Campos opcionais que existem: `fim` (data de encerramento), `capa` (`src` + `alt`, os dois
+juntos) e `links` (`github`, `demo`, `doc`).
+
+Faltou campo obrigatório ou o valor não está na lista? O build para e diz qual arquivo e qual
+campo. Isso é a regra "nada inventado" funcionando — não é bug.
+
 ## Onde mexer no conteúdo
 
 | Quero mudar | Arquivo |
