@@ -17,6 +17,17 @@ import serifLatin from '@fontsource/instrument-serif/files/instrument-serif-lati
 import { profile } from '../data/profile';
 import AlternarTema from '../components/ui/AlternarTema.astro';
 
+/*
+ * Analytics sem cookie e sem identificador de visitante: conta pageview e
+ * referrer, não segue a pessoa entre sites. É por isso que não existe banner
+ * de consentimento aqui — não há o que consentir.
+ *
+ * Em desenvolvimento o componente não envia nada; só o build de produção na
+ * Vercel coleta, e só depois de Analytics estar habilitado no painel do
+ * projeto. Sem isso, o script carrega e os eventos são descartados.
+ */
+import Analytics from '@vercel/analytics/astro';
+
 interface Props {
   titulo?: string;
   descricao?: string;
@@ -89,5 +100,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
     <main id="conteudo">
       <slot />
     </main>
+
+    <Analytics />
   </body>
 </html>
