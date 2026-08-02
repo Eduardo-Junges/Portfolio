@@ -1,0 +1,58 @@
+---
+titulo: 'Agente de suporte às lojas'
+subtitulo: 'Um atendente de IA que interpreta o chamado, consulta quem entende do assunto e sabe a hora de chamar gente'
+categoria: 'ia'
+resumo: >-
+  Canal único para as lojas abrirem chamado. Um agente principal interpreta o pedido, pergunta
+  o que falta e encaminha para um sub-agente especializado na área. Quem responde é o
+  especialista; quem conversa é o principal. Quando nenhum dos dois sabe, vai para uma pessoa.
+contexto: 'empresa'
+autoria: 'arquitetei'
+autoriaDetalhe: >-
+  Projeto meu, assumido dentro do squad de IA da empresa. Desenhei o fluxo: a triagem pelo
+  agente principal, a divisão em sub-agentes por área de conhecimento, a consulta à base e o
+  critério de escalonamento para especialista humano.
+inicio: 2026-08-01
+precisaoInicio: 'oculto'
+status: 'ativo'
+ferramentas:
+  - 'n8n (orquestração)'
+  - 'API de LLM'
+  - 'Banco de dados'
+  - 'Base de conhecimento interna'
+destaque: true
+---
+
+## O que é
+
+Um canal único para as lojas abrirem chamado — dúvida, erro, problema de processo — atendido
+por um agente de IA que não responde sozinho.
+
+## Como está desenhado
+
+Dois níveis de agente, de propósito.
+
+O **agente principal** atende. Lê a mensagem, interpreta o pedido e, se faltar informação,
+pergunta até ter o suficiente. Ele não responde à dúvida: entende a dúvida e decide de quem
+ela é.
+
+O **sub-agente** responde. Cada um cobre uma área, com conhecimento aprofundado no assunto
+como teria um profissional dela. Recebe a solicitação já traduzida, consulta o banco de dados
+e devolve ao principal, que é quem fala com a loja.
+
+A terceira saída é a que mais importa: **quando nenhum dos dois sabe, o chamado vai para um
+especialista humano.** Não existe resposta inventada — existe encaminhamento.
+
+## Memória viva
+
+Os agentes são alimentados com os manuais e processos escritos pela própria operação. Não é
+conhecimento genérico de internet: é como esta rede faz as coisas.
+
+Cada processo novo documentado vira conhecimento que o agente passa a ter. A base cresce junto
+com a operação, em vez de envelhecer com ela.
+
+## Onde está hoje
+
+Em desenvolvimento. Orquestração no **n8n**; agente principal e sub-agentes sobre uma **API de
+LLM**; **banco de dados e memória** por trás, para que conhecimento e contexto não recomecem do
+zero a cada chamado.

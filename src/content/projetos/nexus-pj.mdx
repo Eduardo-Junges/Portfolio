@@ -1,0 +1,69 @@
+---
+titulo: 'Nexus & PJ'
+subtitulo: 'Fechamento de caixa pelo extrato, para quem tem conta em mais de um banco'
+categoria: 'financas'
+resumo: >-
+  O irmão do Nexus, voltado para empresa. Companhia que opera com vários bancos não responde
+  uma pergunta simples — quanto tem, de verdade, agora. A ideia é centralizar pelos extratos:
+  importar de todas as contas, consolidar e fechar o caixa contra o que o banco registrou.
+contexto: 'proprio'
+autoria: 'arquitetei'
+autoriaDetalhe: >-
+  Projeto meu, em planejamento. Nasce de uma necessidade concreta da empresa onde trabalho —
+  é lá que pretendo construir e validar o primeiro caso —, mas o produto é meu e replicável
+  em qualquer companhia com contas em mais de um banco. Por enquanto existe o desenho: o
+  mockup navegável das telas, o design system e a definição do fluxo.
+inicio: 2026-08-01
+status: 'planejamento'
+ferramentas:
+  - 'Mockup navegável (HTML)'
+  - 'Design system próprio'
+destaque: true
+---
+
+## O problema
+
+Fechar o caixa é simples com uma conta. Com quatro ou cinco, cada uma com seu extrato e seu
+formato de exportação, "quanto a empresa tem hoje" vira alguém somando à mão numa planilha —
+com atraso e sem rastro para refazer a conta depois.
+
+O que se perde não é só tempo: é a conta real de cada banco.
+
+## A ideia
+
+Centralizar pelo extrato, não pelo lançamento.
+
+O extrato é a única fonte que já é, por definição, o que aconteceu — não o que alguém digitou
+que ia acontecer. Importando os extratos de todas as contas para um lugar só, o caixa fecha
+contra o realizado e cada banco aparece com o saldo que de fato tem.
+
+## O que já está desenhado
+
+O mockup navegável cobre o fluxo inteiro:
+
+- **Fluxo de caixa** em Realizado e Planejado, com os mesmos filtros nos dois: período, conta
+  e categoria.
+- **Importar extrato** como operação de primeira classe — é a porta de entrada de todo o dado.
+- **Contas bancárias**, **categorias** e **usuários** como cadastros de administração.
+- Indicadores com a origem declarada — *realizado, do extrato* — para não confundir com
+  estimativa.
+- Login e perfil, porque dado financeiro não é de todo mundo.
+
+## O que está em aberto
+
+Duas coisas, anotadas no próprio mockup em vez de escondidas.
+
+O **Planejado** tem tela pronta e fonte de dado indefinida: falta decidir se puxa de lançamento
+manual de contas a pagar e receber, de integração externa, ou dos dois.
+
+O **saldo projetado** aparece como indicador vazio, com a origem declarada como pendente.
+Melhor reservar o espaço do que preencher com um número que ainda não tem de onde sair.
+
+## Onde está hoje
+
+Em planejamento. O desenho está de pé; o próximo passo é o modelo de dados dos extratos —
+cada banco exporta o seu formato — e a decisão sobre a origem do Planejado.
+
+O primeiro caso será a empresa onde trabalho, que tem o problema na forma mais completa:
+várias contas, formatos diferentes e fechamento mensal. Validado ali, o produto serve
+qualquer empresa na mesma situação.

@@ -1,0 +1,480 @@
+@import 'tailwindcss';
+
+/* ============================================================
+   TOKENS — camada 1: RGB cru
+   Guardar sem rgb() permite gerar qualquer opacidade sem
+   redeclarar a cor. Padrão adotado da referência analisada.
+   ============================================================ */
+
+:root {
+  color-scheme: dark;
+
+  /* superfície */
+  --c-bg: 10 18 32; /* azul-tinta profundo */
+  --c-bg-raised: 14 24 41;
+
+  /* texto — 5 níveis de hierarquia */
+  --c-ink: 232 237 245;
+  --c-ink-dim: 173 187 205;
+  --c-ink-mute: 124 141 163;
+  --c-ink-faint: 82 98 118;
+
+  /* linhas técnicas — 3 intensidades */
+  --c-rule: 255 255 255 / 0.07;
+  --c-rule-2: 255 255 255 / 0.13;
+  --c-rule-3: 255 255 255 / 0.24;
+
+  /* superfícies translúcidas em camadas */
+  --c-surface: 255 255 255 / 0.04;
+  --c-surface-2: 255 255 255 / 0.07;
+  --c-surface-3: 255 255 255 / 0.1;
+
+  /* acento — azul cianotipia (links, foco, navegação) */
+  --c-accent: 91 155 213;
+  --c-accent-soft: 91 155 213 / 0.14;
+
+  /* sinal — âmbar (métricas, cotas, números que importam) */
+  --c-signal: 224 145 60;
+  --c-signal-soft: 224 145 60 / 0.14;
+
+  /* cores por categoria de projeto */
+  --c-cat-automacao: 224 145 60;
+  --c-cat-ia: 168 130 220;
+  --c-cat-dados: 91 155 213;
+  --c-cat-financas: 96 190 150;
+  --c-cat-processos: 214 122 108;
+  --c-cat-sistemas: 130 160 190;
+  --c-cat-desenvolvimento: 110 175 165;
+  --c-cat-produto: 205 165 90;
+}
+
+/*
+ * Tema claro — declarado uma única vez.
+ * A preferência do sistema é resolvida pelo script inline em Base.astro,
+ * que carimba data-theme antes do primeiro paint. Sem JS, cai no dark,
+ * que é o tema principal do site.
+ *
+ * Contrastes verificados contra o fundo (WCAG AA = 4.5:1 para texto normal):
+ * ink 15.8 · ink-dim 7.9 · ink-mute 5.0 · accent 7.6 · signal 4.9
+ * ink-faint fica em 3.5 — só para texto grande ou elemento não essencial.
+ */
+[data-theme='light'] {
+  color-scheme: light;
+
+  --c-bg: 245 243 238; /* papel */
+  --c-bg-raised: 255 254 251;
+
+  --c-ink: 19 26 36;
+  --c-ink-dim: 62 76 94;
+  --c-ink-mute: 92 105 122;
+  --c-ink-faint: 120 131 146;
+
+  --c-rule: 19 26 36 / 0.12;
+  --c-rule-2: 19 26 36 / 0.2;
+  --c-rule-3: 19 26 36 / 0.34;
+
+  --c-surface: 19 26 36 / 0.03;
+  --c-surface-2: 19 26 36 / 0.06;
+  --c-surface-3: 19 26 36 / 0.09;
+
+  --c-accent: 27 77 143;
+  --c-accent-soft: 27 77 143 / 0.1;
+
+  --c-signal: 172 80 8;
+  --c-signal-soft: 172 80 8 / 0.12;
+
+  --c-cat-automacao: 172 80 8;
+  --c-cat-ia: 118 76 176;
+  --c-cat-dados: 27 77 143;
+  --c-cat-financas: 22 122 84;
+  --c-cat-processos: 168 62 46;
+  --c-cat-sistemas: 72 100 132;
+  --c-cat-desenvolvimento: 26 110 98;
+  --c-cat-produto: 150 106 20;
+}
+
+/* ============================================================
+   TOKENS — camada 2: consumo semântico pelo Tailwind
+   `inline` porque os valores referenciam outras custom
+   properties e precisam ser resolvidos no ponto de uso.
+   ============================================================ */
+
+@theme inline {
+  --color-bg: rgb(var(--c-bg));
+  --color-bg-raised: rgb(var(--c-bg-raised));
+
+  --color-ink: rgb(var(--c-ink));
+  --color-ink-dim: rgb(var(--c-ink-dim));
+  --color-ink-mute: rgb(var(--c-ink-mute));
+  --color-ink-faint: rgb(var(--c-ink-faint));
+
+  --color-rule: rgb(var(--c-rule));
+  --color-rule-2: rgb(var(--c-rule-2));
+  --color-rule-3: rgb(var(--c-rule-3));
+
+  --color-surface: rgb(var(--c-surface));
+  --color-surface-2: rgb(var(--c-surface-2));
+  --color-surface-3: rgb(var(--c-surface-3));
+
+  --color-accent: rgb(var(--c-accent));
+  --color-accent-soft: rgb(var(--c-accent-soft));
+
+  --color-signal: rgb(var(--c-signal));
+  --color-signal-soft: rgb(var(--c-signal-soft));
+
+  /* tipografia */
+  --font-display: 'Instrument Serif', ui-serif, Georgia, serif;
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SF Mono', monospace;
+
+  /* raio */
+  --radius-xs: 3px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+
+  /* movimento */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 140ms;
+  --dur-base: 220ms;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* foco visível e consistente — requisito de acessibilidade */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: var(--radius-xs);
+  }
+
+  ::selection {
+    background: var(--color-signal-soft);
+    color: var(--color-ink);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ============================================================
+   UTILITÁRIOS DO PROJETO
+   ============================================================ */
+
+@utility container-page {
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+
+  @media (width >= 48rem) {
+    padding-inline: 2.5rem;
+  }
+}
+
+/* ---- superfícies elevadas ----------------------------------
+   Card com highlight interno na borda superior: o truque que dá
+   sensação de material em fundo escuro sem precisar de sombra.
+   ------------------------------------------------------------ */
+@utility card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: inset 0 1px 0 0 rgb(255 255 255 / 0.05);
+  transition:
+    border-color var(--dur-base) var(--ease-out-expo),
+    background-color var(--dur-base) var(--ease-out-expo),
+    transform var(--dur-base) var(--ease-out-expo);
+
+  &:hover {
+    border-color: var(--color-rule-3);
+    background: var(--color-surface-2);
+  }
+}
+
+/* card que reage com a cor da própria categoria (--cat-color) */
+@utility card-cat {
+  &:hover {
+    border-color: color-mix(in srgb, var(--cat-color) 50%, transparent);
+    box-shadow:
+      inset 0 1px 0 0 rgb(255 255 255 / 0.06),
+      0 0 0 1px color-mix(in srgb, var(--cat-color) 14%, transparent),
+      0 18px 40px -24px color-mix(in srgb, var(--cat-color) 55%, transparent);
+  }
+}
+
+/* chip de categoria — consome --cat-color definido inline */
+@utility chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid color-mix(in srgb, var(--cat-color) 32%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--cat-color) 11%, transparent);
+  padding: 0.2rem 0.6rem 0.2rem 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--cat-color) 78%, var(--color-ink));
+  white-space: nowrap;
+}
+
+@utility chip-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--cat-color);
+  box-shadow: 0 0 8px 0 color-mix(in srgb, var(--cat-color) 70%, transparent);
+}
+
+/* ---- botões ------------------------------------------------ */
+@utility btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 2.75rem;
+  border-radius: var(--radius-md);
+  padding-inline: 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-fast) var(--ease-out-expo),
+    border-color var(--dur-fast) var(--ease-out-expo),
+    box-shadow var(--dur-base) var(--ease-out-expo);
+}
+
+@utility btn-primario {
+  background: var(--color-signal);
+  color: rgb(var(--c-bg));
+  box-shadow: 0 0 24px -6px rgb(var(--c-signal) / 0.5);
+
+  &:hover {
+    box-shadow: 0 0 32px -4px rgb(var(--c-signal) / 0.7);
+  }
+}
+
+@utility btn-secundario {
+  border: 1px solid var(--color-rule-2);
+  background: var(--color-surface);
+  color: var(--color-ink);
+
+  &:hover {
+    border-color: var(--color-rule-3);
+    background: var(--color-surface-2);
+  }
+}
+
+/* ---- botão de rede -----------------------------------------
+   Mesma mecânica do card-cat: a cor entra por `--rede-cor` e só
+   se manifesta na interação. Em repouso, os seis botões são um
+   bloco cinza único — a identidade é do site, não das marcas.
+   ------------------------------------------------------------ */
+@utility btn-rede {
+  --rede-cor: var(--color-ink);
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-ink-mute);
+  transition:
+    color var(--dur-fast) var(--ease-out-expo),
+    border-color var(--dur-fast) var(--ease-out-expo),
+    background-color var(--dur-fast) var(--ease-out-expo),
+    box-shadow var(--dur-base) var(--ease-out-expo);
+
+  &:hover,
+  &:focus-visible {
+    color: var(--rede-cor);
+    border-color: color-mix(in srgb, var(--rede-cor) 45%, transparent);
+    background: color-mix(in srgb, var(--rede-cor) 9%, var(--color-surface));
+    box-shadow: 0 14px 30px -22px color-mix(in srgb, var(--rede-cor) 70%, transparent);
+  }
+}
+
+/* ---- textura de fundo -------------------------------------
+   Grade técnica esmaecida, só atrás do hero e com máscara radial
+   que a dissolve nas bordas. Fica no limiar do perceptível — é
+   profundidade, não decoração.
+   ------------------------------------------------------------ */
+@utility grade-tec {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(to right, rgb(var(--c-ink) / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(var(--c-ink) / 0.05) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(ellipse 90% 55% at 15% 0%, #000 20%, transparent 75%);
+  pointer-events: none;
+}
+
+/* brilho difuso de acento — usado uma vez, atrás do hero */
+@utility halo {
+  position: absolute;
+  z-index: -1;
+  border-radius: 999px;
+  filter: blur(90px);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* ponto de status pulsante */
+@utility dot-vivo {
+  position: relative;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--color-signal);
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    background: var(--color-signal);
+    animation: pulsar 2.4s var(--ease-out-expo) infinite;
+  }
+}
+
+@keyframes pulsar {
+  0% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(3.2);
+  }
+}
+
+/* label técnico — o vocabulário de anotação de desenho */
+@utility label-tec {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-ink-mute);
+}
+
+/*
+ * Tipografia de leitura longa dos cases.
+ * Escrito à mão em vez de instalar @tailwindcss/typography: são ~50 linhas
+ * contra uma dependência inteira cheia de estilo que este site não usa.
+ */
+@utility prose-tec {
+  color: var(--color-ink-dim);
+  line-height: 1.75;
+
+  & > * + * {
+    margin-top: 1.25em;
+  }
+
+  & h2 {
+    margin-top: 2.75em;
+    margin-bottom: 0.75em;
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    line-height: 1.25;
+    color: var(--color-ink);
+    text-wrap: balance;
+  }
+
+  & h3 {
+    margin-top: 2em;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  & strong {
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  & a {
+    color: var(--color-accent);
+    text-decoration-line: underline;
+    text-underline-offset: 3px;
+  }
+
+  & code {
+    padding: 0.15em 0.4em;
+    border-radius: var(--radius-xs);
+    background: var(--color-surface-2);
+    font-family: var(--font-mono);
+    font-size: 0.86em;
+    color: var(--color-ink);
+  }
+
+  /* citação = a régua de medida virada na vertical */
+  & blockquote {
+    margin-block: 2em;
+    border-left: 2px solid var(--color-signal);
+    padding-left: 1.25rem;
+    color: var(--color-ink);
+    font-style: normal;
+  }
+
+  & ul,
+  & ol {
+    padding-left: 1.25rem;
+    list-style: disc;
+  }
+
+  & li + li {
+    margin-top: 0.5em;
+  }
+
+  & img,
+  & video {
+    display: block;
+    width: 100%;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-rule);
+  }
+
+  & figcaption {
+    margin-top: 0.6em;
+    font-family: var(--font-mono);
+    font-size: 0.78em;
+    letter-spacing: 0.02em;
+    color: var(--color-ink-mute);
+  }
+}

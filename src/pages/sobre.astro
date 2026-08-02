@@ -1,0 +1,137 @@
+---
+import Base from '../layouts/Base.astro';
+import BotoesRede from '../components/ui/BotoesRede.astro';
+import { profile } from '../data/profile';
+
+/**
+ * Página curta de propósito. O site é um índice de projetos — quem quer ver o
+ * trabalho fica na home; aqui é só o contexto de quem escreveu.
+ *
+ * Todo fato desta página veio da entrevista. Empresas anonimizadas por decisão
+ * do Eduardo: ele está empregado hoje. Nada sobre pessoas, conflitos internos
+ * ou perdas da operação entra aqui.
+ */
+---
+
+<Base
+  titulo={`Sobre — ${profile.nomeCurto}`}
+  descricao="Analista em operações financeiras que constrói as ferramentas que faltam. Processos, automação e sistemas."
+>
+  <article class="container-page py-16 sm:py-24">
+    <a href="/" class="label-tec inline-flex items-center gap-1.5 transition-colors hover:text-ink">
+      <span aria-hidden="true">←</span> Voltar
+    </a>
+
+    <header class="mt-8 border-b border-rule pb-10">
+      <h1 class="font-display text-4xl leading-tight text-balance sm:text-5xl">
+        {profile.nome}
+      </h1>
+      <p class="mt-4 max-w-xl text-lg leading-relaxed text-pretty text-ink-dim">
+        Trabalho com operações financeiras numa rede varejista e construo as ferramentas
+        que faltam — dentro e fora da empresa.
+      </p>
+      <p class="label-tec mt-6">{profile.local}</p>
+    </header>
+
+    <div class="prose-tec mt-12 max-w-2xl">
+      <h2>Tecnologia veio primeiro</h2>
+
+      <p>
+        Antes de terminar o ensino médio fiz um curso completo de AutoCAD e trabalhei alguns
+        meses com desenho técnico 2D. Não sigo na ferramenta, mas foi ali que aprendi a pensar
+        em projeto antes de executar.
+      </p>
+
+      <p>
+        Finanças veio depois, numa cadeira do tecnólogo em Administração. Comecei como
+        assistente financeiro no contas a pagar de uma indústria — conciliação, análise de
+        crédito, liberação de pedidos. Hoje atuo no contas a receber de uma rede varejista com
+        dez lojas no Rio Grande do Sul.
+      </p>
+
+      <p>
+        Quando digo que trabalho com tecnologia, não é transição de carreira. É o interesse
+        que veio primeiro, voltando.
+      </p>
+
+      <h2>O que eu faço</h2>
+
+      <p>
+        Meu cargo diz contas a receber. Na prática, participo do time de qualidade, do time de
+        IA e de projetos estratégicos — como a reformulação do modelo de crédito da empresa,
+        que virou o <a href="/projetos/remodelamento-contas-a-receber">case do contas a receber</a>.
+        Também respondo pela operação de caixa das dez lojas: auditoria, treinamento e melhoria
+        de processo.
+      </p>
+
+      <p>
+        O que faço melhor é <strong>enxergar o todo</strong> — como uma decisão no financeiro
+        chega no comercial, o que o processo do caixa causa três meses depois na cobrança. É
+        por isso que me chamam quando o problema atravessa mais de uma área.
+      </p>
+
+      <h2>Como eu trabalho</h2>
+
+      <p>
+        Quando um problema aparece, meu instinto é entender a causa antes de propor qualquer
+        coisa. O que me incomoda é equipe apagando o mesmo incêndio todo mês sem ninguém olhar
+        o que o acende.
+      </p>
+
+      <p>
+        No crediário, isso significou parar de tentar melhorar a cobrança e perceber que o
+        problema era <em>quem carregava o risco</em>. A conta que fiz mostrou que uma venda não
+        recebida custava mais que o próprio produto — e isso mudou a discussão inteira.
+      </p>
+
+      <p>
+        A parte difícil raramente é técnica. É alinhar pessoas, interesses e responsabilidades
+        para que a solução aconteça.
+      </p>
+
+      <h2>Aprender é o que faço melhor</h2>
+
+      <p>
+        Aprendo rápido e gosto de ensinar. Uso o que fizer sentido para cada caso —
+        documentação, vídeo, tentativa e erro, IA.
+      </p>
+
+      <p>
+        O <a href="/projetos/nexus-analytics">Nexus Analytics</a> nasceu disso: eu queria um
+        jeito melhor de cuidar das minhas finanças e percebi que dava para construir algo bem
+        mais completo que uma planilha. Não terminaria tão rápido sem IA — mas as decisões de
+        arquitetura, o modelo de domínio e os critérios de aceite são meus, inclusive o que
+        recusei implementar.
+      </p>
+
+      <p>
+        Falar em público é o que estou trabalhando para melhorar, e estudo hoje o que ainda não
+        sei sobre construir um negócio próprio e sustentável.
+      </p>
+
+      <h2>Agora</h2>
+
+      <p>
+        Estudando inteligência artificial, que é meu foco atual, e desenvolvendo o Nexus. Na
+        empresa, montando a análise de desempenho do primeiro ano do cartão.
+      </p>
+
+      <h2>Fora do trabalho</h2>
+
+      <p>
+        Jardim, madeira e reformas em casa. Videogame, animes, cinema, cozinha e corrida com
+        meus cachorros. Praia, cachoeira, trilha e acampamento — gosto de natureza e de
+        simplesmente olhar o céu.
+      </p>
+    </div>
+
+    {/*
+      Fora do `prose-tec` de propósito: lá dentro, todo `ul` vira lista com
+      marcador e recuo, o que desmontaria a grade de botões.
+    */}
+    <section class="mt-16 max-w-3xl border-t border-rule pt-10">
+      <h2 class="font-display text-2xl leading-snug text-ink">Falar comigo</h2>
+      <BotoesRede variante="completo" class="mt-6" />
+    </section>
+  </article>
+</Base>

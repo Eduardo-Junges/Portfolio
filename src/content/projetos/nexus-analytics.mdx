@@ -1,0 +1,141 @@
+---
+titulo: 'Nexus Analytics'
+subtitulo: 'Dashboard financeiro offline que lê extratos de banco e não confia em nada'
+categoria: 'sistemas'
+resumo: >-
+  Lê extratos e faturas em quatro formatos, classifica cada lançamento sozinho e responde
+  perguntas sobre as finanças — sem LLM, sem internet e sem alterar um centavo do dado
+  original.
+contexto: 'proprio'
+autoria: 'arquitetei'
+autoriaDetalhe: >-
+  Arquiteto e dono do produto. Desenvolvido em par com IA, sob regras que eu defini e com
+  auditoria minha a cada entrega. Arquitetura, modelo de domínio e critérios de aceite são
+  meus — inclusive as recusas.
+inicio: 2026-05-01
+status: 'ativo'
+metricas:
+  - valor: '163'
+    rotulo: 'testes automatizados'
+  - valor: '4'
+    rotulo: 'formatos de arquivo lidos'
+  - valor: '0'
+    rotulo: 'chamadas de rede'
+ferramentas:
+  - 'Python 3.12'
+  - 'FastHTML'
+  - 'pandas'
+  - 'SQLite'
+  - 'pdfplumber'
+  - 'Chart.js'
+  - 'Inno Setup'
+destaque: true
+---
+
+## O problema
+
+Controle financeiro em planilha, refeito à mão todo mês: baixar extrato de cada banco, abrir
+a fatura, copiar lançamento por lançamento, classificar, refazer fórmula. Horas de trabalho
+que envelheciam em uma semana.
+
+As ferramentas de mercado resolviam isso pedindo credencial bancária e dado financeiro num
+servidor de terceiro. Preço alto demais.
+
+## A restrição que definiu o projeto
+
+A máquina onde isso roda tem **3,9 GB de RAM** — o que eliminou a solução óbvia, rodar um
+modelo de linguagem local, antes de eu tentar.
+
+Foi a melhor coisa que aconteceu ao projeto. Sem LLM, a saída foi uma **IA determinística**:
+regras e estatística sobre números que o sistema já calcula. Cada frase nasce de um valor
+rastreável. Não há alucinação porque não há geração — se a regra não sabe, ela diz que não
+sabe.
+
+Uma limitação de hardware virou uma garantia de auditabilidade.
+
+## As regras que escrevi antes do código
+
+São oito. As três que mais moldaram o sistema:
+
+**Integridade do dado.** O sistema interpreta a *estrutura* de um arquivo — encoding,
+separador, ordem de coluna. Nunca o *conteúdo*. Nenhum valor, data ou descrição é alterado, e
+nenhum lançamento é escondido.
+
+**Nada sai da máquina.** O servidor está preso a `127.0.0.1` e não há CDN. Um teste verifica
+que nenhum módulo importa `socket`, `requests`, `urllib` ou `http` — a regra não depende da
+minha memória.
+
+**Toda escrita é atômica.** Arquivo temporário, `.bak`, substituição. Queda de energia no meio
+de uma gravação não corrompe configuração.
+
+## O modelo de domínio
+
+Os extratos entram em quatro formatos — OFX, CSV, XLS e PDF —, cada banco com seu dialeto. Um
+classificador transforma descrição crua em tipo, e tipo em categoria.
+
+A parte difícil não é essa. São as fronteiras entre seis categorias-mãe:
+
+> Aplicar em poupança **não é despesa** — é investimento, o dinheiro continua seu. Comprar
+> ação **não é despesa** — virou ativo. Resgatar **não é receita** — é devolver da gaveta.
+> Transferir entre contas próprias é neutro.
+
+Errar essas fronteiras não quebra o programa. Faz ele mentir com aparência de certeza.
+
+Projeções usam regressão linear sobre o histórico mensal; parcelas de cartão entram por
+*walk-forward*, caindo nas competências futuras em que realmente vão ocorrer.
+
+## Prova de equivalência, não "parece igual"
+
+O sistema nasceu em Streamlit e migrou para FastHTML. O critério de pronto que estabeleci foi
+**resposta byte-idêntica ao baseline** em sete rotas. Mesmo hash — não "abri e parecia certo".
+
+O mesmo critério voltou na reforma do cache, quando o dividi em duas camadas para que mexer
+numa fatura não reprocessasse dez PDFs pesados: hash do conjunto inteiro antes e depois,
+idêntico ou não entrega. Essa reforma rendeu uma lição concreta — o cache aninhado travava
+com `Lock` comum, porque a camada de topo chama a de baixo na mesma thread. Precisava ser
+`RLock`.
+
+## O que decidi não fazer
+
+**Recusei isolar uma sub-conta de investimento em classe própria.** No período o líquido dela
+era negativo, e isolá-la com piso em zero criaria patrimônio fantasma no relatório. Preferi
+não ter a funcionalidade a ter uma que mente.
+
+**Removi o Streamlit inteiro** do `requirements.txt`, onde arrastava dependências pesadas para
+o instalador. Antes de tirar, provei que dava: rodei o sistema com a biblioteca escondida do
+interpretador, forçando o import a falhar.
+
+**Construí um visualizador mobile e joguei fora.** A segunda versão funcionava — quinze
+gráficos, zero erro. Removi mesmo assim: a abordagem não era a certa. O aprendizado ficou
+documentado; o código, não.
+
+## Auditoria
+
+Pedi uma varredura completa no próprio código. O resultado foi majoritariamente bom, e
+apareceram duas falhas que registrei com risco medido em vez de esconder.
+
+**Path traversal teórico na importação:** o nome do arquivo é sanitizado, o campo de destino
+não. Risco real baixo — servidor só em localhost, usuário único.
+
+**Casamento por substring no classificador:** nomes curtos casam como pedaço de palavra. Medi
+nos dados reais, nenhum falso-positivo hoje. Correção é usar borda de palavra.
+
+Nenhuma afeta os números atuais. Ambas documentadas e priorizadas — que é diferente de não
+existirem.
+
+## Onde está hoje
+
+O sistema está em uso e praticamente fechado. O que resta são ajustes finais antes da **v1**,
+prevista para sair em breve.
+
+## O que aprendi
+
+**Restrição é ferramenta de design.** Os 3,9 GB produziram um sistema mais confiável do que eu
+teria construído com folga de hardware.
+
+**O modelo de domínio é mais difícil que o código.** Decidir que poupança é investimento não
+tem nada de técnico, e determina se todos os números estão certos.
+
+**Faria diferente:** começaria pelos testes, versionaria desde o primeiro dia e fecharia o
+escopo antes — o visualizador mobile consumiu tempo real porque eu não tinha decidido, antes
+de construir, o que significava estar pronto.

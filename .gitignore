@@ -1,0 +1,29 @@
+# build
+dist/
+.astro/
+.vercel/
+
+# deps
+node_modules/
+
+# ambiente
+.env
+.env.production
+.env.local
+
+# material de referência salvo localmente (não versionar — é site de terceiro)
+_referencias/
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Material bruto do Eduardo — NUNCA versionar.
+# Contém nome real das empresas (empregador ATUAL), faturamento interno,
+# valores de unit economics e respostas de entrevista sem anonimização.
+# Só a versão já anonimizada entra em src/content/.
+# ─────────────────────────────────────────────────────────────────────────────
+_privado/
+CONTEUDO.md
+
+# sistema
+.DS_Store
+Thumbs.db
+*.lnk

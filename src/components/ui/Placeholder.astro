@@ -1,0 +1,39 @@
+---
+/**
+ * Marca visualmente um dado que o Eduardo ainda não forneceu.
+ *
+ * Regra do projeto: nada inventado. Em vez de preencher com texto plausível,
+ * o site mostra explicitamente que falta informação.
+ *
+ * Controle de build: em produção, um placeholder remanescente derruba o build.
+ * Só `PUBLIC_PERMITIR_PLACEHOLDERS=true` libera, e de propósito — a trava fica
+ * ARMADA quando a variável não existe.
+ *
+ * Isso importa no deploy: o `.env` não é versionado, então o servidor de build
+ * não recebe variável nenhuma. Com a comparação invertida (`!== 'false'`), a
+ * ausência liberava tudo e a trava só funcionava na máquina do Eduardo —
+ * exatamente onde ela é menos necessária.
+ */
+interface Props {
+  texto: string;
+}
+
+const { texto } = Astro.props;
+
+const permitido = import.meta.env.PUBLIC_PERMITIR_PLACEHOLDERS === 'true';
+
+if (!permitido && import.meta.env.PROD) {
+  throw new Error(
+    `Placeholder não resolvido no build de produção: "${texto}".\n` +
+      `Preencha o dado ou remova o componente. ` +
+      `Para liberar temporariamente, defina PUBLIC_PERMITIR_PLACEHOLDERS=true.`
+  );
+}
+---
+
+<span
+  class="inline-flex items-center gap-1.5 rounded-xs border border-dashed border-signal/50 bg-signal-soft px-1.5 py-0.5 font-mono text-[0.72em] tracking-wide text-signal"
+  title="Dado ainda não fornecido"
+>
+  <span aria-hidden="true">◇</span>{texto}
+</span>

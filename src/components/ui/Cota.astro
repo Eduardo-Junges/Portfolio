@@ -1,0 +1,78 @@
+---
+/**
+ * Cota — a assinatura visual do site.
+ *
+ * Desenha a medida entre dois valores no vocabulário de desenho técnico:
+ * linhas de extensão, linha de medida com setas e o valor cotado ao centro.
+ * Só deve ser usada onde existe um número real para medir.
+ */
+import { reducaoPercentual } from '../../lib/formato';
+
+interface Props {
+  antes: string;
+  depois: string;
+  minutosAntes: number;
+  minutosDepois: number;
+  legenda?: string;
+  rotuloAntes?: string;
+  rotuloDepois?: string;
+}
+
+const {
+  antes,
+  depois,
+  minutosAntes,
+  minutosDepois,
+  legenda,
+  rotuloAntes = 'antes',
+  rotuloDepois = 'depois',
+} = Astro.props;
+
+const reducao = reducaoPercentual(minutosAntes, minutosDepois);
+---
+
+<figure class="m-0">
+  <div class="flex items-stretch gap-3 sm:gap-5">
+    {/* extremo esquerdo — valor anterior */}
+    <div class="flex flex-col items-start justify-center border-l-2 border-rule-3 pl-3 sm:pl-4">
+      <span class="label-tec">{rotuloAntes}</span>
+      <span class="font-mono text-2xl leading-none font-medium text-ink-dim sm:text-3xl">
+        {antes}
+      </span>
+    </div>
+
+    {/* linha de medida */}
+    <div class="relative flex min-w-0 flex-1 flex-col justify-center pb-1">
+      <div class="relative flex items-center" aria-hidden="true">
+        <span class="h-2 w-px shrink-0 bg-rule-3"></span>
+        <span class="h-px flex-1 bg-rule-3"></span>
+        <span
+          class="mx-2 shrink-0 font-mono text-sm font-semibold whitespace-nowrap text-signal sm:text-base"
+        >
+          −{reducao}%
+        </span>
+        <span class="h-px flex-1 bg-rule-3"></span>
+        <span class="h-2 w-px shrink-0 bg-rule-3"></span>
+      </div>
+    </div>
+
+    {/* extremo direito — valor posterior */}
+    <div class="flex flex-col items-end justify-center border-r-2 border-signal pr-3 sm:pr-4">
+      <span class="label-tec text-signal/80">{rotuloDepois}</span>
+      <span class="font-mono text-2xl leading-none font-semibold text-signal sm:text-3xl">
+        {depois}
+      </span>
+    </div>
+  </div>
+
+  {
+    legenda && (
+      <figcaption class="mt-3 font-mono text-[0.7rem] tracking-wider text-ink-mute uppercase">
+        {legenda}
+      </figcaption>
+    )
+  }
+
+  {/* leitura acessível do que só o desenho comunica — a legenda já é lida pelo figcaption */}
+  <span class="sr-only">De {antes} para {depois}: redução de {reducao} por cento.</span>
+</figure>

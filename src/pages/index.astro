@@ -1,0 +1,76 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import BotoesRede from '../components/ui/BotoesRede.astro';
+import CardProjeto from '../components/ui/CardProjeto.astro';
+import { profile } from '../data/profile';
+import { rotuloContexto } from '../lib/formato';
+
+// Todos os projetos aparecem — nada fica escondido atrás de um filtro.
+// A lista é agrupada por contexto, e os de conta própria vêm primeiro: são os
+// que existem por escolha, não por atribuição. Dentro de cada grupo, o mais
+// recente na frente.
+const todos = await getCollection('projetos');
+const porData = (l: typeof todos) => [...l].sort((a, b) => b.data.inicio.valueOf() - a.data.inicio.valueOf());
+
+const grupos = (['proprio', 'empresa'] as const)
+  .map((contexto) => ({
+    contexto,
+    projetos: porData(todos.filter((p) => p.data.contexto === contexto)),
+  }))
+  .filter((g) => g.projetos.length > 0);
+---
+
+<Base>
+  <div class="container-page py-16 sm:py-24">
+    {/* cabeçalho — curto de propósito. Trajetória mora em /sobre. */}
+    <header class="flex flex-col gap-6 border-b border-rule pb-12 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <h1 class="font-display text-4xl leading-tight text-balance sm:text-5xl">
+          {profile.nomeCurto}
+        </h1>
+        <p class="mt-3 max-w-md leading-relaxed text-pretty text-ink-dim">{profile.linha}</p>
+      </div>
+
+      {/*
+        Contato no topo, mas em segundo plano: só ícone, sem cor em repouso.
+        Quem chega aqui vem ver o trabalho — a porta fica visível sem disputar
+        atenção com ele. A versão com nome e endereço está no rodapé.
+      */}
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-3">
+        <BotoesRede />
+        <a
+          href="/sobre"
+          class="label-tec border-l border-rule pl-4 text-ink-dim transition-colors hover:text-ink"
+        >
+          Sobre
+        </a>
+      </div>
+    </header>
+
+    {/* o índice — o corpo do site */}
+    {
+      grupos.map((g) => (
+        <section class="mt-14 first:mt-12">
+          <h2 class="label-tec border-b border-rule pb-3 text-ink-mute">
+            {rotuloContexto[g.contexto]}
+          </h2>
+          <ul class="mt-5 grid gap-5 md:grid-cols-2">
+            {g.projetos.map((p) => (
+              <CardProjeto projeto={p} />
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+
+    {/* rodapé — as três portas, uma frase só. Trabalho primeiro, intenção depois. */}
+    <footer id="contato" class="mt-24 border-t border-rule pt-12">
+      <h2 class="font-display text-2xl leading-snug text-ink">Falar comigo</h2>
+
+      <BotoesRede variante="completo" class="mt-6 max-w-3xl" />
+
+      <p class="label-tec mt-10 text-ink-faint">{profile.local}</p>
+    </footer>
+  </div>
+</Base>

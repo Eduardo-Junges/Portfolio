@@ -1,0 +1,114 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PainelNexus from '../../components/islands/PainelNexus';
+import PainelCaixa from '../../components/islands/PainelCaixa';
+import { formatarPeriodo, rotuloAutoria, rotuloCategoria, rotuloContexto } from '../../lib/formato';
+
+export async function getStaticPaths() {
+  const projetos = await getCollection('projetos');
+  return projetos.map((p) => ({ params: { slug: p.id }, props: { projeto: p } }));
+}
+
+const { projeto } = Astro.props;
+const { Content } = await render(projeto);
+const d = projeto.data;
+---
+
+<Base titulo={`${d.titulo} — Eduardo Junges`} descricao={d.resumo}>
+  <article class="container-page py-16 sm:py-24">
+    <a
+      href="/"
+      class="label-tec inline-flex items-center gap-1.5 transition-colors hover:text-ink"
+    >
+      <span aria-hidden="true">←</span> Voltar
+    </a>
+
+    <header class="mt-8 border-b border-rule pb-12" style={`--cat-color: rgb(var(--c-cat-${d.categoria}))`}>
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="chip">
+          <span class="chip-dot" aria-hidden="true"></span>
+          {rotuloCategoria[d.categoria]}
+        </span>
+        <span class="label-tec text-ink-faint">{rotuloContexto[d.contexto]}</span>
+      </div>
+
+      <h1 class="mt-6 font-display text-4xl leading-tight text-balance sm:text-6xl">
+        {d.titulo}
+      </h1>
+      <p class="mt-4 max-w-2xl text-lg text-pretty text-ink-dim">{d.subtitulo}</p>
+
+      {
+        d.capa && (
+          <img
+            src={d.capa.src}
+            alt={d.capa.alt}
+            class="mt-10 aspect-video w-full max-w-2xl rounded-lg border border-rule object-cover"
+            loading="eager"
+          />
+        )
+      }
+
+      {/* papel — declarado, nunca omitido */}
+      <div class="card mt-10 max-w-2xl p-6 hover:transform-none">
+        <p class="label-tec text-signal">Meu papel · {rotuloAutoria[d.autoria]}</p>
+        <p class="mt-2.5 leading-relaxed text-ink-dim">{d.autoriaDetalhe}</p>
+      </div>
+
+      {
+        d.metricas.length > 0 && (
+          <dl class="mt-8 grid max-w-2xl grid-cols-3 gap-4">
+            {d.metricas.map((m) => (
+              <div class="card p-5 hover:transform-none">
+                <dd class="font-mono text-4xl leading-none font-semibold text-signal">{m.valor}</dd>
+                <dt class="label-tec mt-2.5 leading-tight">{m.rotulo}</dt>
+              </div>
+            ))}
+          </dl>
+        )
+      }
+
+      {
+        (projeto.id === 'nexus-analytics' || projeto.id === 'nexus-pj') && (
+          <div class="mt-10 max-w-2xl">
+            <p class="label-tec text-ink-faint">Experimente com dados fictícios</p>
+            {projeto.id === 'nexus-analytics' ? (
+              <PainelNexus client:load className="mt-3" />
+            ) : (
+              <PainelCaixa client:load className="mt-3" />
+            )}
+          </div>
+        )
+      }
+
+      <div class="mt-10 flex flex-wrap items-center gap-2">
+        {
+          d.ferramentas.map((f) => (
+            <span class="rounded-xs border border-rule-2 px-2.5 py-1 font-mono text-xs text-ink-mute">
+              {f}
+            </span>
+          ))
+        }
+      </div>
+
+      <div class="mt-8 flex flex-wrap items-center gap-x-8 gap-y-2">
+        <span class="label-tec">{formatarPeriodo(d.inicio, d.fim, d.status, d.precisaoInicio)}</span>
+        {
+          d.links.github && (
+            <a
+              href={d.links.github}
+              class="label-tec text-accent transition-opacity hover:opacity-70"
+              rel="noopener"
+            >
+              Ver o código →
+            </a>
+          )
+        }
+      </div>
+    </header>
+
+    <div class="prose-tec mt-12 max-w-2xl">
+      <Content />
+    </div>
+  </article>
+</Base>

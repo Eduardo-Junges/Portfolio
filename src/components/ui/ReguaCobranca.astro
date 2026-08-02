@@ -1,0 +1,204 @@
+---
+/**
+ * A régua de cobrança do case — linha do tempo horizontal.
+ *
+ * Reconstruída a partir do diagrama da apresentação interna do Eduardo, no
+ * vocabulário do site. A imagem original não é usada: ela carrega a identidade
+ * visual da empresa e um valor de corte que é política interna.
+ *
+ * Layout: uma grade de 9 colunas, uma por etapa. As faixas de fase ocupam o
+ * topo, cada uma abrangendo as colunas das suas etapas; os rótulos alternam
+ * acima e abaixo do eixo, como no original. Estático, sem JavaScript.
+ */
+const FASES = [
+  { nome: 'Preventiva', cor: 'var(--color-ink-mute)', etapas: 4 },
+  { nome: 'Negativação', cor: 'var(--color-signal)', etapas: 1 },
+  { nome: 'Renegociação', cor: 'var(--color-accent)', etapas: 2 },
+  { nome: 'Protesto', cor: 'var(--color-signal)', etapas: 1 },
+  { nome: 'Jurídico', cor: 'rgb(var(--c-cat-processos))', etapas: 1 },
+];
+
+const ETAPAS = [
+  { dia: '5º', acao: 'Lembrete simples', nota: 'último dia sem juros' },
+  { dia: '10º–15º', acao: 'Lembretes neutros' },
+  { dia: '20º–25º', acao: 'Lembrete mais firme' },
+  { dia: '29º', acao: 'Aviso de negativação', nota: 'ligação personalizada' },
+  { dia: '30º', acao: 'Inclusão no birô', nota: 'automático' },
+  { dia: '45º–80º', acao: 'Proposta de renegociação', nota: 'tom colaborativo' },
+  { dia: '89º', acao: 'Aviso de protesto', nota: 'tom formal' },
+  { dia: '90º', acao: 'Protesto em cartório', nota: 'automático' },
+  { dia: '360º', acao: 'Encaminhamento ao jurídico', nota: 'acima de um valor de corte' },
+];
+---
+
+<figure class="regua">
+  <div
+    class="rolagem"
+    role="region"
+    aria-label="Linha do tempo da régua de cobrança, do 5º ao 360º dia"
+    tabindex="0"
+  >
+    <div class="trilho">
+      <div class="faixas">
+        {
+          FASES.map((f) => (
+            <div class="faixa" style={`--n:${f.etapas}; --cor:${f.cor}`}>
+              {f.nome}
+            </div>
+          ))
+        }
+      </div>
+
+      <ol class="etapas">
+        {
+          ETAPAS.map((e, i) => (
+            <li class="etapa" data-lado={i % 2 === 0 ? 'cima' : 'baixo'}>
+              <div class="rotulo">
+                <span class="dia">{e.dia} dia</span>
+                <span class="acao">{e.acao}</span>
+                {e.nota && <span class="nota">{e.nota}</span>}
+              </div>
+              <span class="no" aria-hidden="true">{i + 1}</span>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </div>
+
+  <figcaption>
+    Do lembrete ao jurídico. As etapas marcadas como automáticas são as que não dependem de
+    alguém lembrar de executá-las.
+  </figcaption>
+</figure>
+
+<style>
+  /*
+   * Seletores descendentes a partir de `.regua`: este bloco vive dentro de
+   * `prose-tec`, que dá marcador e recuo a todo ol. `.regua ol` empata em
+   * especificidade com `.prose-tec ol`, e o atributo de escopo que o Astro
+   * adiciona desempata a favor daqui.
+   */
+  .regua {
+    margin-block: 2.75rem;
+    /* escapa da coluna de leitura: nove etapas não cabem em 42rem */
+    width: min(64rem, calc(100vw - 5rem));
+  }
+
+  .rolagem {
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+
+  .trilho {
+    min-width: 54rem;
+  }
+
+  /* ---- faixas de fase ---- */
+  .faixas {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 3px;
+    margin-bottom: 1.25rem;
+  }
+
+  .faixa {
+    grid-column: span var(--n);
+    border-top: 2px solid var(--cor);
+    background: color-mix(in srgb, var(--cor) 7%, transparent);
+    padding: 0.45rem 0.6rem 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--cor);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ---- eixo e etapas ---- */
+  .regua .etapas {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* o eixo: fica exatamente na faixa central de cada etapa */
+  .regua .etapas::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 5.25rem;
+    height: 1px;
+    background: var(--color-rule-2);
+  }
+
+  .regua .etapa {
+    display: grid;
+    grid-template-rows: 5.25rem 1.5rem 1fr;
+    margin: 0;
+    padding: 0 0.5rem 0 0;
+  }
+
+  .regua .etapa[data-lado='cima'] .rotulo {
+    grid-row: 1;
+    align-self: end;
+    padding-bottom: 0.55rem;
+  }
+
+  .regua .etapa[data-lado='baixo'] .rotulo {
+    grid-row: 3;
+    padding-top: 0.55rem;
+  }
+
+  .no {
+    grid-row: 2;
+    justify-self: start;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.375rem;
+    height: 1.375rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-rule-3);
+    background: var(--color-bg);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--color-ink-mute);
+  }
+
+  .rotulo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    line-height: 1.35;
+  }
+
+  .dia {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-signal);
+  }
+
+  .acao {
+    font-size: 0.875rem;
+    color: var(--color-ink);
+  }
+
+  .nota {
+    font-size: 0.75rem;
+    color: var(--color-ink-faint);
+  }
+
+  /* prose-tec dá 0.6em à figcaption, que fica apertada sob o eixo */
+  .regua figcaption {
+    margin-top: 1.25rem;
+  }
+</style>

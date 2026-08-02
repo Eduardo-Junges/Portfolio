@@ -1,0 +1,48 @@
+---
+/**
+ * Alternador de tema. Vanilla — não justifica uma ilha React.
+ * O tema inicial já é aplicado pelo script inline em Base.astro,
+ * antes do primeiro paint.
+ */
+---
+
+<button
+  type="button"
+  id="alternar-tema"
+  class="inline-flex size-9 items-center justify-center rounded-sm border border-rule-2 text-ink-mute transition-colors duration-150 hover:border-rule-3 hover:text-ink"
+  aria-label="Alternar entre tema claro e escuro"
+>
+  <svg
+    class="size-4"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.8"
+    stroke-linecap="round"
+    aria-hidden="true"
+  >
+    {/* meia-lua: legível nos dois temas, sem precisar trocar de ícone */}
+    <circle cx="12" cy="12" r="8.5"></circle>
+    <path d="M12 3.5a8.5 8.5 0 0 0 0 17z" fill="currentColor" stroke="none"></path>
+  </svg>
+</button>
+
+<script>
+  const botao = document.getElementById('alternar-tema');
+
+  function temaAtual(): 'light' | 'dark' {
+    const explicito = document.documentElement.dataset.theme;
+    if (explicito === 'light' || explicito === 'dark') return explicito;
+    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  }
+
+  botao?.addEventListener('click', () => {
+    const novo = temaAtual() === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = novo;
+    try {
+      localStorage.setItem('tema', novo);
+    } catch {
+      /* modo privado — o tema vale só para esta sessão */
+    }
+  });
+</script>

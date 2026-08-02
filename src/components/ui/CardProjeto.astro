@@ -1,0 +1,102 @@
+---
+/**
+ * Card do índice.
+ *
+ * Extraído de index.astro quando a lista passou a ser agrupada por contexto —
+ * eram dois `map` renderizando a mesma marcação, e uma alteração de layout
+ * teria que ser feita em dois lugares.
+ *
+ * A etiqueta de contexto saiu do card de propósito: quem carrega essa
+ * informação agora é o título do grupo. Repetir "Na empresa" em cada card
+ * dentro de uma seção chamada "Na empresa" é ruído.
+ */
+import type { CollectionEntry } from 'astro:content';
+import PainelNexus from '../islands/PainelNexus';
+import PainelCaixa from '../islands/PainelCaixa';
+import { formatarPeriodo, rotuloCategoria } from '../../lib/formato';
+
+interface Props {
+  projeto: CollectionEntry<'projetos'>;
+}
+
+const { projeto: p } = Astro.props;
+
+/** Os dois Nexus têm peça interativa embutida — ver comentário do grid. */
+const temPainel = p.id === 'nexus-analytics' || p.id === 'nexus-pj';
+const periodo = formatarPeriodo(p.data.inicio, p.data.fim, p.data.status, p.data.precisaoInicio);
+---
+
+<li
+  class:list={['card card-cat', p.data.destaque && 'md:col-span-2']}
+  style={`--cat-color: rgb(var(--c-cat-${p.data.categoria}))`}
+>
+  {/*
+    Meio a meio: dá ao painel os ~470px de que ele precisa para colapsar KPIs e
+    gráficos em uma linha cada (ver a container query em PainelNexus), sem
+    espremer o texto — que, estreito demais, passa a ser ele o responsável pela
+    altura do card.
+  */}
+  <div class:list={['flex h-full flex-col', temPainel && 'md:grid md:grid-cols-2']}>
+    <a href={`/projetos/${p.id}`} class="group flex flex-1 flex-col">
+      {
+        p.data.capa && (
+          <img
+            src={p.data.capa.src}
+            alt={p.data.capa.alt}
+            class="aspect-video w-full border-b border-rule object-cover"
+            loading="lazy"
+          />
+        )
+      }
+      <div class="flex flex-1 flex-col p-7 sm:p-8">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <span class="chip">
+            <span class="chip-dot" aria-hidden="true" />
+            {rotuloCategoria[p.data.categoria]}
+          </span>
+          {periodo && <span class="label-tec text-ink-faint">{periodo}</span>}
+        </div>
+
+        <h3 class="mt-6 font-display text-3xl leading-snug text-ink">{p.data.titulo}</h3>
+        <p class="mt-3 leading-relaxed text-pretty text-ink-dim">{p.data.resumo}</p>
+
+        {
+          p.data.metricas.length > 0 && (
+            <dl class="mt-8 grid grid-cols-3 gap-4 border-t border-rule pt-6">
+              {p.data.metricas.map((m) => (
+                <div>
+                  <dd class="font-mono text-2xl leading-none font-semibold text-signal">{m.valor}</dd>
+                  <dt class="label-tec mt-2 leading-tight">{m.rotulo}</dt>
+                </div>
+              ))}
+            </dl>
+          )
+        }
+
+        <span class="label-tec mt-8 inline-flex items-center gap-1.5 text-accent">
+          Ver o projeto
+          <span class="transition-transform duration-150 group-hover:translate-x-1" aria-hidden="true">
+            →
+          </span>
+        </span>
+      </div>
+    </a>
+
+    {/* fora do <a>: conteúdo interativo dentro de um link é HTML inválido e
+        deixa o clique ambíguo */}
+    {
+      temPainel && (
+        <div class="border-t border-rule p-5 sm:p-7 md:border-t-0 md:border-l md:p-8">
+          <p class="label-tec text-ink-faint">Experimente com dados fictícios</p>
+          <div class="mt-3">
+            {p.id === 'nexus-analytics' ? (
+              <PainelNexus client:load compacto />
+            ) : (
+              <PainelCaixa client:load compacto />
+            )}
+          </div>
+        </div>
+      )
+    }
+  </div>
+</li>
