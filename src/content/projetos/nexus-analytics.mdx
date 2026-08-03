@@ -57,17 +57,20 @@ São oito. As três que mais moldaram o sistema:
 separador, ordem de coluna. Nunca o *conteúdo*. Nenhum valor, data ou descrição é alterado, e
 nenhum lançamento é escondido.
 
-**Nada sai da máquina.** O servidor está preso a `127.0.0.1` e não há CDN. Um teste verifica
-que nenhum módulo importa `socket`, `requests`, `urllib` ou `http` — a regra não depende da
-minha memória.
+**Nada sai da máquina.** Zero chamadas de rede — e não por configuração: o servidor está preso a
+`127.0.0.1`, não há CDN, e um teste verifica que nenhum módulo importa `socket`, `requests`,
+`urllib` ou `http`. A regra não depende da minha memória.
 
 **Toda escrita é atômica.** Arquivo temporário, `.bak`, substituição. Queda de energia no meio
 de uma gravação não corrompe configuração.
 
+Regra que ninguém verifica é intenção. São **163 testes automatizados** rodando a cada mudança —
+o de rede é só um deles.
+
 ## O modelo de domínio
 
-Os extratos entram em quatro formatos — OFX, CSV, XLS e PDF —, cada banco com seu dialeto. Um
-classificador transforma descrição crua em tipo, e tipo em categoria.
+Os extratos entram em **quatro formatos** — OFX, CSV, XLS e PDF —, cada banco com seu dialeto.
+Um classificador transforma descrição crua em tipo, e tipo em categoria.
 
 A parte difícil não é essa. São as fronteiras entre seis categorias-mãe:
 

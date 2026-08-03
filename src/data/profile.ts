@@ -30,11 +30,16 @@ export const profile = {
    * Cuidado deliberado com a IA: ela é ferramenta em parte dos projetos, não em
    * todos. O contas a receber não tem uma linha de código, e a frase não pode
    * sugerir o contrário.
+   *
+   * Os setores no lugar do porte: "empresas de grande porte" é a única
+   * afirmação da home que alguém poderia querer confrontar, e — com tudo
+   * anonimizado — não há como responder nomeando. Indústria e varejo dizem o
+   * mesmo tamanho de experiência e batem com o LinkedIn.
    */
   linha:
     'Os projetos que construí e os que estou construindo — sistemas, agentes de IA e ' +
     'reformulação de processo financeiro. Atrás deles, mais de cinco anos em finanças e ' +
-    'sistemas de empresas de grande porte.',
+    'sistemas, na indústria e no varejo.',
 
   /*
    * Não existe `local` aqui, e é decisão consciente. A cidade, combinada com o
