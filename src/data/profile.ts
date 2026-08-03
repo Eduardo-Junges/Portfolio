@@ -26,7 +26,12 @@ export const profile = {
   /** Uma linha, não um cargo. Aparece no topo da home. */
   linha: 'Automação, dados e sistemas — aplicados a problemas reais de negócio.',
 
-  local: 'Campo Bom / RS',
+  /*
+   * Não existe `local` aqui, e é decisão consciente. A cidade, combinada com o
+   * porte da rede e o segmento descritos no case do contas a receber, bastava
+   * para identificar o empregador — que é atual. Cada dado sozinho é inofensivo;
+   * o conjunto é que entrega. Quem precisa saber onde ele mora pergunta.
+   */
 
   /** Endereços de contato vivem em `redes.ts`, com ícone e cor junto. */
 

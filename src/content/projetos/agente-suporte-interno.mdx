@@ -1,10 +1,10 @@
 ---
-titulo: 'Agente de suporte às lojas'
+titulo: 'Agente de suporte interno'
 subtitulo: 'Um atendente de IA que interpreta o chamado, consulta quem entende do assunto e sabe a hora de chamar gente'
 categoria: 'ia'
 resumo: >-
-  Canal único para as lojas abrirem chamado. Um agente principal interpreta o pedido, pergunta
-  o que falta e encaminha para um sub-agente especializado na área. Quem responde é o
+  Canal único para as equipes abrirem chamado. Um agente principal interpreta o pedido,
+  pergunta o que falta e encaminha para um sub-agente especializado na área. Quem responde é o
   especialista; quem conversa é o principal. Quando nenhum dos dois sabe, vai para uma pessoa.
 contexto: 'empresa'
 autoria: 'liderei'
@@ -15,6 +15,9 @@ autoriaDetalhe: >-
   escalonamento para especialista humano.
 inicio: 2026-06-01
 status: 'ativo'
+estadoAtual: >-
+  Fluxo desenhado ponta a ponta — triagem, especialização por área, consulta à base e
+  escalonamento para humano —, com a orquestração definida em n8n.
 ferramentas:
   - 'n8n (orquestração)'
   - 'API de LLM'
@@ -23,10 +26,13 @@ ferramentas:
 destaque: true
 ---
 
-## O que é
+## O problema
 
-Um canal único para as lojas abrirem chamado — dúvida, erro, problema de processo — atendido
-por um agente de IA que não responde sozinho.
+Dúvida operacional não tem para onde ir. Ela vira mensagem no WhatsApp de quem respondeu da
+última vez, e a resposta morre naquela conversa — a próxima pessoa com a mesma dúvida recomeça
+do zero, e quem respondeu vira gargalo sem nunca ter pedido para ser.
+
+O conhecimento existe. Ele só não está em lugar nenhum que se possa consultar.
 
 ## Como está desenhado
 
@@ -38,7 +44,7 @@ ela é.
 
 O **sub-agente** responde. Cada um cobre uma área, com conhecimento aprofundado no assunto
 como teria um profissional dela. Recebe a solicitação já traduzida, consulta o banco de dados
-e devolve ao principal, que é quem fala com a loja.
+e devolve ao principal, que é quem fala com quem abriu o chamado.
 
 A terceira saída é a que mais importa: **quando nenhum dos dois sabe, o chamado vai para um
 especialista humano.** Não existe resposta inventada — existe encaminhamento.
@@ -46,10 +52,25 @@ especialista humano.** Não existe resposta inventada — existe encaminhamento.
 ## Memória viva
 
 Os agentes são alimentados com os manuais e processos escritos pela própria operação. Não é
-conhecimento genérico de internet: é como esta rede faz as coisas.
+conhecimento genérico de internet: é como esta empresa faz as coisas.
 
 Cada processo novo documentado vira conhecimento que o agente passa a ter. A base cresce junto
 com a operação, em vez de envelhecer com ela.
+
+## As decisões que sustentam o desenho
+
+**Por que dois níveis e não um agente só.** Um agente único que atende e responde tudo precisa
+ser genérico, e genérico erra em detalhe de processo — que é justamente onde a resposta precisa
+estar certa. Separar quem conversa de quem sabe permite que cada sub-agente seja estreito e
+profundo.
+
+**Por que "não sei" é uma resposta válida.** A saída para o humano não é plano B: é requisito.
+Um agente de suporte interno que inventa procedimento é pior que não ter agente nenhum, porque
+o erro chega com a autoridade de resposta oficial e ninguém confere.
+
+**O que decidi não fazer:** não vou deixar o agente executar ação em sistema — só responder e
+encaminhar. Executar exige garantia de reversão que o projeto ainda não tem, e o custo de um
+erro aí não é uma resposta errada, é um dado errado gravado.
 
 ## Onde está hoje
 

@@ -32,39 +32,28 @@ function mesAno(data: Date): string {
 }
 
 /**
- * Período legível a partir de datas reais.
- * Projeto ativo sem `fim` vira "— em andamento": nunca precisa lembrar de
- * atualizar um texto solto quando o status muda.
+ * Período legível a partir de datas reais. **Só a data** — o que o projeto faz
+ * hoje é dito por `estadoAtual`, não por um rótulo de fase.
+ *
+ * Antes esta função anexava "— em andamento" e afins. O efeito colateral era
+ * uma lista em que todo projeto anunciava estar inacabado, o que descreve
+ * progresso em vez de capacidade e envelhece mal: um projeto que roda há um ano
+ * continuava se apresentando como obra.
  *
  * `precisaoInicio: 'ano'` existe para quando só o ano é um fato confirmado —
  * exibir "jan/2025" nesse caso inventaria um mês que ninguém disse.
- * `'oculto'` vai além: nem o ano se sabe, então some com a data e sobra só o
- * status. Melhor um card sem período do que um card com período errado.
+ * `'oculto'` vai além: nem o ano se sabe, então não sobra período nenhum.
+ * Melhor um card sem data do que um card com data errada.
  */
 export function formatarPeriodo(
   inicio: Date,
   fim: Date | undefined,
-  status: string,
   precisaoInicio: 'mes' | 'ano' | 'oculto' = 'mes'
 ): string {
-  if (precisaoInicio === 'oculto') {
-    return status === 'concluido' ? '' : rotuloStatus[status];
-  }
+  if (precisaoInicio === 'oculto') return '';
   const inicioTxt = precisaoInicio === 'ano' ? String(inicio.getUTCFullYear()) : mesAno(inicio);
-  if (fim) return `${inicioTxt} — ${mesAno(fim)}`;
-  if (status === 'planejamento') return `${inicioTxt} — em planejamento`;
-  if (status === 'ativo') return `${inicioTxt} — em andamento`;
-  if (status === 'aperfeicoamento') return `${inicioTxt} — em aperfeiçoamento`;
-  return inicioTxt;
+  return fim ? `${inicioTxt} — ${mesAno(fim)}` : `desde ${inicioTxt}`;
 }
-
-export const rotuloStatus: Record<string, string> = {
-  planejamento: 'Em planejamento',
-  ativo: 'Em desenvolvimento',
-  aperfeicoamento: 'Em aperfeiçoamento',
-  concluido: 'Concluído',
-  pausado: 'Pausado',
-};
 
 export const rotuloCategoria: Record<string, string> = {
   automacao: 'Automação',

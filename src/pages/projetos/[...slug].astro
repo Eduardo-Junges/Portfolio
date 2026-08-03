@@ -81,6 +81,12 @@ const d = projeto.data;
         )
       }
 
+      {/* capacidade antes de ferramenta: o que roda importa mais que com o quê */}
+      <div class="mt-10 border-t border-rule pt-6">
+        <p class="label-tec text-ink-faint">O que já funciona</p>
+        <p class="mt-2 max-w-2xl leading-relaxed text-pretty text-ink-dim">{d.estadoAtual}</p>
+      </div>
+
       <div class="mt-10 flex flex-wrap items-center gap-2">
         {
           d.ferramentas.map((f) => (
@@ -92,7 +98,7 @@ const d = projeto.data;
       </div>
 
       <div class="mt-8 flex flex-wrap items-center gap-x-8 gap-y-2">
-        <span class="label-tec">{formatarPeriodo(d.inicio, d.fim, d.status, d.precisaoInicio)}</span>
+        <span class="label-tec">{formatarPeriodo(d.inicio, d.fim, d.precisaoInicio)}</span>
         {
           d.links.github && (
             <a

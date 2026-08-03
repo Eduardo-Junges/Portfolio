@@ -7,60 +7,30 @@
  * é reconstruída como contorno de 1.6px em `currentColor`, e quem pinta é o
  * botão que envolve o ícone.
  *
- * Tudo vira `<path>` (retângulos e círculos incluídos) para o glifo ser só uma
- * lista de traços — assim o componente é um `map`, não uma escada de `if`.
+ * Cada glifo é só uma lista de `d` — retângulos e círculos incluídos. Assim o
+ * componente é um `map`, não uma escada de `if`. Já houve uma interface `Traco`
+ * aqui, com `transform` e `larguraTraco`, que existia por causa de um único
+ * glifo composto (o fone dentro do balão do WhatsApp). Com ele fora, a
+ * estrutura extra não tinha mais nada a sustentar.
  */
 import type { IdRede } from '../../data/redes';
 
-interface Traco {
-  d: string;
-  /** usado só no fone do WhatsApp, que é um glifo dentro do outro */
-  transform?: string;
-  /** compensa a escala do transform para o traço sair com a mesma espessura */
-  larguraTraco?: number;
-}
-
-/** O fone do WhatsApp é o mesmo glifo de telefone reduzido dentro do balão. */
-const FONE =
-  'M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z';
-
-const GLIFOS: Record<IdRede, Traco[]> = {
+const GLIFOS: Record<IdRede, string[]> = {
   // envelope: corpo arredondado + a aba em V
   email: [
-    { d: 'M5 4.5h14A2.5 2.5 0 0 1 21.5 7v10a2.5 2.5 0 0 1-2.5 2.5H5A2.5 2.5 0 0 1 2.5 17V7A2.5 2.5 0 0 1 5 4.5z' },
-    { d: 'm3.4 6.6 7.3 5.5a2.2 2.2 0 0 0 2.6 0l7.3-5.5' },
+    'M5 4.5h14A2.5 2.5 0 0 1 21.5 7v10a2.5 2.5 0 0 1-2.5 2.5H5A2.5 2.5 0 0 1 2.5 17V7A2.5 2.5 0 0 1 5 4.5z',
+    'm3.4 6.6 7.3 5.5a2.2 2.2 0 0 0 2.6 0l7.3-5.5',
   ],
 
   // "in": o ponto, a haste e o arco do n
   linkedin: [
-    { d: 'M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z' },
-    { d: 'M2 9h4v12H2z' },
-    { d: 'M4 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4z' },
+    'M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z',
+    'M2 9h4v12H2z',
+    'M4 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4z',
   ],
 
   github: [
-    {
-      d: 'M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22',
-    },
-  ],
-
-  // balão com rabo embaixo à esquerda + fone reduzido dentro
-  whatsapp: [
-    {
-      d: 'M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z',
-    },
-    { d: FONE, transform: 'translate(6.92 5.92) scale(0.44)', larguraTraco: 3 },
-  ],
-
-  // moldura arredondada + lente + o ponto do flash
-  instagram: [
-    { d: 'M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5z' },
-    { d: 'M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z' },
-    { d: 'M17.5 6.5h.01' },
-  ],
-
-  facebook: [
-    { d: 'M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z' },
+    'M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22',
   ],
 };
 
@@ -84,9 +54,5 @@ const { id, tamanho = 20 } = Astro.props;
   aria-hidden="true"
   focusable="false"
 >
-  {
-    GLIFOS[id].map((t) => (
-      <path d={t.d} transform={t.transform} stroke-width={t.larguraTraco} />
-    ))
-  }
+  {GLIFOS[id].map((d) => <path d={d} />)}
 </svg>

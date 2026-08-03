@@ -1,6 +1,6 @@
 ---
 /**
- * As seis portas de contato, em duas densidades.
+ * As três portas de contato, em duas densidades.
  *
  * `compacto` — só o ícone, para o cabeçalho da home, onde contato é secundário
  *   em relação ao trabalho. O nome da rede continua existindo no `aria-label`,
@@ -9,8 +9,8 @@
  *   a pessoa já leu e está decidindo por qual porta entrar.
  *
  * A cor de cada rede entra como `--rede-cor` e só se manifesta no hover/foco.
- * Em repouso tudo é `ink-mute`: seis logos coloridos de uma vez virariam
- * barra de compartilhamento de blog, que é o oposto do que este site é.
+ * Em repouso tudo é `ink-mute`: logos coloridos de uma vez virariam barra de
+ * compartilhamento de blog, que é o oposto do que este site é.
  */
 import { redes } from '../../data/redes';
 import IconeRede from './IconeRede.astro';
@@ -23,9 +23,9 @@ interface Props {
 const { variante = 'compacto', class: classe } = Astro.props;
 
 /*
- * Botão compacto: 36px abaixo de 640px, 40px acima. Em 320px a fila de seis
- * botões de 40px mede 280px para 272px disponíveis, e sobra um botão sozinho na
- * segunda linha.
+ * Botão compacto: 36px abaixo de 640px, 40px acima. O tamanho menor foi
+ * calibrado quando eram seis botões e a fila estourava 320px; com três sobra
+ * folga, mas 36px continua sendo o mínimo confortável para toque.
  */
 
 /** Externo abre em aba nova; `me` marca o link como perfil do próprio autor. */

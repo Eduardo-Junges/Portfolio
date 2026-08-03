@@ -58,6 +58,22 @@ const projetos = defineCollection({
      */
     status: z.enum(['planejamento', 'ativo', 'aperfeicoamento', 'concluido', 'pausado']),
 
+    /**
+     * O que o projeto **já faz hoje**, em uma linha.
+     *
+     * Substitui o rótulo de fase na exibição. Quatro projetos anunciando
+     * "em andamento" e "em planejamento" descrevem progresso, e progresso sem
+     * fim à vista lê como rascunho eterno — mesmo quando o que existe já
+     * funciona. Capacidade é mais honesta que fase: diz o que a pessoa
+     * encontraria se abrisse hoje.
+     *
+     * Obrigatório de propósito. Se fosse opcional, o rótulo de fase voltaria
+     * por omissão no primeiro projeto novo.
+     *
+     * `status` continua no schema como metadado — só não é mais exibido.
+     */
+    estadoAtual: z.string(),
+
     /** Métricas verificáveis. Só entram números que existem de verdade. */
     metricas: z
       .array(
