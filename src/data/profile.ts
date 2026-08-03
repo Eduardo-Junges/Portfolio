@@ -23,8 +23,18 @@ export const profile = {
   nome: 'Eduardo Henrique Junges',
   nomeCurto: 'Eduardo Junges',
 
-  /** Uma linha, não um cargo. Aparece no topo da home. */
-  linha: 'Automação, dados e sistemas — aplicados a problemas reais de negócio.',
+  /**
+   * A abertura da home. Não é cargo — é o que a lista abaixo contém e de onde
+   * ela vem.
+   *
+   * Cuidado deliberado com a IA: ela é ferramenta em parte dos projetos, não em
+   * todos. O contas a receber não tem uma linha de código, e a frase não pode
+   * sugerir o contrário.
+   */
+  linha:
+    'Os projetos que construí e os que estou construindo — sistemas, agentes de IA e ' +
+    'reformulação de processo financeiro. Atrás deles, mais de cinco anos em finanças e ' +
+    'sistemas de empresas de grande porte.',
 
   /*
    * Não existe `local` aqui, e é decisão consciente. A cidade, combinada com o
