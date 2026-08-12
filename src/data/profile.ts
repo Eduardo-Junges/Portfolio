@@ -37,9 +37,9 @@ export const profile = {
    * mesmo tamanho de experiência e batem com o LinkedIn.
    */
   linha:
-    'Os projetos que construí e os que estou construindo — sistemas, agentes de IA e ' +
-    'reformulação de processo financeiro. Atrás deles, mais de cinco anos em finanças e ' +
-    'sistemas, na indústria e no varejo.',
+    'Os projetos que eu construí e os que estou construindo agora — sistemas, agentes de IA, ' +
+    'reformulação de processo financeiro. Por trás deles, mais de cinco anos em finanças e ' +
+    'sistemas, entre indústria e varejo.',
 
   /*
    * Não existe `local` aqui, e é decisão consciente. A cidade, combinada com o

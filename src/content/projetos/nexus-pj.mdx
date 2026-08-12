@@ -1,72 +1,96 @@
 ---
 titulo: 'Nexus & PJ'
-subtitulo: 'Fechamento de caixa pelo extrato, para quem tem conta em mais de um banco'
+subtitulo: 'Fechar o caixa pelo extrato, para quem tem conta em mais de um banco'
 categoria: 'financas'
 resumo: >-
-  O irmão do Nexus, voltado para empresa. Companhia que opera com vários bancos não responde
-  uma pergunta simples — quanto tem, de verdade, agora. A ideia é centralizar pelos extratos:
-  importar de todas as contas, consolidar e fechar o caixa contra o que o banco registrou.
+  O irmão do Nexus, agora para empresa: login, permissão por perfil e o mesmo princípio de
+  sempre — o caixa fecha contra o que o extrato mostra que aconteceu, não contra o que alguém
+  digitou que ia acontecer. Nasceu pensado num caso real e virou produto próprio no meio do
+  caminho.
 contexto: 'proprio'
 autoria: 'arquitetei'
 autoriaDetalhe: >-
-  Projeto meu, em planejamento. Nasce de uma necessidade concreta da empresa onde trabalho —
-  é lá que pretendo construir e validar o primeiro caso —, mas o produto é meu e replicável
-  em qualquer companhia com contas em mais de um banco. Por enquanto existe o desenho: o
-  mockup navegável das telas, o design system e a definição do fluxo.
+  Arquiteto e dono do produto, construído em par com IA sob as mesmas regras do Nexus Analytics
+  — nada de LLM, nada sai da rede, todo número citável até a origem. Comecei pensando numa
+  empresa só. No meio do caminho decidi tirar esse laço: hoje o app não guarda nome, cor nem
+  logo de ninguém — a identidade visual é uma foto que cada instalação troca por conta própria.
 inicio: 2026-08-01
-status: 'planejamento'
+status: 'ativo'
 estadoAtual: >-
-  Mockup navegável cobrindo o fluxo inteiro — importar extrato, categorizar, consolidar por
-  conta e fechar o período —, com o design system definido e as pendências declaradas na tela.
+  Login com três perfis, motor de leitura de extrato herdado do Nexus Analytics, tela de Fluxo
+  de Caixa Realizado rodando com dado de verdade, dashboard com os indicadores principais e um
+  conjunto de módulos de IA determinística — assistente de perguntas, sugestão de
+  categorização, revisão de lançamento e alertas configuráveis pelo próprio usuário. 254 testes
+  automatizados. Ainda não entrou o primeiro extrato real de banco nem a primeira categoria —
+  isso é o próximo passo.
 ferramentas:
-  - 'Mockup navegável (HTML)'
-  - 'Design system próprio'
+  - 'Python'
+  - 'FastHTML'
+  - 'SQLAlchemy'
+  - 'Alembic'
+  - 'SQLite'
+  - 'pytest'
 destaque: true
 ---
 
 ## O problema
 
-Fechar o caixa é simples com uma conta. Com quatro ou cinco, cada uma com seu extrato e seu
-formato de exportação, "quanto a empresa tem hoje" vira alguém somando à mão numa planilha —
-com atraso e sem rastro para refazer a conta depois.
-
-O que se perde não é só tempo: é a conta real de cada banco.
+Empresa que opera com conta em bancos diferentes não responde uma pergunta simples — quanto
+tem, de verdade, agora. Cada banco fala a sua língua, cada extrato vem num formato, e fechar o
+caixa vira alguém somando tudo à mão numa planilha, com atraso e sem rastro pra refazer a conta
+depois.
 
 ## A ideia
 
-Centralizar pelo extrato, não pelo lançamento.
+Centralizar pelo extrato, não pelo lançamento. O extrato é a única fonte que já é, por
+definição, o que aconteceu — não o que alguém digitou que ia acontecer. Importando o extrato de
+todas as contas pra um lugar só, o caixa fecha contra o realizado, e cada banco aparece com o
+saldo que de fato tem.
 
-O extrato é a única fonte que já é, por definição, o que aconteceu — não o que alguém digitou
-que ia acontecer. Importando os extratos de todas as contas para um lugar só, o caixa fecha
-contra o realizado e cada banco aparece com o saldo que de fato tem.
+Foi o mesmo raciocínio que guiou o Nexus Analytics. Aqui o motor de leitura de extrato veio de
+lá, portado — não reescrevi do zero o que já tinha funcionado.
 
-## O que já está desenhado
+## O que já está rodando
 
-O mockup navegável cobre o fluxo inteiro:
+Login com três perfis — administrador, quem lança e quem só visualiza — checado sempre no
+back-end, nunca só escondendo botão na tela. A tela de Fluxo de Caixa Realizado importa
+extrato, categoriza e mostra o saldo de verdade, com filtro por coluna igual planilha. O
+dashboard traz saldo, receita e despesa do mês, despesa por categoria e evolução mensal.
 
-- **Fluxo de caixa** em Realizado e Planejado, com os mesmos filtros nos dois: período, conta
-  e categoria.
-- **Importar extrato** como operação de primeira classe — é a porta de entrada de todo o dado.
-- **Contas bancárias**, **categorias** e **usuários** como cadastros de administração.
-- Indicadores com a origem declarada — *realizado, do extrato* — para não confundir com
-  estimativa.
-- Login e perfil, porque dado financeiro não é de todo mundo.
+Por trás, um conjunto de módulos de IA — todos determinísticos, sem LLM, sem chamada de rede,
+o mesmo princípio do Nexus Analytics: um assistente que responde pergunta sobre o caixa por
+texto, sugestões de categorização quando duas descrições parecidas caíram em categorias
+diferentes, revisão de lançamento fora do padrão e alertas que o próprio usuário configura —
+teto de gasto, termo pra vigiar no extrato, saldo mínimo de conta. 254 testes automatizados
+cobrem tudo isso.
 
-## O que está em aberto
+## Como virou produto
 
-Duas coisas, anotadas no próprio mockup em vez de escondidas.
+O plano original resolvia o problema de uma empresa só. No meio da implementação, decidi tirar
+esse laço: tirei nome, cor e logo fixos do código, e troquei por uma foto que cada instalação
+guarda na própria pasta — trocar a marca é trocar o arquivo, sem mexer em nada mais.
 
-O **Planejado** tem tela pronta e fonte de dado indefinida: falta decidir se puxa de lançamento
-manual de contas a pagar e receber, de integração externa, ou dos dois.
+Não foi capricho. Um produto amarrado a uma empresa só serve àquela empresa; um produto que não
+sabe o nome de ninguém serve qualquer uma no mesmo problema.
 
-O **saldo projetado** aparece como indicador vazio, com a origem declarada como pendente.
-Melhor reservar o espaço do que preencher com um número que ainda não tem de onde sair.
+## O que ainda está em aberto
+
+**Nenhum extrato real de banco passou pelo motor ainda.** Ele foi testado com arquivo sintético
+e um exemplo — nenhum banco de verdade, com o layout de verdade dele, foi lido pelo app
+rodando. É o maior risco técnico aberto: cada banco tem seu próprio jeito de exportar, e é ali
+que leitor de extrato costuma quebrar.
+
+**A tela Planejado** existe como molde vazio — mesma tela do Realizado, sem fonte de dado
+ainda. Decisão de escopo que segue em aberto desde o plano original.
+
+**Uma tabela de consolidado** — resumo por categoria com saldo validado — espera eu mandar pra
+mim mesmo o modelo exato de cálculo antes de implementar. É a parte financeira mais sensível de
+toda a tela; prefiro esperar o modelo certo a arriscar refazer.
+
+**Rodar num servidor de verdade**, dentro da rede da empresa, sem acesso à internet, ainda não
+começou — é a próxima fase grande, separada do que já está pronto.
 
 ## Onde está hoje
 
-Em planejamento. O desenho está de pé; o próximo passo é o modelo de dados dos extratos —
-cada banco exporta o seu formato — e a decisão sobre a origem do Planejado.
-
-O primeiro caso será a empresa onde trabalho, que tem o problema na forma mais completa:
-várias contas, formatos diferentes e fechamento mensal. Validado ali, o produto serve
-qualquer empresa na mesma situação.
+Rodando localmente, com dado real de cadastro mas ainda sem extrato importado de verdade. O
+próximo passo é justamente esse: validar o motor contra o primeiro banco real.
