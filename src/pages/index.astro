@@ -4,7 +4,7 @@ import Base from '../layouts/Base.astro';
 import BotoesRede from '../components/ui/BotoesRede.astro';
 import CardProjeto from '../components/ui/CardProjeto.astro';
 import { profile } from '../data/profile';
-import { rotuloContexto } from '../lib/formato';
+import { rotuloGrupoContexto } from '../lib/formato';
 
 // Todos os projetos aparecem — nada fica escondido atrás de um filtro.
 // A lista é agrupada por contexto, e os de conta própria vêm primeiro: são os
@@ -53,7 +53,7 @@ const grupos = (['proprio', 'empresa'] as const)
       grupos.map((g) => (
         <section class="mt-14 first:mt-12">
           <h2 class="label-tec border-b border-rule pb-3 text-ink-mute">
-            {rotuloContexto[g.contexto]}
+            {rotuloGrupoContexto[g.contexto]}
           </h2>
           <ul class="mt-5 grid gap-5 md:grid-cols-2">
             {g.projetos.map((p) => (

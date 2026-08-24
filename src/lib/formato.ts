@@ -75,7 +75,14 @@ export const rotuloAutoria: Record<string, string> = {
   apoiei: 'Apoiei',
 };
 
+/** Etiqueta singular — usada junto do chip de categoria, na página de um projeto. */
 export const rotuloContexto: Record<string, string> = {
   empresa: 'Na empresa',
   proprio: 'Por conta própria',
+};
+
+/** Título de grupo, no plural — usado nas seções do índice na home. */
+export const rotuloGrupoContexto: Record<string, string> = {
+  empresa: 'Projetos para empresas',
+  proprio: 'Projetos pessoais',
 };
