@@ -116,5 +116,18 @@ const d = projeto.data;
     <div class="prose-tec mt-12 max-w-2xl">
       <Content />
     </div>
+
+    {
+      d.links.doc && (
+        <div class="mt-12 max-w-2xl border-t border-rule pt-8">
+          <a
+            href={d.links.doc}
+            class="btn-rede inline-flex w-auto gap-2 px-4 py-2.5"
+          >
+            Política de Privacidade →
+          </a>
+        </div>
+      )
+    }
   </article>
 </Base>

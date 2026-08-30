@@ -1,0 +1,72 @@
+---
+/**
+ * Política de privacidade do Nexus Analytics.
+ *
+ * Existe por exigência do Google (OAuth precisa de uma URL pública de
+ * política de privacidade para sair do modo "Teste", onde o token de acesso
+ * ao Gmail expira a cada 7 dias). Não é conteúdo do portfólio — é a peça
+ * regulatória mínima para a automação de e-mail do projeto funcionar sem
+ * reautenticação semanal.
+ */
+import Base from '../layouts/Base.astro';
+
+const titulo = 'Política de Privacidade — Nexus Analytics';
+const descricao = 'Como o Nexus Analytics usa o acesso ao Gmail: só localmente, só para o próprio autor.';
+---
+
+<Base titulo={titulo} descricao={descricao}>
+  <article class="container-page py-16 sm:py-24">
+    <a href="/projetos/nexus-analytics" class="label-tec inline-flex items-center gap-1.5 transition-colors hover:text-ink">
+      <span aria-hidden="true">←</span> Voltar para Nexus Analytics
+    </a>
+
+    <header class="mt-8 border-b border-rule pb-8">
+      <h1 class="mt-2 font-display text-3xl leading-tight text-balance sm:text-5xl">
+        Política de Privacidade
+      </h1>
+      <p class="mt-3 max-w-2xl text-ink-dim">Nexus Analytics</p>
+      <p class="label-tec mt-4 text-ink-faint">Última atualização: 30 de agosto de 2026</p>
+    </header>
+
+    <div class="prose-tec mt-12 max-w-2xl">
+      <p>
+        Nexus Analytics é uma aplicação de uso pessoal e privado, desenvolvida e operada por
+        Eduardo Henrique Junges exclusivamente para automatizar a organização de seus próprios
+        extratos bancários e faturas de cartão de crédito.
+      </p>
+
+      <h2>Uso de dados</h2>
+      <p>Esta aplicação acessa uma única conta do Gmail — a do próprio desenvolvedor — para:</p>
+      <ul>
+        <li>Localizar e-mails de instituições financeiras que contenham extratos ou faturas em anexo.</li>
+        <li>Baixar esses anexos (PDF, CSV, OFX, XLS) e salvá-los localmente, em pastas organizadas por banco.</li>
+      </ul>
+
+      <h2>Compartilhamento de dados</h2>
+      <p>
+        Nenhum dado é compartilhado com terceiros. Todo o processamento ocorre localmente, na
+        máquina do próprio usuário. Nenhuma informação é enviada, vendida ou disponibilizada a
+        qualquer outra pessoa, empresa ou serviço.
+      </p>
+
+      <h2>Armazenamento</h2>
+      <p>
+        Os arquivos baixados ficam armazenados apenas no computador pessoal do usuário. A
+        aplicação não mantém servidores externos, bancos de dados na nuvem, nem qualquer
+        infraestrutura de terceiros.
+      </p>
+
+      <h2>Escopo de acesso ao Google</h2>
+      <p>
+        A aplicação solicita acesso de leitura e organização de e-mails (Gmail API) apenas para a
+        finalidade descrita acima. Nenhum e-mail é enviado, excluído ou modificado em massa.
+      </p>
+
+      <h2>Contato</h2>
+      <p>
+        Dúvidas sobre esta política podem ser enviadas para{' '}
+        <a href="mailto:h.junges.14@gmail.com" class="text-accent hover:opacity-70">h.junges.14@gmail.com</a>.
+      </p>
+    </div>
+  </article>
+</Base>
