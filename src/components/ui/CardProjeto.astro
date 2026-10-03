@@ -12,7 +12,7 @@
  */
 import type { CollectionEntry } from 'astro:content';
 import PainelNexus from '../islands/PainelNexus';
-import PainelCaixa from '../islands/PainelCaixa';
+import MockupNexusPJ from './MockupNexusPJ.astro';
 import { formatarPeriodo, rotuloCategoria } from '../../lib/formato';
 
 interface Props {
@@ -100,7 +100,7 @@ const periodo = formatarPeriodo(p.data.inicio, p.data.fim, p.data.precisaoInicio
             {p.id === 'nexus-analytics' ? (
               <PainelNexus client:load compacto />
             ) : (
-              <PainelCaixa client:load compacto />
+              <MockupNexusPJ />
             )}
           </div>
         </div>

@@ -4,10 +4,24 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
+<script>
+/* Antes do primeiro paint. ?embed = dentro do site (iframe): tema acompanha o site.
+   Fora dele, vale o tema escolhido no próprio mockup. */
+(function () {
+  var d = document.documentElement;
+  if (/[?&]embed\b/.test(location.search)) {
+    d.classList.add('embed');
+    try { if (parent.document.documentElement.dataset.theme === 'light') d.setAttribute('data-theme', 'light'); } catch (e) {}
+  } else {
+    try { if (localStorage.getItem('mk-tema') === 'light') d.setAttribute('data-theme', 'light'); } catch (e) {}
+  }
+})();
+</script>
 <title>Nexus &amp; PJ — Mockup da Fase 2</title>
 <style>
 /* Nexus & PJ — mockup. Tokens do app (app/static/css/tokens.css). Dados desta página são fictícios. */
 :root, :root[data-theme="dark"] {
+  color-scheme: dark;
   --bg: #000000; --bg-2: #0a0a0a; --surface-1: #121212; --surface-2: #0d0d0d;
   --border-1: #232323; --border-2: rgba(255,255,255,.06);
   --text-100: #f4f4f5; --text-200: #a1a1aa; --text-mute: #71717a;
@@ -24,6 +38,7 @@
               radial-gradient(900px 500px at 90% 90%, rgba(var(--red-rgb), .10), transparent 60%), #000;
 }
 :root[data-theme="light"] {
+  color-scheme: light;
   --bg: #ffffff; --bg-2: #f7f7f7; --surface-1: #ffffff; --surface-2: #f5f5f6;
   --border-1: #e1e1e1; --border-2: rgba(0,0,0,.06);
   --text-100: #1e1f20; --text-200: #55575c; --text-mute: #8a8d93;
@@ -52,10 +67,11 @@
   --dur-fast: .15s; --dur-base: .25s; --dur-slow: .45s;
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --text-xs: .75rem; --text-sm: .875rem; --text-2xl: 1.5rem;
-  --nxsw: 240px; --nxhh: 60px; --nxsw-collapsed: 68px;
+  --nxsw: 208px; --nxhh: 60px; --nxsw-collapsed: 68px;
 }
 * { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text-100); font-family: var(--font-sans); font-size: 14px; }
+html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text-100); font-family: var(--font-sans); }
+body { font-size: 14px; }
 html { transition: background var(--dur-base) ease; }
 body, .card, .btn, .input, .navlink { transition: background var(--dur-base) ease, color var(--dur-base) ease, border-color var(--dur-base) ease; }
 img { max-width: 100%; }
@@ -104,7 +120,7 @@ img { max-width: 100%; }
 .input:focus-visible { outline: none; border-color: var(--ink); box-shadow: var(--ring); }
 
 /* Navegação lateral */
-.navlink { display: flex; align-items: center; gap: 10px; font: 500 var(--text-sm)/1 var(--font-sans); letter-spacing: -0.01em; padding: 9px 14px; margin: 2px 8px; border-radius: var(--radius-btn); color: var(--text-mute); text-decoration: none; position: relative; cursor: pointer; transition: background var(--dur-fast) ease, color var(--dur-fast) ease; }
+.navlink { display: inline-flex; align-items: center; gap: 10px; font: 500 var(--text-sm)/1 var(--font-sans); letter-spacing: -0.01em; padding: 9px 10px; margin: 2px 6px; border-radius: var(--radius-btn); color: var(--text-mute); text-decoration: none; position: relative; cursor: pointer; transition: background var(--dur-fast) ease, color var(--dur-fast) ease; }
 .navlink:hover { background: var(--overlay-1); color: var(--text-200); }
 .navlink.active { background: var(--overlay-2); color: var(--text-100); font-weight: 600; }
 .navlink.active::before { content: ""; position: absolute; left: -8px; top: 50%; transform: translateY(-50%); width: 3px; height: 18px; background: var(--ink); border-radius: var(--radius-pill); }
@@ -151,7 +167,7 @@ img { max-width: 100%; }
 .shell { display: flex; }
 .sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: var(--nxsw); background: var(--surface-2); border-right: 1px solid var(--border-1); display: flex; flex-direction: column; z-index: 10; }
 .sidebar .brand { display: flex; align-items: center; padding: 0 14px; height: var(--nxhh); border-bottom: 1px solid var(--border-1); }
-.sidebar nav { flex: 1; padding-top: 10px; padding-bottom: 14px; overflow-y: auto; }
+.sidebar nav { flex: 1; padding-top: 10px; padding-bottom: 14px; overflow-y: auto; display: flex; flex-direction: column; align-items: flex-start; }
 .sidebar .grp-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-mute); padding: 14px 20px 6px; }
 .main { margin-left: var(--nxsw); flex: 1; min-width: 0; }
 .topbar { height: var(--nxhh); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; border-bottom: 1px solid var(--border-1); background: var(--surface-2); position: sticky; top: 0; z-index: 5; }
@@ -160,10 +176,10 @@ img { max-width: 100%; }
 .body { padding: 24px; max-width: 1520px; margin: 0 auto; }
 .empty-state { text-align: center; padding: 70px 20px; color: var(--text-mute); }
 .empty-state .ic { font-size: 34px; margin-bottom: 14px; opacity: .6; }
-.empty-state h3 { font-size: 15px; color: var(--text-200); font-weight: 600; margin: 0 0 6px; }
+.empty-state h3 { font-size: 15px; color: var(--text-200); font-weight: 600; margin-bottom: 6px; }
 .empty-state p { font-size: 13.5px; max-width: 420px; margin-inline: auto; line-height: 1.6; }
 .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 12px; flex-wrap: wrap; }
-.section-head h2 { font-size: 15px; font-weight: 600; margin: 0; }
+.section-head h2 { font-size: 15px; font-weight: 600; }
 .filters-row { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 18px; flex-wrap: wrap; }
 .filters-row .field { min-width: 150px; }
 
@@ -205,6 +221,11 @@ img { max-width: 100%; }
 .login-steps { display: flex; gap: 6px; justify-content: center; margin-top: 18px; flex-wrap: wrap; }
 .login-steps button { border: 1px solid var(--border-1); background: var(--overlay-1); color: var(--text-200); border-radius: var(--radius-pill); padding: 4px 10px; font: 500 11.5px var(--font-sans); cursor: pointer; }
 .login-steps button.on { background: var(--ink); color: var(--ink-contrast); border-color: transparent; }
+/* logo da tela de entrada: duas barras + o nome, com o "N" fechando a escada */
+.wordmark { font: 700 26px/1 var(--font-sans); letter-spacing: -.01em; color: var(--text-100); white-space: nowrap; }
+.wm-bar { display: inline-block; width: .12em; margin-right: .06em; border-radius: 1px; vertical-align: baseline; }
+.wm-bar--1 { height: .31em; background: #c8cdd4; }
+.wm-bar--2 { height: .5em; background: #8e97a3; }
 .link-discreto { color: var(--text-200); font-size: 13px; text-decoration: none; cursor: pointer; }
 .link-discreto:hover { color: var(--text-100); text-decoration: underline; }
 
@@ -219,7 +240,7 @@ img { max-width: 100%; }
 .hm-sub { font-size: 13.5px; color: var(--text-mute); margin-top: 6px; line-height: 1.55; }
 .hm-sub b { color: var(--text-100); }
 .hm-tit { font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-mute); margin: 18px 0 8px; }
-.hm-pend { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+.hm-pend { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 8px; }
 .hm-cd { display: block; text-decoration: none; cursor: pointer; border: 1px solid var(--border-1); border-radius: var(--radius-sm); padding: 10px 12px; background: var(--overlay-1); transition: border-color var(--dur-fast) ease, transform var(--dur-fast) ease; }
 .hm-cd:hover { border-color: var(--line-strong); transform: translateY(-2px); }
 .hm-n { font-size: 21px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
@@ -233,7 +254,7 @@ img { max-width: 100%; }
 .hm-x:hover { color: var(--text-100); background: var(--overlay-2); }
 
 /* Dashboard (hub de painéis) */
-.hub-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.hub-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 16px; }
 .hub-card { padding: 0; overflow: hidden; cursor: pointer; text-decoration: none; color: inherit; display: block; }
 .hub-prev { height: 150px; padding: 18px; background: linear-gradient(160deg, var(--overlay-2), transparent); border-bottom: 1px solid var(--border-1); display: flex; flex-direction: column; justify-content: flex-end; gap: 9px; }
 .hub-info { padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
@@ -258,7 +279,7 @@ img { max-width: 100%; }
 .fecha.alerta { background: rgba(var(--amber-rgb), .18); color: var(--amber); }
 .fecha.sem { color: var(--text-mute); }
 .mute { color: var(--text-mute); }
-.resumo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+.resumo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(190px, 100%), 1fr)); gap: 12px; }
 .resumo-item { padding: 12px 14px; border-radius: var(--radius-md); background: var(--overlay-1); border: 1px solid var(--border-1); }
 .resumo-item small { display: block; font-size: 11.5px; color: var(--text-mute); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
 .resumo-item b { font-size: 16px; font-variant-numeric: tabular-nums; }
@@ -272,7 +293,7 @@ img { max-width: 100%; }
 .totais-rodape b { font-variant-numeric: tabular-nums; }
 
 /* Configurações (hub) */
-.cfg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.cfg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr)); gap: 12px; }
 .cfg-tile { display: flex; gap: 12px; align-items: flex-start; padding: 14px; text-decoration: none; color: inherit; cursor: pointer; }
 .cfg-tile b { display: block; font-size: 14px; margin-bottom: 3px; }
 .cfg-tile span { font-size: 12.5px; color: var(--text-mute); }
@@ -299,7 +320,8 @@ img { max-width: 100%; }
 #appShell.sidebar-collapsed .sidebar { width: var(--nxsw-collapsed); }
 #appShell.sidebar-collapsed .main { margin-left: var(--nxsw-collapsed); }
 #appShell.sidebar-collapsed .nav-label, #appShell.sidebar-collapsed .grp-label, #appShell.sidebar-collapsed .brand-full { display: none; }
-#appShell:not(.sidebar-collapsed) .brand-icon { display: none; }
+.brand-badge { width: 29px; height: 29px; flex-shrink: 0; display: block; }
+.brand-name { font: 700 17px/1 var(--font-sans); letter-spacing: -.01em; white-space: nowrap; }
 .brand-btn { display: flex; align-items: center; gap: 10px; background: none; border: 0; color: var(--text-100); cursor: pointer; padding: 6px; border-radius: var(--radius-sm); }
 .brand-btn:hover { background: var(--overlay-1); }
 #appShell.sidebar-collapsed .navlink { justify-content: center; padding: 8px 0; margin: 4px 10px; }
@@ -309,6 +331,16 @@ img { max-width: 100%; }
 
 /* Chat de IA na topbar */
 .topbar-ia { display: flex; align-items: center; gap: 8px; background: var(--overlay-1); border: 1px solid var(--border-1); border-radius: var(--radius-pill); padding: 3px 5px 3px 12px; min-width: 300px; transition: border-color var(--dur-fast) ease; }
+/* Faltou espaço na barra (janela entre ~780 e ~1100px, ou embutido no site): o campo
+   do assistente encolhe em vez de empurrar o título e o avatar para fora. Em tela
+   larga continua com os mesmos 300px. */
+@media (min-width: 781px) {
+  .topbar .title { white-space: nowrap; }
+  .title-wrap { flex-shrink: 0; }
+  .topbar .actions { min-width: 0; }
+  .topbar-ia { min-width: 0; width: 300px; flex-shrink: 1; }
+  .topbar-ia input { min-width: 0; }
+}
 .topbar-ia:focus-within { border-color: var(--line-strong); }
 .topbar-ia .ia-emoji { font-size: 15px; cursor: pointer; }
 .topbar-ia input { flex: 1; background: transparent; border: 0; outline: none; color: var(--text-100); font: var(--text-sm) var(--font-sans); padding: 6px 0; }
@@ -318,7 +350,6 @@ img { max-width: 100%; }
   #appShell .sidebar { width: var(--nxsw-collapsed); }
   #appShell .main { margin-left: var(--nxsw-collapsed); }
   #appShell .nav-label, #appShell .grp-label, #appShell .brand-full { display: none; }
-  #appShell .brand-icon { display: inline-flex !important; }
   .topbar { flex-wrap: wrap; height: auto; min-height: var(--nxhh); padding: 10px 16px; gap: 10px; }
   .title-wrap { flex-wrap: wrap; }
   .topbar-ia { min-width: 0; }
@@ -331,6 +362,8 @@ img { max-width: 100%; }
 .mk-dock { position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); z-index: 4000; display: flex; align-items: center; gap: 10px; padding: 6px 8px 6px 14px; border-radius: var(--radius-pill); background: var(--surface-1); border: 1px solid var(--border-1); box-shadow: var(--shadow-md); font-size: 12px; color: var(--text-mute); white-space: nowrap; }
 .mk-dock .theme-switch--text a { cursor: pointer; }
 @media (max-width: 560px) { .mk-dock .mk-txt { display: none; } }
+/* embutido no site (?embed): sem a barra do mockup */
+.embed .mk-dock { display: none !important; }
 
 /* Tema claro: cartão com contorno e vidro fosco, para não sumir sobre o fundo branco */
 :root[data-theme="light"] {
@@ -346,14 +379,14 @@ img { max-width: 100%; }
 </head>
 <body>
 
-<!-- ============================ ENTRADA (fora da casca) ============================ -->
+<!-- ============================ LOGIN (fora da casca) ============================ -->
 <section id="scr-login" class="login-bg" hidden>
   <div class="auth-glass">
-    <svg viewBox="0 0 150 28" height="26" aria-label="Nexus &amp; PJ" style="color:var(--text-100)"><text x="0" y="21" fill="currentColor" font-family="Inter,system-ui,sans-serif" font-weight="800" font-size="20" letter-spacing="1">NEXUS <tspan fill="var(--red)">&amp;</tspan> PJ</text></svg>
+    <div class="wordmark"><i class="wm-bar wm-bar--1" aria-hidden="true"></i><i class="wm-bar wm-bar--2" aria-hidden="true"></i>Nexus &amp; PJ</div>
 
     <div data-login="senha">
       <h1>Entrar</h1>
-      <p class="sub">Fechamento de caixa pelo extrato.</p>
+      <p class="sub">Acesse com seu usuário cadastrado.</p>
       <form onsubmit="return mk.login('2fa')">
         <div class="field"><label>E-mail</label><input class="input" value="eduardo@exemplo.com"></div>
         <div class="field"><label>Senha</label><input class="input" type="password" value="••••••••••••"></div>
@@ -389,7 +422,7 @@ img { max-width: 100%; }
       </form>
     </div>
 
-    <p class="auth-note">Acesso restrito à rede interna da empresa.</p>
+    <p class="auth-note">🔒 Acesso restrito à rede interna da empresa. Fora dela, esta página não é alcançável.</p>
     <div class="login-steps" id="loginSteps">
       <button data-go="senha" class="on">1 · senha</button>
       <button data-go="2fa">2 · código 2FA</button>
@@ -400,18 +433,17 @@ img { max-width: 100%; }
 </section>
 
 <!-- ============================ CASCA DO APP ============================ -->
-<div id="appShell" class="shell sidebar-collapsed">
+<div id="appShell" class="shell">
   <aside class="sidebar">
     <div class="brand">
       <button class="brand-btn" id="brandToggle" title="Recolher/expandir menu">
-        <svg class="brand-full" viewBox="0 0 150 28" height="24" aria-label="Nexus &amp; PJ"><text x="0" y="21" fill="currentColor" font-family="Inter,system-ui,sans-serif" font-weight="800" font-size="20" letter-spacing="1">NEXUS <tspan fill="var(--red)">&amp;</tspan> PJ</text></svg>
-        <span class="brand-icon nav-badge" style="background:var(--ink);color:var(--ink-contrast);font-weight:800;font-size:12px">N&amp;</span>
+        <svg class="brand-badge" viewBox="0 0 40 40" aria-hidden="true"><defs><radialGradient id="lgBadge" cx="38%" cy="42%" r="65%"><stop offset="0" stop-color="#30343d"/><stop offset="1" stop-color="#101114"/></radialGradient></defs><circle cx="20" cy="20" r="19.2" fill="url(#lgBadge)" stroke="#5f6064" stroke-width="1.3"/><rect x="8.6" y="20.4" width="2.8" height="6.9" rx=".5" fill="#c8cdd4"/><rect x="12.4" y="15.6" width="2.8" height="11.7" rx=".5" fill="#838c98"/><path d="M16.6 27.3V10h3.9l7.1 11.4V10h3.6v17.3h-3.9l-7.1-11.4v11.4z" fill="#fff"/><text x="20" y="33.6" font-size="2.6" text-anchor="middle" fill="#6d727b" font-family="Inter,system-ui,sans-serif" letter-spacing=".3">NEXUS &amp; PJ</text></svg>
+        <span class="brand-full brand-name">Nexus &amp; PJ</span>
       </button>
     </div>
     <nav id="nav">
-      <div class="grp-label">Visão geral</div>
       <a class="navlink active" data-page="dashboard" data-label="Dashboard"><span class="nav-badge">⬡</span><span class="nav-label">Dashboard</span></a>
-      <a class="navlink" data-page="fluxo" data-label="Fluxo de caixa" style="margin-top:10px"><span class="nav-badge">◧</span><span class="nav-label">Fluxo de caixa</span></a>
+      <a class="navlink" data-page="fluxo" data-label="Fluxo de caixa"><span class="nav-badge">◧</span><span class="nav-label">Fluxo de caixa</span></a>
       <div class="grp-label">Operação</div>
       <a class="navlink" data-page="transferencias" data-label="Transferências"><span class="nav-badge">⇄</span><span class="nav-label">Transferências</span></a>
       <a class="navlink" data-page="importar" data-label="Importar extrato"><span class="nav-badge">⇓</span><span class="nav-label">Importar extrato</span></a>
@@ -465,7 +497,7 @@ img { max-width: 100%; }
           <div class="hm-tit">Merece atenção</div>
           <a class="hm-nt" onclick="mk.go('assistente')"><span class="hm-pt" style="background:var(--amber)"></span><span><span class="hm-nt-t">2 possíveis cobranças duplicadas</span><span class="hm-nt-x">Mesmo valor, no mesmo banco, em poucos dias: R$ 1.290,00 em 22/09 e 23/09.</span></span></a>
           <a class="hm-nt" onclick="mk.go('assistente')"><span class="hm-pt" style="background:var(--amber)"></span><span><span class="hm-nt-t">Receita de "cliente orion" ainda não apareceu</span><span class="hm-nt-x">Costuma cair por volta do dia 20, valor médio R$ 6.800,00 — já é dia 26.</span></span></a>
-          <a class="hm-nt" onclick="mk.go('assistente')"><span class="hm-pt" style="background:var(--amber)"></span><span><span class="hm-nt-t">Gasto atípico em Fornecedores</span><span class="hm-nt-x">R$ 41.590,00 esta semana vs média de R$ 24.300,00 nas 3 anteriores.</span></span></a>
+          <a class="hm-nt" onclick="mk.go('assistente')"><span class="hm-pt" style="background:var(--amber)"></span><span><span class="hm-nt-t">Gasto atípico em Fornecedores</span><span class="hm-nt-x">R$ 65.628,87 esta semana vs média de R$ 38.900,00 nas 3 anteriores.</span></span></a>
         </div>
       </dialog>
 
@@ -486,14 +518,14 @@ img { max-width: 100%; }
               <div class="ia-item" style="padding:8px 10px"><div class="ia-ic" style="font-size:15px">⚠️</div><div class="ia-tt" style="font-size:12.5px">2 cobranças duplicadas</div></div>
               <div class="ia-item" style="padding:8px 10px"><div class="ia-ic" style="font-size:15px">⏰</div><div class="ia-tt" style="font-size:12.5px">1 receita atrasada</div></div>
             </div>
-            <div class="hub-info"><span class="nav-badge">🤖</span><div><b>Assistente &amp; análises</b><span>3 alertas pendentes</span></div></div>
+            <div class="hub-info"><span class="nav-badge">🤖</span><div><b>Assistente &amp; análises</b><span>3 alerta(s) pendente(s)</span></div></div>
           </a>
           <div class="card hub-card hub-card--breve">
             <div class="hub-prev">📊</div>
             <div class="hub-info"><span class="nav-badge">▦</span><div><b>Contábil / DRE</b><span>Futuro — o hub já nasce pronto pro card</span></div></div>
           </div>
         </div>
-        <p class="nota">Os KPIs e gráficos que hoje moram em "/" passam pra dentro do card <b>Fluxo de caixa</b> (<code>/dashboard/fluxo-caixa</code>). A prévia do card é dado real, sempre atual — sem screenshot.</p>
+        <p class="nota">A prévia do card é dado real, sempre atual — sem screenshot.</p>
       </section>
 
       <!-- ============================ FLUXO DE CAIXA ============================ -->
@@ -503,17 +535,49 @@ img { max-width: 100%; }
             <a data-vista="lanc">Lançamentos</a><a data-vista="cons" class="on">Consolidado</a>
           </div>
           <div class="field"><label>Banco</label><select class="input"><option>Todos</option><option>Banco Aurora</option><option>Banco Horizonte</option><option>Coop. Vale Norte</option></select></div>
-          <div class="field" data-so="lanc" hidden><label>Lançamento</label><select class="input"><option>Todos</option><option>Recebimento Pix</option><option>Devolução Pix</option><option>Fornecedores</option></select></div>
+          <div class="field" data-so="lanc" hidden><label>Lançamento</label><select class="input"><option>Todos</option><option>A revisar</option><option>Recebimento Pix</option><option>Fornecedores</option><option>Transferência entre contas</option></select></div>
           <div class="field" data-so="lanc" hidden><label>Tipo</label><select class="input"><option>Todos</option><option>Receita</option><option>Despesa</option><option>Neutro</option></select></div>
-          <div class="field"><label>De</label><input class="input" value="21/09/2026"></div>
-          <div class="field"><label>Até</label><input class="input" value="26/09/2026"></div>
+          <div class="field"><label>De</label><input class="input" type="date" value="2026-09-21"></div>
+          <div class="field"><label>Até</label><input class="input" type="date" value="2026-09-26"></div>
           <div class="field" data-so="cons"><label>Agrupar por</label><select class="input"><option>Dia</option></select></div>
-          <button class="btn btn--primary btn--sm">Filtrar</button>
+          <button class="btn btn--secondary btn--sm">Filtrar</button>
           <a class="btn btn--ghost btn--sm">Limpar</a>
         </div>
 
         <!-- ---------- Consolidado ---------- -->
         <div data-vista-pg="cons">
+          <div class="card" style="margin-bottom:16px">
+            <div class="section-head"><h2>Fechamento dia a dia</h2><span class="badge badge--amber">1 registro(s) com diferença</span></div>
+            <div class="tbl-wrap">
+              <table class="tbl tbl--compacta">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th colspan="3" class="grp-th">Entradas</th>
+                    <th colspan="3" class="grp-th sep-l">Saídas</th>
+                    <th colspan="4" class="grp-th sep-l">Fechamento</th>
+                  </tr>
+                  <tr>
+                    <th>Dia</th>
+                    <th class="num col-e">A revisar</th><th class="num col-e">Recebimento Pix</th><th class="num tot">Total</th>
+                    <th class="num col-s sep-l">A revisar</th><th class="num col-s">Fornecedores</th><th class="num tot">Total</th>
+                    <th class="num sep-l">Saldo calculado</th><th class="num">Saldo dos bancos</th><th class="num">Diferença</th><th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>seg 21/09</td><td class="num mute">—</td><td class="num">R$ 23.730,50</td><td class="num tot pos">R$ 23.730,50</td><td class="num mute sep-l">—</td><td class="num">R$ 10.035,90</td><td class="num tot neg">R$ 10.035,90</td><td class="num sep-l">R$ 163.694,60</td><td class="num">R$ 163.694,60</td><td class="num">R$ 0,00</td><td style="text-align:center"><span class="fecha ok" title="Fecha">✓</span></td></tr>
+                  <tr><td>ter 22/09</td><td class="num">R$ 1.200,00</td><td class="num">R$ 15.579,20</td><td class="num tot pos">R$ 16.779,20</td><td class="num mute sep-l">—</td><td class="num">R$ 7.702,75</td><td class="num tot neg">R$ 7.702,75</td><td class="num sep-l">R$ 172.771,05</td><td class="num">R$ 172.771,05</td><td class="num">R$ 0,00</td><td style="text-align:center"><span class="fecha ok" title="Fecha">✓</span></td></tr>
+                  <tr><td>qua 23/09</td><td class="num mute">—</td><td class="num">R$ 20.632,40</td><td class="num tot pos">R$ 20.632,40</td><td class="num mute sep-l">—</td><td class="num">R$ 12.535,00</td><td class="num tot neg">R$ 12.535,00</td><td class="num sep-l">R$ 180.868,45</td><td class="num">R$ 180.868,45</td><td class="num">R$ 0,00</td><td style="text-align:center"><span class="fecha ok" title="Fecha">✓</span></td></tr>
+                  <tr><td>qui 24/09</td><td class="num mute">—</td><td class="num">R$ 16.430,30</td><td class="num tot pos">R$ 16.430,30</td><td class="num mute sep-l">—</td><td class="num">R$ 24.949,90</td><td class="num tot neg">R$ 24.949,90</td><td class="num sep-l">R$ 172.348,85</td><td class="num">R$ 172.348,85</td><td class="num">R$ 0,00</td><td style="text-align:center"><span class="fecha ok" title="Fecha">✓</span></td></tr>
+                  <tr><td>sex 25/09</td><td class="num mute">—</td><td class="num">R$ 27.219,60</td><td class="num tot pos">R$ 27.219,60</td><td class="num sep-l">R$ 450,00</td><td class="num">R$ 10.405,32</td><td class="num tot neg">R$ 10.855,32</td><td class="num sep-l">R$ 188.713,13</td><td class="num">R$ 188.263,13</td><td class="num neg">−R$ 450,00</td><td style="text-align:center"><span class="fecha alerta" title="Diferença real — 1 lançamento em 'A revisar'">⚠</span></td></tr>
+                  <tr><td>sáb 26/09</td><td class="num mute">—</td><td class="num mute">—</td><td class="num mute">—</td><td class="num mute sep-l">—</td><td class="num mute">—</td><td class="num mute">—</td><td class="num mute sep-l">—</td><td class="num mute">—</td><td class="num mute">—</td><td style="text-align:center"><span class="fecha sem" title="Sem extrato ainda — não dá pra saber">—</span></td></tr>
+                  <tr class="linha-total"><td>Período</td><td class="num">R$ 1.200,00</td><td class="num">R$ 103.592,00</td><td class="num pos">R$ 104.792,00</td><td class="num sep-l">R$ 450,00</td><td class="num">R$ 65.628,87</td><td class="num neg">R$ 66.078,87</td><td class="num sep-l">R$ 188.713,13</td><td class="num">R$ 188.263,13</td><td class="num neg">−R$ 450,00</td><td style="text-align:center"><span class="fecha alerta">⚠</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="nota">Saldo calculado = saldo do dia anterior + entradas − saídas. A <b>Diferença</b> compara com a soma dos saldos reais dos bancos: ✓ fecha · ⚠ diferença real · — sem extrato ainda (não é a mesma coisa que "não fechou"). Transferência entre contas e aplicação automática não viram coluna, mas entram no saldo. Coluna com total zero no período some sozinha.</p>
+          </div>
+
           <div class="card" style="margin-bottom:16px">
             <div class="section-head"><h2>Resumo do período</h2><span class="badge badge--neutral">21/09 a 26/09</span></div>
             <div class="resumo-grid">
@@ -522,38 +586,6 @@ img { max-width: 100%; }
               <div class="resumo-item"><small>Saldo inicial · Coop. Vale Norte</small><b>R$ 16.000,00</b></div>
               <div class="resumo-item"><small>Saldo inicial consolidado</small><b>R$ 150.000,00</b></div>
             </div>
-          </div>
-
-          <div class="card" style="margin-bottom:16px">
-            <div class="section-head"><h2>Fechamento dia a dia</h2><span class="badge badge--amber">1 registro(s) com diferença</span></div>
-            <div class="tbl-wrap">
-              <table class="tbl tbl--compacta">
-                <thead>
-                  <tr>
-                    <th></th>
-                    <th colspan="5" class="grp-th">Entradas</th>
-                    <th colspan="7" class="grp-th sep-l">Saídas</th>
-                    <th colspan="4" class="grp-th sep-l">Fechamento</th>
-                  </tr>
-                  <tr>
-                    <th>Dia</th>
-                    <th class="num col-e">A revisar</th><th class="num col-e">Receb. Pix</th><th class="num col-e">Cartões</th><th class="num col-e">Depósitos</th><th class="num tot">Total</th>
-                    <th class="num col-s sep-l">A revisar</th><th class="num col-s">Fornecedores</th><th class="num col-s">Folha</th><th class="num col-s">Impostos</th><th class="num col-s">Tarifas</th><th class="num col-s">Devol. Pix</th><th class="num tot">Total</th>
-                    <th class="num sep-l">Saldo calculado</th><th class="num">Saldo dos bancos</th><th class="num">Diferença</th><th style="text-align:center">✓</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>seg 21/09</td><td class="num mute">—</td><td class="num">8.420,00</td><td class="num">12.310,50</td><td class="num">3.000,00</td><td class="num tot pos">23.730,50</td><td class="num mute sep-l">—</td><td class="num">9.870,00</td><td class="num mute">—</td><td class="num mute">—</td><td class="num">45,90</td><td class="num">120,00</td><td class="num tot neg">10.035,90</td><td class="num sep-l">163.694,60</td><td class="num">163.694,60</td><td class="num">0,00</td><td style="text-align:center"><span class="fecha ok" title="Fecha">✓</span></td></tr>
-                  <tr><td>ter 22/09</td><td class="num">1.200,00</td><td class="num">5.705,00</td><td class="num">9.874,20</td><td class="num mute">—</td><td class="num tot pos">16.779,20</td><td class="num mute sep-l">—</td><td class="num">4.210,00</td><td class="num mute">—</td><td class="num">3.480,75</td><td class="num">12,00</td><td class="num mute">—</td><td class="num tot neg">7.702,75</td><td class="num sep-l">172.771,05</td><td class="num">172.771,05</td><td class="num">0,00</td><td style="text-align:center"><span class="fecha ok">✓</span></td></tr>
-                  <tr><td>qua 23/09</td><td class="num mute">—</td><td class="num">7.130,40</td><td class="num">11.002,00</td><td class="num">2.500,00</td><td class="num tot pos">20.632,40</td><td class="num mute sep-l">—</td><td class="num">12.450,00</td><td class="num mute">—</td><td class="num mute">—</td><td class="num mute">—</td><td class="num">85,00</td><td class="num tot neg">12.535,00</td><td class="num sep-l">180.868,45</td><td class="num">180.868,45</td><td class="num">0,00</td><td style="text-align:center"><span class="fecha ok">✓</span></td></tr>
-                  <tr><td>qui 24/09</td><td class="num mute">—</td><td class="num">5.980,00</td><td class="num">10.450,30</td><td class="num mute">—</td><td class="num tot pos">16.430,30</td><td class="num mute sep-l">—</td><td class="num">6.320,00</td><td class="num">18.600,00</td><td class="num mute">—</td><td class="num">29,90</td><td class="num mute">—</td><td class="num tot neg">24.949,90</td><td class="num sep-l">172.348,85</td><td class="num">172.348,85</td><td class="num">0,00</td><td style="text-align:center"><span class="fecha ok">✓</span></td></tr>
-                  <tr><td>sex 25/09</td><td class="num mute">—</td><td class="num">9.215,00</td><td class="num">13.804,60</td><td class="num">4.200,00</td><td class="num tot pos">27.219,60</td><td class="num sep-l">450,00</td><td class="num">8.740,00</td><td class="num mute">—</td><td class="num">1.455,32</td><td class="num mute">—</td><td class="num">210,00</td><td class="num tot neg">10.855,32</td><td class="num sep-l">188.713,13</td><td class="num">188.263,13</td><td class="num neg">−450,00</td><td style="text-align:center"><span class="fecha alerta" title="Diferença real — 1 lançamento em 'A revisar'">⚠</span></td></tr>
-                  <tr><td>sáb 26/09</td><td class="num mute">—</td><td class="num mute">—</td><td class="num mute">—</td><td class="num mute">—</td><td class="num mute">—</td><td class="num mute sep-l">—</td><td class="num mute">—</td><td class="num mute">—</td><td class="num mute">—</td><td class="num mute">—</td><td class="num mute">—</td><td class="num mute">—</td><td class="num mute sep-l">—</td><td class="num mute">—</td><td class="num mute">—</td><td style="text-align:center"><span class="fecha sem" title="Sem extrato ainda — não dá pra saber">—</span></td></tr>
-                  <tr class="linha-total"><td>Período</td><td class="num">1.200,00</td><td class="num">36.450,40</td><td class="num">57.441,60</td><td class="num">9.700,00</td><td class="num pos">104.792,00</td><td class="num sep-l">450,00</td><td class="num">41.590,00</td><td class="num">18.600,00</td><td class="num">4.936,07</td><td class="num">87,80</td><td class="num">415,00</td><td class="num neg">66.078,87</td><td class="num sep-l">188.713,13</td><td class="num">188.263,13</td><td class="num neg">−450,00</td><td></td></tr>
-                </tbody>
-              </table>
-            </div>
-            <p class="nota">Saldo calculado = saldo do dia anterior + entradas − saídas. A <b>Diferença</b> compara com a soma dos saldos reais dos bancos: ✓ fecha · ⚠ diferença real (aqui, R$ 450,00 num lançamento ainda "A revisar") · — sem extrato ainda (não é a mesma coisa que "não fechou"). <b>A revisar</b> reúne o que ainda não foi categorizado e entra no total do dia. Transferência entre contas e aplicação automática não viram coluna, mas entram no saldo. Coluna com total zero no período some sozinha.</p>
           </div>
 
           <div class="card">
@@ -577,11 +609,11 @@ img { max-width: 100%; }
                   <tr class="filho" data-grupo="g1" hidden><td></td><td>25/09</td><td>JOAO P SILVA</td><td>Banco Aurora</td><td></td><td class="num pos">+180,00</td><td class="mute">descrição limpa na tela</td></tr>
                   <tr class="filho" data-grupo="g1" hidden><td></td><td>25/09</td><td>MARIA F COSTA</td><td>Banco Aurora</td><td></td><td class="num pos">+95,50</td><td class="mute"></td></tr>
                   <tr class="filho" data-grupo="g1" hidden><td></td><td>25/09</td><td class="mute">… mais 36</td><td></td><td></td><td></td><td></td></tr>
-                  <tr class="grupo-row"><td><button class="expand">+</button></td><td>25/09</td><td>Cartões <span class="badge badge--neutral">12</span></td><td>Banco Horizonte</td><td><span class="badge badge--green">Receita</span></td><td class="num pos">+13.804,60</td><td class="mute">—</td></tr>
+                  <tr class="grupo-row"><td><button class="expand">+</button></td><td>25/09</td><td>Recebimento Pix <span class="badge badge--neutral">12</span></td><td>Banco Horizonte</td><td><span class="badge badge--green">Receita</span></td><td class="num pos">+13.804,60</td><td class="mute">—</td></tr>
                   <tr class="grupo-row"><td><button class="expand">+</button></td><td>25/09</td><td>Fornecedores <span class="badge badge--neutral">4</span></td><td>Banco Aurora</td><td><span class="badge badge--red">Despesa</span></td><td class="num neg">−8.740,00</td><td class="mute">—</td></tr>
-                  <tr class="grupo-row"><td><button class="expand">+</button></td><td>25/09</td><td>Devolução Pix <span class="badge badge--neutral">2</span></td><td>Banco Aurora</td><td><span class="badge badge--red">Despesa</span></td><td class="num neg">−210,00</td><td class="mute">—</td></tr>
+                  <tr class="grupo-row"><td><button class="expand">+</button></td><td>25/09</td><td>A revisar <span class="badge badge--neutral">1</span></td><td>Banco Aurora</td><td><span class="badge badge--red">Despesa</span></td><td class="num neg">−450,00</td><td class="mute">sem categoria ainda</td></tr>
                   <tr class="grupo-row"><td><button class="expand">+</button></td><td>24/09</td><td>Transferência entre contas <span class="badge badge--neutral">2</span></td><td>Aurora → Horizonte</td><td><span class="badge" style="background:rgba(var(--cyan-rgb),.14);color:var(--cyan)">Neutro</span></td><td class="num">20.000,00</td><td class="mute">pareada ✓</td></tr>
-                  <tr class="grupo-row"><td><button class="expand">+</button></td><td>24/09</td><td>Folha <span class="badge badge--neutral">9</span></td><td>Banco Horizonte</td><td><span class="badge badge--red">Despesa</span></td><td class="num neg">−18.600,00</td><td class="mute">—</td></tr>
+                  <tr class="grupo-row"><td><button class="expand">+</button></td><td>24/09</td><td>Fornecedores <span class="badge badge--neutral">9</span></td><td>Banco Horizonte</td><td><span class="badge badge--red">Despesa</span></td><td class="num neg">−18.600,00</td><td class="mute">—</td></tr>
                 </tbody>
               </table>
             </div>
@@ -676,7 +708,6 @@ img { max-width: 100%; }
           <div class="card">
             <div class="conta-row"><div class="l"><b>Verificação em duas etapas</b><span>Ativada · 7 de 10 códigos de recuperação restantes</span></div><div class="flex gap-2"><button class="btn btn--soft">Gerar novos códigos</button><button class="btn btn--ghost btn--sm">Desativar</button></div></div>
             <div class="conta-row"><div class="l"><b>Senha</b><span>Troque quando quiser, sem precisar esperar pedirem</span></div><button class="btn btn--soft">Trocar senha</button></div>
-            <div class="conta-row"><div class="l"><b>Tema</b><span>Salvo na sua conta — vale em qualquer aparelho</span></div><div class="theme-switch"><button data-tema="light">☀</button><button data-tema="dark" class="on">☾</button></div></div>
           </div>
         </div>
         <div class="cfg-sec">
@@ -684,10 +715,10 @@ img { max-width: 100%; }
           <div class="cfg-grid">
             <a class="card card--interactive cfg-tile"><span class="nav-badge">⛁</span><div><b>Contas bancárias</b><span>Cadastro de contas bancárias</span></div></a>
             <a class="card card--interactive cfg-tile"><span class="nav-badge">◎</span><div><b>Usuários</b><span>Cadastro de usuários e perfis</span></div></a>
-            <a class="card card--interactive cfg-tile" onclick="mk.go('aparelhos')"><span class="nav-badge">📱</span><div><b>Aparelhos</b><span>Aprovar ou revogar aparelhos</span></div></a>
-            <a class="card card--interactive cfg-tile" onclick="mk.go('permissoes')"><span class="nav-badge">🛡</span><div><b>Permissões</b><span>O que Operador e Visualizador veem</span></div></a>
+            <a class="card card--interactive cfg-tile" onclick="mk.go('aparelhos')"><span class="nav-badge">💻</span><div><b>Aparelhos</b><span>Aprovar ou revogar aparelhos</span></div></a>
+            <a class="card card--interactive cfg-tile" onclick="mk.go('permissoes')"><span class="nav-badge">🔐</span><div><b>Permissões</b><span>O que Operador e Visualizador veem</span></div></a>
             <a class="card card--interactive cfg-tile" onclick="mk.go('auditoria')"><span class="nav-badge">▥</span><div><b>Auditoria</b><span>Trilha de mudanças e Vigia de acesso</span></div></a>
-            <a class="card card--interactive cfg-tile" onclick="mk.go('saude')"><span class="nav-badge">🩺</span><div><b>Saúde do sistema</b><span>Processos, banco, backups e fila</span></div></a>
+            <a class="card card--interactive cfg-tile"><span class="nav-badge">🩺</span><div><b>Saúde do sistema</b><span>Processos, banco, backups e fila</span></div></a>
           </div>
         </div>
         <div class="cfg-sec">
@@ -743,7 +774,7 @@ img { max-width: 100%; }
               </tbody>
             </table>
           </div>
-          <p class="nota">Perdeu o acesso? No computador do servidor, um script de liberação por e-mail — sem senha nenhuma, a "chave" é estar na máquina.</p>
+          <p class="nota">Perdeu o acesso? No computador do servidor: <code>.venv\Scripts\python scripts\liberar_aparelho.py --email …</code> — sem senha nenhuma, a "chave" é estar na máquina.</p>
         </div>
       </section>
 
@@ -784,17 +815,6 @@ img { max-width: 100%; }
         </div>
       </section>
 
-      <!-- ============================ SAÚDE DO SISTEMA ============================ -->
-      <section data-pg="saude" hidden>
-        <div class="kpi-grid">
-          <div class="card kpi-card green"><div class="kpi-label">Processos</div><div class="kpi-value" style="font-size:17px">no ar</div><div class="kpi-note">servidor respondendo em /saude</div></div>
-          <div class="card kpi-card green"><div class="kpi-label">Banco</div><div class="kpi-value" style="font-size:17px">íntegro</div><div class="kpi-note">verificação de integridade ok</div></div>
-          <div class="card kpi-card green"><div class="kpi-label">Backups</div><div class="kpi-value" style="font-size:17px">em dia</div><div class="kpi-note">último: hoje, 02:00</div></div>
-          <div class="card kpi-card"><div class="kpi-label">Fila</div><div class="kpi-value" style="font-size:17px">vazia</div><div class="kpi-note">nada esperando processamento</div></div>
-        </div>
-        <p class="nota">Painel ilustrativo (dados fictícios): mostra o que a tela cobre — processos, banco, backups e fila — e não o layout final.</p>
-      </section>
-
     </main>
   </div>
 </div>
@@ -804,7 +824,7 @@ img { max-width: 100%; }
 <!-- Barra do mockup (não faz parte do app) -->
 <div class="mk-dock">
   <span class="mk-txt">Mockup Fase 2 · dados fictícios</span>
-  <div class="theme-switch theme-switch--text"><a id="mkLogin">Entrada</a><a id="mkApp" class="on">App</a></div>
+  <div class="theme-switch theme-switch--text"><a id="mkLogin">Login</a><a id="mkApp" class="on">App</a></div>
   <a class="link-discreto" id="mkReabrirHome" style="font-size:12px" title="No app de verdade, só recarregar a página faz isto">↻ Home</a>
   <div class="theme-switch"><button data-tema="light" title="Tema claro">☀</button><button data-tema="dark" title="Tema escuro" class="on">☾</button></div>
 </div>
@@ -814,18 +834,20 @@ img { max-width: 100%; }
   var TITULOS = {
     dashboard: 'Dashboard', fluxo: 'Fluxo de caixa', transferencias: 'Transferências',
     importar: 'Importar extrato', assistente: 'Assistente', configuracoes: 'Configurações',
-    permissoes: 'Permissões', aparelhos: 'Aparelhos', auditoria: 'Auditoria', saude: 'Saúde do sistema'
+    permissoes: 'Permissões', aparelhos: 'Aparelhos', auditoria: 'Auditoria'
   };
-  var DE_CONFIG = { permissoes: 1, aparelhos: 1, auditoria: 1, saude: 1 };
+  var DE_CONFIG = { permissoes: 1, aparelhos: 1, auditoria: 1 };
   var shell = document.getElementById('appShell');
   var login = document.getElementById('scr-login');
   var guardar = function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} };
   var ler = function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } };
 
+  var EMBED = document.documentElement.classList.contains('embed');
+
   function tema(t) {
     document.documentElement.setAttribute('data-theme', t);
     document.querySelectorAll('[data-tema]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-tema') === t); });
-    guardar('mk-tema', t);
+    if (!EMBED) guardar('mk-tema', t);
   }
 
   function extra(pg) {
@@ -930,7 +952,7 @@ img { max-width: 100%; }
     shell.classList.toggle('sidebar-collapsed');
     guardar('mk-sidebar', shell.classList.contains('sidebar-collapsed') ? '1' : '0');
   };
-  if (ler('mk-sidebar') === '0') shell.classList.remove('sidebar-collapsed');
+  if (!EMBED && ler('mk-sidebar') === '1') shell.classList.add('sidebar-collapsed');
 
   var tip = document.getElementById('navTooltip');
   document.querySelectorAll('.navlink').forEach(function (a) {
@@ -954,10 +976,20 @@ img { max-width: 100%; }
   hmDlg.addEventListener('click', function (e) { if (e.target === hmDlg) hmDlg.close(); });
   document.getElementById('mkReabrirHome').onclick = abrirHome;
 
-  tema(ler('mk-tema') || 'dark');
   mostrar(true);
   go('dashboard');
-  abrirHome();
+  if (EMBED) {
+    // Dentro do site: o tema segue o alternador do site, e a Home não abre
+    // sozinha — um modal roubando o foco no meio da página seria intrusivo.
+    var raiz = null;
+    try { raiz = parent.document.documentElement; } catch (e) {}
+    var seguir = function () { tema(raiz && raiz.dataset.theme === 'light' ? 'light' : 'dark'); };
+    seguir();
+    if (raiz && window.MutationObserver) new MutationObserver(seguir).observe(raiz, { attributes: true, attributeFilter: ['data-theme'] });
+  } else {
+    tema(ler('mk-tema') || 'dark');
+    abrirHome();
+  }
 })();
 </script>
 </body>
