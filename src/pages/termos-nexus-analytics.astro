@@ -1,0 +1,93 @@
+---
+/**
+ * Termos de uso do Nexus Analytics.
+ *
+ * Par da política de privacidade (`privacidade-nexus-analytics`): mesma
+ * premissa — aplicação de uso pessoal e privado, que roda na máquina do
+ * próprio autor. Qualquer mudança de escopo (outros usuários, nuvem) exige
+ * revisar as duas páginas juntas.
+ */
+import PaginaLegal from '../components/ui/PaginaLegal.astro';
+import { EMAIL } from '../data/redes';
+---
+
+<PaginaLegal
+  titulo="Termos de Uso"
+  subtitulo="Nexus Analytics"
+  descricao="Condições de uso do Nexus Analytics: aplicação pessoal, local, sem garantia e sem aconselhamento financeiro."
+  atualizado="3 de outubro de 2026"
+  voltarHref="/projetos/nexus-analytics"
+  voltarRotulo="Voltar para Nexus Analytics"
+  irmaoHref="/privacidade-nexus-analytics"
+  irmaoRotulo="Política de Privacidade do Nexus Analytics"
+>
+  <p>
+    Nexus Analytics é uma aplicação de uso pessoal e privado, desenvolvida e operada por Eduardo
+    Henrique Junges para organizar seus próprios extratos bancários e faturas de cartão de
+    crédito. Estes termos descrevem as condições desse uso.
+  </p>
+
+  <h2>O que a aplicação faz</h2>
+  <p>
+    Lê extratos e faturas (PDF, CSV, OFX e XLS), classifica os lançamentos, projeta o mês seguinte
+    e responde perguntas sobre as finanças do usuário. A leitura interpreta a estrutura dos
+    arquivos — nunca altera valor, data ou descrição — e todo o processamento ocorre na máquina do
+    próprio usuário.
+  </p>
+
+  <h2>Uso permitido</h2>
+  <p>
+    A aplicação é de uso pessoal. Não é oferecida como serviço a terceiros, não tem contas de
+    outros usuários e não deve ser usada para acessar e-mails, contas ou dados que não sejam do
+    próprio usuário.
+  </p>
+
+  <h2>Integração com o Gmail</h2>
+  <p>
+    Para localizar extratos e faturas recebidos por e-mail, a aplicação pede acesso à conta
+    Gmail do próprio usuário, usando o login do Google (OAuth). O acesso serve só para localizar e
+    baixar anexos de instituições financeiras. O que é feito com esses dados está na{' '}
+    <a href="/privacidade-nexus-analytics" class="text-accent hover:opacity-70">Política de Privacidade</a>.
+    O acesso pode ser revogado a qualquer momento nas configurações da conta Google.
+  </p>
+
+  <h2>Não é aconselhamento financeiro</h2>
+  <p>
+    Classificações, projeções e respostas do assistente são cálculos determinísticos sobre os
+    dados importados — não há modelo de linguagem inventando resposta. Ainda assim, são apoio à
+    organização, não recomendação de investimento, consultoria contábil ou fiscal. A
+    conferência dos números contra o extrato original é de responsabilidade do usuário.
+  </p>
+
+  <h2>Dados e backups</h2>
+  <p>
+    Os arquivos e o banco de dados ficam apenas no computador do usuário. Fazer cópia de
+    segurança e proteger a máquina (senha, disco, antivírus) é responsabilidade dele — a
+    aplicação não mantém cópia em servidor externo.
+  </p>
+
+  <h2>Sem garantia</h2>
+  <p>
+    A aplicação é fornecida como está, em evolução contínua, sem garantia de funcionamento
+    ininterrupto, de compatibilidade com todos os formatos de extrato de todos os bancos ou de
+    ausência de erros. Na medida permitida pela lei, o autor não responde por perdas decorrentes
+    do uso ou da impossibilidade de usar a aplicação.
+  </p>
+
+  <h2>Propriedade intelectual</h2>
+  <p>
+    O código, o design e a documentação do Nexus Analytics pertencem a Eduardo Henrique Junges.
+    Os dados importados continuam sendo do usuário.
+  </p>
+
+  <h2>Mudanças e lei aplicável</h2>
+  <p>
+    Estes termos podem ser atualizados; vale a versão publicada, com a data no topo. São regidos
+    pelas leis brasileiras.
+  </p>
+
+  <h2>Contato</h2>
+  <p>
+    Dúvidas sobre estes termos: <a href={`mailto:${EMAIL}`} class="text-accent hover:opacity-70">{EMAIL}</a>.
+  </p>
+</PaginaLegal>

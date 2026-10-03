@@ -105,8 +105,12 @@ const projetos = defineCollection({
     links: z
       .object({
         github: z.string().url().optional(),
-        demo: z.string().url().optional(),
+        /** Absoluta (https://…) ou caminho do próprio site (/mockups/…). */
+        demo: z.string().optional(),
+        /** Política de privacidade — caminho do próprio site. */
         doc: z.string().optional(),
+        /** Termos de uso — caminho do próprio site. */
+        termos: z.string().optional(),
       })
       .default({}),
   }),
