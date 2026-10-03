@@ -1,0 +1,75 @@
+---
+/**
+ * Termos de uso do próprio site (portfólio).
+ */
+import PaginaLegal from '../components/ui/PaginaLegal.astro';
+import { EMAIL } from '../data/redes';
+---
+
+<PaginaLegal
+  titulo="Termos de Uso"
+  subtitulo="Site de projetos — Eduardo Junges"
+  descricao="Condições para uso do conteúdo, das demonstrações e dos mockups publicados neste site."
+  atualizado="3 de outubro de 2026"
+  voltarHref="/"
+  voltarRotulo="Voltar"
+  irmaoHref="/privacidade"
+  irmaoRotulo="Política de Privacidade do site"
+>
+  <p>
+    Ao acessar este site, você concorda com os termos abaixo. Eles são curtos de propósito: o site
+    é uma vitrine de projetos, não um serviço.
+  </p>
+
+  <h2>O que é este site</h2>
+  <p>
+    Um índice dos projetos de Eduardo Henrique Junges, com o papel dele declarado em cada um.
+    Serve para apresentar trabalho — não oferece produto, serviço contratável ou aconselhamento
+    financeiro, contábil ou jurídico.
+  </p>
+
+  <h2>Informação e anonimização</h2>
+  <p>
+    Os cases descrevem trabalho real, mas empresas, valores internos e dados identificáveis são
+    omitidos ou anonimizados de propósito. O texto reflete o estado do projeto na data da última
+    edição e pode ficar desatualizado; não é garantia de resultado.
+  </p>
+
+  <h2>Demonstrações e mockups</h2>
+  <p>
+    Os painéis interativos e os mockups publicados aqui usam <strong>dados totalmente fictícios</strong>.
+    Servem para mostrar como a ferramenta funciona. Nenhum número neles representa pessoa, empresa
+    ou resultado real, e não devem ser usados como base para decisão financeira.
+  </p>
+
+  <h2>Propriedade intelectual</h2>
+  <p>
+    Textos, design e código do site e dos mockups são de Eduardo Henrique Junges. Você pode
+    compartilhar o endereço das páginas e citar trechos com crédito. Copiar, redistribuir ou
+    reaproveitar o material de outra forma depende de autorização por escrito.
+  </p>
+
+  <h2>Links externos</h2>
+  <p>
+    O site aponta para serviços de terceiros (LinkedIn, GitHub e outros). Eles não são controlados
+    por mim, e o acesso é por conta e risco de quem clica.
+  </p>
+
+  <h2>Disponibilidade e responsabilidade</h2>
+  <p>
+    O site é oferecido como está, sem garantia de que estará sempre no ar ou livre de erros.
+    Na medida permitida pela lei, não há responsabilidade por perdas decorrentes do uso do
+    conteúdo ou da indisponibilidade do site.
+  </p>
+
+  <h2>Mudanças e lei aplicável</h2>
+  <p>
+    Estes termos podem mudar; vale a versão publicada, com a data no topo. Eles são regidos pelas
+    leis brasileiras.
+  </p>
+
+  <h2>Contato</h2>
+  <p>
+    Dúvidas sobre estes termos: <a href={`mailto:${EMAIL}`} class="text-accent hover:opacity-70">{EMAIL}</a>.
+  </p>
+</PaginaLegal>

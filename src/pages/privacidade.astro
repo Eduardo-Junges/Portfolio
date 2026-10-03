@@ -1,0 +1,78 @@
+---
+/**
+ * Política de privacidade do próprio site (portfólio).
+ *
+ * Descreve só o que o site de fato faz: Vercel Analytics sem cookie, tema
+ * guardado no navegador, fontes servidas pelo próprio site, links de contato.
+ * Se algo disso mudar (formulário, outro analytics), esta página muda junto.
+ */
+import PaginaLegal from '../components/ui/PaginaLegal.astro';
+import { EMAIL } from '../data/redes';
+---
+
+<PaginaLegal
+  titulo="Política de Privacidade"
+  subtitulo="Site de projetos — Eduardo Junges"
+  descricao="Quais dados este site coleta (quase nenhum), como e por quê."
+  atualizado="3 de outubro de 2026"
+  voltarHref="/"
+  voltarRotulo="Voltar"
+  irmaoHref="/termos"
+  irmaoRotulo="Termos de Uso do site"
+>
+  <p>
+    Este site é um índice dos projetos de Eduardo Henrique Junges. Ele não tem cadastro, login,
+    formulário nem comentários — a política abaixo existe para dizer, com precisão, o pouco que
+    acontece nos bastidores.
+  </p>
+
+  <h2>O que é coletado</h2>
+  <p>
+    O site usa o Vercel Analytics para contar visitas. A medição é feita <strong>sem cookies</strong>
+    e sem identificador que siga a pessoa entre sites: registra a página visitada, a origem da
+    visita (referrer) e dados técnicos gerais do navegador, de forma agregada. Não há perfil de
+    visitante, publicidade nem venda de dados.
+  </p>
+  <p>
+    Como não há cookie nem identificador pessoal, o site não exibe banner de consentimento — não
+    há o que consentir.
+  </p>
+
+  <h2>O que fica no seu navegador</h2>
+  <p>
+    A escolha entre tema claro e escuro é guardada no próprio navegador (armazenamento local), só
+    para lembrar a preferência na próxima visita. Esse dado não é enviado a ninguém e pode ser
+    apagado limpando os dados do site.
+  </p>
+  <p>
+    O mockup do Nexus &amp; PJ, publicado em uma página à parte, guarda da mesma forma o tema e o
+    estado do menu lateral. Todos os dados exibidos nele são fictícios.
+  </p>
+
+  <h2>Hospedagem</h2>
+  <p>
+    O site é hospedado na Vercel. Como em qualquer hospedagem, o servidor pode registrar de forma
+    temporária o endereço IP e dados da requisição para entregar a página e proteger o serviço.
+    As fontes de texto são servidas pelo próprio site, sem chamada a serviços de fontes externos.
+  </p>
+
+  <h2>Contato e links externos</h2>
+  <p>
+    O contato é feito por e-mail, LinkedIn ou GitHub. Se você escrever, o conteúdo da mensagem
+    será usado apenas para responder. Os links levam a sites de terceiros, que têm políticas
+    próprias — esta não vale para eles.
+  </p>
+
+  <h2>Seus direitos</h2>
+  <p>
+    Nos termos da Lei Geral de Proteção de Dados (Lei 13.709/2018), você pode pedir informação,
+    correção ou exclusão de qualquer dado pessoal seu que eu tenha — por exemplo, o de uma troca
+    de e-mails. Basta escrever para{' '}
+    <a href={`mailto:${EMAIL}`} class="text-accent hover:opacity-70">{EMAIL}</a>.
+  </p>
+
+  <h2>Mudanças nesta política</h2>
+  <p>
+    Se o site passar a coletar algo novo, esta página é atualizada antes, e a data no topo muda.
+  </p>
+</PaginaLegal>

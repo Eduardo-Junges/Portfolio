@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Nexus &amp; PJ — Mockup da Fase 2</title>
+<style>
+/* Nexus & PJ — mockup. Tokens do app (app/static/css/tokens.css). Dados desta página são fictícios. */
+:root, :root[data-theme="dark"] {
+  --bg: #000000; --bg-2: #0a0a0a; --surface-1: #121212; --surface-2: #0d0d0d;
+  --border-1: #232323; --border-2: rgba(255,255,255,.06);
+  --text-100: #f4f4f5; --text-200: #a1a1aa; --text-mute: #71717a;
+  --ink: #f4f4f5; --ink-contrast: #14161a;
+  --overlay-1: rgba(255,255,255,.04); --overlay-2: rgba(255,255,255,.05); --overlay-3: rgba(255,255,255,.08);
+  --line-soft: rgba(255,255,255,.10); --line-strong: rgba(255,255,255,.22);
+  --shadow-card: inset 0 1px 0 rgba(255,255,255,.05), 0 14px 36px -20px rgba(0,0,0,.55);
+  --shadow-card-hover: inset 0 1px 0 rgba(255,255,255,.08), 0 22px 48px -18px rgba(0,0,0,.62);
+  --shadow-sm: 0 4px 12px rgba(0,0,0,.30); --shadow-md: 0 8px 24px rgba(0,0,0,.40);
+  --ring: 0 0 0 2px rgba(244,244,245,.35);
+  --glass: rgba(18,18,18,.62);
+  --nav-hover-fx: 0 0 0 1px rgba(244,244,245,.10), 0 0 16px rgba(244,244,245,.14);
+  --login-bg: radial-gradient(1200px 600px at 15% 10%, rgba(255,255,255,.07), transparent 60%),
+              radial-gradient(900px 500px at 90% 90%, rgba(var(--red-rgb), .10), transparent 60%), #000;
+}
+:root[data-theme="light"] {
+  --bg: #ffffff; --bg-2: #f7f7f7; --surface-1: #ffffff; --surface-2: #f5f5f6;
+  --border-1: #e1e1e1; --border-2: rgba(0,0,0,.06);
+  --text-100: #1e1f20; --text-200: #55575c; --text-mute: #8a8d93;
+  --ink: #1e1f20; --ink-contrast: #ffffff;
+  --overlay-1: rgba(0,0,0,.03); --overlay-2: rgba(0,0,0,.05); --overlay-3: rgba(0,0,0,.08);
+  --line-soft: rgba(0,0,0,.08); --line-strong: rgba(0,0,0,.18);
+  --shadow-card: inset 0 1px 0 rgba(255,255,255,.7), 0 10px 24px -16px rgba(0,0,0,.16);
+  --shadow-card-hover: inset 0 1px 0 rgba(255,255,255,.8), 0 16px 32px -14px rgba(0,0,0,.20);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,.06); --shadow-md: 0 6px 16px rgba(0,0,0,.08);
+  --ring: 0 0 0 2px rgba(30,31,32,.22);
+  --glass: rgba(255,255,255,.66);
+  --nav-hover-fx: 0 6px 14px -4px rgba(30,31,32,.24);
+  --login-bg: radial-gradient(1200px 600px at 15% 10%, rgba(0,0,0,.05), transparent 60%),
+              radial-gradient(900px 500px at 90% 90%, rgba(var(--red-rgb), .08), transparent 60%), #f4f4f5;
+}
+:root {
+  --red: #f13131; --red-rgb: 241,49,49;
+  --green: #10b981; --green-rgb: 16,185,129;
+  --purple: #8b5cf6; --purple-rgb: 139,92,246;
+  --cyan: #06b6d4; --cyan-rgb: 6,182,212;
+  --amber: #f59e0b; --amber-rgb: 245,158,11;
+  --blue: #3b82f6; --blue-rgb: 59,130,246;
+  --radius-xs: 3px; --radius-sm: 6px; --radius-md: 12px; --radius-lg: 16px; --radius-xl: 20px; --radius-pill: 9999px;
+  --radius-btn: var(--radius-md);
+  --ease-pop: cubic-bezier(.16,1,.3,1); --ease-standard: cubic-bezier(.4,0,.2,1);
+  --dur-fast: .15s; --dur-base: .25s; --dur-slow: .45s;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --text-xs: .75rem; --text-sm: .875rem; --text-2xl: 1.5rem;
+  --nxsw: 240px; --nxhh: 60px; --nxsw-collapsed: 68px;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text-100); font-family: var(--font-sans); font-size: 14px; }
+html { transition: background var(--dur-base) ease; }
+body, .card, .btn, .input, .navlink { transition: background var(--dur-base) ease, color var(--dur-base) ease, border-color var(--dur-base) ease; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+
+/* Botões */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; height: 2.5rem; padding: 0 1.5rem; border: 0; border-radius: var(--radius-btn); font: 600 var(--text-sm) var(--font-sans); cursor: pointer; white-space: nowrap; text-decoration: none; transition: all var(--dur-base) var(--ease-pop); }
+.btn:focus-visible { outline: none; box-shadow: var(--ring); }
+.btn--sm { height: 2rem; padding: 0 1rem; font-size: 13px; }
+.btn--primary { color: var(--ink-contrast); background: var(--ink); }
+.btn--primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.btn--secondary { color: var(--text-100); background: var(--overlay-2); border: 1px solid var(--line-soft); }
+.btn--secondary:hover { background: var(--overlay-3); }
+.btn--soft { color: var(--text-100); background: var(--overlay-1); border: 1px solid var(--border-1); height: 2rem; padding: 0 1rem; font-size: 13px; }
+.btn--soft:hover { background: var(--overlay-2); }
+.btn--ghost { color: var(--text-200); background: transparent; }
+.btn--ghost:hover { background: var(--overlay-1); color: var(--text-100); }
+
+/* Cards */
+.card { position: relative; border-radius: var(--radius-md); background: var(--surface-1); border: 1px solid var(--overlay-3); box-shadow: var(--shadow-card); padding: 16px; transition: transform var(--dur-slow) var(--ease-standard), box-shadow var(--dur-slow) var(--ease-standard), border-color var(--dur-slow) var(--ease-standard); }
+.card--interactive:hover { transform: translateY(-4px); border-color: var(--line-strong); box-shadow: var(--shadow-card-hover); }
+.kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 16px; margin-bottom: 20px; }
+@media (max-width: 1000px) { .kpi-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+@media (max-width: 480px) { .kpi-grid { grid-template-columns: minmax(0,1fr); } }
+.kpi-card { padding: 14px 16px; }
+.kpi-card .kpi-label { font-size: var(--text-xs); color: var(--text-mute); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px; }
+.kpi-card .kpi-value { font-size: var(--text-2xl); font-weight: 700; color: var(--text-100); line-height: 1.2; }
+.kpi-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px; border-radius: var(--radius-md) var(--radius-md) 0 0; background: linear-gradient(90deg, var(--ink), transparent); }
+.kpi-card.green::before { background: linear-gradient(90deg, var(--green), transparent); }
+.kpi-card.red::before { background: linear-gradient(90deg, var(--red), transparent); }
+.kpi-card.amber::before { background: linear-gradient(90deg, var(--amber), transparent); }
+.kpi-note { font-size: 11.5px; color: var(--text-mute); margin-top: 4px; }
+
+/* Badges */
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: var(--radius-pill); font: 600 11px/1.5 var(--font-sans); text-transform: uppercase; letter-spacing: .03em; }
+.badge--green { background: rgba(var(--green-rgb), .14); color: var(--green); }
+.badge--red { background: rgba(var(--red-rgb), .14); color: var(--red); }
+.badge--amber { background: rgba(var(--amber-rgb), .14); color: var(--amber); }
+.badge--neutral { background: var(--overlay-2); color: var(--text-200); }
+
+/* Inputs */
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: var(--text-xs); color: var(--text-200); font-weight: 500; }
+.input, select.input { background: var(--surface-2); border: 1px solid var(--border-1); color: var(--text-100); border-radius: var(--radius-sm); padding: 9px 12px; font: var(--text-sm) var(--font-sans); transition: border-color var(--dur-fast) ease, box-shadow var(--dur-fast) ease; }
+.input::placeholder { color: var(--text-mute); }
+.input:focus-visible { outline: none; border-color: var(--ink); box-shadow: var(--ring); }
+
+/* Navegação lateral */
+.navlink { display: flex; align-items: center; gap: 10px; font: 500 var(--text-sm)/1 var(--font-sans); letter-spacing: -0.01em; padding: 9px 14px; margin: 2px 8px; border-radius: var(--radius-btn); color: var(--text-mute); text-decoration: none; position: relative; cursor: pointer; transition: background var(--dur-fast) ease, color var(--dur-fast) ease; }
+.navlink:hover { background: var(--overlay-1); color: var(--text-200); }
+.navlink.active { background: var(--overlay-2); color: var(--text-100); font-weight: 600; }
+.navlink.active::before { content: ""; position: absolute; left: -8px; top: 50%; transform: translateY(-50%); width: 3px; height: 18px; background: var(--ink); border-radius: var(--radius-pill); }
+
+/* Tabelas */
+.tbl { width: 100%; border-collapse: separate; border-spacing: 0; font-size: var(--text-sm); }
+.tbl th { text-align: left; color: var(--text-mute); font-weight: 600; font-size: var(--text-xs); text-transform: uppercase; letter-spacing: .04em; padding: 10px 14px; border-bottom: 1px solid var(--border-1); }
+.tbl td { padding: 12px 14px; border-bottom: 1px solid var(--overlay-1); color: var(--text-100); }
+.tbl tr:hover td { background: var(--overlay-1); }
+.tbl .num { text-align: right; font-variant-numeric: tabular-nums; }
+.tbl .pos { color: var(--green); font-weight: 600; }
+.tbl .neg { color: var(--red); font-weight: 600; }
+.tbl-wrap { overflow-x: auto; }
+.tbl--compacta th, .tbl--compacta td { padding: 8px 10px; white-space: nowrap; }
+
+/* Alternador (tema, Realizado/Planejado, vistas) */
+.theme-switch { display: inline-flex; align-items: center; gap: 2px; padding: 3px; background: var(--overlay-1); border: 1px solid var(--border-1); border-radius: var(--radius-pill); }
+.theme-switch button, .theme-switch a { border: 0; background: transparent; color: var(--text-mute); cursor: pointer; width: 30px; height: 30px; border-radius: var(--radius-pill); font-size: 14px; display: flex; align-items: center; justify-content: center; transition: all var(--dur-fast) ease; text-decoration: none; }
+.theme-switch button.on, .theme-switch a.on { background: var(--surface-1); color: var(--text-100); box-shadow: var(--shadow-sm); }
+.theme-switch--text a { width: auto; height: 26px; padding: 0 12px; font-size: 12.5px; font-weight: 600; }
+.title-wrap { display: flex; align-items: center; gap: 14px; }
+
+/* Menu de usuário */
+.user-menu { position: relative; }
+.user-menu-trigger { display: flex; align-items: center; gap: 10px; padding: 6px 10px 6px 6px; border-radius: var(--radius-pill); background: transparent; border: 1px solid transparent; cursor: pointer; color: inherit; transition: all var(--dur-fast) ease; }
+.user-menu-trigger:hover, .user-menu.open .user-menu-trigger { background: var(--overlay-1); border-color: var(--border-1); }
+.user-menu-trigger .av { width: 30px; height: 30px; border-radius: 50%; background: var(--red); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; }
+.user-menu-trigger .meta { text-align: left; line-height: 1.25; }
+.user-menu-trigger .name { font-size: 13px; font-weight: 600; color: var(--text-100); }
+.user-menu-trigger .role { font-size: 11px; color: var(--text-mute); }
+.user-menu-trigger .chev { font-size: 10px; color: var(--text-mute); margin-left: 2px; }
+.user-menu-panel { position: absolute; top: calc(100% + 8px); right: 0; width: 240px; background: var(--surface-1); border: 1px solid var(--border-1); border-radius: var(--radius-md); box-shadow: var(--shadow-card-hover); padding: 10px; z-index: 40; opacity: 0; visibility: hidden; transform: translateY(-6px); transition: all var(--dur-fast) var(--ease-standard); }
+.user-menu.open .user-menu-panel { opacity: 1; visibility: visible; transform: translateY(0); }
+.user-menu-panel .um-head { padding: 6px 8px 10px; border-bottom: 1px solid var(--border-1); margin-bottom: 8px; }
+.user-menu-panel .um-head .name { font-size: 13.5px; font-weight: 600; color: var(--text-100); }
+.user-menu-panel .um-head .role { font-size: 11.5px; color: var(--text-mute); margin-top: 2px; }
+.user-menu-panel .um-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px; font-size: 12.5px; color: var(--text-200); }
+.user-menu-panel .um-item { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 8px; border-radius: var(--radius-sm); background: transparent; border: 0; color: var(--text-100); font: 500 13px var(--font-sans); text-align: left; cursor: pointer; transition: background var(--dur-fast) ease; }
+.user-menu-panel .um-item:hover { background: var(--overlay-1); }
+.user-menu-panel .um-item.danger { color: var(--red); }
+.user-menu-panel .um-sep { height: 1px; background: var(--border-1); margin: 6px 0; }
+
+/* Casca do app */
+.shell { display: flex; }
+.sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: var(--nxsw); background: var(--surface-2); border-right: 1px solid var(--border-1); display: flex; flex-direction: column; z-index: 10; }
+.sidebar .brand { display: flex; align-items: center; padding: 0 14px; height: var(--nxhh); border-bottom: 1px solid var(--border-1); }
+.sidebar nav { flex: 1; padding-top: 10px; padding-bottom: 14px; overflow-y: auto; }
+.sidebar .grp-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-mute); padding: 14px 20px 6px; }
+.main { margin-left: var(--nxsw); flex: 1; min-width: 0; }
+.topbar { height: var(--nxhh); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; border-bottom: 1px solid var(--border-1); background: var(--surface-2); position: sticky; top: 0; z-index: 5; }
+.topbar .title { font-size: 16px; font-weight: 600; }
+.topbar .actions { display: flex; align-items: center; gap: 14px; }
+.body { padding: 24px; max-width: 1520px; margin: 0 auto; }
+.empty-state { text-align: center; padding: 70px 20px; color: var(--text-mute); }
+.empty-state .ic { font-size: 34px; margin-bottom: 14px; opacity: .6; }
+.empty-state h3 { font-size: 15px; color: var(--text-200); font-weight: 600; margin: 0 0 6px; }
+.empty-state p { font-size: 13.5px; max-width: 420px; margin-inline: auto; line-height: 1.6; }
+.section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 12px; flex-wrap: wrap; }
+.section-head h2 { font-size: 15px; font-weight: 600; margin: 0; }
+.filters-row { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 18px; flex-wrap: wrap; }
+.filters-row .field { min-width: 150px; }
+
+/* Assistente */
+.chat-shell { display: flex; flex-direction: column; }
+.chat-thread { flex: 1; min-height: 320px; max-height: 55vh; overflow-y: auto; padding: 4px 4px 12px; display: flex; flex-direction: column; gap: 14px; }
+.chat-msg { display: flex; flex-direction: column; max-width: 72%; }
+.chat-msg--usuario { align-self: flex-end; align-items: flex-end; }
+.chat-msg--assistente { align-self: flex-start; align-items: flex-start; }
+.chat-bubble { padding: 10px 14px; border-radius: var(--radius-md); font-size: 14px; line-height: 1.5; white-space: pre-wrap; }
+.chat-msg--usuario .chat-bubble { background: var(--ink); color: var(--ink-contrast); border-bottom-right-radius: 4px; }
+.chat-msg--assistente .chat-bubble { background: var(--surface-1); border: 1px solid var(--border-1); border-bottom-left-radius: 4px; }
+.chat-hora { font-size: 11px; color: var(--text-mute); margin-top: 4px; padding: 0 2px; }
+.chat-form { display: flex; gap: 10px; padding-top: 12px; border-top: 1px solid var(--border-1); }
+.chat-form input { flex: 1; }
+.chat-disc { font-size: 12px; color: var(--text-mute); text-align: center; padding-top: 8px; }
+.ia-lista { display: flex; flex-direction: column; gap: 10px; }
+.ia-item { display: flex; gap: 12px; padding: 12px 14px; border-radius: var(--radius-md); background: var(--overlay-1); border: 1px solid var(--border-1); }
+.ia-ic { font-size: 20px; line-height: 1.3; flex-shrink: 0; }
+.ia-corpo { flex: 1; min-width: 0; }
+.ia-tt-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ia-tt { font-weight: 600; font-size: 13.5px; color: var(--text-100); }
+.ia-ds { font-size: 13px; color: var(--text-mute); margin-top: 4px; line-height: 1.5; }
+.ia-acoes { margin-top: 8px; display: flex; gap: 8px; }
+
+.text-mute { color: var(--text-mute); }
+.flex { display: flex; }
+.gap-2 { gap: 8px; }
+
+/* Tela de entrada (login) */
+.login-bg { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; background: var(--login-bg); }
+.auth-glass { width: 100%; max-width: 400px; padding: 32px; border-radius: var(--radius-xl); background: var(--glass); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid var(--line-soft); box-shadow: var(--shadow-card-hover); }
+.auth-glass h1 { font-size: 20px; margin: 18px 0 4px; }
+.auth-glass .sub { color: var(--text-mute); font-size: 13.5px; margin: 0 0 22px; line-height: 1.5; }
+.auth-glass form { display: flex; flex-direction: column; gap: 14px; }
+.auth-glass .btn { width: 100%; }
+.auth-note { font-size: 12px; color: var(--text-mute); text-align: center; margin-top: 18px; }
+.otp { letter-spacing: .6em; text-align: center; font-size: 22px !important; font-weight: 700; }
+.login-steps { display: flex; gap: 6px; justify-content: center; margin-top: 18px; flex-wrap: wrap; }
+.login-steps button { border: 1px solid var(--border-1); background: var(--overlay-1); color: var(--text-200); border-radius: var(--radius-pill); padding: 4px 10px; font: 500 11.5px var(--font-sans); cursor: pointer; }
+.login-steps button.on { background: var(--ink); color: var(--ink-contrast); border-color: transparent; }
+.link-discreto { color: var(--text-200); font-size: 13px; text-decoration: none; cursor: pointer; }
+.link-discreto:hover { color: var(--text-100); text-decoration: underline; }
+
+/* Home — painel que abre sozinho ao carregar a página */
+.hm-dlg { border: 1px solid var(--border-1); border-radius: var(--radius-lg); padding: 0; color: var(--text-100); position: fixed; inset: 0; margin: auto; width: min(560px, 92vw); max-height: 86vh; height: fit-content; overflow: auto; background: var(--surface-1); box-shadow: var(--shadow-card-hover); }
+.hm-dlg::backdrop { background: rgba(0,0,0,.5); backdrop-filter: blur(10px) saturate(130%); -webkit-backdrop-filter: blur(10px) saturate(130%); }
+:root[data-theme="light"] .hm-dlg::backdrop { background: rgba(30,31,32,.38); }
+.hm-dlg[open] { animation: hmEntra .2s var(--ease-standard); }
+@keyframes hmEntra { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
+.hm-in { padding: 22px 24px 20px; position: relative; }
+.hm-ola { font-size: 19px; font-weight: 700; padding-right: 30px; }
+.hm-sub { font-size: 13.5px; color: var(--text-mute); margin-top: 6px; line-height: 1.55; }
+.hm-sub b { color: var(--text-100); }
+.hm-tit { font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-mute); margin: 18px 0 8px; }
+.hm-pend { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+.hm-cd { display: block; text-decoration: none; cursor: pointer; border: 1px solid var(--border-1); border-radius: var(--radius-sm); padding: 10px 12px; background: var(--overlay-1); transition: border-color var(--dur-fast) ease, transform var(--dur-fast) ease; }
+.hm-cd:hover { border-color: var(--line-strong); transform: translateY(-2px); }
+.hm-n { font-size: 21px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.hm-t { display: block; font-size: 12.5px; color: var(--text-100); margin-top: 5px; font-weight: 600; }
+.hm-d { display: block; font-size: 11px; color: var(--text-mute); margin-top: 2px; line-height: 1.4; }
+.hm-nt { display: flex; gap: 10px; align-items: flex-start; padding: 9px 10px; border-radius: var(--radius-sm); text-decoration: none; cursor: pointer; border: 1px solid var(--border-1); background: var(--overlay-1); margin-bottom: 6px; }
+.hm-pt { width: 7px; height: 7px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+.hm-nt-t { display: block; font-size: 13px; font-weight: 600; color: var(--text-100); line-height: 1.35; }
+.hm-nt-x { display: block; font-size: 11.5px; color: var(--text-mute); line-height: 1.45; margin-top: 1px; }
+.hm-x { position: absolute; top: 14px; right: 14px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; color: var(--text-mute); font-size: 18px; line-height: 1; cursor: pointer; border-radius: var(--radius-sm); }
+.hm-x:hover { color: var(--text-100); background: var(--overlay-2); }
+
+/* Dashboard (hub de painéis) */
+.hub-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.hub-card { padding: 0; overflow: hidden; cursor: pointer; text-decoration: none; color: inherit; display: block; }
+.hub-prev { height: 150px; padding: 18px; background: linear-gradient(160deg, var(--overlay-2), transparent); border-bottom: 1px solid var(--border-1); display: flex; flex-direction: column; justify-content: flex-end; gap: 9px; }
+.hub-info { padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+.hub-info b { display: block; font-size: 14.5px; }
+.hub-info span { font-size: 12.5px; color: var(--text-mute); }
+.mini-bar { display: grid; grid-template-columns: 110px 1fr; align-items: center; gap: 10px; font-size: 11.5px; color: var(--text-mute); }
+.mini-bar i { display: block; height: 10px; border-radius: var(--radius-pill); background: linear-gradient(90deg, var(--ink), rgba(var(--green-rgb), .7)); }
+.hub-card--breve { border-style: dashed; cursor: default; opacity: .75; }
+.hub-card--breve .hub-prev { align-items: center; justify-content: center; font-size: 34px; color: var(--text-mute); }
+
+/* Fluxo de caixa */
+.vista-bar { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 16px; }
+.vista-bar .field { min-width: 130px; }
+.tbl .grp-th { text-align: center; border-bottom: 1px solid var(--border-1); color: var(--text-200); }
+.tbl th.col-e { color: rgba(var(--green-rgb), .9); }
+.tbl th.col-s { color: rgba(var(--red-rgb), .9); }
+.tbl td.tot, .tbl th.tot { font-weight: 700; }
+.tbl tr.linha-total td { border-top: 1px solid var(--border-1); background: var(--overlay-1); font-weight: 700; }
+.tbl .sep-l { border-left: 1px solid var(--border-1); }
+.fecha { display: inline-flex; width: 24px; height: 24px; border-radius: 50%; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+.fecha.ok { background: rgba(var(--green-rgb), .16); color: var(--green); }
+.fecha.alerta { background: rgba(var(--amber-rgb), .18); color: var(--amber); }
+.fecha.sem { color: var(--text-mute); }
+.mute { color: var(--text-mute); }
+.resumo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+.resumo-item { padding: 12px 14px; border-radius: var(--radius-md); background: var(--overlay-1); border: 1px solid var(--border-1); }
+.resumo-item small { display: block; font-size: 11.5px; color: var(--text-mute); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
+.resumo-item b { font-size: 16px; font-variant-numeric: tabular-nums; }
+.paginador { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 14px; font-size: 13px; color: var(--text-mute); }
+.paginador .pag { display: flex; gap: 6px; }
+.grupo-row td:first-child { width: 34px; }
+.expand { width: 22px; height: 22px; border-radius: 6px; border: 1px solid var(--border-1); background: var(--overlay-1); color: var(--text-200); cursor: pointer; font-weight: 700; line-height: 1; }
+.filho td { background: var(--overlay-1); font-size: 13px; color: var(--text-200); }
+.filho td:nth-child(2) { padding-left: 28px; }
+.totais-rodape { display: flex; gap: 22px; flex-wrap: wrap; justify-content: flex-end; font-size: 13.5px; padding-top: 12px; border-top: 1px solid var(--border-1); margin-top: 6px; }
+.totais-rodape b { font-variant-numeric: tabular-nums; }
+
+/* Configurações (hub) */
+.cfg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.cfg-tile { display: flex; gap: 12px; align-items: flex-start; padding: 14px; text-decoration: none; color: inherit; cursor: pointer; }
+.cfg-tile b { display: block; font-size: 14px; margin-bottom: 3px; }
+.cfg-tile span { font-size: 12.5px; color: var(--text-mute); }
+.cfg-sec { margin-bottom: 26px; }
+.cfg-sec > h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-mute); margin: 0 0 12px; }
+.conta-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--overlay-1); flex-wrap: wrap; }
+.conta-row:last-child { border-bottom: 0; }
+.conta-row .l b { display: block; font-size: 14px; }
+.conta-row .l span { font-size: 12.5px; color: var(--text-mute); }
+.voltar-cfg { font-size: 13px; color: var(--text-200); text-decoration: none; padding: 5px 10px; border-radius: var(--radius-pill); border: 1px solid var(--border-1); background: var(--overlay-1); }
+.voltar-cfg:hover { color: var(--text-100); }
+.perm td.ck, .perm th.ck { text-align: center; width: 140px; }
+.perm input[type=checkbox] { width: 17px; height: 17px; accent-color: var(--ink); cursor: pointer; }
+.nota { font-size: 12.5px; color: var(--text-mute); line-height: 1.6; margin-top: 12px; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--overlay-1); }
+.abas { margin-bottom: 16px; }
+
+/* Ícones da sidebar e sidebar retrátil */
+.nav-badge { width: 30px; height: 30px; flex-shrink: 0; border-radius: 50%; background: var(--overlay-2); display: inline-flex; align-items: center; justify-content: center; font-size: 14px; color: var(--text-200); transition: all var(--dur-fast) ease; }
+.cfg-tile .nav-badge, .hub-info .nav-badge { width: 36px; height: 36px; font-size: 16px; }
+.navlink:hover .nav-badge { box-shadow: var(--nav-hover-fx); color: var(--text-100); }
+.navlink.active .nav-badge { background: var(--ink); color: var(--ink-contrast); }
+#appShell .sidebar { width: var(--nxsw); transition: width var(--dur-base) var(--ease-standard); overflow: hidden; }
+#appShell .main { margin-left: var(--nxsw); transition: margin-left var(--dur-base) var(--ease-standard); }
+#appShell.sidebar-collapsed .sidebar { width: var(--nxsw-collapsed); }
+#appShell.sidebar-collapsed .main { margin-left: var(--nxsw-collapsed); }
+#appShell.sidebar-collapsed .nav-label, #appShell.sidebar-collapsed .grp-label, #appShell.sidebar-collapsed .brand-full { display: none; }
+#appShell:not(.sidebar-collapsed) .brand-icon { display: none; }
+.brand-btn { display: flex; align-items: center; gap: 10px; background: none; border: 0; color: var(--text-100); cursor: pointer; padding: 6px; border-radius: var(--radius-sm); }
+.brand-btn:hover { background: var(--overlay-1); }
+#appShell.sidebar-collapsed .navlink { justify-content: center; padding: 8px 0; margin: 4px 10px; }
+#appShell.sidebar-collapsed .navlink.active::before { left: -10px; }
+#navTooltip { position: fixed; z-index: 3000; padding: 6px 10px; border-radius: var(--radius-sm); background: var(--surface-1); border: 1px solid var(--border-1); box-shadow: var(--shadow-md); font-size: 12.5px; color: var(--text-100); pointer-events: none; opacity: 0; transition: opacity var(--dur-fast) ease; white-space: nowrap; }
+#navTooltip.on { opacity: 1; }
+
+/* Chat de IA na topbar */
+.topbar-ia { display: flex; align-items: center; gap: 8px; background: var(--overlay-1); border: 1px solid var(--border-1); border-radius: var(--radius-pill); padding: 3px 5px 3px 12px; min-width: 300px; transition: border-color var(--dur-fast) ease; }
+.topbar-ia:focus-within { border-color: var(--line-strong); }
+.topbar-ia .ia-emoji { font-size: 15px; cursor: pointer; }
+.topbar-ia input { flex: 1; background: transparent; border: 0; outline: none; color: var(--text-100); font: var(--text-sm) var(--font-sans); padding: 6px 0; }
+.topbar-ia input::placeholder { color: var(--text-mute); }
+.topbar-ia kbd { font: 600 10.5px var(--font-sans); color: var(--text-mute); border: 1px solid var(--border-1); border-radius: 5px; padding: 2px 6px; }
+@media (max-width: 780px) {
+  #appShell .sidebar { width: var(--nxsw-collapsed); }
+  #appShell .main { margin-left: var(--nxsw-collapsed); }
+  #appShell .nav-label, #appShell .grp-label, #appShell .brand-full { display: none; }
+  #appShell .brand-icon { display: inline-flex !important; }
+  .topbar { flex-wrap: wrap; height: auto; min-height: var(--nxhh); padding: 10px 16px; gap: 10px; }
+  .title-wrap { flex-wrap: wrap; }
+  .topbar-ia { min-width: 0; }
+  .topbar-ia input, .topbar-ia kbd { display: none; }
+  .user-menu-trigger .meta { display: none; }
+  .body { padding: 16px; }
+}
+
+/* Barra do mockup (fora do app) */
+.mk-dock { position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); z-index: 4000; display: flex; align-items: center; gap: 10px; padding: 6px 8px 6px 14px; border-radius: var(--radius-pill); background: var(--surface-1); border: 1px solid var(--border-1); box-shadow: var(--shadow-md); font-size: 12px; color: var(--text-mute); white-space: nowrap; }
+.mk-dock .theme-switch--text a { cursor: pointer; }
+@media (max-width: 560px) { .mk-dock .mk-txt { display: none; } }
+
+/* Tema claro: cartão com contorno e vidro fosco, para não sumir sobre o fundo branco */
+:root[data-theme="light"] {
+  --card-wash: radial-gradient(900px 420px at 6% -8%, rgba(30,31,32,.05), transparent 55%),
+               radial-gradient(760px 420px at 102% 4%, rgba(var(--red-rgb), .055), transparent 55%);
+}
+:root[data-theme="light"] body { background: var(--card-wash), var(--bg); }
+:root[data-theme="light"] .card { background: linear-gradient(155deg, rgba(255,255,255,.82), rgba(247,247,247,.58)); border-color: rgba(30,31,32,.20); backdrop-filter: blur(18px) saturate(170%); -webkit-backdrop-filter: blur(18px) saturate(170%); }
+:root[data-theme="light"] .kpi-card.green { background: linear-gradient(155deg, rgba(var(--green-rgb), .12), rgba(255,255,255,.60)); }
+:root[data-theme="light"] .kpi-card.red { background: linear-gradient(155deg, rgba(var(--red-rgb), .12), rgba(255,255,255,.60)); }
+:root[data-theme="light"] .kpi-card.amber { background: linear-gradient(155deg, rgba(var(--amber-rgb), .12), rgba(255,255,255,.60)); }
+</style>
+</head>
+<body>
+
+<!-- ============================ ENTRADA (fora da casca) ============================ -->
+<section id="scr-login" class="login-bg" hidden>
+  <div class="auth-glass">
+    <svg viewBox="0 0 150 28" height="26" aria-label="Nexus &amp; PJ" style="color:var(--text-100)"><text x="0" y="21" fill="currentColor" font-family="Inter,system-ui,sans-serif" font-weight="800" font-size="20" letter-spacing="1">NEXUS <tspan fill="var(--red)">&amp;</tspan> PJ</text></svg>
+
+    <div data-login="senha">
+      <h1>Entrar</h1>
+      <p class="sub">Fechamento de caixa pelo extrato.</p>
+      <form onsubmit="return mk.login('2fa')">
+        <div class="field"><label>E-mail</label><input class="input" value="eduardo@exemplo.com"></div>
+        <div class="field"><label>Senha</label><input class="input" type="password" value="••••••••••••"></div>
+        <button class="btn btn--primary">Entrar</button>
+      </form>
+    </div>
+
+    <div data-login="2fa" hidden>
+      <h1>Verificação em 2 passos</h1>
+      <p class="sub">Digite o código de 6 dígitos do seu aplicativo autenticador. <span class="badge badge--amber" style="margin-top:6px">motivo: aparelho novo</span></p>
+      <form onsubmit="return mk.entrar()">
+        <input class="input otp" maxlength="6" value="482913" inputmode="numeric">
+        <button class="btn btn--primary">Confirmar</button>
+        <a class="link-discreto" style="text-align:center" href="#" onclick="return false">Usar um código de recuperação</a>
+      </form>
+      <p class="auth-note">Com o código certo, este aparelho fica liberado sozinho — ninguém precisa aprovar.</p>
+    </div>
+
+    <div data-login="pendente" hidden>
+      <h1>Aparelho aguardando liberação</h1>
+      <p class="sub">Contate um administrador.</p>
+      <button class="btn btn--secondary" onclick="mk.login('senha')">Sair</button>
+    </div>
+
+    <div data-login="trocar" hidden>
+      <h1>Crie sua senha</h1>
+      <p class="sub">Primeiro acesso: troque a senha inicial por uma só sua.</p>
+      <form onsubmit="return mk.entrar()">
+        <div class="field"><label>Nova senha</label><input class="input" type="password" value="••••••••••••"></div>
+        <div class="field"><label>Confirmar</label><input class="input" type="password" value="••••••••••••"></div>
+        <p class="kpi-note" style="margin:0">Mínimo de 10 caracteres. Senhas óbvias (123456…, nome da empresa) são recusadas.</p>
+        <button class="btn btn--primary">Salvar e entrar</button>
+      </form>
+    </div>
+
+    <p class="auth-note">Acesso restrito à rede interna da empresa.</p>
+    <div class="login-steps" id="loginSteps">
+      <button data-go="senha" class="on">1 · senha</button>
+      <button data-go="2fa">2 · código 2FA</button>
+      <button data-go="pendente">aparelho pendente</button>
+      <button data-go="trocar">1º acesso</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ CASCA DO APP ============================ -->
+<div id="appShell" class="shell sidebar-collapsed">
+  <aside class="sidebar">
+    <div class="brand">
+      <button class="brand-btn" id="brandToggle" title="Recolher/expandir menu">
+        <svg class="brand-full" viewBox="0 0 150 28" height="24" aria-label="Nexus &amp; PJ"><text x="0" y="21" fill="currentColor" font-family="Inter,system-ui,sans-serif" font-weight="800" font-size="20" letter-spacing="1">NEXUS <tspan fill="var(--red)">&amp;</tspan> PJ</text></svg>
+        <span class="brand-icon nav-badge" style="background:var(--ink);color:var(--ink-contrast);font-weight:800;font-size:12px">N&amp;</span>
+      </button>
+    </div>
+    <nav id="nav">
+      <div class="grp-label">Visão geral</div>
+      <a class="navlink active" data-page="dashboard" data-label="Dashboard"><span class="nav-badge">⬡</span><span class="nav-label">Dashboard</span></a>
+      <a class="navlink" data-page="fluxo" data-label="Fluxo de caixa" style="margin-top:10px"><span class="nav-badge">◧</span><span class="nav-label">Fluxo de caixa</span></a>
+      <div class="grp-label">Operação</div>
+      <a class="navlink" data-page="transferencias" data-label="Transferências"><span class="nav-badge">⇄</span><span class="nav-label">Transferências</span></a>
+      <a class="navlink" data-page="importar" data-label="Importar extrato"><span class="nav-badge">⇓</span><span class="nav-label">Importar extrato</span></a>
+    </nav>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="title-wrap"><div class="title" id="pgTitle">Dashboard</div><div id="pgExtra"></div></div>
+      <div class="actions">
+        <label class="topbar-ia" title="Pergunte ao Assistente">
+          <span class="ia-emoji" onclick="mk.go('assistente')">🤖</span>
+          <input id="iaInput" placeholder="Pergunte ao assistente… ex.: quanto entrou esse mês?">
+          <kbd>Enter</kbd>
+        </label>
+        <div class="user-menu" id="userMenu">
+          <button class="user-menu-trigger" onclick="document.getElementById('userMenu').classList.toggle('open')">
+            <div class="av">E</div>
+            <div class="meta"><div class="name">Eduardo</div><div class="role">ADM</div></div>
+            <span class="chev">▾</span>
+          </button>
+          <div class="user-menu-panel">
+            <div class="um-head"><div class="name">Eduardo</div><div class="role">eduardo@exemplo.com · Perfil ADM · 2FA ativo</div></div>
+            <div class="um-row"><span>Tema</span>
+              <div class="theme-switch"><button data-tema="light" title="Claro">☀</button><button data-tema="dark" title="Escuro" class="on">☾</button></div>
+            </div>
+            <div class="um-sep"></div>
+            <button class="um-item" onclick="mk.go('configuracoes')">⚙ Configurações</button>
+            <div class="um-sep"></div>
+            <button class="um-item danger" onclick="mk.sair()">⏻ Sair</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="body">
+
+      <!-- HOME: não é aba. Abre sozinha quando a página carrega, nunca ao navegar entre telas. -->
+      <dialog class="hm-dlg" id="hmDlg" aria-labelledby="hmOla">
+        <div class="hm-in">
+          <form method="dialog"><button class="hm-x" value="fechar" aria-label="Fechar" title="Fechar">✕</button></form>
+          <div class="hm-ola" id="hmOla">Boa tarde, Eduardo.</div>
+          <div class="hm-sub">Em <b>setembro/2026</b> entraram <b>R$ 412.870,40</b> e saíram <b>R$ 356.110,52</b> — sobrou <b style="color:var(--green)">R$ 56.759,88</b>.</div>
+
+          <div class="hm-tit">Precisa de você</div>
+          <div class="hm-pend">
+            <a class="hm-cd" onclick="mk.go('fluxo')"><span class="hm-n" style="color:var(--amber)">42</span><span class="hm-t">a revisar</span><span class="hm-d">lançamentos sem categoria</span></a>
+            <a class="hm-cd" onclick="mk.go('transferencias')"><span class="hm-n" style="color:var(--cyan)">1</span><span class="hm-t">sem par</span><span class="hm-d">transferência sem a outra perna</span></a>
+          </div>
+
+          <div class="hm-tit">Merece atenção</div>
+          <a class="hm-nt" onclick="mk.go('assistente')"><span class="hm-pt" style="background:var(--amber)"></span><span><span class="hm-nt-t">2 possíveis cobranças duplicadas</span><span class="hm-nt-x">Mesmo valor, no mesmo banco, em poucos dias: R$ 1.290,00 em 22/09 e 23/09.</span></span></a>
+          <a class="hm-nt" onclick="mk.go('assistente')"><span class="hm-pt" style="background:var(--amber)"></span><span><span class="hm-nt-t">Receita de "cliente orion" ainda não apareceu</span><span class="hm-nt-x">Costuma cair por volta do dia 20, valor médio R$ 6.800,00 — já é dia 26.</span></span></a>
+          <a class="hm-nt" onclick="mk.go('assistente')"><span class="hm-pt" style="background:var(--amber)"></span><span><span class="hm-nt-t">Gasto atípico em Fornecedores</span><span class="hm-nt-x">R$ 41.590,00 esta semana vs média de R$ 24.300,00 nas 3 anteriores.</span></span></a>
+        </div>
+      </dialog>
+
+      <!-- ============================ DASHBOARD (hub) ============================ -->
+      <section data-pg="dashboard">
+        <div class="section-head"><h2>Painéis</h2><span class="text-mute" style="font-size:13px">cada card abre um painel completo</span></div>
+        <div class="hub-grid">
+          <a class="card card--interactive hub-card" onclick="mk.go('fluxo')">
+            <div class="hub-prev">
+              <div class="mini-bar"><span>Banco Aurora</span><i style="width:100%"></i></div>
+              <div class="mini-bar"><span>Banco Horizonte</span><i style="width:74%"></i></div>
+              <div class="mini-bar"><span>Coop. Vale Norte</span><i style="width:22%"></i></div>
+            </div>
+            <div class="hub-info"><span class="nav-badge">◧</span><div><b>Fluxo de caixa</b><span>Saldo por conta · ao vivo</span></div></div>
+          </a>
+          <a class="card card--interactive hub-card" onclick="mk.go('assistente')">
+            <div class="hub-prev" style="justify-content:center;gap:8px">
+              <div class="ia-item" style="padding:8px 10px"><div class="ia-ic" style="font-size:15px">⚠️</div><div class="ia-tt" style="font-size:12.5px">2 cobranças duplicadas</div></div>
+              <div class="ia-item" style="padding:8px 10px"><div class="ia-ic" style="font-size:15px">⏰</div><div class="ia-tt" style="font-size:12.5px">1 receita atrasada</div></div>
+            </div>
+            <div class="hub-info"><span class="nav-badge">🤖</span><div><b>Assistente &amp; análises</b><span>3 alertas pendentes</span></div></div>
+          </a>
+          <div class="card hub-card hub-card--breve">
+            <div class="hub-prev">📊</div>
+            <div class="hub-info"><span class="nav-badge">▦</span><div><b>Contábil / DRE</b><span>Futuro — o hub já nasce pronto pro card</span></div></div>
+          </div>
+        </div>
+        <p class="nota">Os KPIs e gráficos que hoje moram em "/" passam pra dentro do card <b>Fluxo de caixa</b> (<code>/dashboard/fluxo-caixa</code>). A prévia do card é dado real, sempre atual — sem screenshot.</p>
+      </section>
+
+      <!-- ============================ FLUXO DE CAIXA ============================ -->
+      <section data-pg="fluxo" hidden>
+        <div class="vista-bar">
+          <div class="theme-switch theme-switch--text" id="vistaSwitch">
+            <a data-vista="lanc">Lançamentos</a><a data-vista="cons" class="on">Consolidado</a>
+          </div>
+          <div class="field"><label>Banco</label><select class="input"><option>Todos</option><option>Banco Aurora</option><option>Banco Horizonte</option><option>Coop. Vale Norte</option></select></div>
+          <div class="field" data-so="lanc" hidden><label>Lançamento</label><select class="input"><option>Todos</option><option>Recebimento Pix</option><option>Devolução Pix</option><option>Fornecedores</option></select></div>
+          <div class="field" data-so="lanc" hidden><label>Tipo</label><select class="input"><option>Todos</option><option>Receita</option><option>Despesa</option><option>Neutro</option></select></div>
+          <div class="field"><label>De</label><input class="input" value="21/09/2026"></div>
+          <div class="field"><label>Até</label><input class="input" value="26/09/2026"></div>
+          <div class="field" data-so="cons"><label>Agrupar por</label><select class="input"><option>Dia</option></select></div>
+          <button class="btn btn--primary btn--sm">Filtrar</button>
+          <a class="btn btn--ghost btn--sm">Limpar</a>
+        </div>
+
+        <!-- ---------- Consolidado ---------- -->
+        <div data-vista-pg="cons">
+          <div class="card" style="margin-bottom:16px">
+            <div class="section-head"><h2>Resumo do período</h2><span class="badge badge--neutral">21/09 a 26/09</span></div>
+            <div class="resumo-grid">
+              <div class="resumo-item"><small>Saldo inicial · Banco Aurora</small><b>R$ 82.400,00</b></div>
+              <div class="resumo-item"><small>Saldo inicial · Banco Horizonte</small><b>R$ 51.600,00</b></div>
+              <div class="resumo-item"><small>Saldo inicial · Coop. Vale Norte</small><b>R$ 16.000,00</b></div>
+              <div class="resumo-item"><small>Saldo inicial consolidado</small><b>R$ 150.000,00</b></div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom:16px">
+            <div class="section-head"><h2>Fechamento dia a dia</h2><span class="badge badge--amber">1 registro(s) com diferença</span></div>
+            <div class="tbl-wrap">
+              <table class="tbl tbl--compacta">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th colspan="5" class="grp-th">Entradas</th>
+                    <th colspan="7" class="grp-th sep-l">Saídas</th>
+                    <th colspan="4" class="grp-th sep-l">Fechamento</th>
+                  </tr>
+                  <tr>
+                    <th>Dia</th>
+                    <th class="num col-e">A revisar</th><th class="num col-e">Receb. Pix</th><th class="num col-e">Cartões</th><th class="num col-e">Depósitos</th><th class="num tot">Total</th>
+                    <th class="num col-s sep-l">A revisar</th><th class="num col-s">Fornecedores</th><th class="num col-s">Folha</th><th class="num col-s">Impostos</th><th class="num col-s">Tarifas</th><th class="num col-s">Devol. Pix</th><th class="num tot">Total</th>
+                    <th class="num sep-l">Saldo calculado</th><th class="num">Saldo dos bancos</th><th class="num">Diferença</th><th style="text-align:center">✓</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>seg 21/09</td><td class="num mute">—</td><td class="num">8.420,00</td><td class="num">12.310,50</td><td class="num">3.000,00</td><td class="num tot pos">23.730,50</td><td class="num mute sep-l">—</td><td class="num">9.870,00</td><td class="num mute">—</td><td class="num mute">—</td><td class="num">45,90</td><td class="num">120,00</td><td class="num tot neg">10.035,90</td><td class="num sep-l">163.694,60</td><td class="num">163.694,60</td><td class="num">0,00</td><td style="text-align:center"><span class="fecha ok" title="Fecha">✓</span></td></tr>
+                  <tr><td>ter 22/09</td><td class="num">1.200,00</td><td class="num">5.705,00</td><td class="num">9.874,20</td><td class="num mute">—</td><td class="num tot pos">16.779,20</td><td class="num mute sep-l">—</td><td class="num">4.210,00</td><td class="num mute">—</td><td class="num">3.480,75</td><td class="num">12,00</td><td class="num mute">—</td><td class="num tot neg">7.702,75</td><td class="num sep-l">172.771,05</td><td class="num">172.771,05</td><td class="num">0,00</td><td style="text-align:center"><span class="fecha ok">✓</span></td></tr>
+                  <tr><td>qua 23/09</td><td class="num mute">—</td><td class="num">7.130,40</td><td class="num">11.002,00</td><td class="num">2.500,00</td><td class="num tot pos">20.632,40</td><td class="num mute sep-l">—</td><td class="num">12.450,00</td><td class="num mute">—</td><td class="num mute">—</td><td class="num mute">—</td><td class="num">85,00</td><td class="num tot neg">12.535,00</td><td class="num sep-l">180.868,45</td><td class="num">180.868,45</td><td class="num">0,00</td><td style="text-align:center"><span class="fecha ok">✓</span></td></tr>
+                  <tr><td>qui 24/09</td><td class="num mute">—</td><td class="num">5.980,00</td><td class="num">10.450,30</td><td class="num mute">—</td><td class="num tot pos">16.430,30</td><td class="num mute sep-l">—</td><td class="num">6.320,00</td><td class="num">18.600,00</td><td class="num mute">—</td><td class="num">29,90</td><td class="num mute">—</td><td class="num tot neg">24.949,90</td><td class="num sep-l">172.348,85</td><td class="num">172.348,85</td><td class="num">0,00</td><td style="text-align:center"><span class="fecha ok">✓</span></td></tr>
+                  <tr><td>sex 25/09</td><td class="num mute">—</td><td class="num">9.215,00</td><td class="num">13.804,60</td><td class="num">4.200,00</td><td class="num tot pos">27.219,60</td><td class="num sep-l">450,00</td><td class="num">8.740,00</td><td class="num mute">—</td><td class="num">1.455,32</td><td class="num mute">—</td><td class="num">210,00</td><td class="num tot neg">10.855,32</td><td class="num sep-l">188.713,13</td><td class="num">188.263,13</td><td class="num neg">−450,00</td><td style="text-align:center"><span class="fecha alerta" title="Diferença real — 1 lançamento em 'A revisar'">⚠</span></td></tr>
+                  <tr><td>sáb 26/09</td><td class="num mute">—</td><td class="num mute">—</td><td class="num mute">—</td><td class="num mute">—</td><td class="num mute">—</td><td class="num mute sep-l">—</td><td class="num mute">—</td><td class="num mute">—</td><td class="num mute">—</td><td class="num mute">—</td><td class="num mute">—</td><td class="num mute">—</td><td class="num mute sep-l">—</td><td class="num mute">—</td><td class="num mute">—</td><td style="text-align:center"><span class="fecha sem" title="Sem extrato ainda — não dá pra saber">—</span></td></tr>
+                  <tr class="linha-total"><td>Período</td><td class="num">1.200,00</td><td class="num">36.450,40</td><td class="num">57.441,60</td><td class="num">9.700,00</td><td class="num pos">104.792,00</td><td class="num sep-l">450,00</td><td class="num">41.590,00</td><td class="num">18.600,00</td><td class="num">4.936,07</td><td class="num">87,80</td><td class="num">415,00</td><td class="num neg">66.078,87</td><td class="num sep-l">188.713,13</td><td class="num">188.263,13</td><td class="num neg">−450,00</td><td></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="nota">Saldo calculado = saldo do dia anterior + entradas − saídas. A <b>Diferença</b> compara com a soma dos saldos reais dos bancos: ✓ fecha · ⚠ diferença real (aqui, R$ 450,00 num lançamento ainda "A revisar") · — sem extrato ainda (não é a mesma coisa que "não fechou"). <b>A revisar</b> reúne o que ainda não foi categorizado e entra no total do dia. Transferência entre contas e aplicação automática não viram coluna, mas entram no saldo. Coluna com total zero no período some sozinha.</p>
+          </div>
+
+          <div class="card">
+            <div class="section-head"><h2>Fechamento mensal</h2><span class="text-mute" style="font-size:13px">saldo final de cada mês</span></div>
+            <div class="resumo-grid">
+              <div class="resumo-item"><small>Julho/2026</small><b>R$ 131.240,18</b></div>
+              <div class="resumo-item"><small>Agosto/2026</small><b>R$ 144.905,62</b></div>
+              <div class="resumo-item"><small>Setembro/2026 (até 25/09)</small><b>R$ 188.713,13</b></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ---------- Lançamentos (agrupado + paginado) ---------- -->
+        <div data-vista-pg="lanc" hidden>
+          <div class="card">
+            <div class="tbl-wrap">
+              <table class="tbl tbl--compacta">
+                <thead><tr><th></th><th>Data</th><th>Lançamento</th><th>Banco</th><th>Tipo</th><th class="num">Valor</th><th>Observação</th></tr></thead>
+                <tbody id="tblLanc">
+                  <tr class="grupo-row"><td><button class="expand" data-alvo="g1">+</button></td><td>25/09</td><td>Recebimento Pix <span class="badge badge--neutral">38</span></td><td>Banco Aurora</td><td><span class="badge badge--green">Receita</span></td><td class="num pos">+9.215,00</td><td class="mute">—</td></tr>
+                  <tr class="filho" data-grupo="g1" hidden><td></td><td>25/09</td><td>JOAO P SILVA</td><td>Banco Aurora</td><td></td><td class="num pos">+180,00</td><td class="mute">descrição limpa na tela</td></tr>
+                  <tr class="filho" data-grupo="g1" hidden><td></td><td>25/09</td><td>MARIA F COSTA</td><td>Banco Aurora</td><td></td><td class="num pos">+95,50</td><td class="mute"></td></tr>
+                  <tr class="filho" data-grupo="g1" hidden><td></td><td>25/09</td><td class="mute">… mais 36</td><td></td><td></td><td></td><td></td></tr>
+                  <tr class="grupo-row"><td><button class="expand">+</button></td><td>25/09</td><td>Cartões <span class="badge badge--neutral">12</span></td><td>Banco Horizonte</td><td><span class="badge badge--green">Receita</span></td><td class="num pos">+13.804,60</td><td class="mute">—</td></tr>
+                  <tr class="grupo-row"><td><button class="expand">+</button></td><td>25/09</td><td>Fornecedores <span class="badge badge--neutral">4</span></td><td>Banco Aurora</td><td><span class="badge badge--red">Despesa</span></td><td class="num neg">−8.740,00</td><td class="mute">—</td></tr>
+                  <tr class="grupo-row"><td><button class="expand">+</button></td><td>25/09</td><td>Devolução Pix <span class="badge badge--neutral">2</span></td><td>Banco Aurora</td><td><span class="badge badge--red">Despesa</span></td><td class="num neg">−210,00</td><td class="mute">—</td></tr>
+                  <tr class="grupo-row"><td><button class="expand">+</button></td><td>24/09</td><td>Transferência entre contas <span class="badge badge--neutral">2</span></td><td>Aurora → Horizonte</td><td><span class="badge" style="background:rgba(var(--cyan-rgb),.14);color:var(--cyan)">Neutro</span></td><td class="num">20.000,00</td><td class="mute">pareada ✓</td></tr>
+                  <tr class="grupo-row"><td><button class="expand">+</button></td><td>24/09</td><td>Folha <span class="badge badge--neutral">9</span></td><td>Banco Horizonte</td><td><span class="badge badge--red">Despesa</span></td><td class="num neg">−18.600,00</td><td class="mute">—</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="totais-rodape"><span>Receita <b style="color:var(--green)">R$ 104.792,00</b></span><span>Despesa <b style="color:var(--red)">R$ 66.078,87</b></span><span>Resultado <b>R$ 38.713,13</b></span><span class="mute">totais do filtro inteiro — não só desta página</span></div>
+            <div class="paginador"><span>1–100 de 3.214 lançamentos</span><div class="pag"><a class="btn btn--soft">‹ Anterior</a><a class="btn btn--soft">1</a><a class="btn btn--secondary btn--sm">2</a><a class="btn btn--soft">3</a><span>…</span><a class="btn btn--soft">33</a><a class="btn btn--soft">Próxima ›</a></div></div>
+          </div>
+        </div>
+
+        <!-- ---------- Planejado (fonte de dado em aberto) ---------- -->
+        <div data-planejado hidden>
+          <div class="card"><div class="empty-state"><span class="ic">◧</span><h3>Planejado ainda sem fonte de dado</h3><p>Decisão de escopo em aberto desde 31/07 — a tela continua como molde.</p></div></div>
+        </div>
+      </section>
+
+      <!-- ============================ TRANSFERÊNCIAS ============================ -->
+      <section data-pg="transferencias" hidden>
+        <div class="kpi-grid">
+          <div class="card kpi-card green"><div class="kpi-label">Pareadas</div><div class="kpi-value">2</div><div class="kpi-note">as duas pernas achadas e neutralizadas</div></div>
+          <div class="card kpi-card amber"><div class="kpi-label">Sugeridas</div><div class="kpi-value">1</div><div class="kpi-note">esperando você confirmar</div></div>
+          <div class="card kpi-card red"><div class="kpi-label">Sem par</div><div class="kpi-value">R$ 8.400,00</div><div class="kpi-note">1 transferência não se anula ainda</div></div>
+          <div class="card kpi-card"><div class="kpi-label">Critério</div><div class="kpi-value" style="font-size:15px;line-height:1.5">valor + data + instrumento</div><div class="kpi-note">nunca por texto da descrição</div></div>
+        </div>
+        <div class="card">
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead><tr><th>Data</th><th>Saiu de</th><th>Entrou em</th><th class="num">Valor</th><th>Instrumento</th><th>Situação</th><th></th></tr></thead>
+              <tbody>
+                <tr><td>24/09</td><td>Banco Aurora</td><td>Banco Horizonte</td><td class="num">20.000,00</td><td>TED</td><td><span class="badge badge--green">pareada</span></td><td></td></tr>
+                <tr><td>22/09</td><td>Coop. Vale Norte</td><td>Banco Aurora</td><td class="num">5.000,00</td><td>Pix</td><td><span class="badge badge--green">pareada</span></td><td></td></tr>
+                <tr><td>25/09 → 26/09</td><td>Banco Horizonte</td><td>Coop. Vale Norte</td><td class="num">3.500,00</td><td>Pix</td><td><span class="badge badge--amber">sugerida · 1 dia de diferença</span></td><td><button class="btn btn--primary btn--sm">Confirmar</button> <button class="btn btn--ghost btn--sm">Não é</button></td></tr>
+                <tr><td>23/09</td><td>Banco Aurora</td><td class="mute">— sem par</td><td class="num">8.400,00</td><td>TED</td><td><span class="badge badge--red">sem par</span></td><td class="mute" style="font-size:12.5px">a outra perna não está em nenhum extrato importado</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="nota">Confirmar um par categoriza as duas pernas como "Transferência entre contas" pela mesma via auditada que o Assistente já usa — nunca um UPDATE cru.</p>
+        </div>
+      </section>
+
+      <!-- ============================ IMPORTAR ============================ -->
+      <section data-pg="importar" hidden>
+        <div class="card" style="margin-bottom:16px">
+          <div class="section-head"><h2>Importar extrato</h2></div>
+          <div class="filters-row">
+            <div class="field"><label>Conta</label><select class="input"><option>Banco Aurora</option></select></div>
+            <div class="field" style="min-width:260px"><label>Arquivo (OFX, CSV, XLS, PDF — até 20 MB)</label><input class="input" value="extrato_setembro.ofx"></div>
+            <button class="btn btn--primary">Importar</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="section-head"><h2>Importações recentes</h2></div>
+          <div class="tbl-wrap">
+            <table class="tbl tbl--compacta">
+              <thead><tr><th>Quando</th><th>Conta</th><th class="num">Lidas</th><th class="num">Gravadas</th><th class="num">Duplicadas</th><th>Confiança</th><th>Checksum</th><th>Detalhe</th></tr></thead>
+              <tbody>
+                <tr><td>25/09 18:40</td><td>Banco Aurora</td><td class="num">412</td><td class="num">412</td><td class="num">0</td><td>100%</td><td><span class="badge badge--neutral">sem saldo</span></td><td class="mute">412 de 412 transações lidas</td></tr>
+                <tr><td>25/09 18:38</td><td>Banco Horizonte</td><td class="num">288</td><td class="num">286</td><td class="num">2</td><td>100%</td><td><span class="badge badge--green">ok</span></td><td class="mute">288 de 288 transações lidas</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="nota"><b>Confiança</b> mede se o leitor entendeu o formato (OFX é estruturado: sempre 100%) — não mede cobertura. Quem prova que nenhuma transação ficou de fora é a coluna <b>Detalhe</b> (blocos do arquivo × linhas lidas).</p>
+        </div>
+      </section>
+
+      <!-- ============================ ASSISTENTE ============================ -->
+      <section data-pg="assistente" hidden>
+        <div class="card" style="margin-bottom:16px">
+          <div class="chat-shell">
+            <div class="chat-thread" id="chatThread" style="min-height:220px">
+              <div class="chat-msg chat-msg--usuario"><div class="chat-bubble">Quanto entrou esse mês?</div><div class="chat-hora">14:02</div></div>
+              <div class="chat-msg chat-msg--assistente"><div class="chat-bubble">Receita em setembro/2026: R$ 412.870,40.</div><div class="chat-hora">14:02</div></div>
+              <div class="chat-msg chat-msg--usuario"><div class="chat-bubble">e em agosto?</div><div class="chat-hora">14:03</div></div>
+              <div class="chat-msg chat-msg--assistente"><div class="chat-bubble">Receita em agosto/2026: R$ 398.114,07.</div><div class="chat-hora">14:03</div></div>
+            </div>
+            <form class="chat-form" onsubmit="return mk.perguntar(this.q.value)"><input name="q" class="input" placeholder="Pergunte sobre suas finanças…"><button class="btn btn--primary">Enviar</button></form>
+            <div class="chat-disc">🔒 Calculado localmente, a partir dos seus lançamentos — nada sai deste servidor.</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="section-head"><h2>🔎 Análises</h2><span class="badge badge--neutral">4 observações</span></div>
+          <div class="ia-lista">
+            <div class="ia-item"><div class="ia-ic">🏷️</div><div class="ia-corpo"><div class="ia-tt-row"><span class="ia-tt">3 lançamento(s) parecem ser Fornecedores</span><span class="badge badge--amber">sugestão</span></div><div class="ia-ds">A descrição tem "atlas", mesmo padrão de lançamentos já categorizados como Fornecedores. Soma: R$ 2.940,00.</div><div class="ia-acoes"><button class="btn btn--primary btn--sm">Marcar como Fornecedores</button><button class="btn btn--ghost btn--sm">Dispensar</button></div></div></div>
+            <div class="ia-item"><div class="ia-ic">⚠️</div><div class="ia-corpo"><div class="ia-tt-row"><span class="ia-tt">2 possíveis cobranças duplicadas</span><span class="badge badge--amber">aviso</span></div><div class="ia-ds">R$ 1.290,00 em 22/09 e 23/09, Banco Horizonte.</div></div></div>
+          </div>
+          <p class="nota">Aplicar uma sugestão continua em 2 passos no servidor (mostra "Confirmar"/"Cancelar") — nunca o <code>confirm()</code> do navegador, que trava a verificação automática.</p>
+        </div>
+      </section>
+
+      <!-- ============================ CONFIGURAÇÕES (hub) ============================ -->
+      <section data-pg="configuracoes" hidden>
+        <div class="cfg-sec">
+          <h2>Minha conta</h2>
+          <div class="card">
+            <div class="conta-row"><div class="l"><b>Verificação em duas etapas</b><span>Ativada · 7 de 10 códigos de recuperação restantes</span></div><div class="flex gap-2"><button class="btn btn--soft">Gerar novos códigos</button><button class="btn btn--ghost btn--sm">Desativar</button></div></div>
+            <div class="conta-row"><div class="l"><b>Senha</b><span>Troque quando quiser, sem precisar esperar pedirem</span></div><button class="btn btn--soft">Trocar senha</button></div>
+            <div class="conta-row"><div class="l"><b>Tema</b><span>Salvo na sua conta — vale em qualquer aparelho</span></div><div class="theme-switch"><button data-tema="light">☀</button><button data-tema="dark" class="on">☾</button></div></div>
+          </div>
+        </div>
+        <div class="cfg-sec">
+          <h2>Administração <span class="badge badge--neutral" style="margin-left:6px">só ADM</span></h2>
+          <div class="cfg-grid">
+            <a class="card card--interactive cfg-tile"><span class="nav-badge">⛁</span><div><b>Contas bancárias</b><span>Cadastro de contas bancárias</span></div></a>
+            <a class="card card--interactive cfg-tile"><span class="nav-badge">◎</span><div><b>Usuários</b><span>Cadastro de usuários e perfis</span></div></a>
+            <a class="card card--interactive cfg-tile" onclick="mk.go('aparelhos')"><span class="nav-badge">📱</span><div><b>Aparelhos</b><span>Aprovar ou revogar aparelhos</span></div></a>
+            <a class="card card--interactive cfg-tile" onclick="mk.go('permissoes')"><span class="nav-badge">🛡</span><div><b>Permissões</b><span>O que Operador e Visualizador veem</span></div></a>
+            <a class="card card--interactive cfg-tile" onclick="mk.go('auditoria')"><span class="nav-badge">▥</span><div><b>Auditoria</b><span>Trilha de mudanças e Vigia de acesso</span></div></a>
+            <a class="card card--interactive cfg-tile" onclick="mk.go('saude')"><span class="nav-badge">🩺</span><div><b>Saúde do sistema</b><span>Processos, banco, backups e fila</span></div></a>
+          </div>
+        </div>
+        <div class="cfg-sec">
+          <h2>Gestão</h2>
+          <div class="cfg-grid">
+            <a class="card card--interactive cfg-tile"><span class="nav-badge">▤</span><div><b>Categorias</b><span>Categorias de receita e despesa</span></div></a>
+            <a class="card card--interactive cfg-tile"><span class="nav-badge">🔔</span><div><b>Agentes de alerta</b><span>Regras de alerta automático</span></div></a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================ PERMISSÕES ============================ -->
+      <section data-pg="permissoes" hidden>
+        <div class="card">
+          <div class="section-head"><h2>Quem vê o quê</h2><span class="badge badge--neutral">sem marcação = sem acesso</span></div>
+          <div class="tbl-wrap">
+            <table class="tbl perm">
+              <thead><tr><th>Tela</th><th class="ck">Operador</th><th class="ck">Visualizador</th></tr></thead>
+              <tbody>
+                <tr><td>Dashboard</td><td class="ck"><input type="checkbox" checked></td><td class="ck"><input type="checkbox" checked></td></tr>
+                <tr><td>Fluxo de caixa</td><td class="ck"><input type="checkbox" checked></td><td class="ck"><input type="checkbox" checked></td></tr>
+                <tr><td>Assistente</td><td class="ck"><input type="checkbox" checked></td><td class="ck"><input type="checkbox" checked></td></tr>
+                <tr><td>Transferências</td><td class="ck"><input type="checkbox" checked></td><td class="ck"><input type="checkbox"></td></tr>
+                <tr><td>Importar extrato</td><td class="ck"><input type="checkbox" checked></td><td class="ck"><input type="checkbox"></td></tr>
+                <tr><td>Gestão <span class="mute">(categorias, agentes)</span></td><td class="ck"><input type="checkbox" checked></td><td class="ck"><input type="checkbox"></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="flex gap-2" style="margin-top:14px;justify-content:flex-end"><button class="btn btn--primary" onclick="this.textContent='✓ Salvo e auditado'">Salvar</button></div>
+          <p class="nota"><b>ADM</b> sempre tem acesso total — não aparece aqui de propósito (não existe risco de o administrador se trancar fora). <b>Home</b> nunca é bloqueada: é a porta de entrada de todo perfil. <b>Administração</b> (contas, usuários, aparelhos, permissões, auditoria, saúde do sistema) é sempre só do ADM. Visualizador nunca edita nada, mesmo que veja a tela.</p>
+        </div>
+      </section>
+
+      <!-- ============================ APARELHOS ============================ -->
+      <section data-pg="aparelhos" hidden>
+        <div class="card" style="margin-bottom:16px">
+          <div class="section-head"><h2>Aguardando liberação</h2><span class="badge badge--amber">1</span></div>
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead><tr><th>Aparelho</th><th>Usuário</th><th>IP</th><th>Pedido em</th><th></th></tr></thead>
+              <tbody><tr><td>Chrome · Android</td><td>Ana Souza <span class="badge badge--neutral">Operador</span></td><td>10.0.0.23</td><td>hoje, 09:12</td><td><button class="btn btn--primary btn--sm">Liberar</button> <button class="btn btn--ghost btn--sm">Recusar</button></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="section-head"><h2>Liberados</h2><span class="badge badge--neutral">2</span></div>
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead><tr><th>Aparelho</th><th>Usuário</th><th>Liberado por</th><th>Último uso</th><th></th></tr></thead>
+              <tbody>
+                <tr><td>Edge · Windows <span class="badge badge--green">este aparelho</span></td><td>Eduardo <span class="badge badge--neutral">ADM</span></td><td>automático (1º do sistema)</td><td>agora</td><td><button class="btn btn--ghost btn--sm" disabled title="Não dá pra revogar o aparelho em uso">Revogar</button></td></tr>
+                <tr><td>Chrome · Windows</td><td>Carlos Lima <span class="badge badge--neutral">Visualizador</span></td><td>automático (código 2FA certo)</td><td>ontem, 17:40</td><td><button class="btn btn--ghost btn--sm">Revogar</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="nota">Perdeu o acesso? No computador do servidor, um script de liberação por e-mail — sem senha nenhuma, a "chave" é estar na máquina.</p>
+        </div>
+      </section>
+
+      <!-- ============================ AUDITORIA + VIGIA ============================ -->
+      <section data-pg="auditoria" hidden>
+        <div class="theme-switch theme-switch--text abas" id="abasAud"><a data-aba="trilha">Trilha</a><a data-aba="vigia" class="on">Vigia de acesso</a></div>
+        <div data-aba-pg="vigia">
+          <div class="kpi-grid">
+            <div class="card kpi-card"><div class="kpi-label">Modo</div><div class="kpi-value" style="font-size:17px">observar</div><div class="kpi-note">1ª semana: registra, não bloqueia</div></div>
+            <div class="card kpi-card red"><div class="kpi-label">Varreduras (7 dias)</div><div class="kpi-value">353</div><div class="kpi-note">2 IPs de fora da rede</div></div>
+            <div class="card kpi-card amber"><div class="kpi-label">Logins falhos</div><div class="kpi-value">3</div><div class="kpi-note">todos de dentro da rede</div></div>
+            <div class="card kpi-card"><div class="kpi-label">Retenção</div><div class="kpi-value" style="font-size:17px">90 dias</div><div class="kpi-note">faxina automática</div></div>
+          </div>
+          <div class="card">
+            <div class="tbl-wrap">
+              <table class="tbl tbl--compacta">
+                <thead><tr><th>Quando</th><th>IP</th><th>Tipo</th><th>Rota</th><th>Navegador</th><th>Usuário</th><th class="num">Ocorrências</th></tr></thead>
+                <tbody>
+                  <tr><td>26/09 03:14</td><td>203.0.113.45</td><td><span class="badge badge--red">varredura</span></td><td>/wp-login.php</td><td>curl/8.4</td><td class="mute">—</td><td class="num">312</td></tr>
+                  <tr><td>26/09 02:58</td><td>203.0.113.45</td><td><span class="badge badge--neutral">rota inexistente</span></td><td>/.env</td><td>curl/8.4</td><td class="mute">—</td><td class="num">41</td></tr>
+                  <tr><td>25/09 18:02</td><td>10.0.0.31</td><td><span class="badge badge--amber">login falhou</span></td><td>/login</td><td>Chrome</td><td>Carlos Lima</td><td class="num">3</td></tr>
+                  <tr><td>25/09 09:12</td><td>10.0.0.23</td><td><span class="badge badge--amber">aparelho pendente</span></td><td>/home</td><td>Chrome Android</td><td>Ana Souza</td><td class="num">1</td></tr>
+                  <tr><td>24/09 09:05</td><td>198.51.100.7</td><td><span class="badge badge--amber">CSRF inválido</span></td><td>/categorias/salvar</td><td>Firefox</td><td class="mute">—</td><td class="num">1</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="nota">Quem ataca recebe exatamente a mesma resposta de sempre (404 canônico, mesmo redirect) — nunca descobre que foi visto. Loopback nunca é bloqueado, IP com sessão válida recente é imune, e <code>/login</code> e <code>/saude</code> ficam sempre alcançáveis.</p>
+          </div>
+        </div>
+        <div data-aba-pg="trilha" hidden>
+          <div class="card"><div class="tbl-wrap"><table class="tbl tbl--compacta">
+            <thead><tr><th>Quando</th><th>Usuário</th><th>Ação</th><th>Entidade</th><th>O que mudou</th></tr></thead>
+            <tbody>
+              <tr><td>26/09 10:14</td><td>Eduardo</td><td>editar</td><td>permissoes_tela</td><td class="mute">Visualizador · transferencias: sim → não</td></tr>
+              <tr><td>26/09 09:30</td><td>Eduardo</td><td>aprovar_aparelho</td><td>dispositivos #7</td><td class="mute">Carlos Lima · Chrome · Windows</td></tr>
+              <tr><td>25/09 18:41</td><td>Ana Souza</td><td>importar</td><td>importacoes #88</td><td class="mute">412 lidas, 412 gravadas</td></tr>
+            </tbody></table></div></div>
+        </div>
+      </section>
+
+      <!-- ============================ SAÚDE DO SISTEMA ============================ -->
+      <section data-pg="saude" hidden>
+        <div class="kpi-grid">
+          <div class="card kpi-card green"><div class="kpi-label">Processos</div><div class="kpi-value" style="font-size:17px">no ar</div><div class="kpi-note">servidor respondendo em /saude</div></div>
+          <div class="card kpi-card green"><div class="kpi-label">Banco</div><div class="kpi-value" style="font-size:17px">íntegro</div><div class="kpi-note">verificação de integridade ok</div></div>
+          <div class="card kpi-card green"><div class="kpi-label">Backups</div><div class="kpi-value" style="font-size:17px">em dia</div><div class="kpi-note">último: hoje, 02:00</div></div>
+          <div class="card kpi-card"><div class="kpi-label">Fila</div><div class="kpi-value" style="font-size:17px">vazia</div><div class="kpi-note">nada esperando processamento</div></div>
+        </div>
+        <p class="nota">Painel ilustrativo (dados fictícios): mostra o que a tela cobre — processos, banco, backups e fila — e não o layout final.</p>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<div id="navTooltip"></div>
+
+<!-- Barra do mockup (não faz parte do app) -->
+<div class="mk-dock">
+  <span class="mk-txt">Mockup Fase 2 · dados fictícios</span>
+  <div class="theme-switch theme-switch--text"><a id="mkLogin">Entrada</a><a id="mkApp" class="on">App</a></div>
+  <a class="link-discreto" id="mkReabrirHome" style="font-size:12px" title="No app de verdade, só recarregar a página faz isto">↻ Home</a>
+  <div class="theme-switch"><button data-tema="light" title="Tema claro">☀</button><button data-tema="dark" title="Tema escuro" class="on">☾</button></div>
+</div>
+
+<script>
+(function () {
+  var TITULOS = {
+    dashboard: 'Dashboard', fluxo: 'Fluxo de caixa', transferencias: 'Transferências',
+    importar: 'Importar extrato', assistente: 'Assistente', configuracoes: 'Configurações',
+    permissoes: 'Permissões', aparelhos: 'Aparelhos', auditoria: 'Auditoria', saude: 'Saúde do sistema'
+  };
+  var DE_CONFIG = { permissoes: 1, aparelhos: 1, auditoria: 1, saude: 1 };
+  var shell = document.getElementById('appShell');
+  var login = document.getElementById('scr-login');
+  var guardar = function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} };
+  var ler = function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } };
+
+  function tema(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    document.querySelectorAll('[data-tema]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-tema') === t); });
+    guardar('mk-tema', t);
+  }
+
+  function extra(pg) {
+    var el = document.getElementById('pgExtra');
+    if (pg === 'fluxo') {
+      el.innerHTML = '<div class="theme-switch theme-switch--text" id="rpSwitch"><a data-rp="real" class="on">Realizado</a><a data-rp="plan">Planejado</a></div>';
+      el.querySelectorAll('[data-rp]').forEach(function (a) {
+        a.onclick = function () {
+          el.querySelectorAll('[data-rp]').forEach(function (x) { x.classList.toggle('on', x === a); });
+          var plan = a.getAttribute('data-rp') === 'plan';
+          document.querySelector('[data-planejado]').hidden = !plan;
+          document.querySelectorAll('[data-vista-pg],.vista-bar').forEach(function (x) { x.hidden = plan; });
+          if (!plan) vista(document.querySelector('#vistaSwitch .on').getAttribute('data-vista'));
+        };
+      });
+    } else if (DE_CONFIG[pg]) {
+      el.innerHTML = '<a class="voltar-cfg" href="#" onclick="mk.go(\'configuracoes\');return false">← Configurações</a>';
+    } else { el.innerHTML = ''; }
+  }
+
+  function go(pg) {
+    document.querySelectorAll('[data-pg]').forEach(function (s) { s.hidden = s.getAttribute('data-pg') !== pg; });
+    document.querySelectorAll('.navlink').forEach(function (a) { a.classList.toggle('active', a.getAttribute('data-page') === pg); });
+    document.getElementById('pgTitle').textContent = TITULOS[pg] || pg;
+    extra(pg);
+    document.getElementById('userMenu').classList.remove('open');
+    window.scrollTo(0, 0);
+    // Home não é destino de navegação: navegar pra qualquer tela fecha o painel.
+    var hm = document.getElementById('hmDlg');
+    if (hm && hm.open) hm.close();
+  }
+
+  function abrirHome() {
+    var hm = document.getElementById('hmDlg');
+    if (hm && !hm.open) try { hm.showModal(); } catch (e) {}
+  }
+
+  function vista(v) {
+    document.querySelectorAll('#vistaSwitch [data-vista]').forEach(function (a) { a.classList.toggle('on', a.getAttribute('data-vista') === v); });
+    document.querySelectorAll('[data-vista-pg]').forEach(function (d) { d.hidden = d.getAttribute('data-vista-pg') !== v; });
+    document.querySelectorAll('[data-so]').forEach(function (d) { d.hidden = d.getAttribute('data-so') !== v; });
+  }
+
+  function loginEstado(e) {
+    document.querySelectorAll('[data-login]').forEach(function (d) { d.hidden = d.getAttribute('data-login') !== e; });
+    document.querySelectorAll('#loginSteps [data-go]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-go') === e); });
+    return false;
+  }
+
+  function mostrar(app) {
+    shell.hidden = !app; login.hidden = app;
+    document.getElementById('mkApp').classList.toggle('on', app);
+    document.getElementById('mkLogin').classList.toggle('on', !app);
+  }
+
+  function perguntar(q) {
+    q = (q || '').trim(); if (!q) return false;
+    var t = document.getElementById('chatThread');
+    var h = new Date(); var hh = ('0' + h.getHours()).slice(-2) + ':' + ('0' + h.getMinutes()).slice(-2);
+    var u = document.createElement('div'); u.className = 'chat-msg chat-msg--usuario';
+    var ub = document.createElement('div'); ub.className = 'chat-bubble'; ub.textContent = q; u.appendChild(ub);
+    var a = document.createElement('div'); a.className = 'chat-msg chat-msg--assistente';
+    var ab = document.createElement('div'); ab.className = 'chat-bubble'; ab.textContent = '(mockup) A resposta sai do motor local, com o número real dos lançamentos.'; a.appendChild(ab);
+    [u, a].forEach(function (m) { var hr = document.createElement('div'); hr.className = 'chat-hora'; hr.textContent = hh; m.appendChild(hr); t.appendChild(m); });
+    t.scrollTop = t.scrollHeight;
+    document.querySelectorAll('.chat-form input').forEach(function (i) { i.value = ''; });
+    return false;
+  }
+
+  window.mk = {
+    go: function (p) { go(p); return false; },
+    login: function (e) { return loginEstado(e); },
+    entrar: function () { mostrar(true); go('dashboard'); abrirHome(); return false; },
+    sair: function () { loginEstado('senha'); mostrar(false); },
+    perguntar: perguntar
+  };
+
+  document.querySelectorAll('.navlink').forEach(function (a) { a.onclick = function () { go(a.getAttribute('data-page')); }; });
+  document.querySelectorAll('#vistaSwitch [data-vista]').forEach(function (a) { a.onclick = function () { vista(a.getAttribute('data-vista')); }; });
+  document.querySelectorAll('#loginSteps [data-go]').forEach(function (b) { b.onclick = function () { loginEstado(b.getAttribute('data-go')); }; });
+  document.querySelectorAll('#abasAud [data-aba]').forEach(function (a) {
+    a.onclick = function () {
+      document.querySelectorAll('#abasAud [data-aba]').forEach(function (x) { x.classList.toggle('on', x === a); });
+      document.querySelectorAll('[data-aba-pg]').forEach(function (d) { d.hidden = d.getAttribute('data-aba-pg') !== a.getAttribute('data-aba'); });
+    };
+  });
+  document.querySelectorAll('.expand[data-alvo]').forEach(function (b) {
+    b.onclick = function () {
+      var abrir = b.textContent === '+'; b.textContent = abrir ? '−' : '+';
+      document.querySelectorAll('[data-grupo="' + b.getAttribute('data-alvo') + '"]').forEach(function (r) { r.hidden = !abrir; });
+    };
+  });
+  document.querySelectorAll('[data-tema]').forEach(function (b) { b.onclick = function () { tema(b.getAttribute('data-tema')); }; });
+  document.getElementById('mkLogin').onclick = function () { mostrar(false); };
+  document.getElementById('mkApp').onclick = function () { mostrar(true); };
+
+  document.getElementById('iaInput').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { var q = this.value; this.value = ''; go('assistente'); perguntar(q); }
+  });
+
+  document.getElementById('brandToggle').onclick = function () {
+    shell.classList.toggle('sidebar-collapsed');
+    guardar('mk-sidebar', shell.classList.contains('sidebar-collapsed') ? '1' : '0');
+  };
+  if (ler('mk-sidebar') === '0') shell.classList.remove('sidebar-collapsed');
+
+  var tip = document.getElementById('navTooltip');
+  document.querySelectorAll('.navlink').forEach(function (a) {
+    a.addEventListener('mouseenter', function () {
+      var recolhida = shell.classList.contains('sidebar-collapsed') || window.innerWidth <= 780;
+      if (!recolhida) return;
+      var r = a.getBoundingClientRect();
+      tip.textContent = a.getAttribute('data-label');
+      tip.style.left = (r.right + 10) + 'px'; tip.style.top = (r.top + r.height / 2 - 14) + 'px';
+      tip.classList.add('on');
+    });
+    a.addEventListener('mouseleave', function () { tip.classList.remove('on'); });
+  });
+
+  document.addEventListener('click', function (e) {
+    var m = document.getElementById('userMenu');
+    if (m && !m.contains(e.target)) m.classList.remove('open');
+  });
+
+  var hmDlg = document.getElementById('hmDlg');
+  hmDlg.addEventListener('click', function (e) { if (e.target === hmDlg) hmDlg.close(); });
+  document.getElementById('mkReabrirHome').onclick = abrirHome;
+
+  tema(ler('mk-tema') || 'dark');
+  mostrar(true);
+  go('dashboard');
+  abrirHome();
+})();
+</script>
+</body>
+</html>

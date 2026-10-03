@@ -100,6 +100,18 @@ const d = projeto.data;
       <div class="mt-8 flex flex-wrap items-center gap-x-8 gap-y-2">
         <span class="label-tec">{formatarPeriodo(d.inicio, d.fim, d.precisaoInicio)}</span>
         {
+          d.links.demo && (
+            <a
+              href={d.links.demo}
+              class="label-tec text-accent transition-opacity hover:opacity-70"
+              target="_blank"
+              rel="noopener"
+            >
+              Abrir o mockup completo →
+            </a>
+          )
+        }
+        {
           d.links.github && (
             <a
               href={d.links.github}
@@ -118,14 +130,18 @@ const d = projeto.data;
     </div>
 
     {
-      d.links.doc && (
-        <div class="mt-12 max-w-2xl border-t border-rule pt-8">
-          <a
-            href={d.links.doc}
-            class="btn-rede inline-flex w-auto gap-2 px-4 py-2.5"
-          >
-            Política de Privacidade →
-          </a>
+      (d.links.doc || d.links.termos) && (
+        <div class="mt-12 flex max-w-2xl flex-wrap gap-3 border-t border-rule pt-8">
+          {d.links.doc && (
+            <a href={d.links.doc} class="btn-rede inline-flex w-auto gap-2 px-4 py-2.5">
+              Política de Privacidade →
+            </a>
+          )}
+          {d.links.termos && (
+            <a href={d.links.termos} class="btn-rede inline-flex w-auto gap-2 px-4 py-2.5">
+              Termos de Uso →
+            </a>
+          )}
         </div>
       )
     }

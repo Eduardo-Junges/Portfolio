@@ -17,12 +17,13 @@ autoriaDetalhe: >-
 inicio: 2026-08-01
 status: 'ativo'
 estadoAtual: >-
-  Login com três perfis, motor de leitura de extrato herdado do Nexus Analytics, tela de Fluxo
-  de Caixa Realizado rodando com dado de verdade, dashboard com os indicadores principais e um
-  conjunto de módulos de IA determinística — assistente de perguntas, sugestão de
-  categorização, revisão de lançamento e alertas configuráveis pelo próprio usuário. 254 testes
-  automatizados. Ainda não entrou o primeiro extrato real de banco nem a primeira categoria —
-  isso é o próximo passo.
+  Login com três perfis, verificação em duas etapas e liberação de aparelho, motor de leitura de
+  extrato herdado do Nexus Analytics e Fluxo de Caixa Realizado rodando com dado de verdade — com
+  fechamento dia a dia que compara o saldo calculado com o saldo dos bancos e aponta onde há
+  diferença. Configurações reúne administração (contas, usuários, aparelhos, permissões,
+  auditoria, saúde do sistema) e gestão (categorias, alertas), ao lado de um conjunto de módulos
+  de IA determinística. 254 testes automatizados. Ainda não entrou o primeiro extrato real de
+  banco — isso é o próximo passo.
 ferramentas:
   - 'Python'
   - 'FastHTML'
@@ -31,6 +32,8 @@ ferramentas:
   - 'SQLite'
   - 'pytest'
 destaque: true
+links:
+  demo: '/mockups/nexus-pj.html'
 ---
 
 ## O problema
@@ -63,6 +66,47 @@ texto, sugestões de categorização quando duas descrições parecidas caíram 
 diferentes, revisão de lançamento fora do padrão e alertas que o próprio usuário configura —
 teto de gasto, termo pra vigiar no extrato, saldo mínimo de conta. 254 testes automatizados
 cobrem tudo isso.
+
+## Fechamento dia a dia
+
+A tela de Fluxo de Caixa tem duas leituras do mesmo extrato: **Lançamentos**, linha a linha, e
+**Consolidado**, que fecha o dia. No Consolidado cada dia mostra entradas e saídas por
+categoria, o saldo que o sistema calculou e o saldo que os bancos de fato informam — e a
+diferença entre os dois.
+
+Duas decisões nessa tela vieram de insistir em não esconder nada:
+
+**A revisar vira coluna, não rodapé.** O que ainda não foi categorizado entra no total do dia
+em vez de ficar fora dele. Assim o saldo calculado fecha com o extrato mesmo antes da
+categorização estar completa, e a pendência aparece onde ela custa — na conta.
+
+**Sem extrato não é o mesmo que não fechou.** Dia sem extrato importado mostra um traço, não
+uma diferença. Marcar como erro o que é só falta de dado ensinaria a ignorar o alerta que
+importa.
+
+O agrupamento do período também é escolha de quem usa: hoje o padrão é por dia.
+
+## Quem entra e de onde
+
+Acesso é a parte que mais mudou desde a primeira versão. Além dos três perfis, cada usuário
+pode ligar a verificação em duas etapas, e o administrador aprova ou revoga aparelhos. Ele
+também define, tela por tela, o que Operador e Visualizador enxergam.
+
+Por baixo há uma trilha de auditoria — toda mudança de cadastro ou permissão fica registrada —
+e um vigia de acesso que registra varredura e tentativa de login falha sem avisar quem tentou
+que foi visto.
+
+## Mockup
+
+O desenho completo do produto — entrada com 2FA, painel de abertura, dashboard como hub de
+painéis, transferências com pareamento das duas pernas, importação, assistente, permissões,
+aparelhos e auditoria — está num mockup navegável, com dados fictícios, que serve de referência
+para a implementação.
+
+[Abrir o mockup completo →](/mockups/nexus-pj.html)
+
+O mockup é a **meta**, não o retrato do que já roda: parte do que ele desenha ainda não foi
+implementada, e a seção abaixo diz o que falta.
 
 ## Como virou produto
 
