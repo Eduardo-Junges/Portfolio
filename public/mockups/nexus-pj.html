@@ -539,7 +539,7 @@ img { max-width: 100%; }
           <div class="field" data-so="lanc" hidden><label>Tipo</label><select class="input"><option>Todos</option><option>Receita</option><option>Despesa</option><option>Neutro</option></select></div>
           <div class="field"><label>De</label><input class="input" type="date" value="2026-09-21"></div>
           <div class="field"><label>Até</label><input class="input" type="date" value="2026-09-26"></div>
-          <div class="field" data-so="cons"><label>Agrupar por</label><select class="input"><option>Dia</option></select></div>
+          <div class="field" data-so="cons"><label>Agrupar por</label><select class="input"><option>Dia</option><option>Semana</option><option>Mês</option><option>Trimestre</option><option>Ano</option></select></div>
           <button class="btn btn--secondary btn--sm">Filtrar</button>
           <a class="btn btn--ghost btn--sm">Limpar</a>
         </div>
@@ -774,7 +774,7 @@ img { max-width: 100%; }
               </tbody>
             </table>
           </div>
-          <p class="nota">Perdeu o acesso? No computador do servidor: <code>.venv\Scripts\python scripts\liberar_aparelho.py --email …</code> — sem senha nenhuma, a "chave" é estar na máquina.</p>
+          <p class="nota">Perdeu o acesso? Um administrador libera o aparelho de novo, direto no servidor.</p>
         </div>
       </section>
 
@@ -783,7 +783,7 @@ img { max-width: 100%; }
         <div class="theme-switch theme-switch--text abas" id="abasAud"><a data-aba="trilha">Trilha</a><a data-aba="vigia" class="on">Vigia de acesso</a></div>
         <div data-aba-pg="vigia">
           <div class="kpi-grid">
-            <div class="card kpi-card"><div class="kpi-label">Modo</div><div class="kpi-value" style="font-size:17px">observar</div><div class="kpi-note">1ª semana: registra, não bloqueia</div></div>
+            <div class="card kpi-card"><div class="kpi-label">Modo</div><div class="kpi-value" style="font-size:17px">observar</div><div class="kpi-note">registra, não bloqueia</div></div>
             <div class="card kpi-card red"><div class="kpi-label">Varreduras (7 dias)</div><div class="kpi-value">353</div><div class="kpi-note">2 IPs de fora da rede</div></div>
             <div class="card kpi-card amber"><div class="kpi-label">Logins falhos</div><div class="kpi-value">3</div><div class="kpi-note">todos de dentro da rede</div></div>
             <div class="card kpi-card"><div class="kpi-label">Retenção</div><div class="kpi-value" style="font-size:17px">90 dias</div><div class="kpi-note">faxina automática</div></div>
@@ -801,7 +801,7 @@ img { max-width: 100%; }
                 </tbody>
               </table>
             </div>
-            <p class="nota">Quem ataca recebe exatamente a mesma resposta de sempre (404 canônico, mesmo redirect) — nunca descobre que foi visto. Loopback nunca é bloqueado, IP com sessão válida recente é imune, e <code>/login</code> e <code>/saude</code> ficam sempre alcançáveis.</p>
+            <p class="nota">Quem ataca recebe a mesma resposta de sempre — nunca descobre que foi visto.</p>
           </div>
         </div>
         <div data-aba-pg="trilha" hidden>
