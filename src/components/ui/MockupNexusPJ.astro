@@ -1,0 +1,60 @@
+---
+/**
+ * O mockup do Nexus & PJ, embutido no site.
+ *
+ * É o mesmo arquivo de `public/mockups/nexus-pj.html` — o link que se manda
+ * sozinho — carregado num iframe com `?embed`: sem a barra do mockup, sem a
+ * Home abrindo sozinha e com o tema acompanhando o alternador do site.
+ * Uma fonte só: mudou o mockup, mudou a demonstração. A reconstrução em React
+ * que existia aqui antes envelheceu justamente por ser uma cópia.
+ *
+ * O iframe é desenhado 25% maior e reduzido a 80%. No card do índice (~470px)
+ * o app aparece no layout estreito dele, com o menu recolhido; na página do
+ * projeto (~670px), já no layout de desktop — o mesmo que o app faz numa
+ * janela daquele tamanho.
+ */
+interface Props {
+  class?: string;
+}
+
+const { class: classe } = Astro.props;
+const SRC = '/mockups/nexus-pj.html';
+---
+
+<div class={classe}>
+  <div class="moldura">
+    <iframe
+      src={`${SRC}?embed`}
+      title="Nexus & PJ — mockup navegável, com dados fictícios"
+      loading="lazy"></iframe>
+  </div>
+  <a
+    href={SRC}
+    target="_blank"
+    rel="noopener"
+    class="label-tec mt-3 inline-flex items-center gap-1.5 text-accent transition-opacity hover:opacity-70"
+  >
+    Abrir em tela cheia <span aria-hidden="true">↗</span>
+  </a>
+</div>
+
+<style>
+  .moldura {
+    position: relative;
+    height: 34rem;
+    overflow: hidden;
+    border: 1px solid var(--color-rule-2);
+    border-radius: 0.5rem;
+  }
+
+  .moldura iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 125%;
+    height: 125%;
+    border: 0;
+    transform: scale(0.8);
+    transform-origin: 0 0;
+  }
+</style>

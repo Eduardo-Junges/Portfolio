@@ -2,7 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import PainelNexus from '../../components/islands/PainelNexus';
-import PainelCaixa from '../../components/islands/PainelCaixa';
+import MockupNexusPJ from '../../components/ui/MockupNexusPJ.astro';
 import { formatarPeriodo, rotuloAutoria, rotuloCategoria, rotuloContexto } from '../../lib/formato';
 
 export async function getStaticPaths() {
@@ -75,7 +75,7 @@ const d = projeto.data;
             {projeto.id === 'nexus-analytics' ? (
               <PainelNexus client:load className="mt-3" />
             ) : (
-              <PainelCaixa client:load className="mt-3" />
+              <MockupNexusPJ class="mt-3" />
             )}
           </div>
         )
@@ -99,18 +99,6 @@ const d = projeto.data;
 
       <div class="mt-8 flex flex-wrap items-center gap-x-8 gap-y-2">
         <span class="label-tec">{formatarPeriodo(d.inicio, d.fim, d.precisaoInicio)}</span>
-        {
-          d.links.demo && (
-            <a
-              href={d.links.demo}
-              class="label-tec text-accent transition-opacity hover:opacity-70"
-              target="_blank"
-              rel="noopener"
-            >
-              Abrir o mockup completo →
-            </a>
-          )
-        }
         {
           d.links.github && (
             <a

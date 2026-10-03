@@ -18,7 +18,10 @@ Outros comandos: `npm run build` (gera `dist/`), `npm run preview` (serve o buil
 Astro 7 · React 19 (só em ilhas interativas) · TypeScript · Tailwind v4 · MDX
 
 Astro entrega HTML estático por padrão e só hidrata JavaScript onde há interação real —
-hoje, dois painéis de demonstração. Cada dependência do `package.json` tem justificativa.
+hoje, o painel de demonstração do Nexus Analytics. O do Nexus & PJ é o próprio mockup do app
+(`public/mockups/nexus-pj.html`, HTML puro), embutido por iframe: o mesmo arquivo serve de
+demonstração no site e de link para mandar sozinho. Cada dependência do `package.json` tem
+justificativa.
 
 ## A regra do projeto: nada inventado
 
@@ -109,6 +112,8 @@ campo. Isso é a regra "nada inventado" funcionando — não é bug.
 | Redes e botões de contato | `src/data/redes.ts` |
 | Cores, tipografia, espaçamento | `src/styles/global.css` |
 | Domínio do site (sitemap e canonical) | `astro.config.mjs` |
+| Mockup do Nexus & PJ (demo e link) | `public/mockups/nexus-pj.html` |
+| Privacidade e termos | `src/pages/privacidade*.astro`, `src/pages/termos*.astro` |
 
 ## Design system
 

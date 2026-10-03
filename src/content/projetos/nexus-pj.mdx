@@ -20,10 +20,10 @@ estadoAtual: >-
   Login com três perfis, verificação em duas etapas e liberação de aparelho, motor de leitura de
   extrato herdado do Nexus Analytics e Fluxo de Caixa Realizado rodando com dado de verdade — com
   fechamento dia a dia que compara o saldo calculado com o saldo dos bancos e aponta onde há
-  diferença. Configurações reúne administração (contas, usuários, aparelhos, permissões,
-  auditoria, saúde do sistema) e gestão (categorias, alertas), ao lado de um conjunto de módulos
-  de IA determinística. 254 testes automatizados. Ainda não entrou o primeiro extrato real de
-  banco — isso é o próximo passo.
+  diferença. Dashboard em painéis, assistente de IA determinística na barra do topo e
+  Configurações com administração (contas, usuários, aparelhos, permissões, auditoria, saúde do
+  sistema) e gestão (categorias, alertas). 254 testes automatizados. Ainda não entrou o primeiro
+  extrato real de banco — isso é o próximo passo.
 ferramentas:
   - 'Python'
   - 'FastHTML'
@@ -32,8 +32,6 @@ ferramentas:
   - 'SQLite'
   - 'pytest'
 destaque: true
-links:
-  demo: '/mockups/nexus-pj.html'
 ---
 
 ## O problema
@@ -58,7 +56,8 @@ lá, portado — não reescrevi do zero o que já tinha funcionado.
 Login com três perfis — administrador, quem lança e quem só visualiza — checado sempre no
 back-end, nunca só escondendo botão na tela. A tela de Fluxo de Caixa Realizado importa
 extrato, categoriza e mostra o saldo de verdade, com filtro por coluna igual planilha. O
-dashboard traz saldo, receita e despesa do mês, despesa por categoria e evolução mensal.
+dashboard virou um painel de painéis: cada card mostra uma prévia com dado real — saldo por
+conta no Fluxo de caixa, alertas pendentes no Assistente — e abre a tela completa.
 
 Por trás, um conjunto de módulos de IA — todos determinísticos, sem LLM, sem chamada de rede,
 o mesmo princípio do Nexus Analytics: um assistente que responde pergunta sobre o caixa por
@@ -98,15 +97,12 @@ que foi visto.
 
 ## Mockup
 
-O desenho completo do produto — entrada com 2FA, painel de abertura, dashboard como hub de
-painéis, transferências com pareamento das duas pernas, importação, assistente, permissões,
-aparelhos e auditoria — está num mockup navegável, com dados fictícios, que serve de referência
-para a implementação.
+O mockup do topo desta página reproduz o visual do app: a entrada, o dashboard em painéis, o
+fechamento dia a dia e as configurações seguem as telas reais. O resto do fluxo — transferências
+com pareamento das duas pernas, importação, assistente, permissões, aparelhos e auditoria — está
+desenhado no mesmo padrão. Os dados são fictícios: nenhum número ali é real.
 
-[Abrir o mockup completo →](/mockups/nexus-pj.html)
-
-O mockup é a **meta**, não o retrato do que já roda: parte do que ele desenha ainda não foi
-implementada, e a seção abaixo diz o que falta.
+[Abrir o mockup em tela cheia →](/mockups/nexus-pj.html)
 
 ## Como virou produto
 
