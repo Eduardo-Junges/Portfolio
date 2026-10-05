@@ -431,6 +431,95 @@ img { max-width: 100%; }
 :root[data-theme="light"] .kpi-card.green { background: linear-gradient(155deg, rgba(var(--green-rgb), .12), rgba(255,255,255,.60)); }
 :root[data-theme="light"] .kpi-card.red { background: linear-gradient(155deg, rgba(var(--red-rgb), .12), rgba(255,255,255,.60)); }
 :root[data-theme="light"] .kpi-card.amber { background: linear-gradient(155deg, rgba(var(--amber-rgb), .12), rgba(255,255,255,.60)); }
+
+/* ======================= Indicadores financeiros =======================
+   Cores validadas com o validador de paletas do skill de dataviz:
+   - lojas (identidade): azul, laranja, violeta, magenta, nessa ordem — passam nos seis testes
+     em claro e escuro nos pares adjacentes (pilha). Magenta no claro fica abaixo de 3:1 contra
+     a superfície, então todo gráfico tem rótulo direto e a visão em tabela (alívio exigido).
+   - dispersão (todos contra todos) não passa com 4 cores; ali a identidade vem do rótulo
+     direto + forma do marcador, não da cor.
+   - receita/despesa usam os tokens do app (verde/vermelho): ΔE de daltonismo 10,0 (alvo ≥ 8) e
+     sempre com sinal, posição (acima/abaixo da linha) e rótulo junto.
+   ===================================================================== */
+:root, :root[data-theme="dark"] { --s-centro: #3987e5; --s-shopping: #d95926; --s-sul: #9085e9; --s-bairro: #d55181; --viz-total: #71717a; }
+:root[data-theme="light"] { --s-centro: #2a78d6; --s-shopping: #eb6834; --s-sul: #4a3aa7; --s-bairro: #e87ba4; --viz-total: #8a8d93; }
+.viz { position: relative; }
+.viz figure { margin: 0; }
+.viz-top { display: flex; align-items: center; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; margin-bottom: 16px; }
+.viz-legend { display: flex; align-items: center; gap: 6px 8px; flex-wrap: wrap; }
+.viz-legend .hint { font-size: 12px; color: var(--text-mute); margin-right: 4px; }
+.lg { display: inline-flex; align-items: center; gap: 8px; height: 30px; padding: 0 12px; border-radius: var(--radius-pill); border: 1px solid var(--border-1); background: var(--overlay-1); color: var(--text-200); font: 500 12.5px var(--font-sans); cursor: pointer; }
+.lg:hover { background: var(--overlay-2); color: var(--text-100); }
+.lg i { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.lg[aria-pressed="true"] { background: var(--overlay-3); border-color: var(--line-strong); color: var(--text-100); }
+.viz[data-foco="centro"] [data-loja]:not([data-loja="centro"]), .viz[data-foco="shopping"] [data-loja]:not([data-loja="shopping"]),
+.viz[data-foco="sul"] [data-loja]:not([data-loja="sul"]), .viz[data-foco="bairro"] [data-loja]:not([data-loja="bairro"]) { opacity: .2; }
+.viz [data-loja] { transition: opacity var(--dur-fast) ease; }
+
+.vk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 12px; margin-bottom: 16px; }
+.vk .kpi-value { font-size: 26px; margin-top: 2px; }
+.vk .vd { display: flex; align-items: center; gap: 6px; font-size: 12px; margin-top: 6px; color: var(--text-200); line-height: 1.4; }
+.vk .vd.up { color: var(--green); } .vk .vd.warn { color: var(--amber); }
+.vk .vv { margin-top: 10px; min-height: 30px; }
+.vk svg { display: block; width: 100%; overflow: visible; }
+.vk svg.fix { width: auto; flex: none; }
+.vk .vv.row { display: flex; align-items: center; gap: 12px; }
+.vcap { font-size: 11px; line-height: 1.55; color: var(--text-mute); }
+.vk .meter { height: 8px; border-radius: 4px; background: rgba(var(--blue-rgb), .22); overflow: hidden; }
+.vk .meter i { display: block; height: 100%; border-radius: 4px; background: var(--s-centro); }
+
+.viz-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(500px, 100%), 1fr)); gap: 16px; }
+.viz-card { display: flex; flex-direction: column; }
+.viz-cap { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.viz-cap h3 { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+.viz-cap p { font-size: 12.5px; color: var(--text-mute); line-height: 1.5; }
+.viz-tg { flex-shrink: 0; height: 28px; padding: 0 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-1); background: var(--overlay-1); color: var(--text-200); font: 500 12px var(--font-sans); cursor: pointer; }
+.viz-tg:hover { background: var(--overlay-2); color: var(--text-100); }
+.viz-plot { width: 100%; min-height: 40px; }
+.viz-plot svg { display: block; overflow: visible; }
+.viz-tbl[hidden] { display: none; }
+.viz-leg { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 8px; font-size: 12px; color: var(--text-200); }
+.viz-leg span { display: inline-flex; align-items: center; gap: 7px; }
+.viz-leg i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; }
+.viz-leg i.ln { height: 3px; border-radius: 2px; }
+.viz-ins { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-1); font-size: 12.5px; color: var(--text-200); line-height: 1.55; }
+.viz-ins b { color: var(--text-100); font-weight: 600; }
+.viz svg text { font-family: var(--font-sans); }
+.halo { paint-order: stroke; stroke: var(--surface-1); stroke-width: 4px; stroke-linejoin: round; }
+.vt { font-size: 11px; fill: var(--text-mute); } .vt2 { font-size: 12px; fill: var(--text-200); } .vt1 { font-size: 12px; font-weight: 600; fill: var(--text-100); }
+.vgrid { stroke: var(--border-1); stroke-width: 1; } .vbase { stroke: var(--line-strong); stroke-width: 1; } .vref { stroke: var(--text-mute); stroke-width: 1; }
+.vline { fill: none; stroke: var(--text-100); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.vhit { fill: transparent; cursor: pointer; } .vhit:hover { fill: var(--overlay-2); } .vhit:focus-visible { outline: none; fill: var(--overlay-2); stroke: var(--ink); stroke-width: 2; }
+.vpos { fill: var(--green); } .vneg { fill: var(--red); } .vtot { fill: var(--viz-total); } .vring { fill: var(--surface-1); } .vink { fill: var(--text-100); }
+.heat-scale { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 8px; margin-top: 10px; font-size: 11.5px; color: var(--text-mute); }
+.heat-scale .sw { display: inline-flex; gap: 2px; } .heat-scale .sw i { width: 22px; height: 10px; border-radius: 2px; display: block; }
+.viz-tip { position: absolute; z-index: 60; pointer-events: none; background: var(--surface-1); border: 1px solid var(--line-soft); border-radius: 8px; box-shadow: var(--shadow-md); padding: 8px 10px; font-size: 12px; min-width: 160px; max-width: 260px; }
+.viz-tip[hidden] { display: none; }
+.tt-h { color: var(--text-200); font-weight: 600; margin-bottom: 4px; }
+.tt-r { display: grid; grid-template-columns: 12px auto 1fr; gap: 8px; align-items: center; margin-top: 4px; }
+.tt-r b { color: var(--text-100); font-weight: 600; font-variant-numeric: tabular-nums; } .tt-r span { color: var(--text-200); }
+.tt-k { display: block; width: 12px; height: 3px; border-radius: 2px; }
+.prev-ind { display: grid; gap: 8px; width: 100%; }
+.prev-ind .pv { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; font-size: 12px; color: var(--text-200); }
+.prev-ind .pv b { font-size: 15px; color: var(--text-100); font-weight: 700; }
+.prev-ind svg { display: block; width: 100%; height: 34px; overflow: visible; }
+.hb-p1 rect { fill: #2d5c4a; } .hb-p1 text { fill: #ffffff; } .hs-p1 { background: #2d5c4a; }
+.hb-p2 rect { fill: #24785b; } .hb-p2 text { fill: #ffffff; } .hs-p2 { background: #24785b; }
+.hb-p3 rect { fill: #1a976d; } .hb-p3 text { fill: #0b0b0b; } .hs-p3 { background: #1a976d; }
+.hb-p4 rect { fill: #10b981; } .hb-p4 text { fill: #0b0b0b; } .hs-p4 { background: #10b981; }
+.hb-n1 rect { fill: #6c3634; } .hb-n1 text { fill: #ffffff; } .hs-n1 { background: #6c3634; }
+.hb-n2 rect { fill: #943433; } .hb-n2 text { fill: #ffffff; } .hs-n2 { background: #943433; }
+.hb-n3 rect { fill: #c13332; } .hb-n3 text { fill: #ffffff; } .hs-n3 { background: #c13332; }
+.hb-n4 rect { fill: #f13131; } .hb-n4 text { fill: #0b0b0b; } .hs-n4 { background: #f13131; }
+:root[data-theme="light"] .hb-p1 rect { fill: #b1e0ce; } :root[data-theme="light"] .hb-p1 text { fill: #0b0b0b; } :root[data-theme="light"] .hs-p1 { background: #b1e0ce; }
+:root[data-theme="light"] .hb-p2 rect { fill: #80d4b6; } :root[data-theme="light"] .hb-p2 text { fill: #0b0b0b; } :root[data-theme="light"] .hs-p2 { background: #80d4b6; }
+:root[data-theme="light"] .hb-p3 rect { fill: #4ac79d; } :root[data-theme="light"] .hb-p3 text { fill: #0b0b0b; } :root[data-theme="light"] .hs-p3 { background: #4ac79d; }
+:root[data-theme="light"] .hb-p4 rect { fill: #10b981; } :root[data-theme="light"] .hb-p4 text { fill: #0b0b0b; } :root[data-theme="light"] .hs-p4 { background: #10b981; }
+:root[data-theme="light"] .hb-n1 rect { fill: #f0bab8; } :root[data-theme="light"] .hb-n1 text { fill: #0b0b0b; } :root[data-theme="light"] .hs-n1 { background: #f0bab8; }
+:root[data-theme="light"] .hb-n2 rect { fill: #f0908e; } :root[data-theme="light"] .hb-n2 text { fill: #0b0b0b; } :root[data-theme="light"] .hs-n2 { background: #f0908e; }
+:root[data-theme="light"] .hb-n3 rect { fill: #f16262; } :root[data-theme="light"] .hb-n3 text { fill: #0b0b0b; } :root[data-theme="light"] .hs-n3 { background: #f16262; }
+:root[data-theme="light"] .hb-n4 rect { fill: #f13131; } :root[data-theme="light"] .hb-n4 text { fill: #0b0b0b; } :root[data-theme="light"] .hs-n4 { background: #f13131; }
 </style>
 </head>
 <body>
@@ -571,6 +660,10 @@ img { max-width: 100%; }
             <div class="hub-prev" id="prevLojas" style="gap:7px"></div>
             <div class="hub-info"><span class="nav-badge">🏬</span><div><b>Fechamento por loja</b><span id="subLojas"></span></div></div>
           </a>
+          <a class="card card--interactive hub-card" onclick="mk.go('indicadores')">
+            <div class="hub-prev" style="justify-content:center"><div class="prev-ind" id="prevInd"></div></div>
+            <div class="hub-info"><span class="nav-badge">📈</span><div><b>Indicadores financeiros</b><span>Fluxo, dias de caixa, margem e conciliação</span></div></div>
+          </a>
           <a class="card card--interactive hub-card" onclick="mk.go('assistente')">
             <div class="hub-prev" style="justify-content:center;gap:8px">
               <div class="ia-item" style="padding:8px 10px"><div class="ia-ic" style="font-size:15px">⚠️</div><div class="ia-tt" style="font-size:12.5px">2 cobranças duplicadas</div></div>
@@ -613,6 +706,11 @@ img { max-width: 100%; }
         <div data-planejado hidden>
           <div class="card"><div class="empty-state"><span class="ic">◧</span><h3>Planejado ainda sem fonte de dado</h3><p>Decisão de escopo em aberto desde 31/07 — a tela continua como molde.</p></div></div>
         </div>
+      </section>
+
+      <!-- ============================ INDICADORES FINANCEIROS ============================ -->
+      <section data-pg="indicadores" hidden>
+        <div class="viz" id="viz"></div>
       </section>
 
       <!-- ============================ TRANSFERÊNCIAS ============================ -->
@@ -834,7 +932,7 @@ img { max-width: 100%; }
   var TITULOS = {
     dashboard: 'Dashboard', fluxo: 'Fluxo de caixa', transferencias: 'Transferências',
     importar: 'Importar extrato', assistente: 'Assistente', configuracoes: 'Configurações',
-    permissoes: 'Permissões', aparelhos: 'Aparelhos', auditoria: 'Auditoria', lojas: 'Lojas'
+    permissoes: 'Permissões', aparelhos: 'Aparelhos', auditoria: 'Auditoria', lojas: 'Lojas', indicadores: 'Indicadores'
   };
   var DE_CONFIG = { permissoes: 1, aparelhos: 1, auditoria: 1, lojas: 1 };
   var shell = document.getElementById('appShell');
@@ -866,6 +964,8 @@ img { max-width: 100%; }
           if (!plan) vista(document.querySelector('#vistaSwitch .on').getAttribute('data-vista'));
         };
       });
+    } else if (pg === 'indicadores') {
+      el.innerHTML = '<a class="voltar-cfg" href="#" onclick="mk.go(\'dashboard\');return false">← Dashboard</a>';
     } else if (DE_CONFIG[pg]) {
       el.innerHTML = '<a class="voltar-cfg" href="#" onclick="mk.go(\'configuracoes\');return false">← Configurações</a>';
     } else { el.innerHTML = ''; }
@@ -876,6 +976,7 @@ img { max-width: 100%; }
     document.querySelectorAll('.navlink').forEach(function (a) { a.classList.toggle('active', a.getAttribute('data-page') === pg); });
     document.getElementById('pgTitle').textContent = TITULOS[pg] || pg;
     extra(pg);
+    if (pg === 'indicadores') renderIndicadores();
     document.getElementById('userMenu').classList.remove('open');
     window.scrollTo(0, 0);
     // Home não é destino de navegação: navegar pra qualquer tela fecha o painel.
@@ -1167,7 +1268,7 @@ img { max-width: 100%; }
         return '<tr><td><b>' + x.nome + '</b></td><td>' + x.banco + '</td><td class="num">' + brl(x.ini) + '</td><td class="num">' + mil(x.lanc) + '</td><td class="num">' + x.rev + '</td><td>' + (f.dif ? '<span class="badge badge--amber">diferença ' + brl(f.dif) + '</span>' : '<span class="badge badge--green">fecha</span>') + '</td></tr>';
       }).join('') + '</tbody>';
   }
-  function renderRede() { renderFluxo(); renderPaineis(); renderHome(); renderChat(); renderLojasPg(); }
+  function renderRede() { renderFluxo(); renderPaineis(); renderPrevInd(); renderHome(); renderChat(); renderLojasPg(); }
 
   function lojaFiltro(id, ir) {
     var l = $('#fLoja'), b = $('#fBanco'), x = lojaPorId(id);
@@ -1177,6 +1278,366 @@ img { max-width: 100%; }
     renderFluxo();
     if (!ir) window.scrollTo(0, 0);
     return false;
+  }
+
+
+  /* =====================================================================
+     Indicadores financeiros — todos saem dos mesmos MOV/LOJAS do fechamento,
+     calculados em tempo de execução (nada digitado à mão).
+     ===================================================================== */
+  var NS = 'http://www.w3.org/2000/svg';
+  function sv(tag, attrs, pai) { var e = document.createElementNS(NS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); if (pai) pai.appendChild(e); return e; }
+  function st(pai, x, y, s, cls, anc) { var t = sv('text', { x: x, y: y, 'class': cls || 'vt', 'text-anchor': anc || 'start' }, pai); t.textContent = s; return t; }
+  function dec1(v) { return (Math.round(v * 10) / 10).toString().replace('.', ','); }
+  function pct1(f) { return dec1(f * 100) + '%'; }
+  function kfmt(c) { var a = Math.abs(c) / 100; return (c < 0 ? '−' : '') + (a >= 1000 ? dec1(a / 1000) + ' mil' : String(Math.round(a))); }
+  function ksign(c) { return (c > 0 ? '+' : '') + kfmt(c); }
+  function kshort(c) { return (c < 0 ? '−' : '+') + (Math.abs(c) / 100000).toFixed(1).replace('.', ','); }
+  function escala(lo, hi, n) { // limites e passo "redondos" para o eixo
+    var raw = (hi - lo) / n, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+    var s = (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p, a = Math.floor(lo / s) * s, b = Math.ceil(hi / s) * s, t = [];
+    for (var v = a; v <= b + s / 2; v += s) t.push(v);
+    return { lo: a, hi: b, ticks: t };
+  }
+  function barra(x, y, w, h, r, fim) { // barra com 4px arredondados só na ponta dos dados; a base fica reta
+    r = Math.max(0, Math.min(r, h / 2, w / 2));
+    if (fim === 'topo') return 'M' + x + ' ' + (y + h) + 'V' + (y + r) + 'A' + r + ' ' + r + ' 0 0 1 ' + (x + r) + ' ' + y + 'H' + (x + w - r) + 'A' + r + ' ' + r + ' 0 0 1 ' + (x + w) + ' ' + (y + r) + 'V' + (y + h) + 'Z';
+    if (fim === 'base') return 'M' + x + ' ' + y + 'V' + (y + h - r) + 'A' + r + ' ' + r + ' 0 0 0 ' + (x + r) + ' ' + (y + h) + 'H' + (x + w - r) + 'A' + r + ' ' + r + ' 0 0 0 ' + (x + w) + ' ' + (y + h - r) + 'V' + y + 'Z';
+    if (fim === 'dir') return 'M' + x + ' ' + y + 'H' + (x + w - r) + 'A' + r + ' ' + r + ' 0 0 1 ' + (x + w) + ' ' + (y + r) + 'V' + (y + h - r) + 'A' + r + ' ' + r + ' 0 0 1 ' + (x + w - r) + ' ' + (y + h) + 'H' + x + 'Z';
+    return 'M' + x + ' ' + y + 'H' + (x + w) + 'V' + (y + h) + 'H' + x + 'Z';
+  }
+  function rot(svg, x, y, s, cls, W) { // rótulo centrado que não vaza para fora do gráfico
+    var meia = s.length * 3.5 + 3; return st(svg, Math.min(Math.max(x, meia), W - meia), y, s, cls, 'middle');
+  }
+  function curto(x, estreito) { return estreito ? x.nome.replace('Loja ', '') : x.nome; }
+
+  /* ---------- tooltip: um só, com todos os valores; textContent porque os rótulos são dado ---------- */
+  function tipHide() { $('#vizTip').hidden = true; }
+  function tipFill(titulo, linhas) {
+    var t = $('#vizTip'); while (t.firstChild) t.removeChild(t.firstChild);
+    var h = document.createElement('div'); h.className = 'tt-h'; h.textContent = titulo; t.appendChild(h);
+    linhas.forEach(function (l) {
+      var r = document.createElement('div'); r.className = 'tt-r';
+      var k = document.createElement('i'); k.className = 'tt-k'; k.style.background = l.cor || 'transparent'; r.appendChild(k);
+      var v = document.createElement('b'); v.textContent = l.valor; r.appendChild(v);
+      var n = document.createElement('span'); n.textContent = l.nome; r.appendChild(n);
+      t.appendChild(r);
+    });
+  }
+  function tipPos(x, y) {
+    var box = $('#viz').getBoundingClientRect(), t = $('#vizTip'); t.hidden = false;
+    var w = t.offsetWidth, h = t.offsetHeight, px = x - box.left + 14, py = y - box.top - h - 12;
+    if (px + w > box.width - 4) px = x - box.left - w - 14;
+    px = Math.max(4, px); if (py < 4) py = y - box.top + 18;
+    t.style.left = px + 'px'; t.style.top = py + 'px';
+  }
+  function ligar(elm, rotulo, fn) { // fn() -> [titulo, linhas]; mesmo conteúdo no foco do teclado e no toque
+    elm.setAttribute('tabindex', '0'); elm.setAttribute('aria-label', rotulo);
+    var mostrar = function (ev) { var r = fn(); tipFill(r[0], r[1]); tipPos(ev.clientX, ev.clientY); };
+    elm.addEventListener('pointermove', mostrar); elm.addEventListener('pointerdown', mostrar);
+    elm.addEventListener('pointerleave', function (ev) { if (ev.pointerType === 'mouse') tipHide(); });
+    elm.addEventListener('focus', function () { var r = fn(), b = elm.getBoundingClientRect(); tipFill(r[0], r[1]); tipPos(b.left + b.width / 2, b.top + b.height / 2); });
+    elm.addEventListener('blur', tipHide);
+  }
+  function tabela(cab, linhas) {
+    return '<div class="tbl-wrap"><table class="tbl tbl--compacta"><thead><tr>' + cab.map(function (c, i) { return '<th' + (i ? ' class="num"' : '') + '>' + c + '</th>'; }).join('') +
+      '</tr></thead><tbody>' + linhas.map(function (l) { return '<tr>' + l.map(function (c, i) { return '<td' + (i ? ' class="num"' : '') + '>' + c + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody></table></div>';
+  }
+  function eixoY(svg, e, y, m, W, fmt) {
+    e.ticks.forEach(function (v) {
+      sv('line', { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), 'class': v === 0 ? 'vbase' : 'vgrid' }, svg);
+      st(svg, m.l - 8, y(v) + 4, fmt(v), 'vt', 'end');
+    });
+  }
+
+  /* ---------- dados ---------- */
+  function dadosInd() {
+    var dias = [0, 1, 2, 3, 4];
+    var lojas = LOJAS.map(function (x) {
+      var t = totaisLoja(x), f = saldoLoja(x, ULTIMO);
+      return { x: x, ent: t.e, sai: t.s, res: t.e - t.s, margem: (t.e - t.s) / t.e, calc: f.calc, bancos: f.bancos, dif: f.dif, dc: f.bancos / (t.s / dias.length),
+        resDia: dias.map(function (d) { var m = MOV[x.id][d]; return { ent: m[0] + m[1], sai: m[2] + m[3], res: m[0] + m[1] - m[2] - m[3] }; }),
+        saldoDia: [x.ini].concat(dias.map(function (d) { return saldoLoja(x, d).calc; })) };
+    });
+    var totE = soma(lojas.map(function (l) { return l.ent; })), totS = soma(lojas.map(function (l) { return l.sai; }));
+    lojas.forEach(function (l) { l.part = l.ent / totE; });
+    var rede = dias.map(function (d) { var m = movDia(LOJAS, d); return { ent: m[0] + m[1], sai: m[2] + m[3], res: m[0] + m[1] - m[2] - m[3] }; });
+    var saldoRede = [0, 1, 2, 3, 4, 5].map(function (i) { return soma(lojas.map(function (l) { return l.saldoDia[i]; })); });
+    var bancos = soma(lojas.map(function (l) { return l.bancos; })), falhas = [], total = 0;
+    LOJAS.forEach(function (x) { dias.forEach(function (d) { total++; if (saldoLoja(x, d).dif !== 0) falhas.push({ x: x, d: d }); }); });
+    var lanc = soma(LOJAS.map(function (x) { return x.lanc; })), rev = soma(LOJAS.map(function (x) { return x.rev; }));
+    var valorRev = soma(LOJAS.map(function (x) { return soma(dias.map(function (d) { return MOV[x.id][d][0] + MOV[x.id][d][2]; })); }));
+    return { dias: dias, lojas: lojas, rede: rede, totE: totE, totS: totS, res: totE - totS, margem: (totE - totS) / totE, saldoRede: saldoRede,
+      ini: saldoRede[0], fim: saldoRede[5], bancos: bancos, dcRede: bancos / (totS / dias.length),
+      conc: { ok: total - falhas.length, total: total, falhas: falhas }, cat: { lanc: lanc, rev: rev, valor: valorRev, pct: (lanc - rev) / lanc } };
+  }
+
+  /* ---------- tiles ---------- */
+  function spark(vals, W, H) {
+    var mn = Math.min.apply(null, vals), mx = Math.max.apply(null, vals), pad = 5;
+    var X = function (i) { return pad + i * (W - 2 * pad) / (vals.length - 1); }, Y = function (v) { return mx === mn ? H / 2 : H - pad - (v - mn) / (mx - mn) * (H - 2 * pad); };
+    var pts = vals.map(function (v, i) { return X(i).toFixed(1) + ',' + Y(v).toFixed(1); }).join(' '), u = vals.length - 1;
+    return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Tendência: de ' + brl(vals[0]) + ' a ' + brl(vals[u]) + '"><polyline points="' + pts + '" fill="none" stroke="var(--text-mute)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>' +
+      '<circle cx="' + X(u).toFixed(1) + '" cy="' + Y(vals[u]).toFixed(1) + '" r="6" class="vring"/><circle cx="' + X(u).toFixed(1) + '" cy="' + Y(vals[u]).toFixed(1) + '" r="4" class="vink"/></svg>';
+  }
+  function htmlKpis(D) {
+    var menor = D.lojas.slice().sort(function (a, b) { return a.dc - b.dc; })[0];
+    var matriz = '<svg class="fix" width="84" height="52" viewBox="0 0 84 52" role="img" aria-label="Fechamento por loja e dia: ' + D.conc.ok + ' de ' + D.conc.total + ' sem diferença">';
+    D.lojas.forEach(function (l, i) { for (var d = 0; d < 5; d++) {
+      var ok = saldoLoja(l.x, d).dif === 0, cx = 8 + d * 16, cy = 7 + i * 13;
+      matriz += ok ? '<circle cx="' + cx + '" cy="' + cy + '" r="4.5" fill="var(--green)"/>' : '<circle cx="' + cx + '" cy="' + cy + '" r="3.8" fill="none" stroke="var(--amber)" stroke-width="2.4"/>';
+    } });
+    matriz += '</svg>';
+    var barras = '<svg class="fix" width="96" height="34" viewBox="0 0 96 34" role="img" aria-label="Dias de caixa por loja">' + D.lojas.map(function (l, i) { var h = Math.max(4, l.dc / Math.max.apply(null, D.lojas.map(function (z) { return z.dc; })) * 28); return '<path d="' + barra(8 + i * 22, 32 - h, 14, h, 3, 'topo') + '" style="fill:var(--s-' + l.x.id + ')"/>'; }).join('') + '</svg>';
+    var up = D.fim >= D.ini;
+    return [
+      '<div class="card kpi-card vk"><div class="kpi-label">Saldo da rede</div><div class="kpi-value">' + brl(D.fim) + '</div><div class="vd ' + (up ? 'up' : '') + '"><span aria-hidden="true">' + (up ? '▲' : '▼') + '</span>' + (up ? '+' : '') + pct1((D.fim - D.ini) / D.ini) + ' desde 21/09 (' + brl(D.fim - D.ini, true) + ')</div><div class="vv">' + spark(D.saldoRede, 160, 30) + '</div></div>',
+      '<div class="card kpi-card green vk"><div class="kpi-label">Resultado da semana</div><div class="kpi-value">' + brl(D.res) + '</div><div class="vd">Margem de caixa ' + pct1(D.margem) + ' (resultado ÷ entradas)</div><div class="vv">' + spark(D.rede.map(function (r) { return r.res; }), 160, 30) + '</div></div>',
+      '<div class="card kpi-card amber vk"><div class="kpi-label">Dias de caixa</div><div class="kpi-value">' + dec1(D.dcRede) + ' dias</div><div class="vd warn"><span aria-hidden="true">⚠</span>' + menor.x.nome + ': só ' + dec1(menor.dc) + ' dias</div><div class="vv row">' + barras + '<span class="vcap">uma barra<br>por loja</span></div></div>',
+      '<div class="card kpi-card green vk"><div class="kpi-label">Conciliação</div><div class="kpi-value">' + Math.round(D.conc.ok * 100 / D.conc.total) + '%</div><div class="vd">' + D.conc.ok + ' de ' + D.conc.total + ' fechamentos loja-dia sem diferença</div>' +
+        (D.conc.falhas.length ? '<div class="vd warn"><span aria-hidden="true">⚠</span>' + D.conc.falhas.map(function (f) { return f.x.nome + ' · ' + DATAS[f.d]; }).join(', ') + '</div>' : '') + '<div class="vv row">' + matriz + '<span class="vcap">linhas = lojas<br>colunas = dias<br>● fecha · ○ diferença</span></div></div>',
+      '<div class="card kpi-card vk"><div class="kpi-label">Categorização em dia</div><div class="kpi-value">' + pct1(D.cat.pct) + '</div><div class="vd">' + D.cat.rev + ' lançamentos a revisar · ' + brl(D.cat.valor) + '</div><div class="vv"><div class="meter" role="img" aria-label="' + pct1(D.cat.pct) + ' dos lançamentos categorizados"><i style="width:' + (D.cat.pct * 100).toFixed(1) + '%"></i></div></div></div>'
+    ].join('');
+  }
+
+  /* ---------- 1. Fluxo diário: entradas para cima, saídas para baixo, resultado em ponto ---------- */
+  function grafFluxo(el, D) {
+    var W = Math.max(160, el.clientWidth), H = 280, m = { l: 44, r: 8, t: 18, b: 30 };
+    var maxv = Math.max.apply(null, D.rede.map(function (d) { return Math.max(d.ent, d.sai); }));
+    var e = escala(-maxv, maxv, 6), hi = Math.max(e.hi, -e.lo), lo = -hi, ph = H - m.t - m.b, bw = (W - m.l - m.r) / 5;
+    var y = function (v) { return m.t + (hi - v) / (hi - lo) * ph; }, cx = function (i) { return m.l + bw * (i + .5); };
+    var svg = sv('svg', { width: W, height: H, viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Fluxo diário: entradas, saídas e resultado de cada dia' }, el);
+    eixoY(svg, e, y, m, W, kfmt);
+    var w = Math.min(24, bw * .46), pts = [];
+    D.rede.forEach(function (d, i) {
+      sv('path', { d: barra(cx(i) - w / 2, y(d.ent), w, y(0) - y(d.ent), 4, 'topo'), 'class': 'vm vpos' }, svg);
+      sv('path', { d: barra(cx(i) - w / 2, y(0), w, y(-d.sai) - y(0), 4, 'base'), 'class': 'vm vneg' }, svg);
+      pts.push(cx(i).toFixed(1) + ',' + y(d.res).toFixed(1));
+      if (bw >= 34 || i % 2 === 0) st(svg, cx(i), H - 9, bw >= 78 ? DIAS[i] : DATAS[i], 'vt', 'middle');
+    });
+    sv('polyline', { points: pts.join(' '), 'class': 'vline' }, svg);
+    D.rede.forEach(function (d, i) { sv('circle', { cx: cx(i), cy: y(d.res), r: 7, 'class': 'vring' }, svg); sv('circle', { cx: cx(i), cy: y(d.res), r: 5, 'class': 'vink' }, svg); });
+    var iMax = 0, iMin = 0; D.rede.forEach(function (d, i) { if (d.res > D.rede[iMax].res) iMax = i; if (d.res < D.rede[iMin].res) iMin = i; });
+    rot(svg, cx(iMax), y(D.rede[iMax].res) - 13, ksign(D.rede[iMax].res), 'vt1 halo', W);
+    if (D.rede[iMin].res < 0) rot(svg, cx(iMin), y(D.rede[iMin].res) + 22, ksign(D.rede[iMin].res), 'vt1 halo', W);
+    D.rede.forEach(function (d, i) {
+      var h = sv('rect', { x: m.l + bw * i, y: m.t, width: bw, height: ph, 'class': 'vhit' }, svg);
+      ligar(h, DIAS[i] + ': entradas ' + brl(d.ent) + ', saídas ' + brl(d.sai) + ', resultado ' + brl(d.res, true), function () {
+        return [DIAS[i], [{ cor: 'var(--green)', nome: 'Entradas', valor: brl(d.ent) }, { cor: 'var(--red)', nome: 'Saídas', valor: brl(d.sai) }, { cor: 'var(--text-100)', nome: 'Resultado do dia', valor: brl(d.res, true) }]];
+      });
+    });
+    var neg = D.rede.map(function (d, i) { return { d: d, i: i }; }).filter(function (o) { return o.d.res < 0; });
+    return { cab: ['Dia', 'Entradas', 'Saídas', 'Resultado'], linhas: D.rede.map(function (d, i) { return [DIAS[i], brl(d.ent), brl(d.sai), brl(d.res, true)]; }),
+      leg: '<span><i style="background:var(--green)"></i>Entradas</span><span><i style="background:var(--red)"></i>Saídas</span><span><i class="ln" style="background:var(--text-100)"></i>Resultado do dia</span>',
+      insight: 'Melhor dia: <b>' + DIAS[iMax] + '</b> (' + brl(D.rede[iMax].res, true) + '). ' + (neg.length ? (neg.length === 1 ? 'Único dia no negativo: ' : 'Dias no negativo: ') + neg.map(function (o) { return '<b>' + DIAS[o.i] + '</b> (' + brl(o.d.res) + ')'; }).join(', ') + '.' : 'Nenhum dia fechou no negativo.') };
+  }
+
+  /* ---------- 2. Saldo por loja, ao fim de cada dia (pilha) ---------- */
+  function grafSaldo(el, D) {
+    var W = Math.max(160, el.clientWidth), H = 280, m = { l: 44, r: 8, t: 22, b: 30 }, cats = ['Inicial'].concat(DATAS.slice(0, 5));
+    var tot = cats.map(function (c, i) { return soma(D.lojas.map(function (l) { return l.saldoDia[i]; })); });
+    var e = escala(0, Math.max.apply(null, tot), 4), ph = H - m.t - m.b, bw = (W - m.l - m.r) / cats.length;
+    var y = function (v) { return m.t + (e.hi - v) / (e.hi - e.lo) * ph; }, cx = function (i) { return m.l + bw * (i + .5); };
+    var svg = sv('svg', { width: W, height: H, viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Saldo por loja ao fim de cada dia' }, el);
+    eixoY(svg, e, y, m, W, kfmt);
+    var w = Math.min(24, bw * .5);
+    cats.forEach(function (c, i) {
+      var cum = 0;
+      D.lojas.forEach(function (l, k) {
+        var v = l.saldoDia[i], ult = k === D.lojas.length - 1, yt = y(cum + v) + (ult ? 0 : 1), yb = y(cum) - (k === 0 ? 0 : 1);
+        sv('path', { d: barra(cx(i) - w / 2, yt, w, Math.max(1, yb - yt), 4, ult ? 'topo' : null), 'class': 'vm', 'data-loja': l.x.id, style: 'fill:var(--s-' + l.x.id + ')' }, svg);
+        cum += v;
+      });
+      if (bw >= 34 || i % 2 === 0) st(svg, cx(i), H - 9, c, 'vt', 'middle');
+    });
+    [0, cats.length - 1].forEach(function (i) { rot(svg, cx(i), y(tot[i]) - 8, 'R$ ' + kfmt(tot[i]), 'vt1', W); });
+    cats.forEach(function (c, i) {
+      var h = sv('rect', { x: m.l + bw * i, y: m.t, width: bw, height: ph, 'class': 'vhit' }, svg);
+      ligar(h, (i ? 'Fim de ' + c : 'Saldo inicial') + ': ' + brl(tot[i]), function () {
+        var ls = D.lojas.slice().reverse().map(function (l) { return { cor: 'var(--s-' + l.x.id + ')', nome: l.x.nome, valor: brl(l.saldoDia[i]) }; });
+        ls.push({ nome: 'Total da rede', valor: brl(tot[i]) });
+        return [i ? 'Fim de ' + c : 'Saldo inicial (21/09)', ls];
+      });
+    });
+    var top = D.lojas.slice().sort(function (a, b) { return b.saldoDia[5] - a.saldoDia[5]; }), baixo = top[top.length - 1];
+    return { cab: ['Dia'].concat(D.lojas.map(function (l) { return l.x.nome; }), ['Total']), linhas: cats.map(function (c, i) { return [i ? c : 'Inicial'].concat(D.lojas.map(function (l) { return brl(l.saldoDia[i]); }), [brl(tot[i])]); }),
+      insight: '<b>' + top[0].x.nome + '</b> guarda <b>' + pct1(top[0].saldoDia[5] / tot[5]) + '</b> do saldo da rede (' + brl(top[0].saldoDia[5]) + '); ' + baixo.x.nome + ', ' + pct1(baixo.saldoDia[5] / tot[5]) + '. Clique numa loja na legenda para destacá-la.' };
+  }
+
+  /* ---------- 3. Cascata: do saldo inicial ao final ---------- */
+  function grafCascata(el, D) {
+    var W = Math.max(160, el.clientWidth), H = 280, m = { l: 44, r: 8, t: 30, b: 30 };
+    var passos = [{ n: 'Saldo inicial', v: D.ini, de: 0, para: D.ini, c: 'vtot' }, { n: 'Entradas', v: D.totE, de: D.ini, para: D.ini + D.totE, c: 'vpos' }, { n: 'Saídas', v: -D.totS, de: D.ini + D.totE, para: D.ini + D.totE - D.totS, c: 'vneg' }, { n: 'Saldo final', v: D.fim, de: 0, para: D.fim, c: 'vtot' }];
+    var e = escala(0, D.ini + D.totE, 6), ph = H - m.t - m.b, bw = (W - m.l - m.r) / 4;
+    var y = function (v) { return m.t + (e.hi - v) / (e.hi - e.lo) * ph; }, cx = function (i) { return m.l + bw * (i + .5); };
+    var svg = sv('svg', { width: W, height: H, viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Do saldo inicial ao final: entradas e saídas da semana' }, el);
+    eixoY(svg, e, y, m, W, kfmt);
+    var w = Math.min(24, bw * .4), compacto = bw < 110;
+    passos.forEach(function (p, i) {
+      var a = Math.max(p.de, p.para), b = Math.min(p.de, p.para);
+      sv('path', { d: barra(cx(i) - w / 2, y(a), w, y(b) - y(a), 4, 'topo'), 'class': 'vm ' + p.c }, svg);
+      if (i < 3) sv('line', { x1: cx(i) + w / 2, x2: cx(i + 1) - w / 2, y1: y(p.para), y2: y(p.para), 'class': 'vgrid' }, svg);
+      rot(svg, cx(i), y(a) - 8, compacto ? (i === 1 ? '+' : i === 2 ? '−' : '') + kfmt(Math.abs(p.v)) : (i === 1 ? '+' : i === 2 ? '−' : '') + brl(Math.abs(p.v)), 'vt1', W);
+      st(svg, cx(i), H - 9, bw < 70 ? ['Inicial', 'Entradas', 'Saídas', 'Final'][i] : p.n, 'vt', 'middle');
+      var h = sv('rect', { x: m.l + bw * i, y: m.t, width: bw, height: ph, 'class': 'vhit' }, svg);
+      ligar(h, p.n + ': ' + brl(p.v), function () { return [p.n, [{ cor: p.c === 'vpos' ? 'var(--green)' : p.c === 'vneg' ? 'var(--red)' : 'var(--viz-total)', nome: i === 1 ? 'entrou na semana' : i === 2 ? 'saiu na semana' : 'da rede', valor: brl(p.v) }]]; });
+    });
+    return { cab: ['Etapa', 'Valor'], linhas: passos.map(function (p, i) { return [p.n, (i === 1 ? '+' : i === 2 ? '−' : '') + brl(Math.abs(p.v))]; }),
+      insight: 'Entraram <b>' + brl(D.totE) + '</b> e saíram <b>' + brl(D.totS) + '</b>: o saldo da rede ' + (D.fim >= D.ini ? 'cresceu' : 'caiu') + ' <b>' + brl(Math.abs(D.fim - D.ini)) + '</b> em 5 dias. De cada R$ 1,00 que entrou, sobraram <b>R$ ' + D.margem.toFixed(2).replace('.', ',') + '</b>.' };
+  }
+
+  /* ---------- 4. Mapa de caixa: resultado do dia por loja ---------- */
+  function grafMapa(el, D) {
+    var W = Math.max(160, el.clientWidth), est = W < 440, labW = est ? 78 : 118, semW = est ? 0 : 80, hdr = 22, rowH = 38, gap = 4, redeH = 30;
+    var cw = (W - labW - semW - (semW ? 8 : 0)) / 5, H = hdr + D.lojas.length * (rowH + gap) + 6 + redeH;
+    var maxAbs = Math.max.apply(null, [].concat.apply([], D.lojas.map(function (l) { return l.resDia.map(function (r) { return Math.abs(r.res); }); })));
+    var bin = function (v) { return Math.min(4, Math.max(1, Math.ceil(Math.abs(v) / maxAbs * 4))); };
+    var svg = sv('svg', { width: W, height: H, viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Resultado do dia de cada loja, de verde (sobrou) a vermelho (faltou)' }, el);
+    DATAS.slice(0, 5).forEach(function (d, i) { st(svg, labW + cw * i + cw / 2, 14, d, 'vt', 'middle'); });
+    if (semW) st(svg, W - 4, 14, 'Semana', 'vt', 'end');
+    D.lojas.forEach(function (l, k) {
+      var y0 = hdr + k * (rowH + gap), g = sv('g', { 'data-loja': l.x.id }, svg);
+      sv('circle', { cx: 6, cy: y0 + rowH / 2, r: 5, style: 'fill:var(--s-' + l.x.id + ')' }, g);
+      st(g, 18, y0 + rowH / 2 + 4, curto(l.x, est), 'vt2');
+      l.resDia.forEach(function (r, d) {
+        var cg = sv('g', { 'class': 'hb vm hb-' + (r.res >= 0 ? 'p' : 'n') + bin(r.res), 'data-loja': l.x.id }, svg);
+        sv('rect', { x: labW + cw * d + 1, y: y0, width: cw - 2, height: rowH, rx: 4 }, cg);
+        var t = st(cg, labW + cw * d + cw / 2, y0 + rowH / 2 + 4, est ? kshort(r.res) : kshort(r.res) + ' mil', 'vt1', 'middle'); t.style.fill = '';
+        var h = sv('rect', { x: labW + cw * d + 1, y: y0, width: cw - 2, height: rowH, rx: 4, 'class': 'vhit', 'data-loja': l.x.id }, svg);
+        ligar(h, l.x.nome + ', ' + DIAS[d] + ': resultado ' + brl(r.res, true), function () {
+          return [l.x.nome + ' · ' + DIAS[d], [{ cor: 'var(--green)', nome: 'Entradas', valor: brl(r.ent) }, { cor: 'var(--red)', nome: 'Saídas', valor: brl(r.sai) }, { cor: 'var(--text-100)', nome: 'Resultado do dia', valor: brl(r.res, true) }]];
+        });
+      });
+      if (semW) st(g, W - 4, y0 + rowH / 2 + 4, kshort(l.res) + ' mil', 'vt1', 'end');
+    });
+    var yr = hdr + D.lojas.length * (rowH + gap) + 6;
+    sv('line', { x1: 0, x2: W, y1: yr - 3, y2: yr - 3, 'class': 'vgrid' }, svg);
+    st(svg, 18, yr + 19, 'Rede', 'vt2');
+    D.rede.forEach(function (r, d) { st(svg, labW + cw * d + cw / 2, yr + 19, est ? kshort(r.res) : kshort(r.res) + ' mil', 'vt1', 'middle'); });
+    if (semW) st(svg, W - 4, yr + 19, kshort(D.res) + ' mil', 'vt1', 'end');
+    var piores = D.rede.map(function (r, i) { return { r: r, i: i }; }).sort(function (a, b) { return a.r.res - b.r.res; })[0];
+    var nNeg = D.lojas.filter(function (l) { return l.resDia[piores.i].res < 0; }).length;
+    var melhor = D.lojas.slice().sort(function (a, b) { return b.res - a.res; })[0];
+    return { cab: ['Loja'].concat(DATAS.slice(0, 5), ['Semana']), linhas: D.lojas.map(function (l) { return [l.x.nome].concat(l.resDia.map(function (r) { return brl(r.res, true); }), [brl(l.res, true)]); }).concat([['Rede'].concat(D.rede.map(function (r) { return brl(r.res, true); }), [brl(D.res, true)])]),
+      leg: '<div class="heat-scale"><span>−' + dec1(maxAbs / 100000) + ' mil</span><span class="sw"><i class="hs-n4"></i><i class="hs-n3"></i><i class="hs-n2"></i><i class="hs-n1"></i></span><span>0</span><span class="sw"><i class="hs-p1"></i><i class="hs-p2"></i><i class="hs-p3"></i><i class="hs-p4"></i></span><span>+' + dec1(maxAbs / 100000) + ' mil · resultado do dia (R$)</span></div>',
+      insight: 'Pior dia da rede: <b>' + DIAS[piores.i] + '</b> (' + brl(piores.r.res) + ') — <b>' + nNeg + ' de ' + D.lojas.length + '</b> lojas no negativo. Melhor semana: <b>' + melhor.x.nome + '</b> (' + brl(melhor.res, true) + ').' };
+  }
+
+  /* ---------- 5. Dias de caixa por loja ---------- */
+  function grafDias(el, D) {
+    var W = Math.max(160, el.clientWidth), est = W < 440, labW = est ? 62 : 108, m = { l: labW, r: est ? 66 : 76, t: 30, b: 30 }, pitch = 42, bh = 20;
+    var L = D.lojas.slice().sort(function (a, b) { return b.dc - a.dc; }), H = m.t + L.length * pitch + m.b;
+    var e = escala(0, Math.max(D.dcRede, L[0].dc), 4), X = function (v) { return m.l + v / e.hi * (W - m.l - m.r); };
+    var svg = sv('svg', { width: W, height: H, viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Dias de caixa de cada loja, comparados com a rede' }, el);
+    e.ticks.forEach(function (v) { sv('line', { x1: X(v), x2: X(v), y1: m.t - 6, y2: H - m.b, 'class': v === 0 ? 'vbase' : 'vgrid' }, svg); st(svg, X(v), H - 9, dec1(v), 'vt', 'middle'); });
+    st(svg, W - 2, H - 9, 'dias', 'vt', 'end');
+    L.forEach(function (l, i) {
+      var y0 = m.t + i * pitch + (pitch - bh) / 2, g = sv('g', { 'data-loja': l.x.id }, svg);
+      st(g, m.l - 10, y0 + bh / 2 + 4, curto(l.x, est), 'vt2', 'end');
+      sv('path', { d: barra(m.l, y0, Math.max(2, X(l.dc) - m.l), bh, 4, 'dir'), 'class': 'vm', style: 'fill:var(--s-' + l.x.id + ')' }, g);
+    });
+    sv('line', { x1: X(D.dcRede), x2: X(D.dcRede), y1: m.t - 8, y2: H - m.b, 'class': 'vref' }, svg);
+    st(svg, X(D.dcRede), m.t - 13, 'Rede ' + dec1(D.dcRede), 'vt2', 'middle');
+    L.forEach(function (l, i) {
+      var y0 = m.t + i * pitch + (pitch - bh) / 2;
+      st(svg, X(l.dc) + 8, y0 + bh / 2 + 4, dec1(l.dc) + ' dias', 'vt1 halo');
+    });
+    L.forEach(function (l, i) {
+      var h = sv('rect', { x: 0, y: m.t + i * pitch, width: W, height: pitch, 'class': 'vhit', 'data-loja': l.x.id }, svg);
+      ligar(h, l.x.nome + ': ' + dec1(l.dc) + ' dias de caixa', function () {
+        return [l.x.nome, [{ cor: 'var(--s-' + l.x.id + ')', nome: 'dias de caixa', valor: dec1(l.dc) + ' dias' }, { nome: 'saldo dos bancos', valor: brl(l.bancos) }, { nome: 'saídas por dia (média)', valor: brl(Math.round(l.sai / 5)) }]];
+      });
+    });
+    var pior = L[L.length - 1];
+    return { cab: ['Loja', 'Saldo dos bancos', 'Saídas por dia', 'Dias de caixa'], linhas: L.map(function (l) { return [l.x.nome, brl(l.bancos), brl(Math.round(l.sai / 5)), dec1(l.dc)]; }).concat([['Rede', brl(D.bancos), brl(Math.round(D.totS / 5)), dec1(D.dcRede)]]),
+      insight: '<b>' + pior.x.nome + '</b> tem o menor fôlego: <b>' + dec1(pior.dc) + ' dias</b> de caixa no ritmo de saídas da semana (a rede tem ' + dec1(D.dcRede) + ') — é onde o dinheiro acaba primeiro.' };
+  }
+
+  /* ---------- 6. Tamanho × margem: quem vende mais é quem sobra mais? ---------- */
+  function forma(pai, k, cx, cy, r, attrs) {
+    if (k === 0) return sv('circle', Object.assign({ cx: cx, cy: cy, r: r }, attrs), pai);
+    if (k === 1) return sv('rect', Object.assign({ x: cx - r, y: cy - r, width: 2 * r, height: 2 * r, rx: 2 }, attrs), pai);
+    if (k === 2) return sv('path', Object.assign({ d: 'M' + cx + ' ' + (cy - r * 1.3) + 'L' + (cx + r * 1.3) + ' ' + cy + 'L' + cx + ' ' + (cy + r * 1.3) + 'L' + (cx - r * 1.3) + ' ' + cy + 'Z' }, attrs), pai);
+    return sv('path', Object.assign({ d: 'M' + cx + ' ' + (cy - r * 1.25) + 'L' + (cx + r * 1.15) + ' ' + (cy + r * .95) + 'L' + (cx - r * 1.15) + ' ' + (cy + r * .95) + 'Z' }, attrs), pai);
+  }
+  function grafMatriz(el, D) {
+    var W = Math.max(160, el.clientWidth), H = 300, m = { l: 44, r: 14, t: 26, b: 40 }, est = W < 440;
+    var xs = D.lojas.map(function (l) { return l.part * 100; }), ys = D.lojas.concat([{ margem: D.margem }]).map(function (l) { return l.margem * 100; });
+    var xh = Math.ceil((Math.max.apply(null, xs) + 5) / 10) * 10, yl = Math.floor((Math.min.apply(null, ys) - 5) / 10) * 10, yh = Math.ceil((Math.max.apply(null, ys) + 5) / 10) * 10;
+    var X = function (v) { return m.l + v / xh * (W - m.l - m.r); }, Y = function (v) { return m.t + (yh - v) / (yh - yl) * (H - m.t - m.b); };
+    var svg = sv('svg', { width: W, height: H, viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Participação nas entradas contra margem de caixa, por loja' }, el);
+    for (var v = yl; v <= yh; v += 10) { sv('line', { x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), 'class': v === yl ? 'vbase' : 'vgrid' }, svg); st(svg, m.l - 8, Y(v) + 4, v + '%', 'vt', 'end'); }
+    for (var u = 0; u <= xh; u += 10) { sv('line', { x1: X(u), x2: X(u), y1: m.t, y2: H - m.b, 'class': u === 0 ? 'vbase' : 'vgrid' }, svg); st(svg, X(u), H - m.b + 16, u + '%', 'vt', 'middle'); }
+    st(svg, m.l, 12, 'margem de caixa', 'vt'); st(svg, W - m.r, H - 6, 'participação nas entradas da rede', 'vt', 'end');
+    sv('line', { x1: m.l, x2: W - m.r, y1: Y(D.margem * 100), y2: Y(D.margem * 100), 'class': 'vref' }, svg);
+    st(svg, W - m.r - 2, Y(D.margem * 100) - 6, 'Rede ' + pct1(D.margem), 'vt2', 'end');
+    D.lojas.forEach(function (l, k) {
+      var cx = X(l.part * 100), cy = Y(l.margem * 100), g = sv('g', { 'data-loja': l.x.id }, svg), nome = curto(l.x, est), larg = nome.length * 7 + 16, esq = cx + 10 + larg > W - m.r;
+      forma(g, k, cx, cy, 8, { 'class': 'vring' });
+      forma(g, k, cx, cy, 6, { 'class': 'vm', style: 'fill:var(--s-' + l.x.id + ')' });
+      st(g, esq ? cx - 14 : cx + 14, cy + 4, nome, 'vt2', esq ? 'end' : 'start');
+      var h = sv('circle', { cx: cx, cy: cy, r: 16, 'class': 'vhit', 'data-loja': l.x.id }, svg);
+      ligar(h, l.x.nome + ': ' + pct1(l.part) + ' das entradas, margem de ' + pct1(l.margem), function () {
+        return [l.x.nome, [{ cor: 'var(--s-' + l.x.id + ')', nome: 'das entradas da rede', valor: pct1(l.part) }, { nome: 'margem de caixa', valor: pct1(l.margem) }, { nome: 'resultado da semana', valor: brl(l.res, true) }]];
+      });
+    });
+    var maior = D.lojas.slice().sort(function (a, b) { return b.part - a.part; })[0], melhor = D.lojas.slice().sort(function (a, b) { return b.margem - a.margem; })[0];
+    return { cab: ['Loja', 'Entradas', 'Participação', 'Margem de caixa'], linhas: D.lojas.map(function (l) { return [l.x.nome, brl(l.ent), pct1(l.part), pct1(l.margem)]; }).concat([['Rede', brl(D.totE), '100%', pct1(D.margem)]]),
+      leg: '<span>● Loja Centro</span><span>■ Loja Shopping</span><span>◆ Loja Sul</span><span>▲ Loja Bairro</span>',
+      insight: maior === melhor ? '<b>' + maior.x.nome + '</b> concentra <b>' + pct1(maior.part) + '</b> das entradas e tem a maior margem (<b>' + pct1(maior.margem) + '</b>): vender mais está rendendo mais caixa.'
+        : 'A <b>' + maior.x.nome + '</b> vende mais (' + pct1(maior.part) + ' das entradas), mas a <b>' + melhor.x.nome + '</b> sobra mais por real vendido (margem de <b>' + pct1(melhor.margem) + '</b>).' };
+  }
+
+  /* ---------- montagem da página ---------- */
+  var CARTOES = [
+    ['fluxo', 'Fluxo diário', 'Entradas para cima, saídas para baixo; o ponto é o resultado do dia.'],
+    ['saldo', 'Saldo por loja', 'Quanto cada loja guarda, ao fim de cada dia — a pilha é a rede.'],
+    ['cascata', 'Do saldo inicial ao final', 'O que entrou e o que saiu entre 21/09 e 25/09.'],
+    ['mapa', 'Mapa de caixa', 'Resultado do dia de cada loja: verde sobrou, vermelho faltou.'],
+    ['dias', 'Dias de caixa', 'Por quantos dias o saldo cobre as saídas, no ritmo da semana.'],
+    ['matriz', 'Tamanho × margem', 'Quanto cada loja vende (horizontal) e quanto sobra do que vende (vertical).']
+  ];
+  function montarIndicadores() {
+    var raiz = $('#viz');
+    raiz.innerHTML = '<div class="viz-top"><span class="badge badge--neutral">21/09 a 25/09 · rede de ' + LOJAS.length + ' lojas</span>' +
+      '<div class="viz-legend" id="vizLegend"><span class="hint">Destacar loja:</span>' + LOJAS.map(function (x) { return '<button type="button" class="lg" data-loja="' + x.id + '" aria-pressed="false"><i style="background:var(--s-' + x.id + ')"></i>' + x.nome + '</button>'; }).join('') + '</div></div>' +
+      '<div class="vk-grid" id="vizKpis"></div><div class="viz-grid">' +
+      CARTOES.map(function (c) { return '<figure class="card viz-card" id="vc-' + c[0] + '"><figcaption class="viz-cap"><div><h3>' + c[1] + '</h3><p>' + c[2] + '</p></div><button type="button" class="viz-tg" aria-pressed="false">Ver tabela</button></figcaption>' +
+        '<div class="viz-body"><div class="viz-plot"></div><div class="viz-tbl" hidden></div></div><div class="viz-leg" id="vl-' + c[0] + '"></div><p class="viz-ins"></p></figure>'; }).join('') +
+      '</div><p class="nota"><b>Como cada indicador é calculado.</b> Margem de caixa = (entradas − saídas) ÷ entradas. Dias de caixa = saldo dos bancos ÷ saída média por dia da semana. Conciliação = fechamentos loja-dia sem diferença ÷ total de fechamentos. Categorização em dia = lançamentos já categorizados ÷ total. Transferência entre lojas não entra no resultado: só muda o saldo de cada loja.</p>' +
+      '<div class="viz-tip" id="vizTip" role="status" hidden></div>';
+    $('#vizLegend').addEventListener('click', function (e) {
+      var b = e.target.closest ? e.target.closest('.lg') : null; if (!b) return;
+      var id = b.getAttribute('data-loja'), ja = raiz.getAttribute('data-foco') === id;
+      if (ja) raiz.removeAttribute('data-foco'); else raiz.setAttribute('data-foco', id);
+      document.querySelectorAll('#vizLegend .lg').forEach(function (x) { x.setAttribute('aria-pressed', !ja && x === b ? 'true' : 'false'); });
+    });
+    raiz.addEventListener('click', function (e) {
+      var b = e.target.closest ? e.target.closest('.viz-tg') : null; if (!b) return;
+      var card = b.closest('.viz-card'), tabela = !card.querySelector('.viz-tbl').hidden;
+      card.querySelector('.viz-tbl').hidden = tabela; card.querySelector('.viz-plot').hidden = !tabela;
+      b.setAttribute('aria-pressed', tabela ? 'false' : 'true'); b.textContent = tabela ? 'Ver tabela' : 'Ver gráfico'; tipHide();
+    });
+    document.addEventListener('pointerdown', function (e) { if (!(e.target.closest && e.target.closest('.vhit'))) tipHide(); });
+    raiz.setAttribute('data-pronto', '1');
+  }
+  function renderIndicadores() {
+    var raiz = $('#viz'); if (!raiz || $('[data-pg="indicadores"]').hidden) return;
+    if (!raiz.getAttribute('data-pronto')) montarIndicadores();
+    var D = dadosInd(), fn = { fluxo: grafFluxo, saldo: grafSaldo, cascata: grafCascata, mapa: grafMapa, dias: grafDias, matriz: grafMatriz };
+    $('#vizKpis').innerHTML = htmlKpis(D); tipHide();
+    CARTOES.forEach(function (c) {
+      var plot = $('#vc-' + c[0] + ' .viz-plot'); plot.innerHTML = '';
+      var r = fn[c[0]](plot, D);
+      $('#vc-' + c[0] + ' .viz-tbl').innerHTML = tabela(r.cab, r.linhas);
+      $('#vc-' + c[0] + ' .viz-ins').innerHTML = r.insight;
+      $('#vl-' + c[0]).innerHTML = r.leg || '';
+    });
+  }
+  var _rz; window.addEventListener('resize', function () { clearTimeout(_rz); _rz = setTimeout(renderIndicadores, 150); });
+  function renderPrevInd() {
+    var D = dadosInd(), el = $('#prevInd'); if (!el) return;
+    el.innerHTML = '<div class="pv"><span>Saldo da rede</span><b>R$ ' + kfmt(D.fim) + '</b></div>' + spark(D.saldoRede, 160, 34) + '<div class="pv"><span>Dias de caixa · conciliação</span><b>' + dec1(D.dcRede) + ' · ' + Math.round(D.conc.ok * 100 / D.conc.total) + '%</b></div>';
   }
 
   window.mk = {
