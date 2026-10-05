@@ -181,7 +181,7 @@ img { max-width: 100%; }
 .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 12px; flex-wrap: wrap; }
 .section-head h2 { font-size: 15px; font-weight: 600; }
 .filters-row { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 18px; flex-wrap: wrap; }
-.filters-row .field { min-width: 150px; }
+.filters-row .field { min-width: min(150px, 100%); }
 
 /* Assistente */
 .chat-shell { display: flex; flex-direction: column; }
@@ -194,7 +194,7 @@ img { max-width: 100%; }
 .chat-msg--assistente .chat-bubble { background: var(--surface-1); border: 1px solid var(--border-1); border-bottom-left-radius: 4px; }
 .chat-hora { font-size: 11px; color: var(--text-mute); margin-top: 4px; padding: 0 2px; }
 .chat-form { display: flex; gap: 10px; padding-top: 12px; border-top: 1px solid var(--border-1); }
-.chat-form input { flex: 1; }
+.chat-form input { flex: 1; min-width: 0; }
 .chat-disc { font-size: 12px; color: var(--text-mute); text-align: center; padding-top: 8px; }
 .ia-lista { display: flex; flex-direction: column; gap: 10px; }
 .ia-item { display: flex; gap: 12px; padding: 12px 14px; border-radius: var(--radius-md); background: var(--overlay-1); border: 1px solid var(--border-1); }
@@ -203,7 +203,8 @@ img { max-width: 100%; }
 .ia-tt-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .ia-tt { font-weight: 600; font-size: 13.5px; color: var(--text-100); }
 .ia-ds { font-size: 13px; color: var(--text-mute); margin-top: 4px; line-height: 1.5; }
-.ia-acoes { margin-top: 8px; display: flex; gap: 8px; }
+.ia-acoes { margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
+.ia-acoes .btn { white-space: normal; height: auto; min-height: 2rem; padding: 6px 14px; line-height: 1.3; text-align: left; }
 
 .text-mute { color: var(--text-mute); }
 .flex { display: flex; }
@@ -284,13 +285,45 @@ img { max-width: 100%; }
 .resumo-item small { display: block; font-size: 11.5px; color: var(--text-mute); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
 .resumo-item b { font-size: 16px; font-variant-numeric: tabular-nums; }
 .paginador { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 14px; font-size: 13px; color: var(--text-mute); }
-.paginador .pag { display: flex; gap: 6px; }
+.paginador .pag { display: flex; gap: 6px; flex-wrap: wrap; }
 .grupo-row td:first-child { width: 34px; }
 .expand { width: 22px; height: 22px; border-radius: 6px; border: 1px solid var(--border-1); background: var(--overlay-1); color: var(--text-200); cursor: pointer; font-weight: 700; line-height: 1; }
 .filho td { background: var(--overlay-1); font-size: 13px; color: var(--text-200); }
 .filho td:nth-child(2) { padding-left: 28px; }
 .totais-rodape { display: flex; gap: 22px; flex-wrap: wrap; justify-content: flex-end; font-size: 13.5px; padding-top: 12px; border-top: 1px solid var(--border-1); margin-top: 6px; }
 .totais-rodape b { font-variant-numeric: tabular-nums; }
+
+/* Rede de lojas: fechamento por loja */
+.loja-row { cursor: pointer; }
+.loja-row td:first-child b { font-weight: 600; }
+.loja-sub { display: block; font-size: 11.5px; color: var(--text-mute); margin-top: 2px; font-weight: 400; }
+.part { display: inline-grid; grid-template-columns: 64px 34px; gap: 8px; align-items: center; }
+.part i { display: block; height: 8px; border-radius: var(--radius-pill); background: linear-gradient(90deg, var(--ink), rgba(var(--green-rgb), .7)); }
+.part span { text-align: right; color: var(--text-200); font-size: 12px; font-variant-numeric: tabular-nums; }
+.link-acao { color: var(--text-mute); font-size: 12.5px; white-space: nowrap; }
+.loja-row:hover .link-acao { color: var(--text-100); }
+.lj-prev { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 12px; color: var(--text-200); }
+.lj-prev .dif { color: var(--red); font-weight: 600; font-variant-numeric: tabular-nums; margin-right: 6px; }
+.lj-prev .fecha { width: 20px; height: 20px; font-size: 11px; vertical-align: middle; }
+.titulo-loja { display: inline-flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+/* fechamento por loja como cartões (celular) */
+.card--lojas { container-type: inline-size; }
+/* tabela larga do dia a dia: a coluna do dia fica fixa enquanto rola para o lado */
+.tbl--stick th:first-child, .tbl--stick td:first-child { position: sticky; left: 0; z-index: 1; background: var(--surface-1); box-shadow: 1px 0 0 var(--border-1); }
+.tbl--stick tr.linha-total td:first-child, .tbl--stick tr:hover td:first-child { background-color: var(--surface-1); background-image: linear-gradient(var(--overlay-1), var(--overlay-1)); }
+.tbl--stick thead th:first-child { z-index: 2; }
+.lojas-cards { display: none; grid-template-columns: repeat(auto-fill, minmax(min(230px, 100%), 1fr)); gap: 12px; }
+@container (max-width: 1100px) { .lojas-cards { display: grid; } .tbl-wrap--lojas { display: none; } }
+.loja-card { display: block; border: 1px solid var(--border-1); border-radius: var(--radius-md); padding: 12px 14px; background: var(--overlay-1); cursor: pointer; }
+.loja-card.total { cursor: default; background: var(--overlay-2); grid-column: 1 / -1; }
+.lc-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.lc-top b { font-size: 14.5px; }
+.lc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 10px 14px; }
+.lc-grid small { display: block; font-size: 11px; color: var(--text-mute); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 2px; }
+.lc-grid b { font-size: 14px; font-variant-numeric: tabular-nums; }
+.lc-grid .pos { color: var(--green); } .lc-grid .neg { color: var(--red); }
+.lc-tr { margin-top: 8px; font-size: 12px; color: var(--text-mute); }
+.lc-ver { margin-top: 8px; font-size: 12px; color: var(--text-mute); text-align: right; }
 
 /* Configurações (hub) */
 .cfg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr)); gap: 12px; }
@@ -303,6 +336,7 @@ img { max-width: 100%; }
 .conta-row:last-child { border-bottom: 0; }
 .conta-row .l b { display: block; font-size: 14px; }
 .conta-row .l span { font-size: 12.5px; color: var(--text-mute); }
+.conta-row .flex { flex-wrap: wrap; }
 .voltar-cfg { font-size: 13px; color: var(--text-200); text-decoration: none; padding: 5px 10px; border-radius: var(--radius-pill); border: 1px solid var(--border-1); background: var(--overlay-1); }
 .voltar-cfg:hover { color: var(--text-100); }
 .perm td.ck, .perm th.ck { text-align: center; width: 140px; }
@@ -356,7 +390,29 @@ img { max-width: 100%; }
   .topbar-ia input, .topbar-ia kbd { display: none; }
   .user-menu-trigger .meta { display: none; }
   .body { padding: 16px; }
+  .title-wrap { flex: 1 1 0; min-width: 0; }
+  .topbar .actions { flex-shrink: 0; margin-left: auto; align-self: flex-start; }
+  .body { padding-bottom: 84px; }                 /* a barra do mockup não cobre o fim da página */
+  .vista-bar .field { flex: 1 1 130px; }
+  .vista-bar .field[data-so="cons"] { flex-basis: 100%; }
+  .vista-bar .btn { flex: 1 1 calc(50% - 6px); }
+  .vista-bar .input, .vista-bar .btn, .filters-row .input { min-height: 42px; }
+  /* lançamentos: cada grupo vira duas linhas, em vez de uma tabela de 8 colunas */
+  .tbl--lanc thead, .tbl--lanc td.c-banco, .tbl--lanc td.c-obs { display: none; }
+  .tbl--lanc, .tbl--lanc tbody { display: block; }
+  .tbl--lanc tr { display: grid; grid-template-columns: 28px auto minmax(0, 1fr) auto; align-items: center; column-gap: 8px; row-gap: 3px; padding: 10px 4px; border-bottom: 1px solid var(--overlay-1); }
+  .tbl--lanc td { padding: 0; border: 0; white-space: normal; }
+  .tbl--lanc td.c-exp { grid-column: 1; grid-row: 1; }
+  .tbl--lanc td.c-lanc { grid-column: 2 / 4; grid-row: 1; font-weight: 600; }
+  .tbl--lanc td.c-valor { grid-column: 4; grid-row: 1; text-align: right; white-space: nowrap; }
+  .tbl--lanc td.c-data { grid-column: 2; grid-row: 2; font-size: 12px; color: var(--text-mute); }
+  .tbl--lanc td.c-loja { grid-column: 3; grid-row: 2; font-size: 12px; color: var(--text-200); }
+  .tbl--lanc td.c-tipo { grid-column: 4; grid-row: 2; text-align: right; }
+  .tbl--lanc tr.filho td.c-data, .tbl--lanc tr.filho td.c-loja, .tbl--lanc tr.filho td.c-tipo { display: none; }
+  .tbl--lanc tr.filho td.c-lanc { font-weight: 400; color: var(--text-200); }
+  .theme-switch--text a { height: 32px; }
 }
+@media (max-width: 360px) { .theme-switch--text a { padding: 0 9px; font-size: 12px; } .lc-grid { grid-template-columns: minmax(0, 1fr); } }
 
 /* Barra do mockup (fora do app) */
 .mk-dock { position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); z-index: 4000; display: flex; align-items: center; gap: 10px; padding: 6px 8px 6px 14px; border-radius: var(--radius-pill); background: var(--surface-1); border: 1px solid var(--border-1); box-shadow: var(--shadow-md); font-size: 12px; color: var(--text-mute); white-space: nowrap; }
@@ -492,9 +548,11 @@ img { max-width: 100%; }
           <div class="hm-pend">
             <a class="hm-cd" onclick="mk.go('fluxo')"><span class="hm-n" style="color:var(--amber)">42</span><span class="hm-t">a revisar</span><span class="hm-d">lançamentos sem categoria</span></a>
             <a class="hm-cd" onclick="mk.go('transferencias')"><span class="hm-n" style="color:var(--cyan)">1</span><span class="hm-t">sem par</span><span class="hm-d">transferência sem a outra perna</span></a>
+            <a class="hm-cd" id="hmLojaCd"></a>
           </div>
 
           <div class="hm-tit">Merece atenção</div>
+          <a class="hm-nt" id="hmLojaNt"></a>
           <a class="hm-nt" onclick="mk.go('assistente')"><span class="hm-pt" style="background:var(--amber)"></span><span><span class="hm-nt-t">2 possíveis cobranças duplicadas</span><span class="hm-nt-x">Mesmo valor, no mesmo banco, em poucos dias: R$ 1.290,00 em 22/09 e 23/09.</span></span></a>
           <a class="hm-nt" onclick="mk.go('assistente')"><span class="hm-pt" style="background:var(--amber)"></span><span><span class="hm-nt-t">Receita de "cliente orion" ainda não apareceu</span><span class="hm-nt-x">Costuma cair por volta do dia 20, valor médio R$ 6.800,00 — já é dia 26.</span></span></a>
           <a class="hm-nt" onclick="mk.go('assistente')"><span class="hm-pt" style="background:var(--amber)"></span><span><span class="hm-nt-t">Gasto atípico em Fornecedores</span><span class="hm-nt-x">R$ 65.628,87 esta semana vs média de R$ 38.900,00 nas 3 anteriores.</span></span></a>
@@ -506,19 +564,19 @@ img { max-width: 100%; }
         <div class="section-head"><h2>Painéis</h2><span class="text-mute" style="font-size:13px">cada card abre um painel completo</span></div>
         <div class="hub-grid">
           <a class="card card--interactive hub-card" onclick="mk.go('fluxo')">
-            <div class="hub-prev">
-              <div class="mini-bar"><span>Banco Aurora</span><i style="width:100%"></i></div>
-              <div class="mini-bar"><span>Banco Horizonte</span><i style="width:74%"></i></div>
-              <div class="mini-bar"><span>Coop. Vale Norte</span><i style="width:22%"></i></div>
-            </div>
-            <div class="hub-info"><span class="nav-badge">◧</span><div><b>Fluxo de caixa</b><span>Saldo por conta · ao vivo</span></div></div>
+            <div class="hub-prev" id="prevSaldos"></div>
+            <div class="hub-info"><span class="nav-badge">◧</span><div><b>Fluxo de caixa</b><span>Saldo por loja · ao vivo</span></div></div>
+          </a>
+          <a class="card card--interactive hub-card" onclick="mk.lojaFiltro('', true)">
+            <div class="hub-prev" id="prevLojas" style="gap:7px"></div>
+            <div class="hub-info"><span class="nav-badge">🏬</span><div><b>Fechamento por loja</b><span id="subLojas"></span></div></div>
           </a>
           <a class="card card--interactive hub-card" onclick="mk.go('assistente')">
             <div class="hub-prev" style="justify-content:center;gap:8px">
               <div class="ia-item" style="padding:8px 10px"><div class="ia-ic" style="font-size:15px">⚠️</div><div class="ia-tt" style="font-size:12.5px">2 cobranças duplicadas</div></div>
               <div class="ia-item" style="padding:8px 10px"><div class="ia-ic" style="font-size:15px">⏰</div><div class="ia-tt" style="font-size:12.5px">1 receita atrasada</div></div>
             </div>
-            <div class="hub-info"><span class="nav-badge">🤖</span><div><b>Assistente &amp; análises</b><span>3 alerta(s) pendente(s)</span></div></div>
+            <div class="hub-info"><span class="nav-badge">🤖</span><div><b>Assistente &amp; análises</b><span>4 alerta(s) pendente(s)</span></div></div>
           </a>
           <div class="card hub-card hub-card--breve">
             <div class="hub-prev">📊</div>
@@ -534,93 +592,22 @@ img { max-width: 100%; }
           <div class="theme-switch theme-switch--text" id="vistaSwitch">
             <a data-vista="lanc">Lançamentos</a><a data-vista="cons" class="on">Consolidado</a>
           </div>
-          <div class="field"><label>Banco</label><select class="input"><option>Todos</option><option>Banco Aurora</option><option>Banco Horizonte</option><option>Coop. Vale Norte</option></select></div>
+          <div class="field"><label>Loja</label><select class="input" id="fLoja"></select></div>
+          <div class="field"><label>Banco</label><select class="input" id="fBanco"><option value="">Todos</option><option>Banco Aurora</option><option>Banco Horizonte</option><option>Coop. Vale Norte</option></select></div>
           <div class="field" data-so="lanc" hidden><label>Lançamento</label><select class="input"><option>Todos</option><option>A revisar</option><option>Recebimento Pix</option><option>Fornecedores</option><option>Transferência entre contas</option></select></div>
           <div class="field" data-so="lanc" hidden><label>Tipo</label><select class="input"><option>Todos</option><option>Receita</option><option>Despesa</option><option>Neutro</option></select></div>
           <div class="field"><label>De</label><input class="input" type="date" value="2026-09-21"></div>
           <div class="field"><label>Até</label><input class="input" type="date" value="2026-09-26"></div>
           <div class="field" data-so="cons"><label>Agrupar por</label><select class="input"><option>Dia</option><option>Semana</option><option>Mês</option><option>Trimestre</option><option>Ano</option></select></div>
-          <button class="btn btn--secondary btn--sm">Filtrar</button>
-          <a class="btn btn--ghost btn--sm">Limpar</a>
+          <button class="btn btn--secondary btn--sm" id="fFiltrar">Filtrar</button>
+          <a class="btn btn--ghost btn--sm" id="fLimpar">Limpar</a>
         </div>
 
-        <!-- ---------- Consolidado ---------- -->
-        <div data-vista-pg="cons">
-          <div class="card" style="margin-bottom:16px">
-            <div class="section-head"><h2>Fechamento dia a dia</h2><span class="badge badge--amber">1 registro(s) com diferença</span></div>
-            <div class="tbl-wrap">
-              <table class="tbl tbl--compacta">
-                <thead>
-                  <tr>
-                    <th></th>
-                    <th colspan="3" class="grp-th">Entradas</th>
-                    <th colspan="3" class="grp-th sep-l">Saídas</th>
-                    <th colspan="4" class="grp-th sep-l">Fechamento</th>
-                  </tr>
-                  <tr>
-                    <th>Dia</th>
-                    <th class="num col-e">A revisar</th><th class="num col-e">Recebimento Pix</th><th class="num tot">Total</th>
-                    <th class="num col-s sep-l">A revisar</th><th class="num col-s">Fornecedores</th><th class="num tot">Total</th>
-                    <th class="num sep-l">Saldo calculado</th><th class="num">Saldo dos bancos</th><th class="num">Diferença</th><th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>seg 21/09</td><td class="num mute">—</td><td class="num">R$ 23.730,50</td><td class="num tot pos">R$ 23.730,50</td><td class="num mute sep-l">—</td><td class="num">R$ 10.035,90</td><td class="num tot neg">R$ 10.035,90</td><td class="num sep-l">R$ 163.694,60</td><td class="num">R$ 163.694,60</td><td class="num">R$ 0,00</td><td style="text-align:center"><span class="fecha ok" title="Fecha">✓</span></td></tr>
-                  <tr><td>ter 22/09</td><td class="num">R$ 1.200,00</td><td class="num">R$ 15.579,20</td><td class="num tot pos">R$ 16.779,20</td><td class="num mute sep-l">—</td><td class="num">R$ 7.702,75</td><td class="num tot neg">R$ 7.702,75</td><td class="num sep-l">R$ 172.771,05</td><td class="num">R$ 172.771,05</td><td class="num">R$ 0,00</td><td style="text-align:center"><span class="fecha ok" title="Fecha">✓</span></td></tr>
-                  <tr><td>qua 23/09</td><td class="num mute">—</td><td class="num">R$ 20.632,40</td><td class="num tot pos">R$ 20.632,40</td><td class="num mute sep-l">—</td><td class="num">R$ 12.535,00</td><td class="num tot neg">R$ 12.535,00</td><td class="num sep-l">R$ 180.868,45</td><td class="num">R$ 180.868,45</td><td class="num">R$ 0,00</td><td style="text-align:center"><span class="fecha ok" title="Fecha">✓</span></td></tr>
-                  <tr><td>qui 24/09</td><td class="num mute">—</td><td class="num">R$ 16.430,30</td><td class="num tot pos">R$ 16.430,30</td><td class="num mute sep-l">—</td><td class="num">R$ 24.949,90</td><td class="num tot neg">R$ 24.949,90</td><td class="num sep-l">R$ 172.348,85</td><td class="num">R$ 172.348,85</td><td class="num">R$ 0,00</td><td style="text-align:center"><span class="fecha ok" title="Fecha">✓</span></td></tr>
-                  <tr><td>sex 25/09</td><td class="num mute">—</td><td class="num">R$ 27.219,60</td><td class="num tot pos">R$ 27.219,60</td><td class="num sep-l">R$ 450,00</td><td class="num">R$ 10.405,32</td><td class="num tot neg">R$ 10.855,32</td><td class="num sep-l">R$ 188.713,13</td><td class="num">R$ 188.263,13</td><td class="num neg">−R$ 450,00</td><td style="text-align:center"><span class="fecha alerta" title="Diferença real — 1 lançamento em 'A revisar'">⚠</span></td></tr>
-                  <tr><td>sáb 26/09</td><td class="num mute">—</td><td class="num mute">—</td><td class="num mute">—</td><td class="num mute sep-l">—</td><td class="num mute">—</td><td class="num mute">—</td><td class="num mute sep-l">—</td><td class="num mute">—</td><td class="num mute">—</td><td style="text-align:center"><span class="fecha sem" title="Sem extrato ainda — não dá pra saber">—</span></td></tr>
-                  <tr class="linha-total"><td>Período</td><td class="num">R$ 1.200,00</td><td class="num">R$ 103.592,00</td><td class="num pos">R$ 104.792,00</td><td class="num sep-l">R$ 450,00</td><td class="num">R$ 65.628,87</td><td class="num neg">R$ 66.078,87</td><td class="num sep-l">R$ 188.713,13</td><td class="num">R$ 188.263,13</td><td class="num neg">−R$ 450,00</td><td style="text-align:center"><span class="fecha alerta">⚠</span></td></tr>
-                </tbody>
-              </table>
-            </div>
-            <p class="nota">Saldo calculado = saldo do dia anterior + entradas − saídas. A <b>Diferença</b> compara com a soma dos saldos reais dos bancos: ✓ fecha · ⚠ diferença real · — sem extrato ainda (não é a mesma coisa que "não fechou"). Transferência entre contas e aplicação automática não viram coluna, mas entram no saldo. Coluna com total zero no período some sozinha.</p>
-          </div>
+        <!-- ---------- Consolidado: montado em renderFluxo() a partir dos dados da rede ---------- -->
+        <div data-vista-pg="cons" id="consBox"></div>
 
-          <div class="card" style="margin-bottom:16px">
-            <div class="section-head"><h2>Resumo do período</h2><span class="badge badge--neutral">21/09 a 26/09</span></div>
-            <div class="resumo-grid">
-              <div class="resumo-item"><small>Saldo inicial · Banco Aurora</small><b>R$ 82.400,00</b></div>
-              <div class="resumo-item"><small>Saldo inicial · Banco Horizonte</small><b>R$ 51.600,00</b></div>
-              <div class="resumo-item"><small>Saldo inicial · Coop. Vale Norte</small><b>R$ 16.000,00</b></div>
-              <div class="resumo-item"><small>Saldo inicial consolidado</small><b>R$ 150.000,00</b></div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="section-head"><h2>Fechamento mensal</h2><span class="text-mute" style="font-size:13px">saldo final de cada mês</span></div>
-            <div class="resumo-grid">
-              <div class="resumo-item"><small>Julho/2026</small><b>R$ 131.240,18</b></div>
-              <div class="resumo-item"><small>Agosto/2026</small><b>R$ 144.905,62</b></div>
-              <div class="resumo-item"><small>Setembro/2026 (até 25/09)</small><b>R$ 188.713,13</b></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ---------- Lançamentos (agrupado + paginado) ---------- -->
-        <div data-vista-pg="lanc" hidden>
-          <div class="card">
-            <div class="tbl-wrap">
-              <table class="tbl tbl--compacta">
-                <thead><tr><th></th><th>Data</th><th>Lançamento</th><th>Banco</th><th>Tipo</th><th class="num">Valor</th><th>Observação</th></tr></thead>
-                <tbody id="tblLanc">
-                  <tr class="grupo-row"><td><button class="expand" data-alvo="g1">+</button></td><td>25/09</td><td>Recebimento Pix <span class="badge badge--neutral">38</span></td><td>Banco Aurora</td><td><span class="badge badge--green">Receita</span></td><td class="num pos">+9.215,00</td><td class="mute">—</td></tr>
-                  <tr class="filho" data-grupo="g1" hidden><td></td><td>25/09</td><td>JOAO P SILVA</td><td>Banco Aurora</td><td></td><td class="num pos">+180,00</td><td class="mute">descrição limpa na tela</td></tr>
-                  <tr class="filho" data-grupo="g1" hidden><td></td><td>25/09</td><td>MARIA F COSTA</td><td>Banco Aurora</td><td></td><td class="num pos">+95,50</td><td class="mute"></td></tr>
-                  <tr class="filho" data-grupo="g1" hidden><td></td><td>25/09</td><td class="mute">… mais 36</td><td></td><td></td><td></td><td></td></tr>
-                  <tr class="grupo-row"><td><button class="expand">+</button></td><td>25/09</td><td>Recebimento Pix <span class="badge badge--neutral">12</span></td><td>Banco Horizonte</td><td><span class="badge badge--green">Receita</span></td><td class="num pos">+13.804,60</td><td class="mute">—</td></tr>
-                  <tr class="grupo-row"><td><button class="expand">+</button></td><td>25/09</td><td>Fornecedores <span class="badge badge--neutral">4</span></td><td>Banco Aurora</td><td><span class="badge badge--red">Despesa</span></td><td class="num neg">−8.740,00</td><td class="mute">—</td></tr>
-                  <tr class="grupo-row"><td><button class="expand">+</button></td><td>25/09</td><td>A revisar <span class="badge badge--neutral">1</span></td><td>Banco Aurora</td><td><span class="badge badge--red">Despesa</span></td><td class="num neg">−450,00</td><td class="mute">sem categoria ainda</td></tr>
-                  <tr class="grupo-row"><td><button class="expand">+</button></td><td>24/09</td><td>Transferência entre contas <span class="badge badge--neutral">2</span></td><td>Aurora → Horizonte</td><td><span class="badge" style="background:rgba(var(--cyan-rgb),.14);color:var(--cyan)">Neutro</span></td><td class="num">20.000,00</td><td class="mute">pareada ✓</td></tr>
-                  <tr class="grupo-row"><td><button class="expand">+</button></td><td>24/09</td><td>Fornecedores <span class="badge badge--neutral">9</span></td><td>Banco Horizonte</td><td><span class="badge badge--red">Despesa</span></td><td class="num neg">−18.600,00</td><td class="mute">—</td></tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="totais-rodape"><span>Receita <b style="color:var(--green)">R$ 104.792,00</b></span><span>Despesa <b style="color:var(--red)">R$ 66.078,87</b></span><span>Resultado <b>R$ 38.713,13</b></span><span class="mute">totais do filtro inteiro — não só desta página</span></div>
-            <div class="paginador"><span>1–100 de 3.214 lançamentos</span><div class="pag"><a class="btn btn--soft">‹ Anterior</a><a class="btn btn--soft">1</a><a class="btn btn--secondary btn--sm">2</a><a class="btn btn--soft">3</a><span>…</span><a class="btn btn--soft">33</a><a class="btn btn--soft">Próxima ›</a></div></div>
-          </div>
-        </div>
+        <!-- ---------- Lançamentos (agrupado + paginado): idem ---------- -->
+        <div data-vista-pg="lanc" id="lancBox" hidden></div>
 
         <!-- ---------- Planejado (fonte de dado em aberto) ---------- -->
         <div data-planejado hidden>
@@ -658,7 +645,7 @@ img { max-width: 100%; }
           <div class="section-head"><h2>Importar extrato</h2></div>
           <div class="filters-row">
             <div class="field"><label>Conta</label><select class="input"><option>Banco Aurora</option></select></div>
-            <div class="field" style="min-width:260px"><label>Arquivo (OFX, CSV, XLS, PDF — até 20 MB)</label><input class="input" value="extrato_setembro.ofx"></div>
+            <div class="field" style="min-width:min(260px,100%)"><label>Arquivo (OFX, CSV, XLS, PDF — até 20 MB)</label><input class="input" value="extrato_setembro.ofx"></div>
             <button class="btn btn--primary">Importar</button>
           </div>
         </div>
@@ -686,16 +673,19 @@ img { max-width: 100%; }
               <div class="chat-msg chat-msg--assistente"><div class="chat-bubble">Receita em setembro/2026: R$ 412.870,40.</div><div class="chat-hora">14:02</div></div>
               <div class="chat-msg chat-msg--usuario"><div class="chat-bubble">e em agosto?</div><div class="chat-hora">14:03</div></div>
               <div class="chat-msg chat-msg--assistente"><div class="chat-bubble">Receita em agosto/2026: R$ 398.114,07.</div><div class="chat-hora">14:03</div></div>
+              <div class="chat-msg chat-msg--usuario"><div class="chat-bubble">e por loja, nesta semana?</div><div class="chat-hora">14:04</div></div>
+              <div class="chat-msg chat-msg--assistente"><div class="chat-bubble" id="chatLojas"></div><div class="chat-hora">14:04</div></div>
             </div>
             <form class="chat-form" onsubmit="return mk.perguntar(this.q.value)"><input name="q" class="input" placeholder="Pergunte sobre suas finanças…"><button class="btn btn--primary">Enviar</button></form>
             <div class="chat-disc">🔒 Calculado localmente, a partir dos seus lançamentos — nada sai deste servidor.</div>
           </div>
         </div>
         <div class="card">
-          <div class="section-head"><h2>🔎 Análises</h2><span class="badge badge--neutral">4 observações</span></div>
+          <div class="section-head"><h2>🔎 Análises</h2><span class="badge badge--neutral">3 observações</span></div>
           <div class="ia-lista">
             <div class="ia-item"><div class="ia-ic">🏷️</div><div class="ia-corpo"><div class="ia-tt-row"><span class="ia-tt">3 lançamento(s) parecem ser Fornecedores</span><span class="badge badge--amber">sugestão</span></div><div class="ia-ds">A descrição tem "atlas", mesmo padrão de lançamentos já categorizados como Fornecedores. Soma: R$ 2.940,00.</div><div class="ia-acoes"><button class="btn btn--primary btn--sm">Marcar como Fornecedores</button><button class="btn btn--ghost btn--sm">Dispensar</button></div></div></div>
             <div class="ia-item"><div class="ia-ic">⚠️</div><div class="ia-corpo"><div class="ia-tt-row"><span class="ia-tt">2 possíveis cobranças duplicadas</span><span class="badge badge--amber">aviso</span></div><div class="ia-ds">R$ 1.290,00 em 22/09 e 23/09, Banco Horizonte.</div></div></div>
+            <div class="ia-item"><div class="ia-ic">🏬</div><div class="ia-corpo"><div class="ia-tt-row"><span class="ia-tt">Loja Sul não fechou em 25/09</span><span class="badge badge--amber">aviso</span></div><div class="ia-ds">O saldo dos bancos está R$ 450,00 abaixo do calculado — a loja tem 1 lançamento ainda em "A revisar", no mesmo valor.</div></div></div>
           </div>
           <p class="nota">Aplicar uma sugestão continua em 2 passos no servidor (mostra "Confirmar"/"Cancelar") — nunca o <code>confirm()</code> do navegador, que trava a verificação automática.</p>
         </div>
@@ -724,9 +714,19 @@ img { max-width: 100%; }
         <div class="cfg-sec">
           <h2>Gestão</h2>
           <div class="cfg-grid">
+            <a class="card card--interactive cfg-tile" onclick="mk.go('lojas')"><span class="nav-badge">🏬</span><div><b>Lojas</b><span>Cadastro de lojas e contas por loja</span></div></a>
             <a class="card card--interactive cfg-tile"><span class="nav-badge">▤</span><div><b>Categorias</b><span>Categorias de receita e despesa</span></div></a>
             <a class="card card--interactive cfg-tile"><span class="nav-badge">🔔</span><div><b>Agentes de alerta</b><span>Regras de alerta automático</span></div></a>
           </div>
+        </div>
+      </section>
+
+      <!-- ============================ LOJAS ============================ -->
+      <section data-pg="lojas" hidden>
+        <div class="card">
+          <div class="section-head"><h2>Lojas da rede</h2><button class="btn btn--primary btn--sm">+ Nova loja</button></div>
+          <div class="tbl-wrap"><table class="tbl" id="tblLojas"></table></div>
+          <p class="nota">Cada loja tem a(s) sua(s) conta(s) bancária(s) e fecha o caixa contra o saldo delas. A rede é a soma das lojas: uma transferência entre lojas sai de uma e entra na outra — muda o saldo de cada uma, não o da rede.</p>
         </div>
       </section>
 
@@ -834,9 +834,9 @@ img { max-width: 100%; }
   var TITULOS = {
     dashboard: 'Dashboard', fluxo: 'Fluxo de caixa', transferencias: 'Transferências',
     importar: 'Importar extrato', assistente: 'Assistente', configuracoes: 'Configurações',
-    permissoes: 'Permissões', aparelhos: 'Aparelhos', auditoria: 'Auditoria'
+    permissoes: 'Permissões', aparelhos: 'Aparelhos', auditoria: 'Auditoria', lojas: 'Lojas'
   };
-  var DE_CONFIG = { permissoes: 1, aparelhos: 1, auditoria: 1 };
+  var DE_CONFIG = { permissoes: 1, aparelhos: 1, auditoria: 1, lojas: 1 };
   var shell = document.getElementById('appShell');
   var login = document.getElementById('scr-login');
   var guardar = function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} };
@@ -854,6 +854,9 @@ img { max-width: 100%; }
     var el = document.getElementById('pgExtra');
     if (pg === 'fluxo') {
       el.innerHTML = '<div class="theme-switch theme-switch--text" id="rpSwitch"><a data-rp="real" class="on">Realizado</a><a data-rp="plan">Planejado</a></div>';
+      document.querySelector('[data-planejado]').hidden = true;
+      document.querySelector('.vista-bar').hidden = false;
+      vista(document.querySelector('#vistaSwitch .on').getAttribute('data-vista'));
       el.querySelectorAll('[data-rp]').forEach(function (a) {
         a.onclick = function () {
           el.querySelectorAll('[data-rp]').forEach(function (x) { x.classList.toggle('on', x === a); });
@@ -917,7 +920,267 @@ img { max-width: 100%; }
     return false;
   }
 
+
+  /* =====================================================================
+     Rede de lojas — dados fictícios.
+     Cada loja tem a própria conta; a rede é a soma das lojas. Valores em
+     centavos. Os totais da rede são os mesmos de antes (entradas
+     R$ 104.792,00, saídas R$ 66.078,87, saldo R$ 188.713,13): o que muda é
+     que agora dá para ver de qual loja cada número veio.
+     MOV[loja][dia] = [entrada a revisar, Recebimento Pix, saída a revisar,
+                       Fornecedores, transferência entre lojas (líquido)]
+     ===================================================================== */
+  var LOJAS = [
+    { id: 'centro',   nome: 'Loja Centro',   banco: 'Banco Aurora',     ini: 5040000, lanc: 1102, rev: 12, jul: 4462166, ago: 4781886 },
+    { id: 'shopping', nome: 'Loja Shopping', banco: 'Banco Horizonte',  ini: 5160000, lanc: 998,  rev: 15, jul: 4330926, ago: 4926791 },
+    { id: 'sul',      nome: 'Loja Sul',      banco: 'Banco Aurora',     ini: 3200000, lanc: 668,  rev: 9,  jul: 2756044, ago: 3043018 },
+    { id: 'bairro',   nome: 'Loja Bairro',   banco: 'Coop. Vale Norte', ini: 1600000, lanc: 446,  rev: 6,  jul: 1574882, ago: 1738867 }
+  ];
+  var DIAS = ['seg 21/09', 'ter 22/09', 'qua 23/09', 'qui 24/09', 'sex 25/09', 'sáb 26/09'];
+  var DATAS = ['21/09', '22/09', '23/09', '24/09', '25/09', '26/09'];
+  var ULTIMO = 4; // sex 25/09: último dia com extrato
+  var MOV = {"centro":[[0,851953,0,264908,0],[0,458864,0,220664,0],[0,686115,0,375640,0],[0,576055,0,655261,-2000000],[0,998155,0,332079,0],null],"shopping":[[0,686196,0,323886,0],[120000,530209,0,267122,0],[0,613521,0,430458,0],[0,464119,0,833434,2000000],[0,718977,0,315597,0],null],"sul":[[0,487336,0,248110,0],[0,375112,0,152754,500000],[0,451568,0,273516,0],[0,370541,0,592662,0],[0,659864,45000,254348,0],null],"bairro":[[0,347565,0,166686,0],[0,193735,0,129735,-500000],[0,312036,0,173886,0],[0,232315,0,413633,0],[0,344964,0,138508,0],null]};
+  var DIF = { sul: { 4: -45000 } }; // saldo dos bancos − saldo calculado, a partir do dia
+  var TRANSF = { 1: ['bairro', 'sul'], 3: ['centro', 'shopping'] }; // dia → [sai de, entra em]
+
+  var $ = function (q, r) { return (r || document).querySelector(q); };
+  function mil(v) { return String(v).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+  function num(c, sinal) { // 1.234,56 — com sinal opcional
+    var v = Math.abs(c);
+    return (c < 0 ? '−' : (sinal && c > 0 ? '+' : '')) + mil(Math.floor(v / 100)) + ',' + ('0' + (v % 100)).slice(-2);
+  }
+  function brl(c, sinal) { return (c < 0 ? '−' : (sinal && c > 0 ? '+' : '')) + 'R$ ' + num(Math.abs(c)); }
+  function lojaPorId(id) { return LOJAS.filter(function (x) { return x.id === id; })[0]; }
+  function soma(arr) { return arr.reduce(function (a, b) { return a + b; }, 0); }
+
+  function selecao() {
+    var l = $('#fLoja').value, b = $('#fBanco').value;
+    return LOJAS.filter(function (x) { return (!l || x.id === l) && (!b || x.banco === b); });
+  }
+  function movDia(sel, d) { // soma do dia nas lojas selecionadas; null = sem extrato
+    var t = null;
+    sel.forEach(function (x) {
+      var m = MOV[x.id][d]; if (!m) return;
+      t = t || [0, 0, 0, 0, 0];
+      for (var j = 0; j < 5; j++) t[j] += m[j];
+    });
+    return t;
+  }
+  function saldoLoja(x, ate) { // saldo calculado e saldo dos bancos da loja até o dia `ate`
+    var s = x.ini, dif = 0;
+    for (var d = 0; d <= ate; d++) {
+      var m = MOV[x.id][d]; if (!m) continue;
+      s += m[0] + m[1] - m[2] - m[3] + m[4];
+      dif += (DIF[x.id] && DIF[x.id][d]) || 0;
+    }
+    return { calc: s, bancos: s + dif, dif: dif };
+  }
+  function totaisLoja(x) { // entradas, saídas e transferências da loja no período
+    var t = { e: 0, s: 0, tr: 0 };
+    for (var d = 0; d <= ULTIMO; d++) { var m = MOV[x.id][d]; t.e += m[0] + m[1]; t.s += m[2] + m[3]; t.tr += m[4]; }
+    return t;
+  }
+  function fecha(dif, titulo) {
+    return dif === 0 ? '<span class="fecha ok" title="Fecha">✓</span>'
+      : '<span class="fecha alerta" title="' + (titulo || 'Diferença real') + '">⚠</span>';
+  }
+  function trCel(c) { return c === 0 ? '<td class="num mute">—</td>' : '<td class="num">' + brl(c, true) + '</td>'; }
+  function difCel(c) { return c === 0 ? '<td class="num">' + brl(0) + '</td>' : '<td class="num neg">' + brl(c) + '</td>'; }
+
+  /* ---------- Consolidado ---------- */
+  function htmlPorLoja(sel) {
+    var rows = [], te = 0, ts = 0, ttr = 0, tc = 0, tb = 0, nDif = 0;
+    var dados = sel.map(function (x) {
+      var t = totaisLoja(x), f = saldoLoja(x, ULTIMO);
+      te += t.e; ts += t.s; ttr += t.tr; tc += f.calc; tb += f.bancos; if (f.dif !== 0) nDif++;
+      return { x: x, t: t, f: f };
+    });
+    dados.forEach(function (r) {
+      var pct = te ? Math.round(r.t.e * 100 / te) : 0;
+      rows.push('<tr class="loja-row" onclick="mk.lojaFiltro(\'' + r.x.id + '\')" title="Ver o fechamento dia a dia desta loja">' +
+        '<td><b>' + r.x.nome + '</b><span class="loja-sub">' + r.x.banco + '</span></td>' +
+        '<td class="num pos">' + brl(r.t.e) + '</td><td class="num neg">' + brl(r.t.s) + '</td>' + trCel(r.t.tr) +
+        '<td><span class="part"><i style="width:' + pct + '%"></i><span>' + pct + '%</span></span></td>' +
+        '<td class="num sep-l">' + brl(r.f.calc) + '</td><td class="num">' + brl(r.f.bancos) + '</td>' + difCel(r.f.dif) +
+        '<td style="text-align:center">' + fecha(r.f.dif) + '</td></tr>');
+    });
+    rows.push('<tr class="linha-total"><td>' + (sel.length === LOJAS.length ? 'Rede · ' : 'Seleção · ') + sel.length + (sel.length === 1 ? ' loja' : ' lojas') + '</td>' +
+      '<td class="num pos">' + brl(te) + '</td><td class="num neg">' + brl(ts) + '</td>' + trCel(ttr) +
+      '<td><span class="part"><i style="width:100%"></i><span>100%</span></span></td>' +
+      '<td class="num sep-l">' + brl(tc) + '</td><td class="num">' + brl(tb) + '</td>' + difCel(tb - tc) +
+      '<td style="text-align:center">' + fecha(tb - tc) + '</td></tr>');
+    var cartao = function (nome, sub, f, t, id, total) {
+      return '<' + (id ? 'a onclick="mk.lojaFiltro(\'' + id + '\')"' : 'div') + ' class="loja-card' + (total ? ' total' : '') + '"><div class="lc-top"><span><b>' + nome + '</b>' + (sub ? '<span class="loja-sub">' + sub + '</span>' : '') + '</span>' + fecha(f.dif) + '</div>' +
+        '<div class="lc-grid"><div><small>Entradas</small><b class="pos">' + brl(t.e) + '</b></div><div><small>Saídas</small><b class="neg">' + brl(t.s) + '</b></div>' +
+        '<div><small>Saldo calculado</small><b>' + brl(f.calc) + '</b></div><div><small>Diferença</small><b' + (f.dif ? ' class="neg"' : '') + '>' + brl(f.dif) + '</b></div></div>' +
+        (t.tr ? '<div class="lc-tr">Transferência entre lojas: ' + brl(t.tr, true) + '</div>' : '') + (id ? '<div class="lc-ver">dia a dia →</div>' : '') + '</' + (id ? 'a' : 'div') + '>';
+    };
+    var cartoes = dados.map(function (r) { return cartao(r.x.nome, r.x.banco, r.f, r.t, r.x.id, false); });
+    cartoes.push(cartao((sel.length === LOJAS.length ? 'Rede · ' : 'Seleção · ') + sel.length + (sel.length === 1 ? ' loja' : ' lojas'), '', { calc: tc, dif: tb - tc }, { e: te, s: ts, tr: ttr }, '', true));
+    return '<div class="card card--lojas" style="margin-bottom:16px">' +
+      '<div class="section-head"><h2>Fechamento por loja</h2>' +
+      (nDif ? '<span class="badge badge--amber">' + nDif + ' loja(s) com diferença</span>' : '<span class="badge badge--green">todas as lojas fecham</span>') + '</div>' +
+      '<div class="lojas-cards">' + cartoes.join('') + '</div>' +
+      '<div class="tbl-wrap tbl-wrap--lojas"><table class="tbl tbl--compacta"><thead><tr><th>Loja</th><th class="num col-e">Entradas</th><th class="num col-s">Saídas</th>' +
+      '<th class="num">Transferências</th><th>% das entradas</th><th class="num sep-l">Saldo calculado</th><th class="num">Saldo dos bancos</th><th class="num">Diferença</th><th></th></tr></thead>' +
+      '<tbody>' + rows.join('') + '</tbody></table></div>' +
+      '<p class="nota">Cada loja fecha contra o saldo dos próprios bancos, e a rede é a soma das lojas. A <b>transferência entre lojas</b> sai de uma e entra na outra: muda o saldo de cada loja, mas não o da rede. Clique numa loja para ver o fechamento dia a dia dela.</p></div>';
+  }
+
+  function htmlDia(sel) {
+    var cols = [{ k: 0, g: 'e', t: 'A revisar' }, { k: 1, g: 'e', t: 'Recebimento Pix' }, { k: 2, g: 's', t: 'A revisar' }, { k: 3, g: 's', t: 'Fornecedores' }];
+    var tot = [0, 0, 0, 0, 0], d, nDif = 0;
+    for (d = 0; d <= ULTIMO; d++) { var m = movDia(sel, d); if (m) for (var j = 0; j < 5; j++) tot[j] += m[j]; }
+    cols = cols.filter(function (c) { return tot[c.k] !== 0; }); // coluna com total zero no período some sozinha
+    var ce = cols.filter(function (c) { return c.g === 'e'; }), cs = cols.filter(function (c) { return c.g === 's'; });
+    var h2 = '<th>Dia</th>' + ce.map(function (c) { return '<th class="num col-e">' + c.t + '</th>'; }).join('') + '<th class="num tot">Total</th>' +
+      cs.map(function (c, i) { return '<th class="num col-s' + (i === 0 ? ' sep-l' : '') + '">' + c.t + '</th>'; }).join('') + '<th class="num tot">Total</th>' +
+      '<th class="num sep-l">Saldo calculado</th><th class="num">Saldo dos bancos</th><th class="num">Diferença</th><th></th>';
+    var h1 = '<th></th><th colspan="' + (ce.length + 1) + '" class="grp-th">Entradas</th><th colspan="' + (cs.length + 1) + '" class="grp-th sep-l">Saídas</th><th colspan="4" class="grp-th sep-l">Fechamento</th>';
+    var mute = '<td class="num mute">—</td>', body = [];
+    for (d = 0; d < DIAS.length; d++) {
+      var v = movDia(sel, d);
+      if (!v) {
+        body.push('<tr><td>' + DIAS[d] + '</td>' + new Array(ce.length + 1).join(mute) + mute + (cs.length ? '<td class="num mute sep-l">—</td>' + new Array(cs.length).join(mute) : '') + mute +
+          '<td class="num mute sep-l">—</td>' + mute + mute + '<td style="text-align:center"><span class="fecha sem" title="Sem extrato ainda — não dá pra saber">—</span></td></tr>');
+        continue;
+      }
+      var calc = 0, bancos = 0;
+      sel.forEach(function (x) { var f = saldoLoja(x, d); calc += f.calc; bancos += f.bancos; });
+      if (bancos !== calc) nDif++;
+      var cel = function (c) { return v[c.k] ? '<td class="num">' + brl(v[c.k]) + '</td>' : mute; };
+      body.push('<tr><td>' + DIAS[d] + '</td>' + ce.map(cel).join('') + '<td class="num tot pos">' + brl(v[0] + v[1]) + '</td>' +
+        cs.map(function (c, i) { return v[c.k] ? '<td class="num' + (i === 0 ? ' sep-l' : '') + '">' + brl(v[c.k]) + '</td>' : (i === 0 ? '<td class="num mute sep-l">—</td>' : mute); }).join('') +
+        '<td class="num tot neg">' + brl(v[2] + v[3]) + '</td><td class="num sep-l">' + brl(calc) + '</td><td class="num">' + brl(bancos) + '</td>' + difCel(bancos - calc) +
+        '<td style="text-align:center">' + fecha(bancos - calc, 'Diferença real — veja os lançamentos em A revisar') + '</td></tr>');
+    }
+    var fim = { calc: 0, bancos: 0 };
+    sel.forEach(function (x) { var f = saldoLoja(x, ULTIMO); fim.calc += f.calc; fim.bancos += f.bancos; });
+    body.push('<tr class="linha-total"><td>Período</td>' + ce.map(function (c) { return '<td class="num">' + brl(tot[c.k]) + '</td>'; }).join('') + '<td class="num pos">' + brl(tot[0] + tot[1]) + '</td>' +
+      cs.map(function (c, i) { return '<td class="num' + (i === 0 ? ' sep-l' : '') + '">' + brl(tot[c.k]) + '</td>'; }).join('') + '<td class="num neg">' + brl(tot[2] + tot[3]) + '</td>' +
+      '<td class="num sep-l">' + brl(fim.calc) + '</td><td class="num">' + brl(fim.bancos) + '</td>' + difCel(fim.bancos - fim.calc) + '<td style="text-align:center">' + fecha(fim.bancos - fim.calc) + '</td></tr>');
+    var unica = $('#fLoja').value ? sel[0] : null;
+    return '<div class="card" style="margin-bottom:16px"><div class="section-head">' +
+      '<div class="titulo-loja"><h2>Fechamento dia a dia' + (unica ? ' · ' + unica.nome : '') + '</h2>' +
+      (unica ? '<a class="voltar-cfg" href="#" onclick="return mk.lojaFiltro(\'\')">← Todas as lojas</a>' : '') + '</div>' +
+      (nDif ? '<span class="badge badge--amber">' + nDif + ' registro(s) com diferença</span>' : '<span class="badge badge--green">todos os dias fecham</span>') + '</div>' +
+      '<div class="tbl-wrap"><table class="tbl tbl--compacta tbl--stick"><thead><tr>' + h1 + '</tr><tr>' + h2 + '</tr></thead><tbody>' + body.join('') + '</tbody></table></div>' +
+      '<p class="nota">Saldo calculado = saldo do dia anterior + entradas − saídas. A <b>Diferença</b> compara com a soma dos saldos reais dos bancos: ✓ fecha · ⚠ diferença real · — sem extrato ainda (não é a mesma coisa que "não fechou"). Transferência entre contas e aplicação automática não viram coluna, mas entram no saldo. Coluna com total zero no período some sozinha.</p></div>';
+  }
+
+  function htmlResumo(sel) {
+    var itens = sel.map(function (x) { return '<div class="resumo-item"><small>Saldo inicial · ' + x.nome + '</small><b>' + brl(x.ini) + '</b><span class="loja-sub">' + x.banco + '</span></div>'; });
+    if (sel.length > 1) itens.push('<div class="resumo-item"><small>Saldo inicial consolidado</small><b>' + brl(soma(sel.map(function (x) { return x.ini; }))) + '</b></div>');
+    var mensal = [
+      ['Julho/2026', soma(sel.map(function (x) { return x.jul; }))],
+      ['Agosto/2026', soma(sel.map(function (x) { return x.ago; }))],
+      ['Setembro/2026 (até 25/09)', soma(sel.map(function (x) { return saldoLoja(x, ULTIMO).calc; }))]
+    ].map(function (r) { return '<div class="resumo-item"><small>' + r[0] + '</small><b>' + brl(r[1]) + '</b></div>'; });
+    return '<div class="card" style="margin-bottom:16px"><div class="section-head"><h2>Resumo do período</h2><span class="badge badge--neutral">21/09 a 26/09</span></div><div class="resumo-grid">' + itens.join('') + '</div></div>' +
+      '<div class="card"><div class="section-head"><h2>Fechamento mensal</h2><span class="text-mute" style="font-size:13px">saldo final de cada mês</span></div><div class="resumo-grid">' + mensal.join('') + '</div></div>';
+  }
+
+  /* ---------- Lançamentos ---------- */
+  var NOMES_PIX = ['JOAO P SILVA', 'MARIA F COSTA'], NOMES_FORN = ['DISTRIBUIDORA ATLAS', 'TRANSPORTES RIO'];
+  function htmlLanc(sel) {
+    var linhas = [], id = 0, primeiro = true;
+    var neutro = '<span class="badge" style="background:rgba(var(--cyan-rgb),.14);color:var(--cyan)">Neutro</span>';
+    function grupo(d, x, rotulo, qtd, badge, valor, obs, filhos, classe) {
+      var g = 'g' + (++id), temFilhos = qtd > 1;
+      linhas.push('<tr class="grupo-row"><td class="c-exp">' + (temFilhos ? '<button class="expand" data-alvo="' + g + '" aria-label="Mostrar lançamentos do grupo">+</button>' : '') + '</td><td class="c-data">' + DATAS[d] + '</td><td class="c-loja">' + x.nome + '</td>' +
+        '<td class="c-lanc">' + rotulo + ' <span class="badge badge--neutral">' + qtd + '</span></td><td class="c-banco">' + x.banco + '</td><td class="c-tipo">' + badge + '</td>' +
+        '<td class="c-valor num ' + classe + '">' + num(valor, true) + '</td><td class="c-obs mute">' + obs + '</td></tr>');
+      if (!temFilhos) return;
+      filhos.forEach(function (f, i) {
+        linhas.push('<tr class="filho" data-grupo="' + g + '" hidden><td class="c-exp"></td><td class="c-data">' + DATAS[d] + '</td><td class="c-loja"></td><td class="c-lanc">' + f[0] + '</td><td class="c-banco">' + x.banco + '</td><td class="c-tipo"></td><td class="c-valor num ' + classe + '">' + num(f[1], true) + '</td><td class="c-obs mute">' + (primeiro && i === 0 ? 'descrição limpa na tela' : '') + '</td></tr>');
+      });
+      if (qtd > filhos.length) linhas.push('<tr class="filho" data-grupo="' + g + '" hidden><td class="c-exp"></td><td class="c-data"></td><td class="c-loja"></td><td class="c-lanc mute">… mais ' + (qtd - filhos.length) + '</td><td class="c-banco"></td><td class="c-tipo"></td><td class="c-valor"></td><td class="c-obs"></td></tr>');
+      primeiro = false;
+    }
+    [4, 3].forEach(function (d) {
+      sel.forEach(function (x) {
+        var m = MOV[x.id][d]; if (!m) return;
+        var rec = '<span class="badge badge--green">Receita</span>', desp = '<span class="badge badge--red">Despesa</span>';
+        if (m[1]) { var n1 = Math.max(1, Math.round(m[1] / 24300)); grupo(d, x, 'Recebimento Pix', n1, rec, m[1], '—', [[NOMES_PIX[0], Math.round(m[1] * .02 / 10) * 10], [NOMES_PIX[1], Math.round(m[1] * .0104 / 10) * 10]], 'pos'); }
+        if (m[0]) grupo(d, x, 'A revisar', 1, rec, m[0], 'sem categoria ainda', [], 'pos');
+        if (m[3]) { var n3 = Math.max(1, Math.round(m[3] / 218500)); grupo(d, x, 'Fornecedores', n3, desp, -m[3], '—', [[NOMES_FORN[0], -Math.round(m[3] * .18 / 10) * 10], [NOMES_FORN[1], -Math.round(m[3] * .11 / 10) * 10]], 'neg'); }
+        if (m[2]) grupo(d, x, 'A revisar', 1, desp, -m[2], 'sem categoria ainda', [], 'neg');
+        if (m[4]) {
+          var t = TRANSF[d];
+          grupo(d, x, 'Transferência entre contas', 1, neutro, m[4], 'pareada ✓ · ' + lojaPorId(t[0]).nome + ' → ' + lojaPorId(t[1]).nome, [], '');
+        }
+      });
+    });
+    var rec = 0, des = 0, nLanc = 0;
+    sel.forEach(function (x) { var t = totaisLoja(x); rec += t.e; des += t.s; nLanc += x.lanc; });
+    var paginas = Math.ceil(nLanc / 100), pag = '';
+    for (var p = 1; p <= Math.min(paginas, 3); p++) pag += '<a class="btn ' + (p === 1 ? 'btn--secondary btn--sm' : 'btn--soft') + '">' + p + '</a>';
+    if (paginas > 4) pag += '<span>…</span>';
+    if (paginas > 3) pag += '<a class="btn btn--soft">' + paginas + '</a>';
+    return '<div class="card"><div class="tbl-wrap"><table class="tbl tbl--compacta tbl--lanc"><thead><tr><th></th><th>Data</th><th>Loja</th><th>Lançamento</th><th>Banco</th><th>Tipo</th><th class="num">Valor</th><th>Observação</th></tr></thead>' +
+      '<tbody>' + linhas.join('') + '</tbody></table></div>' +
+      '<div class="totais-rodape"><span>Receita <b style="color:var(--green)">' + brl(rec) + '</b></span><span>Despesa <b style="color:var(--red)">' + brl(des) + '</b></span><span>Resultado <b>' + brl(rec - des) + '</b></span><span class="mute">totais do filtro inteiro — não só desta página</span></div>' +
+      '<div class="paginador"><span>1–' + Math.min(100, nLanc) + ' de ' + mil(nLanc) + ' lançamentos</span><div class="pag"><a class="btn btn--soft">‹ Anterior</a>' + pag + '<a class="btn btn--soft">Próxima ›</a></div></div></div>';
+  }
+
+  function renderFluxo() {
+    var sel = selecao();
+    if (!sel.length) {
+      var vazio = '<div class="card"><div class="empty-state"><span class="ic">🏬</span><h3>Nenhuma loja nessa combinação</h3><p>' + lojaPorId($('#fLoja').value).nome + ' não tem conta no ' + $('#fBanco').value + '. Limpe o filtro de loja ou o de banco.</p></div></div>';
+      $('#consBox').innerHTML = vazio; $('#lancBox').innerHTML = vazio; return;
+    }
+    $('#consBox').innerHTML = ($('#fLoja').value ? '' : htmlPorLoja(sel)) + htmlDia(sel) + htmlResumo(sel);
+    $('#lancBox').innerHTML = htmlLanc(sel);
+  }
+
+  /* ---------- Dashboard, Home, Assistente, Lojas ---------- */
+  function lojasComDif() { return LOJAS.filter(function (x) { return saldoLoja(x, ULTIMO).dif !== 0; }); }
+  function renderPaineis() {
+    var saldos = LOJAS.map(function (x) { return { x: x, c: saldoLoja(x, ULTIMO).calc }; });
+    var max = Math.max.apply(null, saldos.map(function (r) { return r.c; }));
+    $('#prevSaldos').innerHTML = saldos.map(function (r) { return '<div class="mini-bar"><span>' + r.x.nome + '</span><i style="width:' + Math.max(8, Math.round(r.c * 100 / max)) + '%"></i></div>'; }).join('');
+    $('#prevLojas').innerHTML = LOJAS.map(function (x) {
+      var f = saldoLoja(x, ULTIMO);
+      return '<div class="lj-prev"><span>' + x.nome + '</span><span>' + (f.dif ? '<span class="dif">' + brl(f.dif) + '</span>' : '') + fecha(f.dif) + '</span></div>';
+    }).join('');
+    var n = lojasComDif().length;
+    $('#subLojas').textContent = LOJAS.length + ' lojas · ' + (n ? n + ' com diferença' : 'todas fecham');
+  }
+  function renderHome() {
+    var com = lojasComDif(), cd = $('#hmLojaCd'), nt = $('#hmLojaNt');
+    if (!com.length) { cd.hidden = true; nt.hidden = true; return; }
+    var x = com[0], f = saldoLoja(x, ULTIMO), alvo = com.length === 1 ? x.id : '';
+    cd.setAttribute('onclick', "mk.lojaFiltro('" + alvo + "', true)");
+    cd.innerHTML = '<span class="hm-n" style="color:var(--red)">' + com.length + '</span><span class="hm-t">' + (com.length === 1 ? 'loja sem fechar' : 'lojas sem fechar') + '</span><span class="hm-d">' + com.map(function (y) { return y.nome; }).join(', ') + ' · 25/09</span>';
+    nt.setAttribute('onclick', "mk.lojaFiltro('" + alvo + "', true)");
+    nt.innerHTML = '<span class="hm-pt" style="background:var(--red)"></span><span><span class="hm-nt-t">' + x.nome + ' não fechou em 25/09</span><span class="hm-nt-x">Diferença de ' + brl(Math.abs(f.dif)) + ' entre o saldo calculado e o dos bancos — 1 lançamento ainda em "A revisar".</span></span>';
+  }
+  function renderChat() {
+    var linhas = LOJAS.map(function (x) { return { x: x, e: totaisLoja(x).e }; }).sort(function (a, b) { return b.e - a.e; });
+    $('#chatLojas').textContent = 'Entradas de 21/09 a 25/09, por loja:\n' + linhas.map(function (r) { return '• ' + r.x.nome + ': ' + brl(r.e); }).join('\n') +
+      '\nTotal da rede: ' + brl(soma(linhas.map(function (r) { return r.e; }))) + '.';
+  }
+  function renderLojasPg() {
+    $('#tblLojas').innerHTML = '<thead><tr><th>Loja</th><th>Conta bancária</th><th class="num">Saldo inicial (21/09)</th><th class="num">Lançamentos</th><th class="num">A revisar</th><th>Fechamento</th></tr></thead><tbody>' +
+      LOJAS.map(function (x) {
+        var f = saldoLoja(x, ULTIMO);
+        return '<tr><td><b>' + x.nome + '</b></td><td>' + x.banco + '</td><td class="num">' + brl(x.ini) + '</td><td class="num">' + mil(x.lanc) + '</td><td class="num">' + x.rev + '</td><td>' + (f.dif ? '<span class="badge badge--amber">diferença ' + brl(f.dif) + '</span>' : '<span class="badge badge--green">fecha</span>') + '</td></tr>';
+      }).join('') + '</tbody>';
+  }
+  function renderRede() { renderFluxo(); renderPaineis(); renderHome(); renderChat(); renderLojasPg(); }
+
+  function lojaFiltro(id, ir) {
+    var l = $('#fLoja'), b = $('#fBanco'), x = lojaPorId(id);
+    l.value = id || '';
+    if (x && b.value && b.value !== x.banco) b.value = '';
+    if (ir) { go('fluxo'); vista('cons'); }
+    renderFluxo();
+    if (!ir) window.scrollTo(0, 0);
+    return false;
+  }
+
   window.mk = {
+    lojaFiltro: lojaFiltro,
     go: function (p) { go(p); return false; },
     login: function (e) { return loginEstado(e); },
     entrar: function () { mostrar(true); go('dashboard'); abrirHome(); return false; },
@@ -934,12 +1197,15 @@ img { max-width: 100%; }
       document.querySelectorAll('[data-aba-pg]').forEach(function (d) { d.hidden = d.getAttribute('data-aba-pg') !== a.getAttribute('data-aba'); });
     };
   });
-  document.querySelectorAll('.expand[data-alvo]').forEach(function (b) {
-    b.onclick = function () {
-      var abrir = b.textContent === '+'; b.textContent = abrir ? '−' : '+';
-      document.querySelectorAll('[data-grupo="' + b.getAttribute('data-alvo') + '"]').forEach(function (r) { r.hidden = !abrir; });
-    };
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('.expand[data-alvo]') : null;
+    if (!b) return;
+    var abrir = b.textContent === '+'; b.textContent = abrir ? '−' : '+';
+    document.querySelectorAll('[data-grupo="' + b.getAttribute('data-alvo') + '"]').forEach(function (r) { r.hidden = !abrir; });
   });
+  $('#fLoja').innerHTML = '<option value="">Todas as lojas</option>' + LOJAS.map(function (x) { return '<option value="' + x.id + '">' + x.nome + '</option>'; }).join('');
+  $('#fLoja').onchange = $('#fBanco').onchange = $('#fFiltrar').onclick = renderFluxo;
+  $('#fLimpar').onclick = function () { $('#fLoja').value = ''; $('#fBanco').value = ''; renderFluxo(); };
   document.querySelectorAll('[data-tema]').forEach(function (b) { b.onclick = function () { tema(b.getAttribute('data-tema')); }; });
   document.getElementById('mkLogin').onclick = function () { mostrar(false); };
   document.getElementById('mkApp').onclick = function () { mostrar(true); };
@@ -976,6 +1242,7 @@ img { max-width: 100%; }
   hmDlg.addEventListener('click', function (e) { if (e.target === hmDlg) hmDlg.close(); });
   document.getElementById('mkReabrirHome').onclick = abrirHome;
 
+  renderRede();
   mostrar(true);
   go('dashboard');
   if (EMBED) {
