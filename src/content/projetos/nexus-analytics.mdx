@@ -4,8 +4,9 @@ subtitulo: 'Dashboard financeiro que roda inteiro na sua máquina — o dado nã
 categoria: 'sistemas'
 resumo: >-
   Nenhum extrato sai do computador: sem nuvem, sem entregar senha de banco a terceiro e sem
-  alterar um centavo do arquivo original. Lê extratos e faturas em quatro formatos, classifica
-  cada lançamento sozinho e responde perguntas sobre as finanças.
+  alterar um centavo do arquivo original. Lê extratos e faturas, classifica cada lançamento,
+  acompanha objetivos e responde perguntas em português — com um modelo de linguagem local que
+  só escolhe o cálculo, nunca inventa o número.
 contexto: 'proprio'
 autoria: 'arquitetei'
 autoriaDetalhe: >-
@@ -15,8 +16,8 @@ autoriaDetalhe: >-
 inicio: 2026-05-01
 status: 'ativo'
 estadoAtual: >-
-  Importa extratos e faturas de quatro formatos, classifica os lançamentos sozinho, projeta o
-  mês seguinte e responde perguntas sobre as finanças — tudo offline, na própria máquina.
+  Importa extratos e faturas de quatro formatos, classifica os lançamentos, projeta o mês
+  seguinte, acompanha objetivos e responde perguntas em português — tudo na própria máquina.
 ferramentas:
   - 'Python 3.12'
   - 'FastHTML'
@@ -24,6 +25,7 @@ ferramentas:
   - 'SQLite'
   - 'pdfplumber'
   - 'Chart.js'
+  - 'Ollama (local)'
   - 'Inno Setup'
 destaque: true
 links:
@@ -42,13 +44,19 @@ dado financeiro num servidor de terceiro. E cobrando caro por isso.
 
 ## A restrição que definiu o projeto
 
-A máquina onde isso roda tem **3,9 GB de RAM** — o que eliminou a solução óbvia, rodar um
-modelo de linguagem local, antes de eu tentar.
+A máquina onde isso roda tem **3,9 GB de RAM** — o que eliminou a solução óbvia, colocar um
+modelo de linguagem para gerar as respostas, antes de eu tentar.
 
-Foi a melhor coisa que aconteceu ao projeto. Sem LLM, a saída foi uma **IA determinística**:
-regras e estatística sobre números que o sistema já calcula. Cada frase nasce de um valor
-rastreável. Não há alucinação porque não há geração — se a regra não sabe, ela diz que não
-sabe.
+Foi a melhor coisa que aconteceu ao projeto. A saída foi uma **IA determinística**: regras e
+estatística sobre números que o sistema já calcula. Cada frase nasce de um valor rastreável.
+Se a regra não sabe, ela diz que não sabe.
+
+Mais tarde voltei ao modelo local, mas num papel que cabe na restrição: ele **não responde**,
+só *traduz*. A pergunta em português vira a escolha de um entre 31 cálculos que já existem; o
+número continua saindo do código determinístico. Um modelo pequeno (`qwen3:4b`, via Ollama)
+roda só em loopback, modelos de nuvem são recusados por construção e, sem ele instalado, o
+sistema segue funcionando como antes. Medi o tradutor com uma régua de 155 perguntas mais 25
+de teste — não com "parece que entende".
 
 Uma limitação de hardware virou uma garantia de auditabilidade.
 
@@ -60,15 +68,16 @@ São oito. As três que mais moldaram o sistema:
 separador, ordem de coluna. Nunca o *conteúdo*. Nenhum valor, data ou descrição é alterado, e
 nenhum lançamento é escondido.
 
-**Nada sai da máquina.** Zero chamadas de rede — e não por configuração: o servidor está preso a
-`127.0.0.1`, não há CDN, e um teste verifica que nenhum módulo importa `socket`, `requests`,
-`urllib` ou `http`. A regra não depende da minha memória.
+**Nada sai da máquina.** O servidor está preso a `127.0.0.1`, não há CDN, e os módulos de
+cálculo e importação são verificados por teste para não importar `socket`, `requests`, `urllib`
+ou `http`. A exceção é explícita e opt-in: um canal de WhatsApp opcional, desligado por padrão,
+que roda como processo separado fora do repositório. A regra não depende da minha memória.
 
 **Toda escrita é atômica.** Arquivo temporário, `.bak`, substituição. Queda de energia no meio
 de uma gravação não corrompe configuração.
 
-Regra que ninguém verifica é intenção. São **163 testes automatizados** rodando a cada mudança —
-o de rede é só um deles.
+Regra que ninguém verifica é intenção. Hoje são **mais de 1.500 verificações automatizadas**
+rodando a cada mudança — o teste de rede é só uma delas.
 
 ## O modelo de domínio
 
@@ -83,8 +92,32 @@ A parte difícil não é essa. São as fronteiras entre seis categorias-mãe:
 
 Errar essas fronteiras não quebra o programa. Faz ele mentir com aparência de certeza.
 
-Projeções usam regressão linear sobre o histórico mensal; parcelas de cartão entram por
+Projeções usam a **mediana** do histórico mensal — um mês atípico não puxa o futuro —; parcelas de cartão entram por
 *walk-forward*, caindo nas competências futuras em que realmente vão ocorrer.
+
+## Uma entrada em vez de oito abas
+
+O menu tinha oito itens e o dono se perdia entre eles. Hoje há três — Dashboard, Lançamentos e
+Objetivos — e o Dashboard abre num **hub** de painéis, cada um com um desenho de forma própria:
+áreas sobrepostas para entrou × saiu, rosca para despesas, colunas para o ritmo das receitas,
+barra empilhada para a fatura, linha com o zero marcado para a projeção. Se lê a forma antes do
+título; seis cards iguais obrigavam a ler seis títulos.
+
+**Lançamentos** reúne tudo numa tabela única, com janela virtual para não travar com milhares
+de linhas, filtros de pendência (sem comprovante, sem finalidade, sem subcategoria, receita de
+terceiro) e um rodapé que fecha a conta: entrou, saiu, saldo e o que ficou de fora por ser
+pagamento de fatura.
+
+**Objetivos** responde "quando eu chego lá?" com o aporte de hoje e, ao lado, quanto
+antecipa se o dinheiro render — com cenários e a taxa citada com a fonte.
+
+## Confiança que se mede
+
+Algumas defesas que vieram do uso real: backup com verificação de integridade; vigia que
+reinicia o servidor se ele cair, com endpoint `/saude`; logs com dado sensível mascarado; PDF
+escaneado recusado em vez de lido pela metade; deduplicação por saldo corrente, que separa a
+compra repetida legítima do lançamento importado duas vezes; e um rastreador de gastos por
+impulso.
 
 ## Prova de equivalência, não "parece igual"
 
@@ -127,8 +160,9 @@ existirem.
 
 ## Onde está hoje
 
-O sistema está em uso e praticamente fechado. O que resta são ajustes finais antes da **v1**,
-prevista para sair em breve.
+O sistema está em uso diário e na versão 1.0.0 do código. A demonstração acima reproduz o
+Dashboard, as projeções por mediana e os Objetivos com dados fictícios; o Hub e a tabela de
+Lançamentos existem só no app real.
 
 ## O que aprendi
 
