@@ -4,6 +4,8 @@ import {
   contasDemo,
   posicoesDemo,
   metaPoupancaDemo,
+  objetivosDemo,
+  taxaRendimentoDemoAA,
   type Lancamento,
 } from '../../data/nexusDemo';
 
@@ -45,6 +47,7 @@ const NAV = [
   { id: 'cartoes', rotulo: 'Cartões', icone: '▤' },
   { id: 'investimentos', rotulo: 'Investimentos', icone: '◇' },
   { id: 'projecoes', rotulo: 'Projeções', icone: '◔' },
+  { id: 'objetivos', rotulo: 'Objetivos', icone: '◎' },
 ] as const;
 
 type AbaId = (typeof NAV)[number]['id'];
@@ -597,10 +600,31 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
 
   // Projeção: média dos meses observados repetida à frente. É o método mais
   // simples possível, e o rótulo do bloco diz isso — não é um modelo.
-  const mediaReceita = media(serieReceita);
-  const mediaDespesa = media(serieDespesa);
+  // Projeção pela mediana, como o app real (kpis.mediana): um mês atípico não puxa o futuro.
+  const mediana = (xs: number[]) => {
+    if (!xs.length) return 0;
+    const o = [...xs].sort((a, b) => a - b);
+    const m = Math.floor(o.length / 2);
+    return o.length % 2 ? o[m] : (o[m - 1] + o[m]) / 2;
+  };
+  const mediaReceita = mediana(serieReceita);
+  const mediaDespesa = mediana(serieDespesa);
   const sobraMedia = mediaReceita - mediaDespesa;
   const MESES_PROJ = 4;
+  const planos = useMemo(() => {
+    const nomeMes = (n: number) => {
+      const d = new Date(2026, 8 + n, 1); // parte de set/2026, mês seguinte ao último lançamento
+      return `${MESES[d.getMonth()]}/${d.getFullYear()}`;
+    };
+    const i = Math.pow(1 + taxaRendimentoDemoAA, 1 / 12) - 1;
+    return objetivosDemo.map((o) => {
+      const n = Math.ceil(Math.max(0, o.alvo - o.atual) / o.aporte);
+      let saldo = o.atual;
+      let nj = 0;
+      while (saldo < o.alvo && nj < 600) { saldo = saldo * (1 + i) + o.aporte; nj++; }
+      return { ...o, chega: nomeMes(n), chegaJuros: nomeMes(nj), mesesAntes: n - nj, noPrazo: n <= o.prazoMeses, prazo: nomeMes(o.prazoMeses) };
+    });
+  }, []);
   const rotulosProj = useMemo(() => {
     const mes = Number(mesAtual.slice(5, 7));
     return Array.from({ length: MESES_PROJ }, (_, i) => MESES[(mes + i) % 12]);
@@ -707,6 +731,8 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
         .nx-card { background:var(--nx-surface); border:1px solid var(--nx-line); border-radius:8px;
           padding:9px 10px; margin-top:8px; }
         .nx-grid2 > .nx-card { margin-top:0; }
+        .nx-veredito { margin:8px 0 0; font-size:12px; line-height:1.5; color:var(--nx-text, inherit); }
+        .nx-veredito.sec { opacity:.75; }
         .nx-sec { font-size:9.5px; font-weight:600; color:var(--nx-text); margin-bottom:8px;
           display:flex; align-items:center; gap:6px; }
         .nx-sec::before { content:''; width:2px; height:11px; border-radius:2px; background:var(--nx-blue); flex-shrink:0; }
@@ -1100,7 +1126,7 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
                     { label: 'Saldo Projetado', valor: fmt0(saldoProjetado), cor: 'cyan', icone: '◔',
                       nota: `daqui a ${MESES_PROJ} meses` },
                     { label: `Despesas Futuras (${MESES_PROJ}m)`, valor: fmt0(mediaDespesa * MESES_PROJ), cor: 'red', icone: '▼',
-                      nota: 'pela média do período' },
+                      nota: 'pela mediana do período' },
                     { label: 'Comprometimento da Renda', valor: pct1(comprometimento), cor: comprometimento > 80 ? 'red' : 'amber', icone: '◈',
                       nota: 'despesa sobre receita' },
                     { label: 'Sobra Mensal Média', valor: fmt0(sobraMedia), cor: 'green', icone: '▲',
@@ -1116,7 +1142,7 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
                         { nome: 'Receita', cor: COR.verde, dados: [...serieReceita, ...Array(MESES_PROJ).fill(mediaReceita)] },
                         { nome: 'Despesa', cor: COR.vermelho, dados: [...serieDespesa, ...Array(MESES_PROJ).fill(mediaDespesa)] },
                       ]}
-                      descricao={`Receita e despesa reais de ${rotulos.join(', ')} e projeção pela média para os ${MESES_PROJ} meses seguintes.`}
+                      descricao={`Receita e despesa reais de ${rotulos.join(', ')} e projeção pela mediana para os ${MESES_PROJ} meses seguintes.`}
                     />
                   </Bloco>
                   <Bloco titulo="Saldo Projetado">
@@ -1175,6 +1201,39 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
                     </Bloco>
                   </>
                 )}
+              </>
+            )}
+            {/* ── Objetivos ─────────────────────────────────────────────── */}
+            {aba === 'objetivos' && (
+              <>
+                <Kpis
+                  lista={[
+                    { label: 'Objetivos Ativos', valor: String(planos.length), cor: 'blue', icone: '◎' },
+                    { label: 'Aporte Mensal Total', valor: fmt0(planos.reduce((s, o) => s + o.aporte, 0)), cor: 'green', icone: '▲',
+                      nota: 'somando todos os objetivos' },
+                    { label: 'Já Guardado', valor: fmt0(planos.reduce((s, o) => s + o.atual, 0)), cor: 'purple', icone: '◇' },
+                  ]}
+                />
+                <div className="nx-grid2">
+                  {planos.map((o) => (
+                    <Bloco key={o.nome} titulo={o.nome}>
+                      <Medidor
+                        pct={(o.atual / o.alvo) * 100}
+                        nota={`${fmt0(o.atual)} de ${fmt0(o.alvo)}`}
+                        cor={o.noPrazo ? COR.verde : COR.ambar} W={W} H={H}
+                        descricao={`${o.nome}: ${pct1((o.atual / o.alvo) * 100)} do alvo.`}
+                      />
+                      <p className="nx-veredito">
+                        No ritmo de hoje ({fmt0(o.aporte)}/mês) você chega em <b>{o.chega}</b>
+                        {o.noPrazo ? ` — dentro do prazo (${o.prazo}).` : ` — depois do prazo (${o.prazo}).`}
+                      </p>
+                      <p className="nx-veredito sec">
+                        Rendendo <b>{pct1(taxaRendimentoDemoAA * 100)} a.a.</b>, os mesmos {fmt0(o.aporte)}/mês chegam em{' '}
+                        <b>{o.chegaJuros}</b>{o.mesesAntes > 0 ? ` — ${o.mesesAntes} ${o.mesesAntes === 1 ? 'mês antes' : 'meses antes'}.` : '.'}
+                      </p>
+                    </Bloco>
+                  ))}
+                </div>
               </>
             )}
           </div>

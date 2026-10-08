@@ -66,6 +66,24 @@ export const posicoesDemo: Posicao[] = [
 /** Meta mensal de poupança usada no medidor de Projeções. */
 export const metaPoupancaDemo = 1500;
 
+/** Taxa de rendimento usada no comparativo "rendendo X% a.a." dos objetivos (fictícia). */
+export const taxaRendimentoDemoAA = 0.1;
+
+export interface ObjetivoDemo {
+  nome: string;
+  alvo: number;
+  atual: number;
+  /** Aporte mensal planejado. */
+  aporte: number;
+  /** Prazo desejado, em meses a partir de setembro/2026. */
+  prazoMeses: number;
+}
+
+export const objetivosDemo: ObjetivoDemo[] = [
+  { nome: 'Reserva de emergência', alvo: 18000, atual: 9500, aporte: 1000, prazoMeses: 8 },
+  { nome: 'Viagem de fim de ano', alvo: 6000, atual: 1800, aporte: 500, prazoMeses: 12 },
+];
+
 export const lancamentosDemo: Lancamento[] = [
   // ── mai/2026 ──────────────────────────────────────────────────────────────
   { data: '2026-05-05', descricao: 'Salário', categoria: 'Renda', sub: 'Salário', tipo: 'receita', valor: 6200, origem: 'Banco A' },
