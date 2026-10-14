@@ -773,9 +773,11 @@ img { max-width: 100%; }
               <div class="chat-msg chat-msg--assistente"><div class="chat-bubble">Receita em agosto/2026: R$ 398.114,07.</div><div class="chat-hora">14:03</div></div>
               <div class="chat-msg chat-msg--usuario"><div class="chat-bubble">e por loja, nesta semana?</div><div class="chat-hora">14:04</div></div>
               <div class="chat-msg chat-msg--assistente"><div class="chat-bubble" id="chatLojas"></div><div class="chat-hora">14:04</div></div>
+              <div class="chat-msg chat-msg--usuario"><div class="chat-bubble">cria um alerta se Fornecedores passar de 70 mil na semana</div><div class="chat-hora">14:05</div></div>
+              <div class="chat-msg chat-msg--assistente"><div class="chat-bubble" id="chatProp">Vou criar um alerta de teto: <b>Fornecedores acima de R$ 70.000,00 por semana</b>. Nada muda até você confirmar (vale por 10 minutos).<div class="flex gap-2" style="margin-top:10px"><button class="btn btn--primary btn--sm" onclick="mk.propor(true)">Confirmar</button><button class="btn btn--ghost btn--sm" onclick="mk.propor(false)">Cancelar</button></div></div><div class="chat-hora">14:05</div></div>
             </div>
             <form class="chat-form" onsubmit="return mk.perguntar(this.q.value)"><input name="q" class="input" placeholder="Pergunte sobre suas finanças…"><button class="btn btn--primary">Enviar</button></form>
-            <div class="chat-disc">🔒 Calculado localmente, a partir dos seus lançamentos — nada sai deste servidor.</div>
+            <div class="chat-disc">🔒 Calculado localmente, a partir dos seus lançamentos. O modelo só escolhe a ferramenta, quem calcula é o código, e qualquer alteração pede o seu "sim".</div>
           </div>
         </div>
         <div class="card">
@@ -806,16 +808,46 @@ img { max-width: 100%; }
             <a class="card card--interactive cfg-tile" onclick="mk.go('aparelhos')"><span class="nav-badge">💻</span><div><b>Aparelhos</b><span>Aprovar ou revogar aparelhos</span></div></a>
             <a class="card card--interactive cfg-tile" onclick="mk.go('permissoes')"><span class="nav-badge">🔐</span><div><b>Permissões</b><span>O que Operador e Visualizador veem</span></div></a>
             <a class="card card--interactive cfg-tile" onclick="mk.go('auditoria')"><span class="nav-badge">▥</span><div><b>Auditoria</b><span>Trilha de mudanças e Vigia de acesso</span></div></a>
-            <a class="card card--interactive cfg-tile"><span class="nav-badge">🩺</span><div><b>Saúde do sistema</b><span>Processos, banco, backups e fila</span></div></a>
+            <a class="card card--interactive cfg-tile" onclick="mk.go('saude')"><span class="nav-badge">🩺</span><div><b>Saúde do sistema</b><span>Processos, banco, backups e fila</span></div></a>
           </div>
         </div>
         <div class="cfg-sec">
           <h2>Gestão</h2>
           <div class="cfg-grid">
             <a class="card card--interactive cfg-tile" onclick="mk.go('lojas')"><span class="nav-badge">🏬</span><div><b>Lojas</b><span>Cadastro de lojas e contas por loja</span></div></a>
+            <a class="card card--interactive cfg-tile" onclick="mk.go('rateio')"><span class="nav-badge">⚖</span><div><b>Regras de rateio</b><span>Dividir um lançamento entre lojas</span></div></a>
             <a class="card card--interactive cfg-tile"><span class="nav-badge">▤</span><div><b>Categorias</b><span>Categorias de receita e despesa</span></div></a>
             <a class="card card--interactive cfg-tile"><span class="nav-badge">🔔</span><div><b>Agentes de alerta</b><span>Regras de alerta automático</span></div></a>
           </div>
+        </div>
+      </section>
+
+
+      <!-- ============================ REGRAS DE RATEIO ============================ -->
+      <section data-pg="rateio" hidden>
+        <div class="card">
+          <div class="section-head"><h2>Regras de rateio</h2><button class="btn btn--primary btn--sm">+ Nova regra</button></div>
+          <div class="tbl-wrap"><table class="tbl">
+            <thead><tr><th>Descrição tem</th><th>Divide</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><b>aluguel</b></td><td>Centro 40 · Shopping 40 · Sul 20 (%)</td><td><span class="badge badge--green">ativa</span></td></tr>
+              <tr><td><b>contador</b></td><td>25% em cada loja</td><td><span class="badge badge--green">ativa</span></td></tr>
+              <tr><td><b>marketing</b></td><td>Centro 60 · Shopping 40 (%)</td><td><span class="badge badge--neutral">pausada</span></td></tr>
+            </tbody>
+          </table></div>
+          <p class="nota">Os percentuais precisam fechar 100%. O rateio é calculado na hora do relatório, então mudar a regra vale também para o passado. Lançamento com loja escolhida à mão nunca é rateado.</p>
+        </div>
+      </section>
+
+      <!-- ============================ SAÚDE DO SISTEMA ============================ -->
+      <section data-pg="saude" hidden>
+        <div class="card">
+          <div class="section-head"><h2>Saúde do sistema</h2><span class="badge badge--green">tudo certo</span></div>
+          <div class="conta-row"><div class="l"><b>Servidor e fila de tarefas</b><span>No ar · nenhuma tarefa parada</span></div><span class="badge badge--green">ok</span></div>
+          <div class="conta-row"><div class="l"><b>Banco de dados</b><span>Migrações em dia · integridade conferida</span></div><span class="badge badge--green">ok</span></div>
+          <div class="conta-row"><div class="l"><b>Backup diário</b><span>Último backup hoje, 03:00 · teste de restauração mensal em dia</span></div><span class="badge badge--green">ok</span></div>
+          <div class="conta-row"><div class="l"><b>Assistente local (IA)</b><span>Modelo rodando só neste servidor · 92% de acerto na régua de 159 perguntas</span></div><span class="badge badge--green">ok</span></div>
+          <p class="nota">A tela avisa de cada item antes que vire problema. Dados fictícios.</p>
         </div>
       </section>
 
@@ -932,9 +964,10 @@ img { max-width: 100%; }
   var TITULOS = {
     dashboard: 'Dashboard', fluxo: 'Fluxo de caixa', transferencias: 'Transferências',
     importar: 'Importar extrato', assistente: 'Assistente', configuracoes: 'Configurações',
-    permissoes: 'Permissões', aparelhos: 'Aparelhos', auditoria: 'Auditoria', lojas: 'Lojas', indicadores: 'Indicadores'
+    permissoes: 'Permissões', aparelhos: 'Aparelhos', auditoria: 'Auditoria', lojas: 'Lojas', indicadores: 'Indicadores',
+    rateio: 'Regras de rateio', saude: 'Saúde do sistema'
   };
-  var DE_CONFIG = { permissoes: 1, aparelhos: 1, auditoria: 1, lojas: 1 };
+  var DE_CONFIG = { permissoes: 1, aparelhos: 1, auditoria: 1, lojas: 1, rateio: 1, saude: 1 };
   var shell = document.getElementById('appShell');
   var login = document.getElementById('scr-login');
   var guardar = function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} };
@@ -1005,6 +1038,12 @@ img { max-width: 100%; }
     shell.hidden = !app; login.hidden = app;
     document.getElementById('mkApp').classList.toggle('on', app);
     document.getElementById('mkLogin').classList.toggle('on', !app);
+  }
+
+  function propor(sim) {
+    var b = document.getElementById('chatProp'); if (!b) return false;
+    b.innerHTML = sim ? '✅ Feito. O alerta "Fornecedores acima de R$ 70.000,00 por semana" já está ativo.' : 'Cancelado. Nada foi alterado.';
+    return false;
   }
 
   function perguntar(q) {
@@ -1646,7 +1685,8 @@ img { max-width: 100%; }
     login: function (e) { return loginEstado(e); },
     entrar: function () { mostrar(true); go('dashboard'); abrirHome(); return false; },
     sair: function () { loginEstado('senha'); mostrar(false); },
-    perguntar: perguntar
+    perguntar: perguntar,
+    propor: propor
   };
 
   document.querySelectorAll('.navlink').forEach(function (a) { a.onclick = function () { go(a.getAttribute('data-page')); }; });

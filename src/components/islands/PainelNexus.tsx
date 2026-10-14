@@ -42,6 +42,7 @@ const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'o
 // NAV do app real (utils/layout.py)
 const NAV = [
   { id: 'dashboard', rotulo: 'Dashboard', icone: '⬡' },
+  { id: 'lancamentos', rotulo: 'Lançamentos', icone: '☰' },
   { id: 'receitas', rotulo: 'Receitas', icone: '▲' },
   { id: 'despesas', rotulo: 'Despesas', icone: '▼' },
   { id: 'cartoes', rotulo: 'Cartões', icone: '▤' },
@@ -867,6 +868,25 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
             )}
 
             {/* ── Receitas ──────────────────────────────────────────────── */}
+            {/* ── Lançamentos ───────────────────────────────────────────── */}
+            {aba === 'lancamentos' && (
+              <>
+                <Kpis
+                  lista={[
+                    { label: 'Entrou', valor: fmt0(receitas.reduce((a, l) => a + l.valor, 0)), cor: 'green', icone: '▲' },
+                    { label: 'Saiu', valor: fmt0(despesas.reduce((a, l) => a + l.valor, 0)), cor: 'red', icone: '▼' },
+                    { label: 'Lançamentos', valor: String(lancamentosDemo.length), cor: 'blue', icone: '☰',
+                      nota: 'todos os meses da base' },
+                  ]}
+                />
+                <TabelaLancamentos
+                  titulo="Todos os lançamentos"
+                  lista={[...lancamentosDemo].sort((a, b) => b.data.localeCompare(a.data))}
+                  rotuloAba={rotuloAba}
+                />
+              </>
+            )}
+
             {aba === 'receitas' && (
               <>
                 <Kpis
@@ -1158,6 +1178,14 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
 
                 {!compacto && (
                   <>
+                    <Bloco titulo="Caixa das próximas 13 semanas">
+                      <Linha
+                        rotulos={Array.from({ length: 13 }, (_, i) => `s${i + 1}`)}
+                        valores={Array.from({ length: 13 }, (_, i) => saldoAcum[saldoAcum.length - 1] + (sobraMedia * (i + 1)) / 4.33)}
+                        cor={COR.ciano} W={W} H={H}
+                        descricao="Saldo semanal projetado, repartindo a sobra mensal pela mediana em semanas."
+                      />
+                    </Bloco>
                     <div className="nx-grid2">
                       <Bloco titulo="Sobra vs Meta de Poupança">
                         <Medidor
