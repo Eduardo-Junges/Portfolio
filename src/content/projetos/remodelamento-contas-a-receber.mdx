@@ -32,37 +32,24 @@ import ReguaCobranca from '../../components/ui/ReguaCobranca.astro';
 
 ## O problema
 
-Todo o crédito era crediário próprio, concedido no caixa da loja pelo operador, com apoio do líder
-nos casos mais sensíveis. Isso trazia três problemas:
-
-- **Custo operacional alto:** análise e cadastro comiam minutos de cada venda, em todas as lojas.
-- **Concessão por percepção:** o critério existia no papel, mas a decisão acontecia no balcão.
-- **A empresa carregava o risco:** era a financeira do próprio crediário, sem estrutura pra isso.
-
-E a inadimplência no varejo brasileiro estava em alta.
+Todo o crédito era crediário próprio, concedido no caixa da loja pelo operador. Isso trazia custo
+alto de atendimento, concessão por percepção e uma empresa carregando o risco de ser financeira do
+próprio crediário, com a inadimplência do varejo em alta.
 
 ## O que a conta mostrou
 
-A conta nasceu no GDE (Gestão e Desenvolvimento para a Excelência), curso que fiz logo que entrei
-na empresa. Antes de propor qualquer coisa, montei o custo real de cada cenário de venda: preço,
-custo do produto, impostos, comissão, embalagem e cobrança. Não o valor da venda, o resultado
-líquido.
-
-**Uma venda não recebida custava mais que o próprio produto.** Cada aprovação por percepção era
-uma aposta pior que não vender. Foi essa conta que mudou a conversa, de "como cobramos melhor"
-pra "por que somos nós carregando esse risco".
+Antes de propor qualquer coisa, montei o custo real de cada cenário de venda: preço, custo do
+produto, impostos, comissão, embalagem e cobrança. **Uma venda não recebida custava mais que o
+próprio produto.** Foi essa conta que mudou a conversa, de "como cobramos melhor" pra "por que somos
+nós carregando esse risco".
 
 ## As três frentes
 
 ### 1. A carteira já vencida
 
-Vendi os títulos em carteira depois de analisar caso a caso: o que ainda tinha recuperação interna
-ficou, o que só gerava custo de cobrança saiu. Em paralelo, política clara de renegociação.
-
-Levei a empresa pro **Serasa Limpa Nome**. Lá a dívida entra como proposta de negociação, visível
-só pro cliente, a empresa e o Serasa, e o cliente renegocia sozinho no app. Foi um dos melhores
-retornos do projeto: recuperei dívida com mais de vinte anos de atraso, que a cobrança tradicional
-jamais traria de volta. Hoje está parado, esperando a integração do ERP com o Serasa.
+Vendi os títulos em carteira depois de analisar caso a caso e criei uma política clara de
+renegociação. Levei a empresa pro **Serasa Limpa Nome**, onde o cliente renegocia sozinho no app, e
+recuperei dívidas com mais de vinte anos de atraso.
 
 ### 2. A régua de cobrança
 
@@ -71,42 +58,29 @@ automatizadas.
 
 <ReguaCobranca />
 
-No meio da implantação a Meta mudou a política antispam do WhatsApp e bloqueou os números da
-empresa. Não estava em plano nenhum e atrasou a régua recém-implantada.
-
 ### 3. A saída da posição de financeira
 
-A régua estanca a sangria, mas não resolve a causa. Então troquei o crediário próprio por um
-produto de crédito administrado por um parceiro especializado, que assume risco, inadimplência e
-cobrança. Escolhi o parceiro comparando modelos de fornecedores diferentes, todos simulados na
-mesma planilha de custo do diagnóstico. Da busca de cases ao fechamento foram mais de oito meses.
+Troquei o crediário próprio por um produto de crédito administrado por um parceiro especializado,
+que assume risco, inadimplência e cobrança. Escolhi o parceiro comparando modelos de fornecedores
+diferentes na mesma planilha de custo do diagnóstico.
 
 ## Como conduzi
 
-Comecei mapeando o ambiente todo (recursos, estrutura, mercado, riscos) e amarrei cada objetivo à
-estratégia da empresa, com indicador e meta. A execução virou um plano **5W2H com priorização
-GUT**: cada ação com responsável, prazo, método, custo e nota de gravidade, urgência e tendência.
-Revisão toda semana. A parte difícil nunca foi técnica, foi alinhar áreas com prioridades
-diferentes em torno de uma mudança estrutural.
+Mapeei o ambiente, amarrei cada objetivo à estratégia da empresa e levei a execução num plano
+**5W2H com priorização GUT**, com revisão toda semana. A parte difícil nunca foi técnica, foi
+alinhar áreas com prioridades diferentes.
 
 ## O que decidi não fazer
 
-- **Não tentei reter 100% da base antiga.** Parte dos clientes não migrou, e era esperado.
-  Desenhar o produto pra retê-los afrouxaria justamente o critério de crédito que o projeto veio
-  corrigir. Seria recriar o problema com outro nome.
-- **Não comecei pela cobrança**, que era o pedido inicial. Melhorar a régua sem mexer em quem
-  concede o crédito trata o sintoma e deixa a causa rodando.
+- **Não tentei reter 100% da base antiga.** Isso afrouxaria o critério de crédito que o projeto veio
+  corrigir.
+- **Não comecei pela cobrança**, que era o pedido inicial. Sem mexer em quem concede o crédito, eu
+  trataria o sintoma.
 
 ## O que mudou
 
-O novo modelo está no oitavo mês de operação, com adesão acima do previsto.
+O novo modelo está no oitavo mês, com adesão acima do previsto. O risco de crédito saiu da empresa,
+a concessão segue o mesmo critério em toda a rede, o atendimento recuperou tempo e a cobrança virou
+processo. A análise do primeiro ano está em construção, e os números entram aqui quando fechar.
 
-- O risco de crédito saiu da empresa, que voltou a ser varejo.
-- A concessão não depende mais de percepção: mesmo critério em toda a rede.
-- O atendimento recuperou tempo em cada venda.
-- A cobrança virou processo, com régua única.
-- A carteira vencida foi tratada título a título.
-
-A análise formal do primeiro ano está em construção. Os números entram aqui quando ela fechar,
-porque antes disso seriam estimativa. O acompanhamento diário de cada loja e operador virou o
-[painel de eficiência do cartão](/projetos/painel-eficiencia-cartao).
+O acompanhamento diário virou o [painel de eficiência do cartão](/projetos/painel-eficiencia-cartao).
