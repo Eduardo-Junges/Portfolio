@@ -1,25 +1,24 @@
 ---
 titulo: 'Remodelamento do contas a receber'
-subtitulo: 'Três frentes para tirar uma operação varejista do próprio risco de crédito'
+subtitulo: 'Três frentes pra tirar uma operação varejista do próprio risco de crédito'
 categoria: 'financas'
 resumo: >-
-  O crédito ao consumidor era concedido no caixa da loja, por percepção, e a própria empresa
-  carregava a inadimplência. A reformulação atacou as três pontas ao mesmo tempo — a carteira
-  já vencida, a régua de cobrança e a saída da empresa da posição de financeira de si mesma.
+  O crédito era concedido no caixa da loja, por percepção, e a própria empresa carregava a
+  inadimplência. Ataquei três pontas ao mesmo tempo: a carteira já vencida, a régua de cobrança e
+  a saída da empresa da posição de financeira de si mesma.
 contexto: 'empresa'
 autoria: 'liderei'
 autoriaDetalhe: >-
-  Conduzi o projeto do diagnóstico à implantação. A empresa deixou de ser a financeira do
-  próprio crediário, a análise de crédito saiu do caixa da loja e a cobrança artesanal virou uma
-  régua única e automatizada. Conduzir não foi fazer sozinho — diretoria, financeiro, jurídico,
-  contabilidade e especialistas participaram das decisões, e boa parte do desenho final veio
-  dessas conversas.
+  Conduzi do diagnóstico à implantação. A empresa deixou de ser a financeira do próprio crediário,
+  a análise saiu do caixa da loja e a cobrança artesanal virou uma régua única e automatizada.
+  Conduzir não foi fazer sozinho: diretoria, financeiro, jurídico, contabilidade e especialistas
+  participaram, e boa parte do desenho final veio dessas conversas.
 inicio: 2025-01-01
 precisaoInicio: 'ano'
 status: 'aperfeicoamento'
 estadoAtual: >-
-  As três frentes em operação: risco de crédito fora da empresa, régua de cobrança automatizada
-  e carteira antiga tratada.
+  As três frentes rodando: risco de crédito fora da empresa, régua de cobrança automatizada e
+  carteira antiga tratada.
 ferramentas:
   - '5W2H com priorização GUT'
   - 'Birôs de crédito'
@@ -33,120 +32,81 @@ import ReguaCobranca from '../../components/ui/ReguaCobranca.astro';
 
 ## O problema
 
-Todo o crédito ao consumidor era crediário próprio, concedido de forma descentralizada — no
-caixa da loja, pelo operador, com apoio do líder nos casos mais sensíveis.
+Todo o crédito era crediário próprio, concedido no caixa da loja pelo operador, com apoio do líder
+nos casos mais sensíveis. Isso trazia três problemas:
 
-Três consequências estruturais:
+- **Custo operacional alto:** análise e cadastro comiam minutos de cada venda, em todas as lojas.
+- **Concessão por percepção:** o critério existia no papel, mas a decisão acontecia no balcão.
+- **A empresa carregava o risco:** era a financeira do próprio crediário, sem estrutura pra isso.
 
-- **Custo operacional alto.** Análise de crédito e abertura de cadastro consumiam minutos de
-  atendimento em cada venda, multiplicados por todas as lojas.
-- **Concessão por percepção.** O critério existia no papel; a decisão acontecia no balcão.
-- **A empresa carregava o risco.** Era ela a financeira do próprio crediário, sem estrutura de
-  análise de crédito para isso.
+E a inadimplência no varejo brasileiro estava em alta.
 
-O cenário externo não ajudava: inadimplência em alta no varejo brasileiro.
+## O que a conta mostrou
 
-## O que a conta revelou
+A conta nasceu no GDE (Gestão e Desenvolvimento para a Excelência), curso que fiz logo que entrei
+na empresa. Antes de propor qualquer coisa, montei o custo real de cada cenário de venda: preço,
+custo do produto, impostos, comissão, embalagem e cobrança. Não o valor da venda, o resultado
+líquido.
 
-A conta nasceu no GDE — Gestão e Desenvolvimento para a Excelência —, curso que fiz logo no meu
-início na empresa. Antes de propor qualquer coisa, montei o custo real de cada cenário de venda:
-preço, custo do produto, impostos, comissão, embalagem e custo de cobrança. Não o valor de
-venda — o resultado líquido.
+**Uma venda não recebida custava mais que o próprio produto.** Cada aprovação por percepção era
+uma aposta pior que não vender. Foi essa conta que mudou a conversa, de "como cobramos melhor"
+pra "por que somos nós carregando esse risco".
 
-**Uma venda não recebida custava mais do que o próprio produto.** No crediário, a venda que não
-é paga soma todo o custo da operação a um prejuízo que já é integral. Na prática, cada aprovação
-de crédito por percepção era uma aposta pior do que não vender.
+## As três frentes
 
-Foi essa conta que mudou a discussão — de "como cobramos melhor" para "por que somos nós
-carregando esse risco".
+### 1. A carteira já vencida
 
-## Três frentes
+Vendi os títulos em carteira depois de analisar caso a caso: o que ainda tinha recuperação interna
+ficou, o que só gerava custo de cobrança saiu. Em paralelo, política clara de renegociação.
 
-O remodelamento foi conduzido em três frentes simultâneas: a carteira já vencida, a régua de
-cobrança e a substituição do crediário próprio.
-
-### 1. A carteira que já estava vencida
-
-Venda estratégica dos títulos em carteira, com análise criteriosa caso a caso. Não é
-liquidação de tudo: é separar o que ainda tem recuperação interna do que só gera custo de
-cobrança. Em paralelo, política clara de renegociação para quem quisesse voltar.
-
-**A parceria que mudou o que era recuperável.** Levei a empresa para dentro do Serasa Limpa
-Nome — modelo diferente de uma inclusão em negativação. No Limpa Nome, a dívida entra na
-plataforma já como proposta de negociação, visível só para o cliente, a empresa e o Serasa; o
-cliente renegocia por conta própria, dentro do próprio app.
-
-Foi um dos movimentos com melhor retorno do projeto inteiro: recuperei dívidas com mais de
-vinte anos de atraso, títulos que a cobrança tradicional jamais traria de volta. Hoje essa
-frente está parada, aguardando a integração do ERP da empresa com o Serasa para voltar a
-rodar.
+Levei a empresa pro **Serasa Limpa Nome**. Lá a dívida entra como proposta de negociação, visível
+só pro cliente, a empresa e o Serasa, e o cliente renegocia sozinho no app. Foi um dos melhores
+retornos do projeto: recuperei dívida com mais de vinte anos de atraso, que a cobrança tradicional
+jamais traria de volta. Hoje está parado, esperando a integração do ERP com o Serasa.
 
 ### 2. A régua de cobrança
 
-A cobrança era artesanal: cada loja do seu jeito, com resultado tão irregular quanto a régua
-de liberação. Desenhei um fluxo único, com prazo definido para cada etapa e as ações críticas
+Cada loja cobrava do seu jeito. Desenhei um fluxo único, com prazo por etapa e as ações críticas
 automatizadas.
 
 <ReguaCobranca />
 
-No meio da implantação, a Meta mudou a política antispam do WhatsApp e passou a bloquear os
-números da empresa — obstáculo que não estava em plano nenhum e que atrasou a régua recém
-implantada.
+No meio da implantação a Meta mudou a política antispam do WhatsApp e bloqueou os números da
+empresa. Não estava em plano nenhum e atrasou a régua recém-implantada.
 
 ### 3. A saída da posição de financeira
 
-A régua estanca a sangria, mas não resolve a causa. A terceira frente substitui o crediário
-próprio por um produto de crédito administrado por um parceiro especializado. Risco de
-crédito, inadimplência e cobrança deixam de ser da empresa.
+A régua estanca a sangria, mas não resolve a causa. Então troquei o crediário próprio por um
+produto de crédito administrado por um parceiro especializado, que assume risco, inadimplência e
+cobrança. Escolhi o parceiro comparando modelos de fornecedores diferentes, todos simulados na
+mesma planilha de custo do diagnóstico. Da busca de cases ao fechamento foram mais de oito meses.
 
-A escolha do parceiro saiu de um comparativo entre modelos de fornecedores diferentes, cada um
-simulado na mesma planilha de custo que originou o diagnóstico. Da busca de cases ao fechamento
-foram mais de oito meses, com diretoria, financeiro, jurídico, contabilidade e especialistas
-envolvidos.
+## Como conduzi
 
-## Como o projeto foi conduzido
-
-Comecei mapeando o ambiente inteiro — recursos, capacidades, estrutura, tendências de mercado,
-riscos. Depois amarrei cada objetivo à estratégia da empresa, com indicador e meta próprios,
-cobrindo financeiro, comercial e mercado.
-
-A execução virou um plano em **5W2H com priorização GUT**: cada ação com responsável, prazo,
-método, custo e uma nota de gravidade, urgência e tendência pra definir a ordem. Revisão toda
-semana, corrigindo rota pelo resultado.
-
-A parte difícil nunca foi técnica. Foi alinhar áreas com prioridades diferentes em torno de
-uma mudança estrutural.
+Comecei mapeando o ambiente todo (recursos, estrutura, mercado, riscos) e amarrei cada objetivo à
+estratégia da empresa, com indicador e meta. A execução virou um plano **5W2H com priorização
+GUT**: cada ação com responsável, prazo, método, custo e nota de gravidade, urgência e tendência.
+Revisão toda semana. A parte difícil nunca foi técnica, foi alinhar áreas com prioridades
+diferentes em torno de uma mudança estrutural.
 
 ## O que decidi não fazer
 
-**Não tentei reter cem por cento da base antiga.**
+- **Não tentei reter 100% da base antiga.** Parte dos clientes não migrou, e era esperado.
+  Desenhar o produto pra retê-los afrouxaria justamente o critério de crédito que o projeto veio
+  corrigir. Seria recriar o problema com outro nome.
+- **Não comecei pela cobrança**, que era o pedido inicial. Melhorar a régua sem mexer em quem
+  concede o crédito trata o sintoma e deixa a causa rodando.
 
-Parte dos clientes não migrou para o novo modelo. Era esperado, e era o objetivo — desenhar o
-produto para retê-los significaria afrouxar exatamente o critério de crédito que o projeto
-existia para corrigir. Seria recriar o problema com outro nome.
+## O que mudou
 
-**Também não comecei pela cobrança**, que era o pedido inicial. Melhorar a régua sem mexer em
-quem concede o crédito trataria o sintoma e deixaria a causa rodando.
+O novo modelo está no oitavo mês de operação, com adesão acima do previsto.
 
-## O que mudou na operação
+- O risco de crédito saiu da empresa, que voltou a ser varejo.
+- A concessão não depende mais de percepção: mesmo critério em toda a rede.
+- O atendimento recuperou tempo em cada venda.
+- A cobrança virou processo, com régua única.
+- A carteira vencida foi tratada título a título.
 
-As três frentes saíram do papel e o novo modelo está no oitavo mês de operação, com adesão
-acima do previsto.
-
-- **O risco de crédito saiu da empresa.** Inadimplência e cobrança do novo modelo são do
-  parceiro especializado. A empresa voltou a ser varejo, e não financeira de si mesma.
-- **A concessão deixou de depender de percepção.** Quem analisa crédito passou a ser quem tem
-  estrutura para isso, com o mesmo critério em toda a rede — não o balcão, caso a caso.
-- **O atendimento recuperou tempo.** Análise e abertura de cadastro não consomem mais minutos
-  de cada venda, em cada loja.
-- **A cobrança virou processo.** Uma régua única, com prazo definido por etapa e as ações
-  críticas automatizadas, no lugar de cada loja do seu jeito.
-- **A carteira vencida foi tratada título a título** — o que ainda tinha recuperação interna
-  ficou; o que só gerava custo de cobrança saiu.
-
-Uma análise de desempenho formal do primeiro ano está em construção. Os números entram numa
-atualização deste case quando ela fechar — antes disso, seriam estimativa.
-
-O acompanhamento do dia a dia — como cada loja e cada operador estão indo na liberação do
-cartão — virou um projeto à parte: o
+A análise formal do primeiro ano está em construção. Os números entram aqui quando ela fechar,
+porque antes disso seriam estimativa. O acompanhamento diário de cada loja e operador virou o
 [painel de eficiência do cartão](/projetos/painel-eficiencia-cartao).

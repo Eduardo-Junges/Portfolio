@@ -1,29 +1,23 @@
 ---
 titulo: 'Nexus & PJ'
-subtitulo: 'Fechar o caixa pelo extrato, para quem tem conta em mais de um banco'
+subtitulo: 'Fechar o caixa pelo extrato, pra quem tem conta em mais de um banco'
 categoria: 'financas'
 resumo: >-
-  O irmão do Nexus, agora para empresa: login, permissão por perfil e o mesmo princípio de
-  sempre — o caixa fecha contra o que o extrato mostra que aconteceu, não contra o que alguém
-  digitou que ia acontecer. Nasceu pensado num caso real e virou produto próprio no meio do
-  caminho.
+  O irmão do Nexus, só que pra empresa: login com perfis e o mesmo princípio de sempre. O caixa
+  fecha contra o que o extrato mostra que aconteceu, não contra o que alguém digitou que ia
+  acontecer. Nasceu de um caso real e virou produto.
 contexto: 'proprio'
 autoria: 'arquitetei'
 autoriaDetalhe: >-
-  Produto para fechamento de caixa por extrato, construído em par com IA sob regras
-  escritas antes do código — sem LLM, sem chamada de rede, todo número citável até a origem. Nasceu
-  pensado numa empresa só; hoje o app não guarda nome, cor nem logo de ninguém — a identidade
-  visual é uma foto que cada instalação troca por conta própria.
+  Feito em par com IA, com regras escritas antes do código: sem LLM, sem chamada de rede e todo
+  número rastreável até a origem. Nasceu pra uma empresa só, mas hoje o app não guarda nome, cor
+  nem logo de ninguém. A identidade visual é uma foto que cada instalação troca sozinha.
 inicio: 2026-08-01
 status: 'ativo'
 estadoAtual: >-
-  Login com três perfis, verificação em duas etapas e liberação de aparelho, motor de leitura de
-  extrato herdado do Nexus Analytics e Fluxo de Caixa Realizado rodando com dado de verdade — com
-  fechamento dia a dia que compara o saldo calculado com o saldo dos bancos e aponta onde há
-  diferença. Dashboard em painéis, assistente de IA determinística na barra do topo e
-  Configurações com administração (contas, usuários, aparelhos, permissões, auditoria, saúde do
-  sistema) e gestão (categorias, alertas). 254 testes automatizados. Ainda não entrou o primeiro
-  extrato real de banco — isso é o próximo passo.
+  Rodando local com login (3 perfis, verificação em duas etapas, liberação de aparelho), Fluxo de
+  Caixa Realizado com dado real e fechamento dia a dia que compara o saldo calculado com o dos
+  bancos. 254 testes automáticos. O primeiro extrato real de banco é o próximo passo.
 ferramentas:
   - 'Python'
   - 'FastHTML'
@@ -36,105 +30,65 @@ destaque: true
 
 ## O problema
 
-Empresa que opera com conta em bancos diferentes não responde uma pergunta simples — quanto
-tem, de verdade, agora. Cada banco fala a sua língua, cada extrato vem num formato, e fechar o
-caixa vira alguém somando tudo à mão numa planilha, com atraso e sem rastro pra refazer a conta
-depois.
+Empresa com conta em vários bancos não consegue responder uma coisa simples: quanto tem de
+verdade agora. Cada banco tem seu formato, e fechar o caixa vira alguém somando tudo à mão,
+atrasado e sem rastro pra refazer a conta.
 
 ## A ideia
 
-Centralizar pelo extrato, não pelo lançamento. O extrato é a única fonte que já é, por
-definição, o que aconteceu — não o que alguém digitou que ia acontecer. Importando o extrato de
-todas as contas pra um lugar só, o caixa fecha contra o realizado, e cada banco aparece com o
-saldo que de fato tem.
+Centralizar pelo **extrato**, não pelo lançamento. Extrato é a única fonte que já é o que
+aconteceu. Importando as contas todas num lugar só, o caixa fecha contra o realizado e cada banco
+mostra o saldo que tem. É o mesmo raciocínio do Nexus Analytics, e o motor de leitura de extrato
+veio de lá, portado. Não reescrevi o que já funcionava.
 
-Foi o mesmo raciocínio que guiou o Nexus Analytics. Aqui o motor de leitura de extrato veio de
-lá, portado — não reescrevi do zero o que já tinha funcionado.
+## O que já roda
 
-## O que já está rodando
-
-Login com três perfis — administrador, quem lança e quem só visualiza — checado sempre no
-back-end, nunca só escondendo botão na tela. A tela de Fluxo de Caixa Realizado importa
-extrato, categoriza e mostra o saldo de verdade, com filtro por coluna igual planilha. O
-dashboard virou um painel de painéis: cada card mostra uma prévia com dado real — saldo por
-conta no Fluxo de caixa, alertas pendentes no Assistente — e abre a tela completa.
-
-Por trás, um conjunto de módulos de IA — todos determinísticos, sem LLM, sem chamada de rede,
-o mesmo princípio de auditabilidade: um assistente que responde pergunta sobre o caixa por
-texto, sugestões de categorização quando duas descrições parecidas caíram em categorias
-diferentes, revisão de lançamento fora do padrão e alertas que o próprio usuário configura —
-teto de gasto, termo pra vigiar no extrato, saldo mínimo de conta. 254 testes automatizados
-cobrem tudo isso.
+- **Login com três perfis** (administrador, quem lança, quem só vê), sempre checado no back-end e
+  nunca só escondendo botão. Dá pra ligar verificação em duas etapas, e o administrador aprova ou
+  revoga aparelhos e define o que cada perfil enxerga.
+- **Fluxo de Caixa Realizado:** importa extrato, categoriza e mostra o saldo real, com filtro por
+  coluna igual planilha.
+- **Dashboard em painéis**, cada card com prévia de dado real.
+- **IA determinística**: assistente que responde sobre o caixa, sugestão de categoria quando duas
+  descrições parecidas caíram em categorias diferentes, revisão de lançamento fora do padrão e
+  alertas que o usuário configura (teto de gasto, termo no extrato, saldo mínimo).
+- **Auditoria:** toda mudança de cadastro ou permissão fica registrada, e um vigia registra
+  varredura e login falho sem avisar quem tentou.
 
 ## Fechamento dia a dia
 
-A tela de Fluxo de Caixa tem duas leituras do mesmo extrato: **Lançamentos**, linha a linha, e
-**Consolidado**, que fecha o dia. No Consolidado cada dia mostra entradas e saídas por
-categoria, o saldo que o sistema calculou e o saldo que os bancos de fato informam — e a
-diferença entre os dois.
+O mesmo extrato tem duas leituras: **Lançamentos**, linha a linha, e **Consolidado**, que fecha o
+dia com entradas e saídas por categoria, o saldo que o sistema calculou, o saldo que os bancos
+informam e a diferença entre os dois. Duas decisões vieram de não querer esconder nada:
 
-Duas decisões nessa tela vieram de insistir em não esconder nada:
-
-**A revisar vira coluna, não rodapé.** O que ainda não foi categorizado entra no total do dia
-em vez de ficar fora dele. Assim o saldo calculado fecha com o extrato mesmo antes da
-categorização estar completa, e a pendência aparece onde ela custa — na conta.
-
-**Sem extrato não é o mesmo que não fechou.** Dia sem extrato importado mostra um traço, não
-uma diferença. Marcar como erro o que é só falta de dado ensinaria a ignorar o alerta que
-importa.
-
-O período pode ser agrupado por dia, semana, mês, trimestre ou ano.
-
-## Quem entra e de onde
-
-Acesso é a parte que mais mudou desde a primeira versão. Além dos três perfis, cada usuário
-pode ligar a verificação em duas etapas, e o administrador aprova ou revoga aparelhos. Ele
-também define, tela por tela, o que Operador e Visualizador enxergam.
-
-Por baixo há uma trilha de auditoria — toda mudança de cadastro ou permissão fica registrada —
-e um vigia de acesso que registra varredura e tentativa de login falha sem avisar quem tentou
-que foi visto.
+- **"A revisar" vira coluna, não rodapé.** O que ainda não foi categorizado entra no total do dia,
+  então o saldo fecha com o extrato mesmo antes de categorizar tudo.
+- **Sem extrato não é o mesmo que não fechou.** Dia sem extrato mostra um traço, não uma
+  diferença. Marcar erro onde falta dado ensina a ignorar o alerta que importa.
 
 ## Mockup
 
-O mockup do topo desta página reproduz o visual do app: a entrada, o dashboard em painéis, o
-fechamento dia a dia e as configurações seguem as telas reais. Ele mostra também o fechamento por
-loja, para quem opera várias lojas e quer conciliar tudo num lugar só: cada loja fecha contra os
-próprios bancos, a rede é a soma delas e dá para abrir o dia a dia de cada uma. E uma tela de
-indicadores financeiros calculados desses mesmos lançamentos: fluxo diário, saldo por loja, cascata
-do saldo, mapa de caixa, dias de caixa por loja e a relação entre tamanho e margem. O resto do fluxo — transferências
-com pareamento das duas pernas, importação, assistente, permissões, aparelhos e auditoria — está
-desenhado no mesmo padrão. Os dados são fictícios: nenhum número ali é real.
+O mockup lá em cima reproduz o app, com dados fictícios. Além das telas reais, ele mostra o
+**fechamento por loja**, pra quem opera várias lojas e quer conciliar tudo num lugar só (cada loja
+fecha contra os próprios bancos, a rede é a soma e dá pra abrir o dia a dia de cada uma) e uma
+tela de **indicadores financeiros** calculados dos mesmos lançamentos: fluxo diário, saldo por
+loja, cascata do saldo, mapa de caixa, dias de caixa por loja e tamanho × margem.
 
 [Abrir o mockup em tela cheia →](/mockups/nexus-pj.html)
 
 ## Como virou produto
 
-O plano original resolvia o problema de uma empresa só. No meio da implementação, decidi tirar
-esse laço: tirei nome, cor e logo fixos do código, e troquei por uma foto que cada instalação
-guarda na própria pasta — trocar a marca é trocar o arquivo, sem mexer em nada mais.
-
-Não foi capricho. Um produto amarrado a uma empresa só serve àquela empresa; um produto que não
-sabe o nome de ninguém serve qualquer uma no mesmo problema.
+O plano original era pra uma empresa só. No meio do caminho tirei o laço: nome, cor e logo saíram
+do código e viraram uma foto na pasta de cada instalação. Trocar a marca é trocar o arquivo.
+Produto amarrado a uma empresa serve àquela empresa. Um que não sabe o nome de ninguém serve
+qualquer uma com o mesmo problema.
 
 ## O que ainda está em aberto
 
-**Nenhum extrato real de banco passou pelo motor ainda.** Ele foi testado com arquivo sintético
-e um exemplo — nenhum banco de verdade, com o layout de verdade dele, foi lido pelo app
-rodando. É o maior risco técnico aberto: cada banco tem seu próprio jeito de exportar, e é ali
-que leitor de extrato costuma quebrar.
-
-**A tela Planejado** existe como molde vazio — mesma tela do Realizado, sem fonte de dado
-ainda. Decisão de escopo que segue em aberto desde o plano original.
-
-**Uma tabela de consolidado** — resumo por categoria com saldo validado — espera eu mandar pra
-mim mesmo o modelo exato de cálculo antes de implementar. É a parte financeira mais sensível de
-toda a tela; prefiro esperar o modelo certo a arriscar refazer.
-
-**Rodar num servidor de verdade**, dentro da rede da empresa, sem acesso à internet, ainda não
-começou — é a próxima fase grande, separada do que já está pronto.
-
-## Onde está hoje
-
-Rodando localmente, com dado real de cadastro mas ainda sem extrato importado de verdade. O
-próximo passo é justamente esse: validar o motor contra o primeiro banco real.
+- **Nenhum extrato real de banco passou pelo motor ainda.** Testei com arquivo sintético. É o
+  maior risco técnico: cada banco exporta de um jeito e é ali que leitor de extrato quebra.
+- **A tela Planejado** existe só como molde vazio, ainda sem fonte de dado.
+- **A tabela de consolidado por categoria** espera eu fechar o modelo de cálculo antes de
+  implementar. Prefiro esperar o modelo certo a refazer a parte financeira mais sensível.
+- **Rodar num servidor de verdade**, dentro da rede da empresa e sem internet, é a próxima fase
+  grande e ainda não começou.

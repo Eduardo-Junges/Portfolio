@@ -1,23 +1,20 @@
 ---
 titulo: 'Painel de eficiência do cartão'
-subtitulo: 'Visão diária de como cada loja e cada operador estão indo na liberação do cartão'
+subtitulo: 'Como cada loja e cada operador estão indo na liberação do cartão, todo dia'
 categoria: 'dados'
 resumo: >-
-  O novo modelo de crédito trouxe um cartão administrado pelo parceiro, mas ninguém enxergava
-  como cada loja estava indo na liberação dele. Um painel que puxa as planilhas que chegam por
-  e-mail, organiza por loja e por operador e mostra tudo em tempo real — na tela da loja ou pelo
-  celular, sem nenhum dado saindo do ambiente.
+  O novo modelo de crédito trouxe um cartão do parceiro, mas ninguém enxergava como cada loja
+  estava indo na liberação. Fiz um painel que pega as planilhas que chegam por e-mail, organiza
+  por loja e por operador e mostra tudo na tela da loja ou no celular, sem dado saindo da empresa.
 contexto: 'empresa'
 autoria: 'construi'
 autoriaDetalhe: >-
-  Painel entregue em menos de uma semana, em par com o Claude Code — do primeiro rascunho ao
-  rodando nas lojas. A decisão que mais mudou o resultado: trocar o critério de ranking de
-  volume para eficiência, antes de mostrar o painel pra qualquer pessoa.
+  Entreguei em menos de uma semana, em par com o Claude Code. A decisão que mais mudou o resultado
+  foi trocar o ranking de volume pra eficiência, antes de mostrar pra qualquer pessoa.
 inicio: 2026-08-01
 status: 'concluido'
 estadoAtual: >-
-  Em uso nas lojas, atualizado automaticamente a partir das planilhas recebidas por e-mail —
-  sem intervenção manual depois da configuração inicial.
+  Em uso nas lojas, atualizando sozinho a partir das planilhas que chegam por e-mail.
 ferramentas:
   - 'Python'
   - 'HTML/CSS'
@@ -28,37 +25,21 @@ destaque: true
 
 ## O problema
 
-O [remodelamento do contas a receber](/projetos/remodelamento-contas-a-receber) trocou o
-crediário próprio por um cartão administrado pelo parceiro, mas isso não respondia uma pergunta
-que só aparece depois: dentro do modelo novo, cada loja está indo bem na liberação do cartão, ou
-só empurrando papelada para o parceiro?
-
-A resposta existia, só que espalhada — planilha por loja, chegando por e-mail, sem padrão e
-sem ninguém olhando o conjunto. Pra saber como a rede inteira estava indo, alguém teria que
-abrir uma por uma e montar a conta à mão.
+O [remodelamento do contas a receber](/projetos/remodelamento-contas-a-receber) trocou o crediário
+próprio por um cartão do parceiro. Ficou uma pergunta: cada loja está indo bem na liberação, ou
+só empurrando papelada pro parceiro? A resposta existia, mas espalhada em planilhas por loja que
+chegavam por e-mail, sem padrão. Pra ver a rede inteira, alguém teria que abrir uma por uma.
 
 ## Como funciona
 
-O painel automatiza a ponta a ponta: recebe as planilhas por e-mail, baixa para pasta própria,
-processa e mostra o resultado numa tela — inclusive no celular de quem está na loja, conectado
-no wifi local.
-
-Nada sai do ambiente da empresa. O processamento e a exibição rodam no próprio servidor local;
-não há envio de dado para fora, o mesmo princípio de segurança do
-[Nexus Analytics](/projetos/nexus-analytics), aplicado agora a um problema da empresa.
-
-A interface segue a identidade visual da marca — cores e tipografia que o time já reconhece,
-em vez de um painel genérico de ferramenta interna.
+Recebe as planilhas por e-mail, baixa numa pasta, processa e mostra numa tela, inclusive no
+celular de quem está na loja, pelo wifi local. Nada sai do ambiente da empresa (mesmo princípio de
+segurança do [Nexus Analytics](/projetos/nexus-analytics)). O visual segue a identidade da marca,
+não um painel genérico de ferramenta interna.
 
 ## A decisão que mudou o painel
 
-O primeiro rascunho ordenava operador por quantidade de cartão liberado. Isso premiava quem
-aprovava mais, não quem aprovava melhor — exatamente o tipo de incentivo que o remodelamento
-inteiro tentou tirar da operação.
-
-Troquei o critério para eficiência antes de mostrar o painel para qualquer pessoa. O ranking
-existe para apontar quem faz bem, não para pressionar por volume.
-
-## Onde está hoje
-
-Entregue e em uso nas lojas, com atualização automática a cada novo lote de planilhas.
+O primeiro rascunho ordenava os operadores por quantidade de cartão liberado. Isso premiava quem
+aprovava mais, não quem aprovava melhor, o oposto do que o remodelamento queria tirar da
+operação. Troquei o critério pra **eficiência** antes de mostrar pra qualquer pessoa. O ranking
+serve pra apontar quem faz bem, não pra pressionar por volume.
