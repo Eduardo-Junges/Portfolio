@@ -1,23 +1,21 @@
 ---
 titulo: 'Nexus Analytics'
-subtitulo: 'Dashboard financeiro que roda inteiro na sua máquina — o dado não sai dela'
+subtitulo: 'Meu controle financeiro, que roda inteiro no meu computador'
 categoria: 'sistemas'
 resumo: >-
-  Nenhum extrato sai do computador: sem nuvem, sem entregar senha de banco a terceiro e sem
-  alterar um centavo do arquivo original. Lê extratos e faturas, classifica cada lançamento,
-  acompanha objetivos e responde perguntas em português — com um modelo de linguagem local que
-  só escolhe o cálculo, nunca inventa o número.
+  Cansei de refazer planilha todo mês e de entregar senha de banco pra app de terceiro. Fiz um
+  sistema que lê meus extratos e faturas, classifica tudo, projeta o caixa e responde perguntas em
+  português — sem nada sair do meu computador.
 contexto: 'proprio'
 autoria: 'arquitetei'
 autoriaDetalhe: >-
-  Sistema pessoal de controle financeiro, desenvolvido em par com IA sob regras escritas antes
-  do código e com auditoria a cada entrega. Arquitetura, modelo de domínio e critérios de
-  aceite nasceram dessas regras — inclusive o que ficou de fora.
+  Sistema pessoal feito em par com IA. Escrevi as regras antes do código e conferi cada entrega.
+  A arquitetura, o modelo de domínio e o que ficou de fora são decisões minhas.
 inicio: 2026-05-01
 status: 'ativo'
 estadoAtual: >-
-  Importa extratos e faturas de quatro formatos, classifica os lançamentos, projeta o mês
-  seguinte, acompanha objetivos e responde perguntas em português — tudo na própria máquina.
+  Em uso todo dia, na versão 1.0.0. Lê extratos e faturas, projeta o caixa, acompanha objetivos e
+  responde perguntas em português.
 ferramentas:
   - 'Python 3.12'
   - 'FastHTML'
@@ -33,145 +31,105 @@ links:
   termos: '/termos-nexus-analytics'
 ---
 
-## O problema
+## Por que fiz
 
-Eu controlava as finanças numa planilha, refeita à mão todo mês: baixar extrato de cada banco,
-abrir a fatura, copiar lançamento por lançamento, classificar, refazer fórmula. Horas de
-trabalho que envelheciam numa semana.
+Eu controlava tudo numa planilha que refazia à mão todo mês: baixar extrato de cada banco, abrir
+fatura, copiar lançamento por lançamento, classificar. Horas de trabalho que envelheciam em uma
+semana. Os apps prontos resolviam, mas pediam minha senha do banco e guardavam meus dados num
+servidor deles. Não quis.
 
-As ferramentas prontas do mercado resolviam isso, mas pedindo minha credencial bancária e meu
-dado financeiro num servidor de terceiro. E cobrando caro por isso.
+## Como funciona
 
-## A restrição que definiu o projeto
+Eu jogo o extrato (OFX, CSV, XLS ou PDF) e o sistema lê, separa o que é receita, despesa,
+investimento e transferência e mostra tudo em três telas:
 
-A máquina onde isso roda tem **3,9 GB de RAM** — o que eliminou a solução óbvia, colocar um
-modelo de linguagem para gerar as respostas, antes de eu tentar.
+- **Dashboard:** uma entrada com um card por painel (visão geral, despesas, receitas, cartões,
+  projeções, investimentos), cada um com um desenho diferente pra eu reconhecer de relance.
+- **Lançamentos:** todos os lançamentos numa tabela só, com filtros de pendência (sem comprovante,
+  sem finalidade, sem subcategoria) e um rodapé que fecha a conta: entrou, saiu, saldo.
+- **Objetivos:** "quando eu chego lá?" no ritmo de hoje, e quanto antecipa se o dinheiro render.
 
-Foi a melhor coisa que aconteceu ao projeto. A saída foi uma **IA determinística**: regras e
-estatística sobre números que o sistema já calcula. Cada frase nasce de um valor rastreável.
-Se a regra não sabe, ela diz que não sabe.
-
-Mais tarde voltei ao modelo local, mas num papel que cabe na restrição: ele **não responde**,
-só *traduz*. A pergunta em português vira a escolha de um entre 31 cálculos que já existem; o
-número continua saindo do código determinístico. Um modelo pequeno (`qwen3:4b`, via Ollama)
-roda só em loopback, modelos de nuvem são recusados por construção e, sem ele instalado, o
-sistema segue funcionando como antes. Medi o tradutor com uma régua de 155 perguntas mais 25
-de teste — não com "parece que entende".
-
-Uma limitação de hardware virou uma garantia de auditabilidade.
+Em Configurações ficam a saúde do sistema, as regras pessoais e a aparência.
 
 ## As regras que escrevi antes do código
 
-São oito. As três que mais moldaram o sistema:
+**Não mexer no dado.** O sistema entende a *estrutura* do arquivo, nunca altera o *conteúdo*.
+Nenhum valor ou data muda, nenhum lançamento é escondido.
 
-**Integridade do dado.** O sistema interpreta a *estrutura* de um arquivo — encoding,
-separador, ordem de coluna. Nunca o *conteúdo*. Nenhum valor, data ou descrição é alterado, e
-nenhum lançamento é escondido.
+**Nada sai da máquina.** O servidor só atende a si mesmo (`127.0.0.1`), não tem CDN e um teste
+garante que os módulos de cálculo não abrem conexão de rede. A única exceção é um canal opcional
+de WhatsApp, desligado por padrão.
 
-**Nada sai da máquina.** O servidor está preso a `127.0.0.1`, não há CDN, e os módulos de
-cálculo e importação são verificados por teste para não importar `socket`, `requests`, `urllib`
-ou `http`. A exceção é explícita e opt-in: um canal de WhatsApp opcional, desligado por padrão,
-que roda como processo separado fora do repositório. A regra não depende da minha memória.
+**Escrita atômica.** Arquivo temporário, `.bak`, troca. Se a luz cair no meio, nada corrompe.
 
-**Toda escrita é atômica.** Arquivo temporário, `.bak`, substituição. Queda de energia no meio
-de uma gravação não corrompe configuração.
+Regra que ninguém confere é só intenção. Por isso hoje tenho **mais de 1.500 verificações
+automáticas** rodando a cada mudança.
 
-Regra que ninguém verifica é intenção. Hoje são **mais de 1.500 verificações automatizadas**
-rodando a cada mudança — o teste de rede é só uma delas.
+## A IA: o que ela faz e o que não faz
 
-## O modelo de domínio
+O computador onde isso roda tem só 3,9 GB de RAM, então deixar um modelo de linguagem escrever as
+respostas estava fora de questão. Acabou sendo a melhor decisão: o sistema responde com regras e
+estatística sobre números que ele já calculou, e cada frase vem de um valor rastreável.
 
-Os extratos entram em **quatro formatos** — OFX, CSV, XLS e PDF —, cada banco com seu dialeto.
-Um classificador transforma descrição crua em tipo, e tipo em categoria.
+Depois voltei ao modelo local num papel pequeno: ele **só traduz**. Minha pergunta em português
+vira a escolha de um entre 31 cálculos que já existem, e o número sai do código, nunca do
+modelo. Roda só no meu computador (qwen3:4b via Ollama), recusa modelo de nuvem e, se não estiver
+instalado, o sistema funciona igual. Medi o acerto com 155 perguntas mais 25 de teste.
 
-A parte difícil não é essa. São as fronteiras entre seis categorias-mãe:
+O mesmo vale pras **regras pessoais**: eu escrevo em português ("tudo que for padaria é
+alimentação"), a IA traduz, o código confere e eu vejo uma prévia antes de valer.
 
-> Aplicar em poupança **não é despesa** — é investimento, o dinheiro continua seu. Comprar
-> ação **não é despesa** — virou ativo. Resgatar **não é receita** — é devolver da gaveta.
-> Transferir entre contas próprias é neutro.
+## Onde o modelo de domínio pega
 
-Errar essas fronteiras não quebra o programa. Faz ele mentir com aparência de certeza.
+A parte difícil não é ler arquivo, são as fronteiras entre categorias:
 
-Projeções usam a **mediana** do histórico mensal — um mês atípico não puxa o futuro —; parcelas de cartão entram por
-*walk-forward*, caindo nas competências futuras em que realmente vão ocorrer.
+> Aplicar na poupança **não é despesa**, é investimento. Comprar ação também não. Resgatar
+> **não é receita**. Transferir entre contas minhas é neutro.
 
-## Uma entrada em vez de oito abas
+Errar isso não quebra o programa. Faz ele mentir com cara de certeza. As projeções usam a
+**mediana** (um mês atípico não puxa o futuro) e as parcelas do cartão caem nos meses em que
+realmente vão cobrar. Tem também a **caixa das próximas 13 semanas**, com um colchão mínimo.
 
-O menu tinha oito itens e o dono se perdia entre eles. Hoje há três — Dashboard, Lançamentos e
-Objetivos — e o Dashboard abre num **hub** de painéis, cada um com um desenho de forma própria:
-áreas sobrepostas para entrou × saiu, rosca para despesas, colunas para o ritmo das receitas,
-barra empilhada para a fatura, linha com o zero marcado para a projeção. Se lê a forma antes do
-título; seis cards iguais obrigavam a ler seis títulos.
+## Avisos e confiança
 
-**Lançamentos** reúne tudo numa tabela única, com janela virtual para não travar com milhares
-de linhas, filtros de pendência (sem comprovante, sem finalidade, sem subcategoria, receita de
-terceiro) e um rodapé que fecha a conta: entrou, saiu, saldo e o que ficou de fora por ser
-pagamento de fatura.
+O sistema avisa de preço que subiu, cobrança incomum e semana de caixa apertado. Cada lançamento
+mostra quem categorizou (regra, eu ou IA), e a tela de Saúde mede o acerto disso.
 
-**Objetivos** responde "quando eu chego lá?" com o aporte de hoje e, ao lado, quanto
-antecipa se o dinheiro render — com cenários e a taxa citada com a fonte.
+Defesas que vieram do uso: backup com verificação, vigia que reinicia o servidor se ele cair,
+logs com dado sensível mascarado, PDF escaneado recusado em vez de lido pela metade e
+deduplicação pelo saldo corrente (separa a compra repetida de verdade do lançamento importado
+duas vezes).
 
-## Confiança que se mede
+## Visual e segurança
 
-Algumas defesas que vieram do uso real: backup com verificação de integridade; vigia que
-reinicia o servidor se ele cair, com endpoint `/saude`; logs com dado sensível mascarado; PDF
-escaneado recusado em vez de lido pela metade; deduplicação por saldo corrente, que separa a
-compra repetida legítima do lançamento importado duas vezes; e um rastreador de gastos por
-impulso.
+Nos temas escuros, o fundo é uma cena 3D do sistema solar feita em WebGL, que roda offline e usa
+as posições reais dos planetas no dia. Dá pra deixar em Completo, Reduzido ou Desligado. O login
+tem uma animação de eclipse, com alternativa pra quem está sem WebGL ou prefere menos movimento.
 
-## Prova de equivalência, não "parece igual"
-
-O sistema nasceu em Streamlit e migrou para FastHTML. O critério de pronto que estabeleci foi
-**resposta byte-idêntica ao baseline** em sete rotas. Mesmo hash — não "abri e parecia certo".
-
-O mesmo critério voltou na reforma do cache, quando o dividi em duas camadas para que mexer
-numa fatura não reprocessasse dez PDFs pesados: hash do conjunto inteiro antes e depois,
-idêntico ou não entrega. Essa reforma rendeu uma lição concreta — o cache aninhado travava
-com `Lock` comum, porque a camada de topo chama a de baixo na mesma thread. Precisava ser
-`RLock`.
+Também medi o contraste dos textos: todos passam o nível AA (4,5:1) nos quatro temas, com teste
+automático. E reforcei o login: logout só por POST, desconexão por inatividade (60 min, ajustável)
+e script pra redefinir senha.
 
 ## O que decidi não fazer
 
-**Recusei isolar uma sub-conta de investimento em classe própria.** No período o líquido dela
-era negativo, e isolá-la com piso em zero criaria patrimônio fantasma no relatório. Preferi
-não ter a funcionalidade a ter uma que mente.
-
-**Removi o Streamlit inteiro** do `requirements.txt`, onde arrastava dependências pesadas para
-o instalador. Antes de tirar, provei que dava: rodei o sistema com a biblioteca escondida do
-interpretador, forçando o import a falhar.
-
-**Construí um visualizador mobile e joguei fora.** A segunda versão funcionava — quinze
-gráficos, zero erro. Removi mesmo assim: a abordagem não era a certa. O aprendizado ficou
-documentado; o código, não.
-
-## Auditoria
-
-Pedi uma varredura completa no próprio código. O resultado foi majoritariamente bom, e
-apareceram duas falhas que registrei com risco medido em vez de esconder.
-
-**Path traversal teórico na importação:** o nome do arquivo é sanitizado, o campo de destino
-não. Risco real baixo — servidor só em localhost, usuário único.
-
-**Casamento por substring no classificador:** nomes curtos casam como pedaço de palavra. Medi
-nos dados reais, nenhum falso-positivo hoje. Correção é usar borda de palavra.
-
-Nenhuma afeta os números atuais. Ambas documentadas e priorizadas — que é diferente de não
-existirem.
-
-## Onde está hoje
-
-O sistema está em uso diário e na versão 1.0.0 do código. A demonstração acima reproduz o
-Dashboard, as projeções por mediana e os Objetivos com dados fictícios; o Hub e a tabela de
-Lançamentos existem só no app real.
+- **Não isolei uma sub-conta de investimento.** O líquido dela era negativo e isolar com piso em
+  zero criaria patrimônio fantasma. Prefiro não ter a função a ter uma que mente.
+- **Tirei o Streamlit inteiro** do projeto, depois de provar que rodava sem ele.
+- **Joguei fora um visualizador mobile** que funcionava, porque a abordagem estava errada. O
+  aprendizado ficou documentado, o código não.
 
 ## O que aprendi
 
-**Restrição é ferramenta de design.** Os 3,9 GB produziram um sistema mais confiável do que eu
-teria construído com folga de hardware.
+**Restrição é ferramenta de design.** Os 3,9 GB me levaram a um sistema mais confiável do que eu
+teria feito com folga.
 
-**O modelo de domínio é mais difícil que o código.** Decidir que poupança é investimento não
-tem nada de técnico, e determina se todos os números estão certos.
+**O modelo de domínio é mais difícil que o código.** Decidir que poupança é investimento não é
+técnico e define se todos os números estão certos.
 
-**Faria diferente:** começaria pelos testes, versionaria desde o primeiro dia e fecharia o
-escopo antes — o visualizador mobile consumiu tempo real porque eu não tinha decidido, antes
-de construir, o que significava estar pronto.
+**Faria diferente:** começaria pelos testes, versionaria desde o dia um e fecharia o escopo antes.
+O visualizador mobile só consumiu tempo porque eu não tinha definido o que era "pronto".
+
+## Sobre a demonstração
+
+Lá em cima dá pra mexer na réplica com dados fictícios. Ela reproduz o Dashboard, as projeções por
+mediana e os Objetivos. O Hub e a tabela de Lançamentos existem só no app real.
