@@ -3,21 +3,23 @@ titulo: 'Nexus & PJ'
 subtitulo: 'Fechar o caixa pelo extrato, pra quem tem conta em mais de um banco'
 categoria: 'financas'
 resumo: >-
-  O irmão do Nexus, só que pra empresa: login com perfis e o mesmo princípio de sempre. O caixa
-  fecha contra o que o extrato mostra que aconteceu, não contra o que alguém digitou que ia
-  acontecer. Nasceu de um caso real e virou produto.
+  O irmão do Nexus, só que pra empresa: login com perfis, várias lojas no mesmo lugar e uma IA
+  local que responde perguntas sobre o caixa. O princípio é o mesmo de sempre: o caixa fecha
+  contra o que o extrato mostra que aconteceu, não contra o que alguém digitou que ia acontecer.
 contexto: 'proprio'
 autoria: 'arquitetei'
 autoriaDetalhe: >-
-  Feito em par com IA, com regras escritas antes do código: sem LLM, sem chamada de rede e todo
-  número rastreável até a origem. Nasceu pra uma empresa só, mas hoje o app não guarda nome, cor
-  nem logo de ninguém. A identidade visual é uma foto que cada instalação troca sozinha.
+  Feito em par com IA, com regras escritas antes do código. O modelo de linguagem só entende a
+  pergunta e escolhe a ferramenta, quem calcula é sempre o código testado, então nenhum número
+  sai do modelo. Nasceu pra uma empresa só, mas hoje o app não guarda nome, cor nem logo de
+  ninguém.
 inicio: 2026-08-01
 status: 'ativo'
 estadoAtual: >-
-  Rodando local com login (3 perfis, verificação em duas etapas, liberação de aparelho), Fluxo de
-  Caixa Realizado com dado real e fechamento dia a dia que compara o saldo calculado com o dos
-  bancos. 254 testes automáticos. O primeiro extrato real de banco é o próximo passo.
+  Rodando local, em uso: login com 3 perfis e 2FA, importação de extrato, fechamento dia a dia,
+  várias lojas com rateio, 9 painéis, backup e vigia automáticos e IA local (acerto de 92% numa
+  régua de 159 perguntas). 917 testes automáticos. O canal de WhatsApp está pronto e testado,
+  mas desligado até eu abrir as contas da Meta.
 ferramentas:
   - 'Python'
   - 'FastHTML'
@@ -25,6 +27,7 @@ ferramentas:
   - 'Alembic'
   - 'SQLite'
   - 'pytest'
+  - 'Ollama (local)'
 destaque: true
 ---
 
@@ -39,56 +42,88 @@ atrasado e sem rastro pra refazer a conta.
 Centralizar pelo **extrato**, não pelo lançamento. Extrato é a única fonte que já é o que
 aconteceu. Importando as contas todas num lugar só, o caixa fecha contra o realizado e cada banco
 mostra o saldo que tem. É o mesmo raciocínio do Nexus Analytics, e o motor de leitura de extrato
-veio de lá, portado. Não reescrevi o que já funcionava.
+veio de lá, portado.
 
 ## O que já roda
 
-- **Login com três perfis** (administrador, quem lança, quem só vê), sempre checado no back-end e
-  nunca só escondendo botão. Dá pra ligar verificação em duas etapas, e o administrador aprova ou
-  revoga aparelhos e define o que cada perfil enxerga.
-- **Fluxo de Caixa Realizado:** importa extrato, categoriza e mostra o saldo real, com filtro por
-  coluna igual planilha.
-- **Dashboard em painéis**, cada card com prévia de dado real.
-- **IA determinística**: assistente que responde sobre o caixa, sugestão de categoria quando duas
-  descrições parecidas caíram em categorias diferentes, revisão de lançamento fora do padrão e
-  alertas que o usuário configura (teto de gasto, termo no extrato, saldo mínimo).
-- **Auditoria:** toda mudança de cadastro ou permissão fica registrada, e um vigia registra
-  varredura e login falho sem avisar quem tentou.
+- **Acesso:** três perfis (administrador, quem lança, quem só vê), sempre checados no back-end,
+  verificação em duas etapas, aprovação de aparelho pelo administrador e trilha de auditoria. Um
+  vigia registra varredura e login falho sem avisar quem tentou.
+- **Fluxo de Caixa:** importa extrato, categoriza e mostra o saldo real. Tem duas leituras do mesmo
+  dado, **Lançamentos** (linha a linha) e **Consolidado** (fecha o dia: entradas, saídas, saldo
+  calculado, saldo dos bancos e a diferença), agrupável por dia, semana, mês, trimestre ou ano.
+- **Várias lojas:** cada lançamento tem uma loja, pela ordem manual, rateio, palavra-chave ou loja
+  padrão da conta, e nunca chuta: sem regra, vira "Sem loja". O rateio ("aluguel: 60% numa, 40%
+  na outra") é calculado na hora do relatório, então mudar a regra vale pro passado também.
+- **Painéis:** a tela inicial é um hub com um card por painel (Fluxo de caixa, Conciliação, Lojas
+  e outros), com filtro de loja e período. Mostra margem, dias de caixa, fluxo diário, ponto de
+  equilíbrio e uma sugestão de transferência entre contas.
+- **Categorias:** todo cliente novo nasce com uma grade padrão. Onde o extrato não diz a
+  subcategoria, a regra põe no grupo e não chuta.
 
-## Fechamento dia a dia
+## A IA
 
-O mesmo extrato tem duas leituras: **Lançamentos**, linha a linha, e **Consolidado**, que fecha o
-dia com entradas e saídas por categoria, o saldo que o sistema calculou, o saldo que os bancos
-informam e a diferença entre os dois. Duas decisões vieram de não querer esconder nada:
+Começou como um assistente por regras e hoje é um "cérebro" local: um modelo pequeno
+(`qwen3:4b`, via Ollama) que só **entende o pedido e escolhe uma ferramenta**. Quem calcula é o
+código que já tinha teste, e o modelo nunca vê valor nem descrição de extrato, o que barra
+injeção de texto via descrição de PIX. A resposta nunca traz número que não veio de uma
+ferramenta.
 
-- **"A revisar" vira coluna, não rodapé.** O que ainda não foi categorizado entra no total do dia,
-  então o saldo fecha com o extrato mesmo antes de categorizar tudo.
-- **Sem extrato não é o mesmo que não fechou.** Dia sem extrato mostra um traço, não uma
-  diferença. Marcar erro onde falta dado ensina a ignorar o alerta que importa.
+- **Mede antes de confiar:** montei uma régua de 159 perguntas e rodei o modelo contra ela. Com
+  o prompt inicial deu 79%, reprovado. Depois de ajustar as regras de decisão, subiu pra **92,1%
+  de ferramenta certa e 91,4% de argumentos**, sem nenhum número sem lastro e nenhuma escrita sem
+  proposta. Sem IA, o motor antigo acertava 26,5%.
+- **A IA propõe, a pessoa confirma.** Pedido de alterar algo (criar alerta, recategorizar) vira
+  uma proposta com Confirmar/Cancelar, de uso único e que vence em 10 minutos. Se o dado mudou
+  antes do "sim", ela é descartada.
+- **Local de verdade:** só fala com `127.0.0.1`, recusa modelo de nuvem e o firewall bloqueia a
+  saída do Ollama. Se ele cair, o sistema responde pelo motor antigo, avisando "modo básico".
+- **Gráficos** nas respostas e um **vigia** que avisa de alerta a cada 15 minutos em dia útil.
+
+Medi também o que não funcionou: um ajuste de desempenho que eu mesmo tinha escrito deixava o
+modelo ~45% mais lento neste PC (são recursos pra GPU). Corrigi o script e documentei.
+
+## Resistir a queda
+
+O sistema tem fila durável em SQLite, com tentativa repetida e backoff. Importação que cai no meio
+não grava nada, e o mesmo lançamento nunca entra duas vezes. Também tem backup diário com teste de
+restauração mensal, cópia externa, tela de **Saúde do sistema** e atualizador em um clique, que
+faz backup, migra, reinicia, confere e **volta sozinho** se algo falhar.
+
+Um bug desse trabalho vale contar: o supervisor morria em segundos no Windows, sem erro nenhum.
+Foi a tela de Saúde que acusou. A causa era o console oculto do `python.exe`, que o Windows
+encerra quando fecha. Troquei por `pythonw.exe` e reproduzi antes e depois.
+
+## Extrato de banco de verdade
+
+Os extratos reais do Itaú e do Santander já passaram pelo motor, e acharam um erro que nenhum
+teste sintético pegou: os dois traziam linhas só pra informar saldo ("SALDO ANTERIOR" etc.), que
+eu estava gravando como dinheiro e inflavam entradas e saídas. Agora o leitor descarta essas
+linhas e inverte o extrato que vem do mais novo pro mais antigo. Banco a banco, é aqui que leitor
+de extrato quebra, então sigo validando um por um.
 
 ## Mockup
 
 O mockup lá em cima reproduz o app, com dados fictícios. Além das telas reais, ele mostra o
-**fechamento por loja**, pra quem opera várias lojas e quer conciliar tudo num lugar só (cada loja
-fecha contra os próprios bancos, a rede é a soma e dá pra abrir o dia a dia de cada uma) e uma
-tela de **indicadores financeiros** calculados dos mesmos lançamentos: fluxo diário, saldo por
-loja, cascata do saldo, mapa de caixa, dias de caixa por loja e tamanho × margem.
+**fechamento por loja** (cada loja fecha contra os próprios bancos, a rede é a soma e dá pra abrir
+o dia a dia de cada uma) e uma tela de **indicadores financeiros**: fluxo diário, saldo por loja,
+cascata do saldo, mapa de caixa, dias de caixa por loja e tamanho × margem.
 
 [Abrir o mockup em tela cheia →](/mockups/nexus-pj.html)
 
 ## Como virou produto
 
 O plano original era pra uma empresa só. No meio do caminho tirei o laço: nome, cor e logo saíram
-do código e viraram uma foto na pasta de cada instalação. Trocar a marca é trocar o arquivo.
-Produto amarrado a uma empresa serve àquela empresa. Um que não sabe o nome de ninguém serve
-qualquer uma com o mesmo problema.
+do código e viraram uma foto na pasta de cada instalação. Produto amarrado a uma empresa serve
+àquela empresa. Um que não sabe o nome de ninguém serve qualquer uma com o mesmo problema.
 
 ## O que ainda está em aberto
 
-- **Nenhum extrato real de banco passou pelo motor ainda.** Testei com arquivo sintético. É o
-  maior risco técnico: cada banco exporta de um jeito e é ali que leitor de extrato quebra.
-- **A tela Planejado** existe só como molde vazio, ainda sem fonte de dado.
-- **A tabela de consolidado por categoria** espera eu fechar o modelo de cálculo antes de
-  implementar. Prefiro esperar o modelo certo a refazer a parte financeira mais sensível.
-- **Rodar num servidor de verdade**, dentro da rede da empresa e sem internet, é a próxima fase
-  grande e ainda não começou.
+- **WhatsApp:** o canal está construído e testado com mensagens simuladas (assinatura do webhook,
+  vínculo do número com aprovação do administrador, botões de confirmar). Falta abrir as contas da
+  Meta e da Cloudflare e conferir a política da Meta pra IA. É a única exceção à regra "nada sai
+  da empresa", e tem mensagem mínima, só números aprovados e aviso explícito de que o conteúdo
+  passa por esses serviços.
+- **Servidor dedicado:** o guia de compra e migração está escrito, mas só vou decidir depois de
+  medir se o modelo atual, que leva ~20 s por resposta neste PC, já basta.
+- **Tela Planejado:** continua como molde vazio, sem fonte de dado definida.
