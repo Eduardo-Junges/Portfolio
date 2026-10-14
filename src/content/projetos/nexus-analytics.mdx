@@ -5,17 +5,17 @@ categoria: 'sistemas'
 resumo: >-
   Cansei de refazer planilha todo mês e de entregar senha de banco pra app de terceiro. Fiz um
   sistema que lê meus extratos e faturas, classifica tudo, projeta o caixa e responde perguntas em
-  português — sem nada sair do meu computador.
+  português, tudo no meu computador.
 contexto: 'proprio'
 autoria: 'arquitetei'
 autoriaDetalhe: >-
-  Sistema pessoal feito em par com IA. Escrevi as regras antes do código e conferi cada entrega.
-  A arquitetura, o modelo de domínio e o que ficou de fora são decisões minhas.
+  Sistema pessoal feito em par com IA. As regras vieram antes do código, e a arquitetura, o modelo
+  de domínio e o que ficou de fora são decisões minhas.
 inicio: 2026-05-01
 status: 'ativo'
 estadoAtual: >-
-  Em uso todo dia, na versão 1.0.0. Lê extratos e faturas, projeta o caixa, acompanha objetivos e
-  responde perguntas em português.
+  Em uso todo dia. Lê extratos e faturas, projeta o caixa, acompanha objetivos e responde
+  perguntas em português.
 ferramentas:
   - 'Python 3.12'
   - 'FastHTML'
@@ -33,103 +33,68 @@ links:
 
 ## Por que fiz
 
-Eu controlava tudo numa planilha que refazia à mão todo mês: baixar extrato de cada banco, abrir
-fatura, copiar lançamento por lançamento, classificar. Horas de trabalho que envelheciam em uma
-semana. Os apps prontos resolviam, mas pediam minha senha do banco e guardavam meus dados num
-servidor deles. Não quis.
+Eu controlava tudo numa planilha que refazia à mão todo mês. Os apps prontos resolviam, mas
+pediam minha senha do banco e guardavam meus dados num servidor deles. Não quis.
 
 ## Como funciona
 
-Eu jogo o extrato (OFX, CSV, XLS ou PDF) e o sistema lê, separa o que é receita, despesa,
-investimento e transferência e mostra tudo em três telas:
+Eu jogo o extrato (OFX, CSV, XLS ou PDF) e o sistema lê, separa receita, despesa, investimento e
+transferência e mostra tudo em três telas:
 
-- **Dashboard:** uma entrada com um card por painel (visão geral, despesas, receitas, cartões,
-  projeções, investimentos), cada um com um desenho diferente pra eu reconhecer de relance.
-- **Lançamentos:** todos os lançamentos numa tabela só, com filtros de pendência (sem comprovante,
-  sem finalidade, sem subcategoria) e um rodapé que fecha a conta: entrou, saiu, saldo.
-- **Objetivos:** "quando eu chego lá?" no ritmo de hoje, e quanto antecipa se o dinheiro render.
+- **Dashboard:** um card por painel (visão geral, despesas, receitas, cartões, projeções,
+  investimentos), cada um com um desenho próprio.
+- **Lançamentos:** tudo numa tabela só, com filtros de pendência e o saldo fechando no rodapé.
+- **Objetivos:** quando eu chego lá no ritmo de hoje, e quanto antecipa se o dinheiro render.
 
-Em Configurações ficam a saúde do sistema, as regras pessoais e a aparência.
+Tem ainda avisos (preço que subiu, cobrança incomum, semana de caixa apertado), caixa das próximas
+13 semanas e regras pessoais escritas em português.
 
 ## As regras que escrevi antes do código
 
-**Não mexer no dado.** O sistema entende a *estrutura* do arquivo, nunca altera o *conteúdo*.
-Nenhum valor ou data muda, nenhum lançamento é escondido.
+- **Não mexer no dado:** nenhum valor ou data muda, nenhum lançamento é escondido.
+- **Nada sai da máquina:** o servidor atende só a si mesmo e os cálculos não abrem conexão de rede.
+- **Escrita atômica:** se a luz cair no meio de uma gravação, nada corrompe.
 
-**Nada sai da máquina.** O servidor só atende a si mesmo (`127.0.0.1`), não tem CDN e um teste
-garante que os módulos de cálculo não abrem conexão de rede. A única exceção é um canal opcional
-de WhatsApp, desligado por padrão.
+Regra que ninguém confere é só intenção, então são mais de 1.500 verificações automáticas rodando a
+cada mudança.
 
-**Escrita atômica.** Arquivo temporário, `.bak`, troca. Se a luz cair no meio, nada corrompe.
+## A IA: o que faz e o que não faz
 
-Regra que ninguém confere é só intenção. Por isso hoje tenho **mais de 1.500 verificações
-automáticas** rodando a cada mudança.
+O computador tem só 3,9 GB de RAM, então deixar um modelo escrever as respostas estava fora de
+questão. Acabou sendo a melhor decisão: o sistema responde com regras e estatística sobre números
+que ele já calculou, e cada frase vem de um valor rastreável.
 
-## A IA: o que ela faz e o que não faz
-
-O computador onde isso roda tem só 3,9 GB de RAM, então deixar um modelo de linguagem escrever as
-respostas estava fora de questão. Acabou sendo a melhor decisão: o sistema responde com regras e
-estatística sobre números que ele já calculou, e cada frase vem de um valor rastreável.
-
-Depois voltei ao modelo local num papel pequeno: ele **só traduz**. Minha pergunta em português
-vira a escolha de um entre 31 cálculos que já existem, e o número sai do código, nunca do
-modelo. Roda só no meu computador (qwen3:4b via Ollama), recusa modelo de nuvem e, se não estiver
-instalado, o sistema funciona igual. Medi o acerto com 155 perguntas mais 25 de teste.
-
-O mesmo vale pras **regras pessoais**: eu escrevo em português ("tudo que for padaria é
-alimentação"), a IA traduz, o código confere e eu vejo uma prévia antes de valer.
+Depois voltei ao modelo local num papel pequeno: ele **só traduz** a pergunta em português para um
+dos 31 cálculos que já existem. O número sai do código, nunca do modelo.
 
 ## Onde o modelo de domínio pega
 
-A parte difícil não é ler arquivo, são as fronteiras entre categorias:
+A parte difícil são as fronteiras entre categorias. Aplicar na poupança **não é despesa**, é
+investimento. Resgatar **não é receita**. Transferir entre contas minhas é neutro. Errar isso não
+quebra o programa, faz ele mentir com cara de certeza. As projeções usam a **mediana**, pra um mês
+atípico não puxar o futuro.
 
-> Aplicar na poupança **não é despesa**, é investimento. Comprar ação também não. Resgatar
-> **não é receita**. Transferir entre contas minhas é neutro.
+## Visual
 
-Errar isso não quebra o programa. Faz ele mentir com cara de certeza. As projeções usam a
-**mediana** (um mês atípico não puxa o futuro) e as parcelas do cartão caem nos meses em que
-realmente vão cobrar. Tem também a **caixa das próximas 13 semanas**, com um colchão mínimo.
-
-## Avisos e confiança
-
-O sistema avisa de preço que subiu, cobrança incomum e semana de caixa apertado. Cada lançamento
-mostra quem categorizou (regra, eu ou IA), e a tela de Saúde mede o acerto disso.
-
-Defesas que vieram do uso: backup com verificação, vigia que reinicia o servidor se ele cair,
-logs com dado sensível mascarado, PDF escaneado recusado em vez de lido pela metade e
-deduplicação pelo saldo corrente (separa a compra repetida de verdade do lançamento importado
-duas vezes).
-
-## Visual e segurança
-
-Nos temas escuros, o fundo é uma cena 3D do sistema solar feita em WebGL, que roda offline e usa
-as posições reais dos planetas no dia. Dá pra deixar em Completo, Reduzido ou Desligado. O login
-tem uma animação de eclipse, com alternativa pra quem está sem WebGL ou prefere menos movimento.
-
-Também medi o contraste dos textos: todos passam o nível AA (4,5:1) nos quatro temas, com teste
-automático. E reforcei o login: logout só por POST, desconexão por inatividade (60 min, ajustável)
-e script pra redefinir senha.
+Nos temas escuros, o fundo é uma cena 3D do sistema solar com as posições reais do dia, e o login
+tem uma animação de eclipse. Dá pra reduzir ou desligar. Todos os textos passam o contraste AA nos
+quatro temas, com teste automático.
 
 ## O que decidi não fazer
 
-- **Não isolei uma sub-conta de investimento.** O líquido dela era negativo e isolar com piso em
-  zero criaria patrimônio fantasma. Prefiro não ter a função a ter uma que mente.
-- **Tirei o Streamlit inteiro** do projeto, depois de provar que rodava sem ele.
-- **Joguei fora um visualizador mobile** que funcionava, porque a abordagem estava errada. O
-  aprendizado ficou documentado, o código não.
+- **Não isolei uma sub-conta de investimento.** Isolar criaria patrimônio fantasma. Prefiro não ter
+  a função a ter uma que mente.
+- **Joguei fora um visualizador mobile** que funcionava, porque a abordagem estava errada.
 
 ## O que aprendi
 
-**Restrição é ferramenta de design.** Os 3,9 GB me levaram a um sistema mais confiável do que eu
-teria feito com folga.
+**Restrição é ferramenta de design.** Os 3,9 GB me levaram a um sistema mais confiável.
 
-**O modelo de domínio é mais difícil que o código.** Decidir que poupança é investimento não é
-técnico e define se todos os números estão certos.
+**O modelo de domínio é mais difícil que o código.** Decidir que poupança é investimento define se
+todos os números estão certos.
 
-**Faria diferente:** começaria pelos testes, versionaria desde o dia um e fecharia o escopo antes.
-O visualizador mobile só consumiu tempo porque eu não tinha definido o que era "pronto".
+**Faria diferente:** começaria pelos testes e fecharia o escopo antes de construir.
 
 ## Sobre a demonstração
 
-Lá em cima dá pra mexer na réplica com dados fictícios. Ela reproduz o Dashboard, as projeções por
-mediana e os Objetivos. O Hub e a tabela de Lançamentos existem só no app real.
+Lá em cima dá pra mexer na réplica com dados fictícios: Dashboard, projeções e Objetivos.
