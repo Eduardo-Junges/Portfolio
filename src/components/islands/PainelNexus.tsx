@@ -43,15 +43,21 @@ const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'o
 const NAV = [
   { id: 'dashboard', rotulo: 'Dashboard', icone: '⬡' },
   { id: 'lancamentos', rotulo: 'Lançamentos', icone: '☰' },
-  { id: 'receitas', rotulo: 'Receitas', icone: '▲' },
-  { id: 'despesas', rotulo: 'Despesas', icone: '▼' },
-  { id: 'cartoes', rotulo: 'Cartões', icone: '▤' },
-  { id: 'investimentos', rotulo: 'Investimentos', icone: '◇' },
-  { id: 'projecoes', rotulo: 'Projeções', icone: '◔' },
   { id: 'objetivos', rotulo: 'Objetivos', icone: '◎' },
 ] as const;
 
-type AbaId = (typeof NAV)[number]['id'];
+/** Painéis que o Hub abre: no app real perderam a aba própria e vivem atrás dos cards. */
+const PAINEIS = [
+  { id: 'visaogeral', icone: '⬡', titulo: 'Visão geral', legenda: 'KPIs, tendência e orçamentos' },
+  { id: 'despesas', icone: '▼', titulo: 'Despesas', legenda: 'para onde o dinheiro foi' },
+  { id: 'receitas', icone: '▲', titulo: 'Receitas', legenda: 'de onde ele veio' },
+  { id: 'cartoes', icone: '▤', titulo: 'Cartões', legenda: 'faturas e parcelas' },
+  { id: 'projecoes', icone: '◔', titulo: 'Projeções', legenda: 'o que vem pela frente' },
+  { id: 'investimentos', icone: '◇', titulo: 'Investimentos', legenda: 'patrimônio e rendimento' },
+] as const;
+
+type PainelId = (typeof PAINEIS)[number]['id'];
+type AbaId = (typeof NAV)[number]['id'] | PainelId;
 
 const COR = {
   verde: 'var(--nx-green)',
@@ -536,6 +542,240 @@ interface Props {
   compacto?: boolean;
 }
 
+/* ── Hub ────────────────────────────────────────────────────────────────────
+   Portado de webapp/hub_view.py + hub_svg.py do app real: um card por painel, cada um
+   com a FORMA que responde a pergunta dele (áreas sobrepostas, rosca, colunas, barras,
+   linha com o zero, área subindo). A prévia é dado, não captura de tela. */
+
+const pontosSvg = (vals: number[], w: number, h: number, pad = 2) => {
+  const lo0 = Math.min(...vals), hi0 = Math.max(...vals);
+  const [lo, hi] = hi0 - lo0 < 1e-9 ? [lo0 - 1, hi0 + 1] : [lo0, hi0];
+  const dx = w / Math.max(1, vals.length - 1);
+  return vals.map((v, i) => [i * dx, pad + (h - 2 * pad) * (1 - (v - lo) / (hi - lo))] as const);
+};
+const caminho = (pts: readonly (readonly [number, number])[]) =>
+  pts.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ');
+
+function SvgAreaDupla({ a, b }: { a: number[]; b: number[] }) {
+  const w = 250, h = 62;
+  const todos = [...a, ...b, 0];
+  const lo = Math.min(...todos), hi = Math.max(...todos) || 1;
+  const pts = (v: number[]) =>
+    v.map((x, i) => [i * (w / Math.max(1, v.length - 1)), 4 + (h - 8) * (1 - (x - lo) / (hi - lo))] as const);
+  const pa = pts(a), pb = pts(b);
+  return (
+    <svg className="hub-svg" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" aria-hidden="true">
+      <path d={`${caminho(pb)} L${w} ${h} L0 ${h} Z`} fill={COR.vermelho} opacity=".2" />
+      <path d={`${caminho(pa)} L${w} ${h} L0 ${h} Z`} fill={COR.verde} opacity=".26" />
+      <path d={caminho(pa)} fill="none" stroke={COR.verde} strokeWidth="1.8" />
+      <path d={caminho(pb)} fill="none" stroke={COR.vermelho} strokeWidth="1.8" strokeDasharray="3 2" />
+    </svg>
+  );
+}
+
+function SvgRosca({ fatias }: { fatias: { v: number; cor: string }[] }) {
+  const tot = fatias.reduce((s, f) => s + f.v, 0) || 1;
+  const r = 44, sw = 15, circ = 2 * Math.PI * r;
+  let off = 0;
+  return (
+    <svg viewBox="0 0 104 104" width="64" height="64" aria-hidden="true" style={{ flex: 'none' }}>
+      <circle cx="52" cy="52" r={r} fill="none" stroke="rgba(255,255,255,.07)" strokeWidth={sw} />
+      {fatias.map((f, i) => {
+        const frac = Math.max(0, f.v / tot);
+        const el = (
+          <circle key={i} cx="52" cy="52" r={r} fill="none" stroke={f.cor} strokeWidth={sw}
+            strokeDasharray={`${(frac * circ).toFixed(2)} ${circ.toFixed(2)}`}
+            strokeDashoffset={(-off * circ).toFixed(2)} transform="rotate(-90 52 52)" />
+        );
+        off += frac;
+        return el;
+      })}
+    </svg>
+  );
+}
+
+function SvgColunas({ vals, cor }: { vals: number[]; cor: string }) {
+  const w = 250, h = 56, gap = 3, n = vals.length;
+  const mx = Math.max(...vals, 0) || 1;
+  const bw = Math.max(2, (w - gap * (n - 1)) / n);
+  return (
+    <svg className="hub-svg" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" aria-hidden="true">
+      {vals.map((v, i) => {
+        const alt = Math.max(2, (h - 3) * (Math.max(0, v) / mx));
+        return <rect key={i} x={i * (bw + gap)} y={h - alt} width={bw} height={alt} rx="1.5" fill={cor} opacity={i === n - 1 ? 1 : 0.45} />;
+      })}
+    </svg>
+  );
+}
+
+function SvgLinhaZero({ vals }: { vals: number[] }) {
+  const w = 250, h = 62;
+  const lo = Math.min(...vals, 0), hi = Math.max(...vals, 0) || 1;
+  const y0 = 4 + (h - 8) * (1 - (0 - lo) / (hi - lo));
+  const pts = pontosSvg(vals, w, h, 4);
+  const ult = pts[pts.length - 1];
+  return (
+    <svg className="hub-svg" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" aria-hidden="true">
+      {Math.min(...vals) < 0 && <path d={`${caminho(pts)} L${w} ${y0.toFixed(1)} L0 ${y0.toFixed(1)} Z`} fill={COR.vermelho} opacity=".16" />}
+      <line x1="0" y1={y0} x2={w} y2={y0} stroke="currentColor" strokeWidth="1" strokeDasharray="4 3" opacity=".4" />
+      <path d={caminho(pts)} fill="none" stroke={COR.ambar} strokeWidth="2" />
+      <circle cx={ult[0]} cy={ult[1]} r="3" fill={COR.ambar} />
+    </svg>
+  );
+}
+
+function SvgAreaSubindo({ vals, cor }: { vals: number[]; cor: string }) {
+  const w = 250, h = 58;
+  const pts = pontosSvg(vals, w, h, 4);
+  const ult = pts[pts.length - 1];
+  return (
+    <svg className="hub-svg" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" aria-hidden="true">
+      <path d={`${caminho(pts)} L${w} ${h} L0 ${h} Z`} fill={cor} opacity=".22" />
+      <path d={caminho(pts)} fill="none" stroke={cor} strokeWidth="2" />
+      <circle cx={ult[0]} cy={ult[1]} r="3" fill={cor} />
+    </svg>
+  );
+}
+
+function Hub({
+  paineis, abrir, rotulos, receita, despesa, invest, porCategoria, faturas,
+  sobraMediana, sobras, patrimonio, mesAtual,
+}: {
+  paineis: typeof PAINEIS;
+  abrir: (id: PainelId) => void;
+  rotulos: string[];
+  receita: number[];
+  despesa: number[];
+  invest: number[];
+  porCategoria: [string, number][];
+  faturas: [string, number][];
+  sobraMediana: number;
+  sobras: number[];
+  patrimonio: number;
+  mesAtual: string;
+}) {
+  const n = receita.length - 1;
+  const sobrou = receita[n] - despesa[n];
+  const TONS = [COR.vermelho, '#f0764e', '#e8a33d', '#b8646e', 'rgba(148,163,184,.6)'];
+  const topo = porCategoria.slice(0, 4);
+  const resto = porCategoria.slice(4).reduce((s, [, v]) => s + v, 0);
+  const fat = [...topo.map(([nm, v], i) => ({ nm, v, cor: TONS[i] })), ...(resto > 0 ? [{ nm: 'demais', v: resto, cor: TONS[4] }] : [])];
+  const totDesp = fat.reduce((s, f) => s + f.v, 0) || 1;
+  const medRec = [...receita].sort((a, b) => a - b)[Math.floor(receita.length / 2)];
+  const totFat = faturas.reduce((s, [, v]) => s + v, 0);
+  const maxFat = Math.max(...faturas.map(([, v]) => v), 1);
+  const noVermelho = sobras.filter((v) => v < 0).length;
+  const acumInvest = invest.map((_, i) => invest.slice(0, i + 1).reduce((a, b) => a + b, 0));
+
+  const previas: Record<PainelId, ReactNode> = {
+    visaogeral: (
+      <>
+        <div className="hub-top">
+          <div>
+            <div className={`hub-big ${sobrou < 0 ? 'hub-neg' : 'hub-pos'}`}>{fmt0(sobrou)}</div>
+            <div className="hub-cap">sobrou em {rotulos[n]}</div>
+          </div>
+          <div className="hub-leg">
+            <span><i style={{ background: COR.verde }} />entrou</span>
+            <span><i style={{ background: COR.vermelho, opacity: 0.75 }} />saiu</span>
+          </div>
+        </div>
+        <SvgAreaDupla a={receita} b={despesa} />
+      </>
+    ),
+    despesas: (
+      <>
+        <div className="hub-big hub-neg">{fmt0(totDesp)}</div>
+        <div className="hub-cap">saiu no período</div>
+        <div className="hub-ro">
+          <SvgRosca fatias={fat.map((f) => ({ v: f.v, cor: f.cor }))} />
+          <div className="hub-fats">
+            {fat.slice(0, 4).map((f) => (
+              <div className="hub-fat" key={f.nm}>
+                <i style={{ background: f.cor }} />
+                <span className="nm">{f.nm}</span>
+                <span className="vl">{Math.round((100 * f.v) / totDesp)}%</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </>
+    ),
+    receitas: (
+      <>
+        <div className="hub-top">
+          <div>
+            <div className="hub-big hub-pos">{fmt0(receita[n])}</div>
+            <div className="hub-cap">em {rotulos[n]}</div>
+          </div>
+          <div className="hub-lado"><b>{fmt0(medRec)}</b><span>mediana</span></div>
+        </div>
+        <SvgColunas vals={receita} cor={COR.verde} />
+        <div className="hub-cap">últimos {receita.length} meses</div>
+      </>
+    ),
+    cartoes: (
+      <>
+        <div className="hub-big" style={{ color: COR.roxo }}>{fmt0(totFat)}</div>
+        <div className="hub-cap">fatura de {mesAtual} · {faturas.length} cartões</div>
+        <div className="hub-carts">
+          {faturas.map(([nm, v]) => (
+            <div className="hub-row" key={nm}>
+              <span className="nm">{nm}</span>
+              <span className="hub-bar"><i style={{ width: `${Math.max(4, Math.round((100 * v) / maxFat))}%`, background: COR.roxo }} /></span>
+              <span className="vl">{fmt0(v)}</span>
+            </div>
+          ))}
+        </div>
+      </>
+    ),
+    projecoes: (
+      <>
+        <div className="hub-top">
+          <div>
+            <div className={`hub-big ${sobraMediana < 0 ? 'hub-neg' : 'hub-pos'}`}>{fmt0(sobraMediana)}</div>
+            <div className="hub-cap">sobra mediana por mês</div>
+          </div>
+          <div className="hub-lado"><b>{noVermelho}/{sobras.length}</b><span>no vermelho</span></div>
+        </div>
+        <SvgLinhaZero vals={sobras} />
+      </>
+    ),
+    investimentos: (
+      <>
+        <div className="hub-top">
+          <div>
+            <div className="hub-big" style={{ color: COR.ciano }}>{fmt0(patrimonio)}</div>
+            <div className="hub-cap">aplicado hoje</div>
+          </div>
+        </div>
+        <SvgAreaSubindo vals={acumInvest} cor={COR.ciano} />
+      </>
+    ),
+  };
+
+  return (
+    <>
+      <div className="hub-h">
+        <b>Painéis</b>
+        <span>cada card abre um painel completo</span>
+      </div>
+      <div className="hub-g">
+        {paineis.map((p) => (
+          <button key={p.id} type="button" className="hub-c" onClick={() => abrir(p.id)} aria-label={`Abrir painel ${p.titulo}`}>
+            <div className="hub-pv">{previas[p.id]}</div>
+            <div className="hub-ft">
+              <div className="hub-ic" aria-hidden="true">{p.icone}</div>
+              <div><b>{p.titulo}</b><span>{p.legenda}</span></div>
+            </div>
+          </button>
+        ))}
+      </div>
+    </>
+  );
+}
+
+
 export default function PainelNexus({ className = '', compacto = false }: Props) {
   const [aba, setAba] = useState<AbaId>('dashboard');
 
@@ -588,7 +828,9 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
     return meses.map((_, i) => (acc += serieReceita[i] - serieDespesa[i] - serieInvest[i]));
   }, [meses, serieReceita, serieDespesa, serieInvest]);
 
-  const rotuloAba = NAV.find((n) => n.id === aba)?.rotulo ?? '';
+  const painelAberto = PAINEIS.find((p) => p.id === aba);
+  const rotuloAba = painelAberto?.titulo ?? NAV.find((n) => n.id === aba)?.rotulo ?? '';
+  const menuAtivo = painelAberto ? 'dashboard' : aba;
 
   // ── dados por aba ───────────────────────────────────────────────────────────
   const receitas = lancamentosDemo.filter((l) => l.tipo === 'receita');
@@ -772,6 +1014,48 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
           .nx-logo { justify-content:center; padding:1px 0 10px; }
           .nx-demo { display:none; }
         }
+        .nx-voltar { background:none; border:0; padding:0 0 8px; cursor:pointer; font-family:inherit;
+          font-size:10px; color:var(--nx-text2); }
+        .nx-voltar:hover { color:var(--nx-blue); }
+        .hub-g { display:grid; gap:8px; grid-template-columns:1fr; }
+        @container (min-width: 420px) { .hub-g { grid-template-columns:1fr 1fr; } }
+        @container (min-width: 640px) { .hub-g { grid-template-columns:repeat(3,1fr); } }
+        .hub-h { display:flex; align-items:baseline; gap:8px; margin:0 0 8px; }
+        .hub-h b { font-size:12px; }
+        .hub-h span { margin-left:auto; font-size:9.5px; color:var(--nx-text2); }
+        .hub-c { display:flex; flex-direction:column; text-align:left; font-family:inherit; cursor:pointer;
+          background:var(--nx-surface); border:1px solid var(--nx-line); border-radius:10px;
+          overflow:hidden; color:inherit; padding:0; min-width:0; transition:border-color .13s, transform .13s; }
+        .hub-c:hover { border-color:var(--nx-blue); transform:translateY(-2px); }
+        .hub-pv { flex:1; padding:10px 11px; display:flex; flex-direction:column; gap:6px; min-width:0; min-height:98px; }
+        .hub-ft { display:flex; align-items:center; gap:7px; padding:7px 10px;
+          border-top:1px solid var(--nx-line); background:rgba(255,255,255,.025); }
+        .hub-ic { width:22px; height:22px; border-radius:6px; display:grid; place-items:center;
+          background:rgba(255,255,255,.06); font-size:11px; flex:none; }
+        .hub-ft b { display:block; font-size:10.5px; }
+        .hub-ft span { display:block; font-size:9px; color:var(--nx-text2); }
+        .hub-big { font-size:17px; font-weight:700; font-variant-numeric:tabular-nums; line-height:1.1; }
+        .hub-cap { font-size:9px; color:var(--nx-text2); }
+        .hub-top { display:flex; align-items:flex-start; gap:6px; }
+        .hub-lado { margin-left:auto; text-align:right; white-space:nowrap; }
+        .hub-lado b { display:block; font-size:10.5px; font-variant-numeric:tabular-nums; }
+        .hub-lado span { display:block; font-size:8.5px; color:var(--nx-text2); }
+        .hub-leg { margin-left:auto; display:flex; flex-direction:column; gap:2px; font-size:8.5px; color:var(--nx-text2); white-space:nowrap; }
+        .hub-leg i { display:inline-block; width:10px; height:3px; border-radius:2px; margin-right:4px; vertical-align:middle; }
+        .hub-svg { width:100%; height:42px; display:block; margin-top:auto; flex:none; }
+        .hub-ro { display:flex; align-items:center; gap:10px; margin-top:auto; margin-bottom:auto; }
+        .hub-fats { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+        .hub-fat { display:flex; align-items:center; gap:5px; font-size:9px; }
+        .hub-fat i { width:7px; height:7px; border-radius:2px; flex:none; }
+        .hub-fat .nm { color:var(--nx-text2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .hub-fat .vl { margin-left:auto; font-variant-numeric:tabular-nums; }
+        .hub-row { display:flex; align-items:center; gap:6px; font-size:9px; }
+        .hub-row .nm { color:var(--nx-text2); min-width:44px; white-space:nowrap; }
+        .hub-row .vl { margin-left:auto; font-variant-numeric:tabular-nums; }
+        .hub-bar { flex:1; height:5px; border-radius:3px; background:rgba(255,255,255,.07); overflow:hidden; min-width:20px; }
+        .hub-bar i { display:block; height:100%; border-radius:3px; }
+        .hub-carts { display:flex; flex-direction:column; gap:6px; margin-top:auto; margin-bottom:auto; }
+        .hub-pos { color:var(--nx-green); } .hub-neg { color:var(--nx-red); }
         @media (prefers-reduced-motion: reduce) { .nx * { transition:none !important; } }
       `}</style>
 
@@ -785,8 +1069,8 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
             <button
               key={n.id}
               type="button"
-              className={`nx-item ${aba === n.id ? 'on' : ''}`}
-              aria-current={aba === n.id ? 'page' : undefined}
+              className={`nx-item ${menuAtivo === n.id ? 'on' : ''}`}
+              aria-current={menuAtivo === n.id ? 'page' : undefined}
               onClick={() => setAba(n.id)}
             >
               <span className="ic" aria-hidden="true">{n.icone}</span>
@@ -807,8 +1091,32 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
           </header>
 
           <div className="nx-body">
-            {/* ── Dashboard ─────────────────────────────────────────────── */}
+            {painelAberto && (
+              <button type="button" className="nx-voltar" onClick={() => setAba('dashboard')}>
+                ← Painéis
+              </button>
+            )}
+
+            {/* ── Hub: a entrada do Dashboard ───────────────────────────── */}
             {aba === 'dashboard' && (
+              <Hub
+                paineis={PAINEIS}
+                abrir={(id) => setAba(id)}
+                rotulos={rotulos}
+                receita={serieReceita}
+                despesa={serieDespesa}
+                invest={serieInvest}
+                porCategoria={agrupar(despesas, (l) => l.categoria)}
+                faturas={agrupar(noCartao.filter((l) => l.data.startsWith(mesAtual)), (l) => l.origem)}
+                sobraMediana={sobraMedia}
+                sobras={serieReceita.map((r, i) => r - serieDespesa[i])}
+                patrimonio={patrimonio}
+                mesAtual={rotuloMes(mesAtual)}
+              />
+            )}
+
+            {/* ── Visão geral ───────────────────────────────────────────── */}
+            {aba === 'visaogeral' && (
               <>
                 <Kpis
                   lista={[
