@@ -542,6 +542,156 @@ interface Props {
   compacto?: boolean;
 }
 
+/* ── Gráficos novos (portados de utils/graficos_svg.py + paineis_v2.py do app real) ── */
+
+/** Sankey: cada receita até a categoria onde terminou. A conta fecha: o que sobra vira "sobrou". */
+function Sankey({ fontes, destinos, descricao }: { fontes: { nome: string; v: number; cor: string }[]; destinos: { nome: string; v: number; cor: string }[]; descricao: string }) {
+  const W = 330, H = 150, nw = 7, topo = 6, gap = 3;
+  const tot = Math.max(fontes.reduce((s, f) => s + f.v, 0), destinos.reduce((s, f) => s + f.v, 0), 1);
+  const util = H - 2 * topo;
+  const lay = (itens: typeof fontes) => {
+    const total = itens.reduce((s, f) => s + f.v, 0);
+    const livre = util - gap * (itens.length - 1);
+    let y = topo + (util - (livre * total) / tot - gap * (itens.length - 1)) / 2;
+    return itens.map((it) => {
+      const h = Math.max(2, (livre * it.v) / tot);
+      const r = { ...it, y, h };
+      y += h + gap;
+      return r;
+    });
+  };
+  const L = lay(fontes), R = lay(destinos);
+  const xl = 70, xr = W - 70;
+  // distribui as fitas: cada fonte reparte a altura proporcionalmente entre os destinos
+  const usadoL = L.map(() => 0), usadoR = R.map(() => 0);
+  const fitas: { d: string; cor: string }[] = [];
+  const totD = destinos.reduce((s, f) => s + f.v, 0) || 1;
+  L.forEach((a, i) => {
+    R.forEach((b, j) => {
+      const ha = a.h * (b.v / totD), hb = b.h * (a.v / (fontes.reduce((s, f) => s + f.v, 0) || 1));
+      const h = Math.min(ha, hb);
+      const ya = a.y + usadoL[i], yb = b.y + usadoR[j];
+      usadoL[i] += ha; usadoR[j] += hb;
+      const mx = (xl + nw + xr) / 2;
+      fitas.push({ cor: a.cor, d: `M${xl + nw} ${ya} C${mx} ${ya},${mx} ${yb},${xr} ${yb} L${xr} ${yb + h} C${mx} ${yb + h},${mx} ${ya + h},${xl + nw} ${ya + h} Z` });
+    });
+  });
+  return (
+    <svg className="cht" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={descricao}>
+      {fitas.map((f, i) => <path key={i} d={f.d} fill={f.cor} opacity=".28" />)}
+      {L.map((n) => (
+        <g key={n.nome}>
+          <rect x={xl} y={n.y} width={nw} height={n.h} rx="1.5" fill={n.cor} />
+          <text x={xl - 4} y={n.y + n.h / 2 + 2.5} textAnchor="end">{n.nome}</text>
+        </g>
+      ))}
+      {R.map((n) => (
+        <g key={n.nome}>
+          <rect x={xr} y={n.y} width={nw} height={n.h} rx="1.5" fill={n.cor} />
+          <text x={xr + nw + 4} y={n.y + n.h / 2 + 2.5}>{n.nome}</text>
+        </g>
+      ))}
+    </svg>
+  );
+}
+
+/** Cascata: do saldo inicial ao final, passo a passo. */
+function Cascata({ passos, W, H, descricao }: { passos: { nome: string; v: number; total?: boolean }[]; W: number; H: number; descricao: string }) {
+  let acc = 0;
+  const barras = passos.map((p) => {
+    const ini = p.total ? 0 : acc;
+    const fim = p.total ? p.v : acc + p.v;
+    if (!p.total) acc = fim; else acc = p.v;
+    return { ...p, lo: Math.min(ini, fim), hi: Math.max(ini, fim) };
+  });
+  const max = Math.max(...barras.map((b) => b.hi), 1);
+  const plotW = W - PAD.l - PAD.r, plotH = H - PAD.t - PAD.b;
+  const gw = plotW / barras.length, bw = Math.min(22, gw * 0.62);
+  const y = (v: number) => PAD.t + plotH * (1 - v / max);
+  return (
+    <svg className="cht" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={descricao}>
+      <Grade W={W} H={H} ticks={[0, 0.5, 1].map((f) => ({ y: PAD.t + plotH * (1 - f), texto: tickCurto(max * f) }))} />
+      {barras.map((b, i) => {
+        const cx = PAD.l + gw * (i + 0.5);
+        const cor = b.total ? COR.azul : b.v >= 0 ? COR.verde : COR.vermelho;
+        return (
+          <g key={b.nome}>
+            <rect x={cx - bw / 2} y={y(b.hi)} width={bw} height={Math.max(1.5, y(b.lo) - y(b.hi))} rx="2" fill={cor} />
+            <text x={cx} y={H - 5} textAnchor="middle">{b.nome}</text>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+/** Calendário de gasto: cada quadrado é um dia; quanto mais forte, mais gasto. */
+function Calendario({ dias, inicio, fim, descricao }: { dias: Record<string, number>; inicio: Date; fim: Date; descricao: string }) {
+  const cel = 9, gap = 2;
+  const ini = new Date(inicio); ini.setDate(ini.getDate() - ((ini.getDay() + 6) % 7)); // segunda
+  const semanas = Math.ceil((fim.getTime() - ini.getTime()) / (7 * 86400000)) + 1;
+  const max = Math.max(...Object.values(dias), 1);
+  const W = semanas * (cel + gap), H = 7 * (cel + gap);
+  const quad: ReactNode[] = [];
+  for (let sIdx = 0; sIdx < semanas; sIdx++) {
+    for (let d = 0; d < 7; d++) {
+      const dt = new Date(ini); dt.setDate(ini.getDate() + sIdx * 7 + d);
+      if (dt < inicio || dt > fim) continue;
+      const iso = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+      const v = dias[iso] ?? 0;
+      quad.push(
+        <rect key={iso} x={sIdx * (cel + gap)} y={d * (cel + gap)} width={cel} height={cel} rx="2"
+          fill={v ? COR.vermelho : 'rgba(255,255,255,.06)'} opacity={v ? 0.25 + 0.75 * (v / max) : 1}>
+          <title>{`${formatarData(iso)}: ${v ? fmt0(v) : 'sem gasto'}`}</title>
+        </rect>
+      );
+    }
+  }
+  return (
+    <div style={{ overflowX: 'auto' }}>
+      <svg className="cht" style={{ minWidth: W, maxWidth: '100%' }} viewBox={`0 0 ${W} ${H}`} role="img" aria-label={descricao}>{quad}</svg>
+    </div>
+  );
+}
+
+/** Mês × mediana: barra = o mês, traço = mediana dos meses anteriores; vermelho quando passou. */
+function BarrasMediana({ itens }: { itens: { rotulo: string; valor: number; mediana: number }[] }) {
+  const max = Math.max(...itens.flatMap((i) => [i.valor, i.mediana]), 1);
+  return (
+    <div>
+      {itens.map((i) => (
+        <div className="bar-row" key={i.rotulo}>
+          <div className="bar-hd"><span className="c">{i.rotulo}</span><span className="v">{fmt0(i.valor)} · mediana {fmt0(i.mediana)}</span></div>
+          <div className="bar-tk" style={{ position: 'relative' }}>
+            <div className="bar-fl" style={{ width: `${(i.valor / max) * 100}%`, background: i.valor > i.mediana ? COR.vermelho : undefined }} />
+            <i style={{ position: 'absolute', top: -2, bottom: -2, left: `${(i.mediana / max) * 100}%`, width: 2, background: 'var(--nx-text)', opacity: 0.8 }} />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** Linha central com faixa provável (1º e 3º quartil das sobras passadas). */
+function LinhaFaixa({ rotulos, centro, baixo, alto, W, H, descricao }: { rotulos: string[]; centro: number[]; baixo: number[]; alto: number[]; W: number; H: number; descricao: string }) {
+  const lo = Math.min(...baixo, ...centro, 0), hi = Math.max(...alto, ...centro, 1);
+  const plotW = W - PAD.l - PAD.r, plotH = H - PAD.t - PAD.b;
+  const x = (i: number) => PAD.l + (plotW * i) / Math.max(1, centro.length - 1);
+  const y = (v: number) => PAD.t + plotH * (1 - (v - lo) / (hi - lo));
+  const pts = (v: number[]) => v.map((a, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)} ${y(a).toFixed(1)}`).join(' ');
+  const faixa = `${pts(alto)} ${[...baixo].reverse().map((a, i) => `L${x(baixo.length - 1 - i).toFixed(1)} ${y(a).toFixed(1)}`).join(' ')} Z`;
+  return (
+    <svg className="cht" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={descricao}>
+      <Grade W={W} H={H} ticks={[0, 0.5, 1].map((f) => ({ y: PAD.t + plotH * (1 - f), texto: tickCurto(lo + (hi - lo) * f) }))} />
+      <path d={faixa} fill={COR.ambar} opacity=".16" />
+      {lo < 0 && <line x1={PAD.l} x2={W - PAD.r} y1={y(0)} y2={y(0)} stroke="currentColor" strokeDasharray="3 3" opacity=".4" />}
+      <path d={pts(centro)} fill="none" stroke={COR.ambar} strokeWidth="1.6" />
+      {rotulos.map((r, i) => <text key={r + i} x={x(i)} y={H - 5} textAnchor="middle">{r}</text>)}
+    </svg>
+  );
+}
+
+
 /* ── Hub ────────────────────────────────────────────────────────────────────
    Portado de webapp/hub_view.py + hub_svg.py do app real: um card por painel, cada um
    com a FORMA que responde a pergunta dele (áreas sobrepostas, rosca, colunas, barras,
@@ -876,6 +1026,63 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
   const saldoProjetado = saldoAcum[saldoAcum.length - 1] + sobraMedia * MESES_PROJ;
   const comprometimento = mediaReceita ? (mediaDespesa / mediaReceita) * 100 : 0;
 
+  // ── dados dos gráficos novos ───────────────────────────────────────────────
+  const iN = meses.length - 1;
+  const fontesSankey = agrupar(doTipo(doMes, 'receita'), (l) => l.sub).map(([nome, v], i) => ({ nome, v, cor: [COR.verde, '#7fd3b1', COR.ciano][i % 3] }));
+  const sankeyDest = (() => {
+    const cats = agrupar(doTipo(doMes, 'despesa'), (l) => l.categoria);
+    const topo = cats.slice(0, 3);
+    const resto = cats.slice(3).reduce((a, [, v]) => a + v, 0);
+    const tons = [COR.vermelho, '#f0764e', '#e8a33d', '#b8646e'];
+    const itens = topo.map(([nome, v], i) => ({ nome, v, cor: tons[i] }));
+    if (resto > 0) itens.push({ nome: 'demais', v: resto, cor: tons[3] });
+    if (investMes > 0) itens.push({ nome: 'investido', v: investMes, cor: COR.ciano });
+    const sobrou = receitaMes - despesaMes - investMes;
+    if (sobrou > 0) itens.push({ nome: 'sobrou', v: sobrou, cor: COR.verde });
+    return itens;
+  })();
+  const passosCascata = [
+    { nome: 'início', v: iN > 0 ? saldoAcum[iN - 1] : 0, total: true },
+    { nome: 'receitas', v: receitaMes },
+    { nome: 'despesas', v: -despesaMes },
+    { nome: 'invest.', v: -investMes },
+    { nome: 'final', v: saldoAcum[iN], total: true },
+  ];
+  const gastoPorDia = useMemo(() => {
+    const m: Record<string, number> = {};
+    for (const l of lancamentosDemo) if (l.tipo === 'despesa') m[l.data] = (m[l.data] ?? 0) + l.valor;
+    return m;
+  }, []);
+  const calIni = new Date(`${meses[Math.max(0, iN - 2)]}-01T12:00:00`);
+  const calFim = new Date(Number(mesAtual.slice(0, 4)), Number(mesAtual.slice(5, 7)), 0, 12);
+  const medianaDe = (xs: number[]) => {
+    if (!xs.length) return 0;
+    const o = [...xs].sort((a, b) => a - b), m = Math.floor(o.length / 2);
+    return o.length % 2 ? o[m] : (o[m - 1] + o[m]) / 2;
+  };
+  const mesVsMediana = agrupar(doTipo(doMes, 'despesa'), (l) => l.categoria).map(([rotulo, valor]) => ({
+    rotulo, valor,
+    mediana: medianaDe(meses.slice(0, iN).map((m) => soma(lancamentosDemo.filter((l) => l.data.startsWith(m) && l.tipo === 'despesa' && l.categoria === rotulo)))),
+  }));
+  const recExtra = meses.map((m) => {
+    const rs = lancamentosDemo.filter((l) => l.data.startsWith(m) && l.tipo === 'receita');
+    return { rec: soma(rs.filter((l) => l.sub === 'Salário')), extra: soma(rs.filter((l) => l.sub !== 'Salário')) };
+  });
+  const cartoesIds = contasDemo.filter((c) => c.tipo === 'cartao');
+  const faturasPorCartao = cartoesIds.map((c, i) => ({
+    nome: c.rotulo, cor: [COR.roxo, '#6f7fe0'][i % 2],
+    dados: meses.map((m) => soma(lancamentosDemo.filter((l) => l.data.startsWith(m) && l.tipo === 'despesa' && l.origem === c.id))),
+  }));
+  const faixaProj = (() => {
+    const o = [...serieReceita.map((r, i) => r - serieDespesa[i])].sort((a, b) => a - b);
+    const q = (f: number) => o[Math.min(o.length - 1, Math.floor(f * (o.length - 1)))];
+    const base = saldoAcum[iN];
+    const passo = (v: number) => Array.from({ length: 7 }, (_, i) => base + v * i);
+    return { centro: passo(sobraMedia), baixo: passo(q(0.25)), alto: passo(q(0.75)) };
+  })();
+  const rotProj6 = ['hoje', ...Array.from({ length: 6 }, (_, i) => MESES[(Number(mesAtual.slice(5, 7)) + i) % 12])];
+  const mediaAporte = media(serieInvest);
+
   const cartoes = contasDemo.filter((c) => c.tipo === 'cartao');
 
   return (
@@ -1169,6 +1376,20 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
                         />
                       </Bloco>
                     </div>
+                    <Bloco titulo={`Para onde foi o dinheiro — ${rotuloMes(mesAtual)}`}>
+                      <Sankey fontes={fontesSankey} destinos={sankeyDest}
+                        descricao={`Fluxo do mês: ${fmt0(receitaMes)} de receita até as categorias de despesa, investimento e sobra.`} />
+                    </Bloco>
+                    <div className="nx-grid2">
+                      <Bloco titulo={`Do saldo inicial ao final — ${rotuloMes(mesAtual)}`}>
+                        <Cascata passos={passosCascata} W={W} H={H}
+                          descricao={`Saldo de ${fmt0(passosCascata[0].v)} até ${fmt0(passosCascata[4].v)} no mês.`} />
+                      </Bloco>
+                      <Bloco titulo="Calendário de gasto diário">
+                        <Calendario dias={gastoPorDia} inicio={calIni} fim={calFim}
+                          descricao="Cada quadrado é um dia; quanto mais forte, mais se gastou." />
+                      </Bloco>
+                    </div>
                     <TabelaLancamentos titulo="Histórico de Lançamentos" lista={doMes} rotuloAba={rotuloAba} />
                   </>
                 )}
@@ -1246,6 +1467,12 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
                         />
                       </Bloco>
                     </div>
+                    <Bloco titulo="Recorrente × extra">
+                      <Legenda itens={[{ nome: 'recorrente', cor: COR.verde }, { nome: 'extra', cor: '#7fd3b1' }]} />
+                      <Barras rotulos={rotulos} W={W} H={H}
+                        series={[{ nome: 'recorrente', cor: COR.verde, dados: recExtra.map((r) => r.rec) }, { nome: 'extra', cor: '#7fd3b1', dados: recExtra.map((r) => r.extra) }]}
+                        descricao="Receita recorrente (salário) e extra, por mês." />
+                    </Bloco>
                     <TabelaLancamentos titulo="Transações de Receita" lista={receitas} rotuloAba={rotuloAba} />
                   </>
                 )}
@@ -1304,6 +1531,9 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
                         />
                       </Bloco>
                     </div>
+                    <Bloco titulo={`${rotuloMes(mesAtual)} × mediana`}>
+                      <BarrasMediana itens={mesVsMediana.slice(0, 6)} />
+                    </Bloco>
                     <TabelaLancamentos titulo="Transações de Despesa" lista={despesas} rotuloAba={rotuloAba} />
                   </>
                 )}
@@ -1372,6 +1602,11 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
                         />
                       </Bloco>
                     </div>
+                    <Bloco titulo="Faturas por cartão">
+                      <Legenda itens={faturasPorCartao.map((c) => ({ nome: c.nome, cor: c.cor }))} />
+                      <Barras rotulos={rotulos} W={W} H={H} series={faturasPorCartao}
+                        descricao="Compras de cada fatura, uma cor por cartão." />
+                    </Bloco>
                     <TabelaLancamentos
                       titulo="Lançamentos do Cartão" lista={noCartao}
                       terceiraColuna="origem" rotuloAba={rotuloAba}
@@ -1440,6 +1675,12 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
                         />
                       </Bloco>
                     </div>
+                    <Bloco titulo="Aportes por mês">
+                      <Barras rotulos={rotulos} W={W} H={H}
+                        series={[{ nome: 'aportes', cor: COR.ciano, dados: serieInvest }]}
+                        descricao={`Aplicações de cada mês; média de ${fmt0(mediaAporte)}.`} />
+                      <p className="nx-veredito">Média de <b>{fmt0(mediaAporte)}</b> por mês.</p>
+                    </Bloco>
                     <TabelaLancamentos titulo="Histórico de Movimentações" lista={aportes} rotuloAba={rotuloAba} />
                   </>
                 )}
@@ -1511,6 +1752,11 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
                       </Bloco>
                     </div>
 
+                    <Bloco titulo="Saldo projetado com faixa">
+                      <LinhaFaixa rotulos={rotProj6} {...faixaProj} W={W} H={H}
+                        descricao="Projeção central do saldo e faixa provável pelos quartis das sobras passadas." />
+                      <p className="nx-veredito sec">Faixa = se os próximos meses sobrarem como o 1º e o 3º quartil dos meses passados. Estimativa estatística, não aconselhamento.</p>
+                    </Bloco>
                     <Bloco titulo="Detalhe da Projeção por Mês">
                       <div className="nx-scr" tabIndex={0} role="region" aria-label="Detalhe da projeção por mês, tabela rolável">
                         <table className="nx-tb">

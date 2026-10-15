@@ -494,6 +494,17 @@ img { max-width: 100%; }
 .vpos { fill: var(--green); } .vneg { fill: var(--red); } .vtot { fill: var(--viz-total); } .vring { fill: var(--surface-1); } .vink { fill: var(--text-100); }
 .heat-scale { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 8px; margin-top: 10px; font-size: 11.5px; color: var(--text-mute); }
 .heat-scale .sw { display: inline-flex; gap: 2px; } .heat-scale .sw i { width: 22px; height: 10px; border-radius: 2px; display: block; }
+.pn-abas { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+.pn-abas a { cursor: pointer; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border-1); font-size: 13px; color: var(--text-200); }
+.pn-abas a.on { background: var(--overlay-2); color: var(--text-100); border-color: var(--s-centro); }
+.hbar { display: flex; flex-direction: column; gap: 9px; }
+.hbar .r { display: grid; grid-template-columns: minmax(80px, 150px) 1fr auto; gap: 10px; align-items: center; font-size: 12.5px; }
+.hbar .r .n { color: var(--text-200); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hbar .r .t { height: 10px; border-radius: 5px; background: var(--overlay-1); position: relative; }
+.hbar .r .t i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 5px; }
+.hbar .r .t u { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--text-100); opacity: .7; }
+.hbar .r b { font-variant-numeric: tabular-nums; font-weight: 600; min-width: 74px; text-align: right; }
+@media (max-width: 520px) { .hbar .r { grid-template-columns: 1fr auto; row-gap: 4px; } .hbar .r .t { grid-column: 1 / -1; grid-row: 2; } .hbar .r b { min-width: 0; } }
 .viz-tip { position: absolute; z-index: 60; pointer-events: none; background: var(--surface-1); border: 1px solid var(--line-soft); border-radius: 8px; box-shadow: var(--shadow-md); padding: 8px 10px; font-size: 12px; min-width: 160px; max-width: 260px; }
 .viz-tip[hidden] { display: none; }
 .tt-h { color: var(--text-200); font-weight: 600; margin-bottom: 4px; }
@@ -671,6 +682,18 @@ img { max-width: 100%; }
             </div>
             <div class="hub-info"><span class="nav-badge">🤖</span><div><b>Assistente &amp; análises</b><span>4 alerta(s) pendente(s)</span></div></div>
           </a>
+          <a class="card card--interactive hub-card" onclick="mk.go('conciliacao')">
+            <div class="hub-prev" id="prevConc" style="justify-content:center"></div>
+            <div class="hub-info"><span class="nav-badge">✓</span><div><b>Conciliação</b><span>O que ainda não fecha com o extrato</span></div></div>
+          </a>
+          <a class="card card--interactive hub-card" onclick="mk.go('vendas')">
+            <div class="hub-prev" id="prevVendas" style="justify-content:center"></div>
+            <div class="hub-info"><span class="nav-badge">🛒</span><div><b>Vendas</b><span>Receita por origem e por dia da semana</span></div></div>
+          </a>
+          <a class="card card--interactive hub-card" onclick="mk.go('despesas')">
+            <div class="hub-prev" id="prevDesp" style="justify-content:center"></div>
+            <div class="hub-info"><span class="nav-badge">🧾</span><div><b>Despesas</b><span>Fixa × variável e ponto de equilíbrio</span></div></div>
+          </a>
           <div class="card hub-card hub-card--breve">
             <div class="hub-prev">📊</div>
             <div class="hub-info"><span class="nav-badge">▦</span><div><b>Contábil / DRE</b><span>Futuro — o hub já nasce pronto pro card</span></div></div>
@@ -710,8 +733,14 @@ img { max-width: 100%; }
 
       <!-- ============================ INDICADORES FINANCEIROS ============================ -->
       <section data-pg="indicadores" hidden>
+        <div id="abasInd"></div>
         <div class="viz" id="viz"></div>
       </section>
+
+      <!-- ============================ PAINÉIS: CONCILIAÇÃO · VENDAS · DESPESAS ============================ -->
+      <section data-pg="conciliacao" hidden><div class="viz" id="pn-conciliacao"></div></section>
+      <section data-pg="vendas" hidden><div class="viz" id="pn-vendas"></div></section>
+      <section data-pg="despesas" hidden><div class="viz" id="pn-despesas"></div></section>
 
       <!-- ============================ TRANSFERÊNCIAS ============================ -->
       <section data-pg="transferencias" hidden>
@@ -965,9 +994,11 @@ img { max-width: 100%; }
     dashboard: 'Dashboard', fluxo: 'Fluxo de caixa', transferencias: 'Transferências',
     importar: 'Importar extrato', assistente: 'Assistente', configuracoes: 'Configurações',
     permissoes: 'Permissões', aparelhos: 'Aparelhos', auditoria: 'Auditoria', lojas: 'Lojas', indicadores: 'Indicadores',
-    rateio: 'Regras de rateio', saude: 'Saúde do sistema'
+    rateio: 'Regras de rateio', saude: 'Saúde do sistema',
+    conciliacao: 'Conciliação', vendas: 'Vendas', despesas: 'Despesas'
   };
   var DE_CONFIG = { permissoes: 1, aparelhos: 1, auditoria: 1, lojas: 1, rateio: 1, saude: 1 };
+  var PAINEIS_PG = { conciliacao: 1, vendas: 1, despesas: 1 };
   var shell = document.getElementById('appShell');
   var login = document.getElementById('scr-login');
   var guardar = function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} };
@@ -997,7 +1028,7 @@ img { max-width: 100%; }
           if (!plan) vista(document.querySelector('#vistaSwitch .on').getAttribute('data-vista'));
         };
       });
-    } else if (pg === 'indicadores') {
+    } else if (pg === 'indicadores' || PAINEIS_PG[pg]) {
       el.innerHTML = '<a class="voltar-cfg" href="#" onclick="mk.go(\'dashboard\');return false">← Dashboard</a>';
     } else if (DE_CONFIG[pg]) {
       el.innerHTML = '<a class="voltar-cfg" href="#" onclick="mk.go(\'configuracoes\');return false">← Configurações</a>';
@@ -1010,6 +1041,7 @@ img { max-width: 100%; }
     document.getElementById('pgTitle').textContent = TITULOS[pg] || pg;
     extra(pg);
     if (pg === 'indicadores') renderIndicadores();
+    if (PAINEIS_PG[pg]) renderPainel(pg);
     document.getElementById('userMenu').classList.remove('open');
     window.scrollTo(0, 0);
     // Home não é destino de navegação: navegar pra qualquer tela fecha o painel.
@@ -1307,7 +1339,7 @@ img { max-width: 100%; }
         return '<tr><td><b>' + x.nome + '</b></td><td>' + x.banco + '</td><td class="num">' + brl(x.ini) + '</td><td class="num">' + mil(x.lanc) + '</td><td class="num">' + x.rev + '</td><td>' + (f.dif ? '<span class="badge badge--amber">diferença ' + brl(f.dif) + '</span>' : '<span class="badge badge--green">fecha</span>') + '</td></tr>';
       }).join('') + '</tbody>';
   }
-  function renderRede() { renderFluxo(); renderPaineis(); renderPrevInd(); renderHome(); renderChat(); renderLojasPg(); }
+  function renderRede() { renderFluxo(); renderPaineis(); renderPrevInd(); renderPrevPaineis(); renderHome(); renderChat(); renderLojasPg(); }
 
   function lojaFiltro(id, ir) {
     var l = $('#fLoja'), b = $('#fBanco'), x = lojaPorId(id);
@@ -1663,6 +1695,7 @@ img { max-width: 100%; }
   function renderIndicadores() {
     var raiz = $('#viz'); if (!raiz || $('[data-pg="indicadores"]').hidden) return;
     if (!raiz.getAttribute('data-pronto')) montarIndicadores();
+    $('#abasInd').innerHTML = abasPainel('indicadores');
     var D = dadosInd(), fn = { fluxo: grafFluxo, saldo: grafSaldo, cascata: grafCascata, mapa: grafMapa, dias: grafDias, matriz: grafMatriz };
     $('#vizKpis').innerHTML = htmlKpis(D); tipHide();
     CARTOES.forEach(function (c) {
@@ -1677,6 +1710,142 @@ img { max-width: 100%; }
   function renderPrevInd() {
     var D = dadosInd(), el = $('#prevInd'); if (!el) return;
     el.innerHTML = '<div class="pv"><span>Saldo da rede</span><b>R$ ' + kfmt(D.fim) + '</b></div>' + spark(D.saldoRede, 160, 34) + '<div class="pv"><span>Dias de caixa · conciliação</span><b>' + dec1(D.dcRede) + ' · ' + Math.round(D.conc.ok * 100 / D.conc.total) + '%</b></div>';
+  }
+
+
+  /* =====================================================================
+     Painéis novos (Conciliação, Vendas, Despesas) — dados fictícios, em centavos.
+     Receita de agosto e setembro batem com as respostas do Assistente
+     (R$ 398.114,07 e R$ 412.870,40). A mesma conta do app real:
+       margem de contribuição = (receita − despesa variável) ÷ receita
+       ponto de equilíbrio    = despesa fixa ÷ margem de contribuição
+     ===================================================================== */
+  var MESES4 = ['jun', 'jul', 'ago', 'set'];
+  var REC = [37120530, 38564018, 39811407, 41287040];
+  var ORIGEM = [ // [nome, cor, participação por mês jun..set]
+    ['Cartão de crédito', 'var(--s-centro)', [.43, .42, .42, .41]],
+    ['Cartão de débito', 'var(--s-sul)', [.27, .27, .27, .27]],
+    ['Pix', 'var(--s-shopping)', [.22, .24, .24, .25]],
+    ['Dinheiro', 'var(--s-bairro)', [.08, .07, .07, .07]]
+  ];
+  var DOW = [['seg', .82], ['ter', .88], ['qua', .95], ['qui', 1.0], ['sex', 1.22], ['sáb', 1.38]];
+  var GRUPOS = [ // [nome, natureza, valor por mês jun..set]
+    ['Fornecedores', 'v', [15210000, 15690000, 16120000, 16890000]],
+    ['Pessoal', 'f', [5640000, 5640000, 5790000, 5790000]],
+    ['Ocupação', 'f', [3120000, 3120000, 3120000, 3180000]],
+    ['Impostos (Simples)', 'v', [2210000, 2290000, 2370000, 2460000]],
+    ['Comerciais', 'v', [890000, 940000, 1010000, 1370000]],
+    ['Administrativas', 'f', [810000, 820000, 830000, 845000]]
+  ];
+  var CORES6 = ['var(--s-centro)', 'var(--s-shopping)', 'var(--s-sul)', 'var(--s-bairro)', 'var(--green)', 'var(--amber)'];
+  var MAIORES = [['Fornecedor Atlas', 4120000], ['Folha de pagamento', 3860000], ['Fornecedor Pampa', 2975000], ['Aluguel — Centro', 1450000], ['Simples Nacional', 1380000], ['Fornecedor Serra', 1295000], ['Aluguel — Shopping', 1180000], ['Energia — 4 lojas', 612000], ['Campanha de outono', 540000], ['Contador', 310000]];
+
+  function pctf(v) { return dec1(v * 100) + '%'; }
+  function kpi(cls, rot, val, nota) { return '<div class="card kpi-card ' + cls + ' vk"><div class="kpi-label">' + rot + '</div><div class="kpi-value">' + val + '</div><div class="vd">' + nota + '</div></div>'; }
+  function figura(id, titulo, desc) { return '<figure class="card viz-card"><figcaption class="viz-cap"><div><h3>' + titulo + '</h3><p>' + desc + '</p></div></figcaption><div class="viz-body"><div class="viz-plot" id="' + id + '"></div></div><div class="viz-leg" id="' + id + '-l"></div><p class="viz-ins" id="' + id + '-i"></p></figure>'; }
+  function abasPainel(at) {
+    var it = [['indicadores', 'Fluxo de caixa'], ['conciliacao', 'Conciliação'], ['vendas', 'Vendas'], ['despesas', 'Despesas']];
+    return '<div class="pn-abas">' + it.map(function (x) { return '<a class="' + (x[0] === at ? 'on' : '') + '" onclick="mk.go(\'' + x[0] + '\')">' + x[1] + '</a>'; }).join('') + '</div>';
+  }
+  function hbar(itens, ref) { // itens: [nome, valor, cor, marca?]
+    var mx = Math.max.apply(null, itens.map(function (i) { return Math.max(i[1], i[3] || 0); }));
+    return '<div class="hbar">' + itens.map(function (i) { return '<div class="r"><span class="n">' + i[0] + '</span><span class="t"><i style="width:' + (i[1] / mx * 100).toFixed(1) + '%;background:' + (i[2] || 'var(--s-centro)') + '"></i>' + (i[3] ? '<u style="left:' + (i[3] / mx * 100).toFixed(1) + '%"></u>' : '') + '</span><b>' + (i[4] || 'R$ ' + kfmt(i[1])) + '</b></div>'; }).join('') + '</div>';
+  }
+  function colunas(el, rot, series, empilhar) { // series: [{nome, cor, d[]}]
+    var W = Math.max(200, el.clientWidth), H = 240, m = { l: 44, r: 8, t: 12, b: 26 };
+    var tot = rot.map(function (_, i) { return empilhar ? soma(series.map(function (s) { return s.d[i]; })) : Math.max.apply(null, series.map(function (s) { return s.d[i]; })); });
+    var e = escala(0, Math.max.apply(null, tot), 4), ph = H - m.t - m.b, bw = (W - m.l - m.r) / rot.length;
+    var y = function (v) { return m.t + (e.hi - v) / (e.hi - e.lo) * ph; };
+    var svg = sv('svg', { width: W, height: H, viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Evolução mensal' }, el);
+    eixoY(svg, e, y, m, W, kfmt);
+    var w = empilhar ? Math.min(46, bw * .55) : Math.min(22, bw * .8 / series.length);
+    rot.forEach(function (r, i) {
+      var cx = m.l + bw * (i + .5), acc = 0;
+      series.forEach(function (s, j) {
+        var v = s.d[i], x = empilhar ? cx - w / 2 : cx - (w * series.length + 2 * (series.length - 1)) / 2 + j * (w + 2);
+        var y0 = empilhar ? y(acc + v) : y(v), h = empilhar ? y(acc) - y(acc + v) - (acc + v ? 1 : 0) : y(0) - y(v);
+        var rc = sv('path', { d: barra(x, y0, w, Math.max(1, h), empilhar ? 0 : 4, 'topo'), fill: s.cor }, svg);
+        sv('title', {}, rc).textContent = r + ' · ' + s.nome + ': ' + brl(v);
+        acc += v;
+      });
+      st(svg, cx, H - 8, r, 'vt', 'middle');
+    });
+  }
+  function rosca(el, fatias) {
+    var S = 150, r = 54, sw = 24, c = 2 * Math.PI * r, tot = soma(fatias.map(function (f) { return f[1]; })), off = 0;
+    var svg = sv('svg', { width: S, height: S, viewBox: '0 0 ' + S + ' ' + S, role: 'img', 'aria-label': 'Participação por origem', style: 'margin:0 auto' }, el);
+    fatias.forEach(function (f) {
+      var fr = f[1] / tot, ci = sv('circle', { cx: S / 2, cy: S / 2, r: r, fill: 'none', stroke: f[2], 'stroke-width': sw, 'stroke-dasharray': (fr * c - 2).toFixed(2) + ' ' + c.toFixed(2), 'stroke-dashoffset': (-off * c).toFixed(2), transform: 'rotate(-90 ' + S / 2 + ' ' + S / 2 + ')' }, svg);
+      sv('title', {}, ci).textContent = f[0] + ': ' + pctf(fr); off += fr;
+    });
+    st(svg, S / 2, S / 2 + 4, 'R$ ' + kfmt(tot), 'vt1', 'middle').setAttribute('style', 'font-size:12px');
+  }
+  function cartoesPainel(pg) {
+    var raiz = $('#pn-' + pg);
+    var i3 = 3, rec = REC[i3];
+    if (pg === 'vendas') {
+      var por = ORIGEM.map(function (o) { return [o[0], Math.round(rec * o[2][i3]), o[1]]; });
+      var card = por[0][1] + por[1][1], dias = 21, mdia = Math.round(rec / dias), fx = soma(DOW.map(function (d) { return d[1]; })) / DOW.length;
+      var melhor = DOW[4];
+      raiz.innerHTML = abasPainel('vendas') +
+        '<div class="vk-grid">' + kpi('green', 'Receita de setembro', brl(rec), 'até 25/09 · rede de 4 lojas') +
+        kpi('', 'Média por dia com movimento', brl(mdia), dias + ' dias com extrato') +
+        kpi('', 'Melhor dia', 'sexta', '+' + Math.round((melhor[1] / fx - 1) * 100) + '% sobre a média dos dias') +
+        kpi('amber', 'Custo da maquininha', '1,9%', 'das vendas no cartão · ' + brl(Math.round(card * .019))) +
+        kpi('green', 'Receita × mês anterior', '+' + pctf(rec / REC[2] - 1), 'agosto: ' + brl(REC[2])) +
+        kpi('', 'Receita × média de 3 meses', '+' + pctf(rec / ((REC[0] + REC[1] + REC[2]) / 3) - 1), 'jun, jul e ago') + '</div>' +
+        '<div class="viz-grid">' + figura('pv-origem', 'Receita por origem', 'De onde veio a venda deste mês.') + figura('pv-dow', 'Média por dia da semana', 'Quanto cada dia costuma vender, no ritmo do mês.') + figura('pv-evol', 'Evolução mensal por origem', 'A receita de cada mês, repartida pela origem.') + '</div>';
+      rosca($('#pv-origem'), por); $('#pv-origem-l').innerHTML = por.map(function (p) { return '<span><i style="background:' + p[2] + '"></i>' + p[0] + ' ' + pctf(p[1] / rec) + '</span>'; }).join('');
+      $('#pv-origem-i').innerHTML = '<b>' + pctf(card / rec) + '</b> da receita entra por cartão: é aí que a taxa da maquininha pesa.';
+      $('#pv-dow').innerHTML = hbar(DOW.map(function (d) { return [d[0], Math.round(mdia * d[1]), d[0] === 'sex' || d[0] === 'sáb' ? 'var(--green)' : 'var(--s-centro)']; }));
+      $('#pv-dow-i').innerHTML = 'Sexta e sábado puxam a semana; segunda é o dia mais fraco.';
+      colunas($('#pv-evol'), MESES4, ORIGEM.map(function (o) { return { nome: o[0], cor: o[1], d: REC.map(function (r, i) { return Math.round(r * o[2][i]); }) }; }), true);
+      $('#pv-evol-l').innerHTML = ORIGEM.map(function (o) { return '<span><i style="background:' + o[1] + '"></i>' + o[0] + '</span>'; }).join('');
+      $('#pv-evol-i').innerHTML = 'O Pix ganhou espaço: de <b>22%</b> em junho para <b>25%</b> em setembro.';
+    } else if (pg === 'despesas') {
+      var tot = soma(GRUPOS.map(function (g) { return g[2][i3]; })), fixas = soma(GRUPOS.filter(function (g) { return g[1] === 'f'; }).map(function (g) { return g[2][i3]; })), vari = tot - fixas;
+      var mc = (rec - vari) / rec, pe = Math.round(fixas / mc), med3 = Math.round(soma(GRUPOS.map(function (g) { return soma(g[2].slice(0, 3)); })) / 3);
+      var fora = GRUPOS.map(function (g) { var base = soma(g[2].slice(0, 3)) / 3, v = g[2][i3]; return { g: g, base: base, v: v, d: v / base - 1 }; }).filter(function (x) { return x.d > .3; });
+      raiz.innerHTML = abasPainel('despesas') +
+        '<div class="vk-grid">' + kpi('red', 'Despesa de setembro', brl(tot), 'até 25/09') +
+        kpi('', 'Média mensal (3 meses)', brl(med3), 'jun, jul e ago') +
+        kpi('', 'Fixa × variável', pctf(fixas / tot) + ' fixa', brl(fixas) + ' se repetem todo mês') +
+        kpi('amber', 'Ponto de equilíbrio', brl(pe), pctf(rec / pe - 1) + ' acima: a receita já passou dele') +
+        kpi('green', 'Margem de contribuição', pctf(mc), '(receita − despesa variável) ÷ receita') + '</div>' +
+        '<div class="viz-grid">' + figura('pd-grupo', 'Por grupo', 'Onde o dinheiro foi em setembro.') + figura('pd-evol', 'Evolução mensal por grupo', 'Cada mês, repartido pelos grupos de despesa.') + figura('pd-top', '10 maiores despesas', 'Os lançamentos que mais pesaram no mês.') + figura('pd-fora', 'Fora do padrão', 'Grupo que passou de 30% sobre a média dos 3 meses anteriores.') + '</div>';
+      $('#pd-grupo').innerHTML = hbar(GRUPOS.map(function (g, i) { return [g[0], g[2][i3], CORES6[i], 0, 'R$ ' + kfmt(g[2][i3]) + ' · ' + Math.round(g[2][i3] / tot * 100) + '%']; }).sort(function (a, b) { return b[1] - a[1]; }));
+      $('#pd-grupo-i').innerHTML = 'Fornecedores e pessoal são <b>' + pctf((GRUPOS[0][2][i3] + GRUPOS[1][2][i3]) / tot) + '</b> da despesa do mês.';
+      colunas($('#pd-evol'), MESES4, GRUPOS.map(function (g, i) { return { nome: g[0], cor: CORES6[i], d: g[2] }; }), true);
+      $('#pd-evol-l').innerHTML = GRUPOS.map(function (g, i) { return '<span><i style="background:' + CORES6[i] + '"></i>' + g[0] + '</span>'; }).join('');
+      $('#pd-top').innerHTML = hbar(MAIORES.map(function (x) { return [x[0], x[1], 'var(--red)']; }));
+      $('#pd-fora').innerHTML = fora.length ? hbar(fora.map(function (x) { return [x.g[0], x.v, 'var(--red)', x.base, '+' + Math.round(x.d * 100) + '%']; })) : '<p class="nota">Nenhum grupo fora do padrão.</p>';
+      $('#pd-fora-i').innerHTML = fora.length ? 'O traço é a média dos 3 meses anteriores. <b>' + fora.map(function (x) { return x.g[0]; }).join(', ') + '</b> passou dela.' : '';
+    } else {
+      var cat = dadosInd().cat;
+      var contas = [['Banco Aurora', 1, 14, 'var(--s-centro)'], ['Banco Horizonte', 2, 21, 'var(--s-shopping)'], ['Coop. Vale Norte', 9, 6, 'var(--red)']];
+      raiz.innerHTML = abasPainel('conciliacao') +
+        '<div class="vk-grid">' + kpi('green', 'Categorizado', pctf(cat.pct), cat.lanc + ' lançamentos') +
+        kpi('amber', 'A revisar', String(cat.rev), brl(cat.valor) + ' ainda sem categoria') +
+        kpi('red', 'Transferência sem par', '1', brl(840000) + ' sem a outra perna') +
+        kpi('amber', 'Conta que não fecha', '1', 'Loja Sul · 25/09 · diferença de ' + brl(-45000)) + '</div>' +
+        '<div class="viz-grid">' + figura('pc-rev', 'A revisar por conta', 'Quantos lançamentos ainda esperam categoria.') + figura('pc-dias', 'Dias desde o último extrato', 'Vermelho quando passa de 7 dias.') + '</div>' +
+        '<div class="card" style="margin-top:16px"><div class="section-head"><h2>Onde o saldo não fecha</h2></div>' + tabela(['Loja', 'Dia', 'Saldo calculado', 'Saldo dos bancos', 'Diferença'], [['Loja Sul', '25/09', brl(saldoLoja(lojaPorId('sul'), ULTIMO).calc), brl(saldoLoja(lojaPorId('sul'), ULTIMO).bancos), '<span class="neg">' + brl(-45000) + '</span>']]) + '<p class="nota">A quebra aparece no dia em que a sequência de saldos deixa de bater com o extrato. Dia sem extrato não conta como diferença.</p></div>';
+      $('#pc-rev').innerHTML = hbar(contas.map(function (c) { return [c[0], c[2], c[3], 0, c[2] + ' lanç.']; }));
+      $('#pc-dias').innerHTML = hbar(contas.map(function (c) { return [c[0], c[1], c[1] > 7 ? 'var(--red)' : 'var(--green)', 7, c[1] + (c[1] === 1 ? ' dia' : ' dias')]; }));
+      $('#pc-dias-i').innerHTML = '<b>Coop. Vale Norte</b> está há 9 dias sem extrato importado.';
+    }
+  }
+  function renderPainel(pg) {
+    var raiz = $('#pn-' + pg); if (!raiz) return;
+    if (!$('#vizTip')) { var t = document.createElement('div'); t.id = 'vizTip'; t.className = 'viz-tip'; t.hidden = true; document.body.appendChild(t); }
+    cartoesPainel(pg);
+  }
+  function renderPrevPaineis() {
+    var D = dadosInd(), a = $('#prevConc'), b = $('#prevVendas'), c = $('#prevDesp'); if (!a) return;
+    a.innerHTML = '<div class="pv"><span>Categorizado</span><b>' + pct1(D.cat.pct) + '</b></div><div class="pv"><span>A revisar · sem par</span><b>' + D.cat.rev + ' · 1</b></div>';
+    b.innerHTML = '<div class="pv"><span>Receita de setembro</span><b>R$ ' + kfmt(REC[3]) + '</b></div>' + spark(REC, 160, 34);
+    var tot = soma(GRUPOS.map(function (g) { return g[2][3]; })), fx = soma(GRUPOS.filter(function (g) { return g[1] === 'f'; }).map(function (g) { return g[2][3]; }));
+    c.innerHTML = '<div class="pv"><span>Despesa de setembro</span><b>R$ ' + kfmt(tot) + '</b></div><div class="pv"><span>Fixa</span><b>' + pct1(fx / tot) + '</b></div>';
   }
 
   window.mk = {
