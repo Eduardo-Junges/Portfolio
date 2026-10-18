@@ -837,6 +837,7 @@ img { max-width: 100%; }
             <a class="card card--interactive cfg-tile" onclick="mk.go('aparelhos')"><span class="nav-badge">💻</span><div><b>Aparelhos</b><span>Aprovar ou revogar aparelhos</span></div></a>
             <a class="card card--interactive cfg-tile" onclick="mk.go('permissoes')"><span class="nav-badge">🔐</span><div><b>Permissões</b><span>O que Operador e Visualizador veem</span></div></a>
             <a class="card card--interactive cfg-tile" onclick="mk.go('auditoria')"><span class="nav-badge">▥</span><div><b>Auditoria</b><span>Trilha de mudanças e Vigia de acesso</span></div></a>
+            <a class="card card--interactive cfg-tile" onclick="mk.go('sobre')"><span class="nav-badge">ⓘ</span><div><b>Sobre e novidades</b><span>Versão do sistema e o que mudou</span></div></a>
             <a class="card card--interactive cfg-tile" onclick="mk.go('saude')"><span class="nav-badge">🩺</span><div><b>Saúde do sistema</b><span>Processos, banco, backups e fila</span></div></a>
           </div>
         </div>
@@ -865,6 +866,26 @@ img { max-width: 100%; }
             </tbody>
           </table></div>
           <p class="nota">Os percentuais precisam fechar 100%. O rateio é calculado na hora do relatório, então mudar a regra vale também para o passado. Lançamento com loja escolhida à mão nunca é rateado.</p>
+        </div>
+      </section>
+
+      <!-- ============================ SOBRE E NOVIDADES ============================ -->
+      <section data-pg="sobre" hidden>
+        <div class="card">
+          <div class="section-head"><h2>Nexus &amp; PJ</h2><span class="badge badge--green">versão 2.1.0</span></div>
+          <div class="conta-row"><div class="l"><b>Aviso de atualização</b><span>Desligado. Ligado, o sistema só lê o número da última versão e mostra uma faixa quando há versão nova. Não envia dado nenhum.</span></div><label class="flex gap-2" style="align-items:center;cursor:pointer"><input type="checkbox" id="avisoAtu" onchange="document.getElementById('avisoTxt').textContent=this.checked?'Ligado: faixa só para administradores.':'Desligado'"> <span id="avisoTxt">Desligado</span></label></div>
+          <div class="conta-row"><div class="l"><b>Ambiente</b><span>Produção. O ambiente de testes tem faixa vermelha na tela.</span></div><span class="badge badge--neutral">produção</span></div>
+        </div>
+        <div class="card" style="margin-top:16px">
+          <div class="section-head"><h2>O que mudou na 2.1.0</h2></div>
+          <div class="ia-lista">
+            <div class="ia-item"><div class="ia-ic">🏬</div><div class="ia-corpo"><div class="ia-tt">Lojas e regras de rateio</div><div class="ia-ds">Cadastre as lojas, escolha a loja de cada conta e divida lançamentos entre lojas por percentual.</div></div></div>
+            <div class="ia-item"><div class="ia-ic">📊</div><div class="ia-corpo"><div class="ia-tt">Painéis novos</div><div class="ia-ds">Fluxo de caixa, Conciliação, Vendas, Despesas e Lojas, com período e filtro de loja.</div></div></div>
+            <div class="ia-item"><div class="ia-ic">🔁</div><div class="ia-corpo"><div class="ia-tt">Sugestão de transferência entre contas</div><div class="ia-ds">Quando uma conta fica no vermelho e outra tem saldo, o sistema sugere quanto mover.</div></div></div>
+            <div class="ia-item"><div class="ia-ic">🧰</div><div class="ia-corpo"><div class="ia-tt">Instalação guiada</div><div class="ia-ds">Numa instalação nova, a tela pede o primeiro administrador, com um código que só quem está no servidor tem.</div></div></div>
+            <div class="ia-item"><div class="ia-ic">📄</div><div class="ia-corpo"><div class="ia-tt">Leitura de extratos mais robusta</div><div class="ia-ds">Linhas que só informam saldo não viram lançamento, e o mesmo mês em PDF e planilha não duplica.</div></div></div>
+            <div class="ia-item"><div class="ia-ic">🩺</div><div class="ia-corpo"><div class="ia-tt">Atualização por versão</div><div class="ia-ds">Backup, migração e volta atrás automática se algo falhar.</div></div></div>
+          </div>
         </div>
       </section>
 
@@ -994,10 +1015,10 @@ img { max-width: 100%; }
     dashboard: 'Dashboard', fluxo: 'Fluxo de caixa', transferencias: 'Transferências',
     importar: 'Importar extrato', assistente: 'Assistente', configuracoes: 'Configurações',
     permissoes: 'Permissões', aparelhos: 'Aparelhos', auditoria: 'Auditoria', lojas: 'Lojas', indicadores: 'Indicadores',
-    rateio: 'Regras de rateio', saude: 'Saúde do sistema',
+    rateio: 'Regras de rateio', saude: 'Saúde do sistema', sobre: 'Sobre e novidades',
     conciliacao: 'Conciliação', vendas: 'Vendas', despesas: 'Despesas'
   };
-  var DE_CONFIG = { permissoes: 1, aparelhos: 1, auditoria: 1, lojas: 1, rateio: 1, saude: 1 };
+  var DE_CONFIG = { permissoes: 1, aparelhos: 1, auditoria: 1, lojas: 1, rateio: 1, saude: 1, sobre: 1 };
   var PAINEIS_PG = { conciliacao: 1, vendas: 1, despesas: 1 };
   var shell = document.getElementById('appShell');
   var login = document.getElementById('scr-login');

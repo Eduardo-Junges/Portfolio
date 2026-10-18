@@ -19,7 +19,7 @@ import {
  * página:
  *
  *   Dashboard      Receita × Despesa — Mensal · Saldo por Mês — Bancos ·
- *                  Taxa de Poupança · Assinaturas · Histórico de Lançamentos
+ *                  Assinaturas · Fluxo do dinheiro · Cascata · Calendário · Histórico de Lançamentos
  *   Receitas       Receita — Mensal · Fontes de Receita · Receita por Banco ·
  *                  Top 5 Maiores Receitas · Transações de Receita
  *   Despesas       Despesa — Mensal · Despesas por Categoria · Fixas × Variáveis ·
@@ -1126,7 +1126,10 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
         .nx-hd .t { font-size:11.5px; font-weight:600; }
         .nx-dot { width:6px; height:6px; border-radius:50%; background:var(--nx-green);
           box-shadow:0 0 5px var(--nx-green); flex-shrink:0; }
-        .nx-hd .per { margin-left:auto; font-size:9.5px; color:var(--nx-text2); white-space:nowrap; }
+        .nx-busca { margin-left:auto; font-size:9px; color:var(--nx-text2); border:1px solid var(--nx-line);
+          border-radius:999px; padding:3px 9px; white-space:nowrap; }
+        @container (max-width: 520px) { .nx-busca { display:none; } }
+        .nx-hd .per { margin-left:8px; font-size:9.5px; color:var(--nx-text2); white-space:nowrap; }
         .nx-demo { color:rgba(var(--lm-text2),.75); }
         .nx-av { width:21px; height:21px; border-radius:50%; font-size:9px; font-weight:600; color:#fff;
           flex-shrink:0; background:linear-gradient(135deg,var(--nx-blue),var(--nx-purple));
@@ -1290,6 +1293,7 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
           <header className="nx-hd">
             <span className="nx-dot" aria-hidden="true" />
             <span className="t">{rotuloAba}</span>
+            <span className="nx-busca" aria-hidden="true">Pergunte ao assistente…</span>
             <span className="per">
               {rotuloCompetencia(mesAtual)}
               <span className="nx-demo"> · dados fictícios</span>
@@ -1360,22 +1364,12 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
 
                 {!compacto && (
                   <>
-                    <div className="nx-grid2">
-                      <Bloco titulo="Taxa de Poupança">
-                        <Medidor
-                          pct={receitaMes ? ((receitaMes - despesaMes) / receitaMes) * 100 : 0}
-                          nota={`${fmt0(receitaMes - despesaMes)} sobraram de ${fmt0(receitaMes)}`}
-                          cor={COR.verde} W={W} H={H}
-                          descricao={`Taxa de poupança do mês: ${pct1(receitaMes ? ((receitaMes - despesaMes) / receitaMes) * 100 : 0)}`}
-                        />
-                      </Bloco>
                       <Bloco titulo="Assinaturas">
                         <BarrasH
                           itens={agrupar(doTipo(doMes, 'despesa').filter((l) => l.sub === 'Fixa'), (l) => l.descricao)
                             .map(([rotulo, valor]) => ({ rotulo, valor }))}
                         />
                       </Bloco>
-                    </div>
                     <Bloco titulo={`Para onde foi o dinheiro — ${rotuloMes(mesAtual)}`}>
                       <Sankey fontes={fontesSankey} destinos={sankeyDest}
                         descricao={`Fluxo do mês: ${fmt0(receitaMes)} de receita até as categorias de despesa, investimento e sobra.`} />
