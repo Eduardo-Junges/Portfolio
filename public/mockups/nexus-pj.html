@@ -494,6 +494,19 @@ img { max-width: 100%; }
 .vpos { fill: var(--green); } .vneg { fill: var(--red); } .vtot { fill: var(--viz-total); } .vring { fill: var(--surface-1); } .vink { fill: var(--text-100); }
 .heat-scale { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 8px; margin-top: 10px; font-size: 11.5px; color: var(--text-mute); }
 .heat-scale .sw { display: inline-flex; gap: 2px; } .heat-scale .sw i { width: 22px; height: 10px; border-radius: 2px; display: block; }
+.rel-layout { display: grid; grid-template-columns: minmax(300px, 400px) minmax(0, 1fr); gap: 14px; align-items: start; }
+@media (max-width: 900px) { .rel-layout { grid-template-columns: minmax(0, 1fr); } .rel-layout > * { min-width: 0; } }
+.rel-grade .field, .rel-acoes .field { min-width: 0; } .rel-grade .input { width: 100%; }
+.rel-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.rel-grade .full { grid-column: 1 / -1; }
+.rel-desc { font-size: 12px; margin-top: 4px; }
+.rel-acoes { display: flex; gap: 10px; align-items: flex-end; margin-top: 12px; flex-wrap: wrap; }
+.rel-acoes .field { flex: 1; min-width: 130px; }
+.rel-previa { padding: 12px 14px; font-size: 12px; }
+.rel-cab { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding-bottom: 8px; margin-bottom: 6px; border-bottom: 1px solid var(--line-soft); }
+.rel-previa h2 { font-size: 14px; }
+.rel-previa .tbl th, .rel-previa .tbl td { padding: 5px 7px; font-size: 11.5px; }
+.rel-toast { margin-top: 10px; padding: 8px 10px; border-radius: 8px; background: var(--overlay-1); font-size: 12.5px; color: var(--text-200); }
 .pn-abas { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
 .pn-abas a { cursor: pointer; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border-1); font-size: 13px; color: var(--text-200); }
 .pn-abas a.on { background: var(--overlay-2); color: var(--text-100); border-color: var(--s-centro); }
@@ -601,6 +614,7 @@ img { max-width: 100%; }
       <a class="navlink active" data-page="dashboard" data-label="Dashboard"><span class="nav-badge">⬡</span><span class="nav-label">Dashboard</span></a>
       <a class="navlink" data-page="fluxo" data-label="Fluxo de caixa"><span class="nav-badge">◧</span><span class="nav-label">Fluxo de caixa</span></a>
       <div class="grp-label">Operação</div>
+      <a class="navlink" data-page="relatorios" data-label="Relatórios"><span class="nav-badge">▤</span><span class="nav-label">Relatórios</span></a>
       <a class="navlink" data-page="transferencias" data-label="Transferências"><span class="nav-badge">⇄</span><span class="nav-label">Transferências</span></a>
       <a class="navlink" data-page="importar" data-label="Importar extrato"><span class="nav-badge">⇓</span><span class="nav-label">Importar extrato</span></a>
     </nav>
@@ -742,6 +756,54 @@ img { max-width: 100%; }
       <section data-pg="vendas" hidden><div class="viz" id="pn-vendas"></div></section>
       <section data-pg="despesas" hidden><div class="viz" id="pn-despesas"></div></section>
 
+      <!-- ============================ RELATÓRIOS ============================ -->
+      <section data-pg="relatorios" hidden>
+        <div class="rel-layout">
+          <div class="card" style="padding:12px 14px">
+            <div class="rel-grade">
+              <div class="field full"><label>Relatório</label><select class="input" id="relEscolha"></select><p class="text-mute rel-desc" id="relDesc"></p></div>
+              <div class="field" data-f="periodo"><label>De</label><input class="input" type="text" value="01/09/2026" id="relDe"></div>
+              <div class="field" data-f="periodo"><label>Até</label><input class="input" type="text" value="25/09/2026" id="relAte"></div>
+              <div class="field" data-f="loja"><label>Loja</label><select class="input" id="relLoja"><option value="">Todas as lojas</option><option>Loja Centro</option><option>Loja Shopping</option><option>Loja Sul</option><option>Loja Bairro</option></select></div>
+              <div class="field" data-f="sinal"><label>Movimento</label><select class="input" id="relSinal"><option value="todas">Entradas e saídas</option><option value="entradas">Só entradas</option><option value="saidas">Só saídas</option></select></div>
+            </div>
+            <div class="rel-acoes">
+              <div class="field"><label>Formato do arquivo</label><select class="input" id="relFmt"><option>PDF</option><option>Excel (.xlsx)</option><option>CSV</option><option>TXT</option></select></div>
+              <button class="btn btn--primary" type="button" onclick="mk.gerarRel()">Gerar arquivo</button>
+            </div>
+            <div class="rel-toast" id="relToast" hidden></div>
+          </div>
+          <div class="card rel-previa" id="relPrevia"></div>
+        </div>
+        <p class="nota">A prévia se monta sozinha a cada mudança de filtro. PDF, Excel e TXT saem com o cabeçalho padrão (nome da empresa, título, período e filtros, data de geração e quem gerou). O CSV leva só os dados. Cada geração fica na auditoria.</p>
+      </section>
+
+      <!-- ============================ PRÓXIMAS 13 SEMANAS ============================ -->
+      <section data-pg="semanas" hidden><div class="viz" id="pn-semanas"></div></section>
+
+      <!-- ============================ API E INTEGRAÇÕES ============================ -->
+      <section data-pg="api" hidden>
+        <div class="card">
+          <div class="section-head"><h2>API de leitura</h2><span class="badge badge--neutral" id="apiBadge">desligada</span></div>
+          <div class="conta-row"><div class="l"><b>Ligar a API</b><span>Só leitura: nada é gravado por ela. Tokens guardados só como hash, limite de pedidos e cada leitura na auditoria.</span></div><label class="flex gap-2" style="align-items:center;cursor:pointer"><input type="checkbox" id="apiLiga" onchange="document.getElementById('apiBadge').textContent=this.checked?'ligada':'desligada';document.getElementById('apiBadge').className='badge '+(this.checked?'badge--green':'badge--neutral')"> ligar</label></div>
+          <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Token</th><th>Escopos</th><th>Último uso</th><th></th></tr></thead><tbody>
+            <tr><td>Planilha da diretoria</td><td>saldos, relatórios</td><td>hoje, 08:12</td><td><button class="btn btn--ghost btn--sm">Revogar</button></td></tr>
+            <tr><td>Painel do contador</td><td>lançamentos</td><td>ontem</td><td><button class="btn btn--ghost btn--sm">Revogar</button></td></tr>
+          </tbody></table></div>
+          <p class="nota">O token aparece uma única vez, ao ser criado. Escopos possíveis: saldos, lançamentos, relatórios e projeção.</p>
+        </div>
+      </section>
+
+      <!-- ============================ EMPRESA E LOGO ============================ -->
+      <section data-pg="empresa" hidden>
+        <div class="card">
+          <div class="section-head"><h2>Empresa e logo</h2></div>
+          <div class="field" style="max-width:420px"><label>Nome da empresa (como aparece nos relatórios)</label><input class="input" id="empNome" value="Comércio Exemplo Ltda" oninput="mk.empNome(this.value)"></div>
+          <div class="field" style="max-width:420px;margin-top:12px"><label>Logo da tela de entrada</label><input class="input" type="file" accept="image/png,image/jpeg"></div>
+          <p class="nota">O logo enviado é conferido e regravado. Sem ele, vale o logo padrão do sistema. Os relatórios levam só o nome.</p>
+        </div>
+      </section>
+
       <!-- ============================ TRANSFERÊNCIAS ============================ -->
       <section data-pg="transferencias" hidden>
         <div class="kpi-grid">
@@ -837,6 +899,8 @@ img { max-width: 100%; }
             <a class="card card--interactive cfg-tile" onclick="mk.go('aparelhos')"><span class="nav-badge">💻</span><div><b>Aparelhos</b><span>Aprovar ou revogar aparelhos</span></div></a>
             <a class="card card--interactive cfg-tile" onclick="mk.go('permissoes')"><span class="nav-badge">🔐</span><div><b>Permissões</b><span>O que Operador e Visualizador veem</span></div></a>
             <a class="card card--interactive cfg-tile" onclick="mk.go('auditoria')"><span class="nav-badge">▥</span><div><b>Auditoria</b><span>Trilha de mudanças e Vigia de acesso</span></div></a>
+            <a class="card card--interactive cfg-tile" onclick="mk.go('empresa')"><span class="nav-badge">🏢</span><div><b>Empresa e logo</b><span>Nome nos relatórios e logo da entrada</span></div></a>
+            <a class="card card--interactive cfg-tile" onclick="mk.go('api')"><span class="nav-badge">🔌</span><div><b>API e integrações</b><span>Leitura dos dados por outros sistemas</span></div></a>
             <a class="card card--interactive cfg-tile" onclick="mk.go('sobre')"><span class="nav-badge">ⓘ</span><div><b>Sobre e novidades</b><span>Versão do sistema e o que mudou</span></div></a>
             <a class="card card--interactive cfg-tile" onclick="mk.go('saude')"><span class="nav-badge">🩺</span><div><b>Saúde do sistema</b><span>Processos, banco, backups e fila</span></div></a>
           </div>
@@ -1015,11 +1079,11 @@ img { max-width: 100%; }
     dashboard: 'Dashboard', fluxo: 'Fluxo de caixa', transferencias: 'Transferências',
     importar: 'Importar extrato', assistente: 'Assistente', configuracoes: 'Configurações',
     permissoes: 'Permissões', aparelhos: 'Aparelhos', auditoria: 'Auditoria', lojas: 'Lojas', indicadores: 'Indicadores',
-    rateio: 'Regras de rateio', saude: 'Saúde do sistema', sobre: 'Sobre e novidades',
+    rateio: 'Regras de rateio', saude: 'Saúde do sistema', sobre: 'Sobre e novidades', relatorios: 'Relatórios', semanas: 'Próximas 13 semanas', api: 'API e integrações', empresa: 'Empresa e logo',
     conciliacao: 'Conciliação', vendas: 'Vendas', despesas: 'Despesas'
   };
-  var DE_CONFIG = { permissoes: 1, aparelhos: 1, auditoria: 1, lojas: 1, rateio: 1, saude: 1, sobre: 1 };
-  var PAINEIS_PG = { conciliacao: 1, vendas: 1, despesas: 1 };
+  var DE_CONFIG = { permissoes: 1, aparelhos: 1, auditoria: 1, lojas: 1, rateio: 1, saude: 1, sobre: 1, api: 1, empresa: 1 };
+  var PAINEIS_PG = { conciliacao: 1, vendas: 1, despesas: 1, semanas: 1 };
   var shell = document.getElementById('appShell');
   var login = document.getElementById('scr-login');
   var guardar = function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} };
@@ -1063,6 +1127,7 @@ img { max-width: 100%; }
     extra(pg);
     if (pg === 'indicadores') renderIndicadores();
     if (PAINEIS_PG[pg]) renderPainel(pg);
+    if (pg === 'relatorios') renderRelatorio();
     document.getElementById('userMenu').classList.remove('open');
     window.scrollTo(0, 0);
     // Home não é destino de navegação: navegar pra qualquer tela fecha o painel.
@@ -1765,7 +1830,7 @@ img { max-width: 100%; }
   function kpi(cls, rot, val, nota) { return '<div class="card kpi-card ' + cls + ' vk"><div class="kpi-label">' + rot + '</div><div class="kpi-value">' + val + '</div><div class="vd">' + nota + '</div></div>'; }
   function figura(id, titulo, desc) { return '<figure class="card viz-card"><figcaption class="viz-cap"><div><h3>' + titulo + '</h3><p>' + desc + '</p></div></figcaption><div class="viz-body"><div class="viz-plot" id="' + id + '"></div></div><div class="viz-leg" id="' + id + '-l"></div><p class="viz-ins" id="' + id + '-i"></p></figure>'; }
   function abasPainel(at) {
-    var it = [['indicadores', 'Fluxo de caixa'], ['conciliacao', 'Conciliação'], ['vendas', 'Vendas'], ['despesas', 'Despesas']];
+    var it = [['indicadores', 'Fluxo de caixa'], ['conciliacao', 'Conciliação'], ['vendas', 'Vendas'], ['despesas', 'Despesas'], ['semanas', 'Próximas 13 semanas']];
     return '<div class="pn-abas">' + it.map(function (x) { return '<a class="' + (x[0] === at ? 'on' : '') + '" onclick="mk.go(\'' + x[0] + '\')">' + x[1] + '</a>'; }).join('') + '</div>';
   }
   function hbar(itens, ref) { // itens: [nome, valor, cor, marca?]
@@ -1858,6 +1923,7 @@ img { max-width: 100%; }
   }
   function renderPainel(pg) {
     var raiz = $('#pn-' + pg); if (!raiz) return;
+    if (pg === 'semanas') { painelSemanas(); return; }
     if (!$('#vizTip')) { var t = document.createElement('div'); t.id = 'vizTip'; t.className = 'viz-tip'; t.hidden = true; document.body.appendChild(t); }
     cartoesPainel(pg);
   }
@@ -1869,7 +1935,108 @@ img { max-width: 100%; }
     c.innerHTML = '<div class="pv"><span>Despesa de setembro</span><b>R$ ' + kfmt(tot) + '</b></div><div class="pv"><span>Fixa</span><b>' + pct1(fx / tot) + '</b></div>';
   }
 
+
+  /* =====================================================================
+     Relatórios (aba nova) e Próximas 13 semanas — dados fictícios.
+     ===================================================================== */
+  var EMPRESA = 'Comércio Exemplo Ltda';
+  var COLCHAO = 6000000, SALDO0 = 18871313;
+  var SEM_E = [9800000, 10100000, 9600000, 9900000, 10300000, 9700000, 10000000, 9800000, 10200000, 9900000, 10100000, 9700000, 10000000];
+  var SEM_S = [8600000, 14500000, 9100000, 9300000, 8900000, 14800000, 9200000, 9400000, 9000000, 14600000, 9300000, 9500000, 9100000];
+  function semanas13() {
+    var ini = new Date(2026, 8, 28), saldo = SALDO0, out = [];
+    for (var i = 0; i < 13; i++) {
+      var a = new Date(ini.getTime() + i * 7 * 864e5), b = new Date(a.getTime() + 6 * 864e5);
+      saldo += SEM_E[i] - SEM_S[i];
+      var f = function (d) { return ('0' + d.getDate()).slice(-2) + '/' + ('0' + (d.getMonth() + 1)).slice(-2); };
+      out.push({ rot: f(a) + ' a ' + f(b), e: SEM_E[i], s: SEM_S[i], saldo: saldo, abaixo: saldo < COLCHAO, grande: SEM_S[i] > 12000000 });
+    }
+    return out;
+  }
+  var RELS = {
+    extrato: ['Extrato de lançamentos', 'Todos os lançamentos do período, com categoria, loja e saldo.', ['periodo', 'loja', 'sinal']],
+    fluxo: ['Fluxo de caixa diário', 'Entradas, saídas, resultado e saldo das contas, dia a dia.', ['periodo', 'loja']],
+    origem: ['Entradas por origem', 'De onde veio o dinheiro: vendas por tipo e outras receitas.', ['periodo', 'loja']],
+    grupo: ['Despesas por grupo', 'Para onde foi o dinheiro, por grupo de categoria, e o que fugiu do padrão.', ['periodo', 'loja']],
+    lojas: ['Resultado por loja', 'Receita, despesa e margem de cada loja, com o rateio aplicado.', ['periodo']],
+    conc: ['Conciliação por conta', 'Lançamentos a revisar, quebras de saldo e último lançamento de cada conta.', []],
+    sem13: ['Projeção das próximas 13 semanas', 'Saldo previsto semana a semana, com o colchão mínimo.', []]
+  };
+  function relDados(k) {
+    var D = dadosInd(), t;
+    if (k === 'extrato') {
+      var L = [['25/09', 'Banco Aurora', 'PIX RECEBIDO — CLIENTE ORION', 'Vendas', 'Loja Centro', 680000], ['25/09', 'Banco Aurora', 'FORNECEDOR ATLAS LTDA', 'Fornecedores', 'Loja Centro', -412000], ['24/09', 'Banco Horizonte', 'RECEBIMENTO CIELO', 'Vendas', 'Loja Shopping', 1032000], ['24/09', 'Banco Aurora', 'TED ENVIADA — TRANSFERÊNCIA', 'Transferência entre contas', '', -2000000], ['23/09', 'Banco Horizonte', 'ENERGIA ELÉTRICA', 'Ocupação', 'Loja Sul', -61200], ['23/09', 'Coop. Vale Norte', 'PIX RECEBIDO', 'A revisar', 'Loja Bairro', 129000], ['22/09', 'Banco Aurora', 'FOLHA DE PAGAMENTO', 'Pessoal', '', -579000], ['22/09', 'Banco Horizonte', 'ALUGUEL — SHOPPING', 'Ocupação', 'Loja Shopping', -118000]];
+      var ent = 0, sai = 0; L.forEach(function (l) { if (l[5] > 0) ent += l[5]; else sai -= l[5]; });
+      return { titulo: RELS.extrato[0], filtros: [['Período', '01/09/2026 a 25/09/2026'], ['Loja', 'todas'], ['Movimento', 'entradas e saídas']],
+        html: '<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Data</th><th>Conta</th><th>Descrição</th><th>Categoria</th><th>Loja</th><th class="num">Valor</th></tr></thead><tbody>' +
+          L.map(function (l) { return '<tr><td>' + l[0] + '</td><td>' + l[1] + '</td><td>' + l[2] + '</td><td>' + l[3] + '</td><td>' + (l[4] || '—') + '</td><td class="num' + (l[5] < 0 ? ' neg' : '') + '">' + brl(l[5]) + '</td></tr>'; }).join('') + '</tbody></table></div>',
+        obs: 'Mostrando as primeiras ' + L.length + ' linhas da prévia · entradas ' + brl(ent) + ' · saídas ' + brl(sai) + ' · inclui transferências entre contas (neutras), como no extrato.' };
+    }
+    if (k === 'fluxo') {
+      return { titulo: RELS.fluxo[0], filtros: [['Período', '21/09/2026 a 25/09/2026'], ['Loja', 'todas']], html: tabela(['Dia', 'Entradas', 'Saídas', 'Resultado do dia', 'Saldo das contas'], D.rede.map(function (d, i) { return [DIAS[i], brl(d.ent), brl(d.sai), brl(d.res, true), brl(D.saldoRede[i + 1])]; })), obs: '' };
+    }
+    if (k === 'origem') {
+      var rec = REC[3];
+      return { titulo: RELS.origem[0], filtros: [['Período', '01/09/2026 a 25/09/2026'], ['Loja', 'todas']], html: tabela(['Origem', 'Valor', '% do total'], ORIGEM.map(function (o) { return [o[0], brl(Math.round(rec * o[2][3])), pctf(o[2][3])]; }).concat([['TOTAL', brl(rec), '100%']])), obs: '' };
+    }
+    if (k === 'grupo') {
+      var tot = soma(GRUPOS.map(function (g) { return g[2][3]; }));
+      return { titulo: RELS.grupo[0], filtros: [['Período', '01/09/2026 a 25/09/2026'], ['Loja', 'todas']], html: tabela(['Grupo', 'Valor', '% do total'], GRUPOS.map(function (g) { return [g[0], brl(g[2][3]), pctf(g[2][3] / tot)]; }).concat([['TOTAL', brl(tot), '100%']])), obs: 'Comerciais passou de 30% sobre a média dos 3 meses anteriores.' };
+    }
+    if (k === 'lojas') {
+      return { titulo: RELS.lojas[0], filtros: [['Período', '21/09/2026 a 25/09/2026']], html: tabela(['Loja', 'Receita', 'Despesa', 'Resultado', 'Margem'], D.lojas.map(function (l) { return [l.x.nome, brl(l.ent), brl(l.sai), brl(l.res, true), pct1(l.margem)]; }).concat([['Rede', brl(D.totE), brl(D.totS), brl(D.res, true), pct1(D.margem)]])), obs: 'Rateio aplicado: aluguel e contador divididos entre as lojas pelas regras cadastradas.' };
+    }
+    if (k === 'conc') {
+      return { titulo: RELS.conc[0], filtros: [], html: tabela(['Conta', 'A revisar', 'Quebras de saldo', '1ª quebra', 'Último lançamento', 'Dias sem lançamento'], [['Banco Aurora', '14', '1', '25/09', '25/09', '1'], ['Banco Horizonte', '21', '0', '—', '24/09', '2'], ['Coop. Vale Norte', '6', '0', '—', '16/09', '9']]), obs: '' };
+    }
+    var S = semanas13();
+    return { titulo: RELS.sem13[0], filtros: [['Colchão mínimo', brl(COLCHAO)]], html: tabela(['Semana', 'Entradas', 'Saídas', 'Saldo ao fim', 'Situação'], S.map(function (x) { return [x.rot, brl(x.e), brl(x.s), brl(x.saldo), x.abaixo ? 'abaixo do colchão' : (x.grande ? 'folha e aluguel' : 'ok')]; })), obs: 'Estimativa pelo histórico, não promessa. Cada parcela fixa cai no dia típico do mês.' };
+  }
+  function renderRelatorio() {
+    var sel = $('#relEscolha');
+    if (!sel.options.length) {
+      Object.keys(RELS).forEach(function (k) { var o = document.createElement('option'); o.value = k; o.textContent = RELS[k][0]; sel.appendChild(o); });
+      sel.onchange = renderRelatorio;
+      document.querySelectorAll('#relDe,#relAte,#relLoja,#relSinal').forEach(function (e) { e.onchange = renderRelatorio; });
+    }
+    var k = sel.value, r = RELS[k], d = relDados(k);
+    $('#relDesc').textContent = r[1];
+    document.querySelectorAll('[data-f]').forEach(function (e) { e.hidden = r[2].indexOf(e.getAttribute('data-f')) < 0; });
+    $('#relToast').hidden = true;
+    var h = new Date(), q = ('0' + h.getDate()).slice(-2) + '/' + ('0' + (h.getMonth() + 1)).slice(-2) + '/' + h.getFullYear();
+    $('#relPrevia').innerHTML = '<div class="rel-cab"><b>' + EMPRESA + '</b><span class="text-mute">Gerado em ' + q + ' por Eduardo</span></div><div class="section-head"><h2>' + d.titulo + '</h2></div>' +
+      (d.filtros.length ? '<p class="text-mute">' + d.filtros.map(function (f) { return f[0] + ': ' + f[1]; }).join(' · ') + '</p>' : '') + (d.obs ? '<p class="text-mute">' + d.obs + '</p>' : '') + d.html;
+  }
+  function gerarRel() {
+    var f = $('#relFmt').value, t = $('#relToast');
+    t.hidden = false;
+    t.textContent = (f === 'CSV' ? 'Mockup: o CSV seria baixado só com os dados, pronto para outra planilha.' : 'Mockup: o arquivo ' + f + ' seria baixado com o cabeçalho padrão (empresa, título, período, filtros, data e quem gerou).') + ' A geração ficaria na auditoria.';
+  }
+  function empNome(v) { EMPRESA = v || 'Comércio Exemplo Ltda'; }
+  function painelSemanas() {
+    var S = semanas13(), minimo = S.reduce(function (a, b) { return b.saldo < a.saldo ? b : a; }), abx = S.filter(function (x) { return x.abaixo; });
+    $('#pn-semanas').innerHTML = abasPainel('semanas') +
+      '<div class="vk-grid">' + kpi('', 'Saldo hoje', brl(SALDO0), 'soma das contas ativas') + kpi('', 'Saldo previsto em 13 semanas', brl(S[12].saldo), 'até 26/12/2026') +
+      kpi(abx.length ? 'red' : 'green', 'Menor saldo previsto', brl(minimo.saldo), 'na semana de ' + minimo.rot.slice(0, 5)) +
+      kpi(abx.length ? 'red' : 'green', 'Semanas abaixo do colchão', String(abx.length), 'colchão de ' + brl(COLCHAO)) + '</div>' +
+      '<div class="viz-grid">' + figura('ps-graf', 'Saldo previsto semana a semana', 'Linha = saldo previsto das contas ao fim de cada semana; tracejado = colchão mínimo.') + '</div>' +
+      '<div class="card" style="margin-top:16px"><div class="section-head"><h2>Semana a semana</h2></div>' + tabela(['Semana', 'Entradas', 'Saídas', 'Saldo ao fim', 'Situação'], S.map(function (x) { return [x.rot, brl(x.e), brl(x.s), brl(x.saldo), x.abaixo ? 'abaixo do colchão' : (x.grande ? 'folha e aluguel' : 'ok')]; })) +
+      '<p class="nota">É estimativa pelo histórico, não promessa: o que se repete todo mês (aluguel, folha) cai no dia típico, e vendas e saídas variáveis entram pela média semanal. O colchão mínimo é definido pelo ADM.</p></div>';
+    var el = $('#ps-graf'), W = Math.max(220, el.clientWidth), H = 240, m = { l: 48, r: 10, t: 14, b: 28 };
+    var vals = S.map(function (x) { return x.saldo; }), e = escala(Math.min(COLCHAO, Math.min.apply(null, vals)) * .9, Math.max.apply(null, vals), 4), ph = H - m.t - m.b;
+    var y = function (v) { return m.t + (e.hi - v) / (e.hi - e.lo) * ph; }, x = function (i) { return m.l + i * (W - m.l - m.r) / 12; };
+    var svg = sv('svg', { width: W, height: H, viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Saldo previsto das próximas 13 semanas' }, el);
+    eixoY(svg, e, y, m, W, kfmt);
+    sv('line', { x1: m.l, x2: W - m.r, y1: y(COLCHAO), y2: y(COLCHAO), 'class': 'vref' }, svg); st(svg, W - m.r - 2, y(COLCHAO) - 6, 'colchão', 'vt2', 'end');
+    sv('polyline', { points: vals.map(function (v, i) { return x(i).toFixed(1) + ',' + y(v).toFixed(1); }).join(' '), 'class': 'vline' }, svg);
+    S.forEach(function (w, i) {
+      var c = sv('circle', { cx: x(i), cy: y(w.saldo), r: 4.5, fill: w.abaixo ? 'var(--red)' : 'var(--green)' }, svg); sv('title', {}, c).textContent = w.rot + ': ' + brl(w.saldo);
+      if (i % 2 === 0) st(svg, x(i), H - 8, w.rot.slice(0, 5), 'vt', 'middle');
+    });
+  }
+
   window.mk = {
+    gerarRel: gerarRel, empNome: empNome,
     lojaFiltro: lojaFiltro,
     go: function (p) { go(p); return false; },
     login: function (e) { return loginEstado(e); },
