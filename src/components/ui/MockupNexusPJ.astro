@@ -18,13 +18,13 @@ interface Props {
 }
 
 const { class: classe } = Astro.props;
-const SRC = '/mockups/nexus-pj.html';
+const SRC = '/mockups/nexus-pj.html?v=2.2.0';
 ---
 
 <div class={classe}>
   <div class="moldura">
     <iframe
-      src={`${SRC}?embed`}
+      src={`${SRC}&embed`}
       title="Nexus & PJ — mockup navegável, com dados fictícios"
       loading="lazy"></iframe>
   </div>

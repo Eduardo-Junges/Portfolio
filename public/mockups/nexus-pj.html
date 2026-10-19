@@ -384,14 +384,17 @@ img { max-width: 100%; }
   #appShell .sidebar { width: var(--nxsw-collapsed); }
   #appShell .main { margin-left: var(--nxsw-collapsed); }
   #appShell .nav-label, #appShell .grp-label, #appShell .brand-full { display: none; }
-  .topbar { flex-wrap: wrap; height: auto; min-height: var(--nxhh); padding: 10px 16px; gap: 10px; }
-  .title-wrap { flex-wrap: wrap; }
+  .topbar { flex-wrap: nowrap; height: var(--nxhh); min-height: var(--nxhh); padding: 0 12px; gap: 8px; }
+  .title-wrap { display: flex; align-items: center; flex-wrap: nowrap; gap: 8px; }
+  .topbar .title { font-size: 15px; overflow: hidden; text-overflow: ellipsis; }
+  .voltar-cfg .vt-txt { display: none; }
+  .voltar-cfg { padding: 4px 9px; flex-shrink: 0; }
   .topbar-ia { min-width: 0; }
   .topbar-ia input, .topbar-ia kbd { display: none; }
   .user-menu-trigger .meta { display: none; }
   .body { padding: 16px; }
   .title-wrap { flex: 1 1 0; min-width: 0; }
-  .topbar .actions { flex-shrink: 0; margin-left: auto; align-self: flex-start; }
+  .topbar .actions { flex-shrink: 0; margin-left: auto; align-self: center; }
   .body { padding-bottom: 84px; }                 /* a barra do mockup não cobre o fim da página */
   .vista-bar .field { flex: 1 1 130px; }
   .vista-bar .field[data-so="cons"] { flex-basis: 100%; }
@@ -936,19 +939,19 @@ img { max-width: 100%; }
       <!-- ============================ SOBRE E NOVIDADES ============================ -->
       <section data-pg="sobre" hidden>
         <div class="card">
-          <div class="section-head"><h2>Nexus &amp; PJ</h2><span class="badge badge--green">versão 2.1.0</span></div>
+          <div class="section-head"><h2>Nexus &amp; PJ</h2><span class="badge badge--green">versão 2.2.0</span></div>
           <div class="conta-row"><div class="l"><b>Aviso de atualização</b><span>Desligado. Ligado, o sistema só lê o número da última versão e mostra uma faixa quando há versão nova. Não envia dado nenhum.</span></div><label class="flex gap-2" style="align-items:center;cursor:pointer"><input type="checkbox" id="avisoAtu" onchange="document.getElementById('avisoTxt').textContent=this.checked?'Ligado: faixa só para administradores.':'Desligado'"> <span id="avisoTxt">Desligado</span></label></div>
           <div class="conta-row"><div class="l"><b>Ambiente</b><span>Produção. O ambiente de testes tem faixa vermelha na tela.</span></div><span class="badge badge--neutral">produção</span></div>
         </div>
         <div class="card" style="margin-top:16px">
-          <div class="section-head"><h2>O que mudou na 2.1.0</h2></div>
+          <div class="section-head"><h2>O que mudou na 2.2.0</h2></div>
           <div class="ia-lista">
-            <div class="ia-item"><div class="ia-ic">🏬</div><div class="ia-corpo"><div class="ia-tt">Lojas e regras de rateio</div><div class="ia-ds">Cadastre as lojas, escolha a loja de cada conta e divida lançamentos entre lojas por percentual.</div></div></div>
-            <div class="ia-item"><div class="ia-ic">📊</div><div class="ia-corpo"><div class="ia-tt">Painéis novos</div><div class="ia-ds">Fluxo de caixa, Conciliação, Vendas, Despesas e Lojas, com período e filtro de loja.</div></div></div>
-            <div class="ia-item"><div class="ia-ic">🔁</div><div class="ia-corpo"><div class="ia-tt">Sugestão de transferência entre contas</div><div class="ia-ds">Quando uma conta fica no vermelho e outra tem saldo, o sistema sugere quanto mover.</div></div></div>
-            <div class="ia-item"><div class="ia-ic">🧰</div><div class="ia-corpo"><div class="ia-tt">Instalação guiada</div><div class="ia-ds">Numa instalação nova, a tela pede o primeiro administrador, com um código que só quem está no servidor tem.</div></div></div>
-            <div class="ia-item"><div class="ia-ic">📄</div><div class="ia-corpo"><div class="ia-tt">Leitura de extratos mais robusta</div><div class="ia-ds">Linhas que só informam saldo não viram lançamento, e o mesmo mês em PDF e planilha não duplica.</div></div></div>
-            <div class="ia-item"><div class="ia-ic">🩺</div><div class="ia-corpo"><div class="ia-tt">Atualização por versão</div><div class="ia-ds">Backup, migração e volta atrás automática se algo falhar.</div></div></div>
+            <div class="ia-item"><div class="ia-ic">📄</div><div class="ia-corpo"><div class="ia-tt">Aba Relatórios</div><div class="ia-ds">Sete relatórios com prévia na hora e arquivo em PDF, Excel, CSV ou TXT, com o nome da empresa e quem gerou.</div></div></div>
+            <div class="ia-item"><div class="ia-ic">📆</div><div class="ia-corpo"><div class="ia-tt">Próximas 13 semanas</div><div class="ia-ds">O saldo previsto semana a semana, com um colchão mínimo definido pelo administrador.</div></div></div>
+            <div class="ia-item"><div class="ia-ic">🔌</div><div class="ia-corpo"><div class="ia-tt">API de leitura</div><div class="ia-ds">Desligada por padrão: tokens por escopo para outros sistemas lerem os dados, sem nunca gravar.</div></div></div>
+            <div class="ia-item"><div class="ia-ic">🗂️</div><div class="ia-corpo"><div class="ia-tt">Cadastros completos</div><div class="ia-ds">Conta, loja, usuário e empresa com CNPJ, CPF e CEP validados na hora.</div></div></div>
+            <div class="ia-item"><div class="ia-ic">🏢</div><div class="ia-corpo"><div class="ia-tt">Empresa e logo</div><div class="ia-ds">O nome da empresa nos relatórios e o logo da tela de entrada.</div></div></div>
+            <div class="ia-item"><div class="ia-ic">🔔</div><div class="ia-corpo"><div class="ia-tt">Avisos novos</div><div class="ia-ds">Serviço que ficou mais caro, pagamento alto para favorecido novo e semana de caixa apertado.</div></div></div>
           </div>
         </div>
       </section>
@@ -1114,9 +1117,9 @@ img { max-width: 100%; }
         };
       });
     } else if (pg === 'indicadores' || PAINEIS_PG[pg]) {
-      el.innerHTML = '<a class="voltar-cfg" href="#" onclick="mk.go(\'dashboard\');return false">← Dashboard</a>';
+      el.innerHTML = '<a class="voltar-cfg" href="#" onclick="mk.go(\'dashboard\');return false">←<span class="vt-txt"> Dashboard</span></a>';
     } else if (DE_CONFIG[pg]) {
-      el.innerHTML = '<a class="voltar-cfg" href="#" onclick="mk.go(\'configuracoes\');return false">← Configurações</a>';
+      el.innerHTML = '<a class="voltar-cfg" href="#" onclick="mk.go(\'configuracoes\');return false">←<span class="vt-txt"> Configurações</span></a>';
     } else { el.innerHTML = ''; }
   }
 
