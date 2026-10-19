@@ -14,8 +14,8 @@ autoriaDetalhe: >-
 inicio: 2026-08-01
 status: 'ativo'
 estadoAtual: >-
-  Versão 2.1.0, rodando local. Login com perfis e 2FA, importação de extrato, fechamento dia a dia, várias lojas
-  com rateio, painéis e IA local. Canal de WhatsApp em desenvolvimento e validação junto à Meta.
+  Versão 2.2.0, rodando local. Login com perfis e 2FA, importação de extrato, fechamento dia a dia, várias lojas
+  com rateio, painéis, relatórios em PDF e Excel e IA local. Canal de WhatsApp em desenvolvimento e validação junto à Meta.
 ferramentas:
   - 'Python'
   - 'FastHTML'
@@ -48,6 +48,14 @@ do Nexus Analytics, e o motor de leitura de extrato veio de lá.
   relatório. Sem regra, vira "Sem loja", nunca chuta.
 - **Painéis:** um hub com Fluxo de caixa, Conciliação, Lojas e outros, com filtro de loja e
   período, mostrando margem, dias de caixa e ponto de equilíbrio.
+- **Relatórios:** sete relatórios (extrato, fluxo diário, entradas por origem, despesas por grupo,
+  resultado por loja, conciliação e projeção) com a prévia montada na hora e arquivo em PDF, Excel,
+  CSV ou TXT, com o nome da empresa e quem gerou. Os números são os mesmos das telas.
+- **Próximas 13 semanas:** o saldo previsto semana a semana, com um colchão mínimo definido pelo
+  administrador. É estimativa pelo histórico, não promessa.
+- **API de leitura** (desligada por padrão): tokens por escopo para outros sistemas lerem os dados,
+  sem nunca gravar.
+- **Cadastros completos** de conta, loja, usuário e empresa, com CNPJ, CPF e CEP validados na hora.
 - **IA local:** um assistente que responde sobre o caixa. O modelo só escolhe a ferramenta e nunca
   vê valor de extrato. Pedido de alterar algo vira uma proposta que a pessoa confirma. Testei com
   159 perguntas e chegou a 92% de acerto.
