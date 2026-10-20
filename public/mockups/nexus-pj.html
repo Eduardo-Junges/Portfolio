@@ -497,6 +497,19 @@ img { max-width: 100%; }
 .vpos { fill: var(--green); } .vneg { fill: var(--red); } .vtot { fill: var(--viz-total); } .vring { fill: var(--surface-1); } .vink { fill: var(--text-100); }
 .heat-scale { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 8px; margin-top: 10px; font-size: 11.5px; color: var(--text-mute); }
 .heat-scale .sw { display: inline-flex; gap: 2px; } .heat-scale .sw i { width: 22px; height: 10px; border-radius: 2px; display: block; }
+.dre-tg { display: inline-flex; gap: 6px; margin-bottom: 14px; }
+.dre-wrap { overflow-x: auto; }
+.dre { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 12.5px; min-width: 620px; }
+.dre th, .dre td { padding: 7px 10px; white-space: nowrap; border-bottom: 1px solid var(--border-1); }
+.dre th { text-align: right; font-weight: 600; color: var(--text-mute); font-size: 11.5px; }
+.dre td.n { text-align: right; font-variant-numeric: tabular-nums; }
+.dre td:first-child, .dre th:first-child { position: sticky; left: 0; background: var(--surface-1); text-align: left; z-index: 1; }
+.dre tr.t td { font-weight: 700; }
+.dre tr.rev td { color: var(--amber); }
+.dre .ex { background: none; border: 0; color: var(--text-200); cursor: pointer; width: 20px; padding: 0; font-size: 11px; }
+.dre .sp { display: inline-block; width: 20px; }
+.dre td.neg { color: var(--red); }
+.dre-falta { margin: 0; padding-left: 18px; line-height: 1.8; font-size: 13px; color: var(--text-200); }
 .rel-layout { display: grid; grid-template-columns: minmax(300px, 400px) minmax(0, 1fr); gap: 14px; align-items: start; }
 @media (max-width: 900px) { .rel-layout { grid-template-columns: minmax(0, 1fr); } .rel-layout > * { min-width: 0; } }
 .rel-grade .field, .rel-acoes .field { min-width: 0; } .rel-grade .input { width: 100%; }
@@ -616,6 +629,7 @@ img { max-width: 100%; }
     <nav id="nav">
       <a class="navlink active" data-page="dashboard" data-label="Dashboard"><span class="nav-badge">⬡</span><span class="nav-label">Dashboard</span></a>
       <a class="navlink" data-page="fluxo" data-label="Fluxo de caixa"><span class="nav-badge">◧</span><span class="nav-label">Fluxo de caixa</span></a>
+      <a class="navlink" data-page="dre" data-label="DRE"><span class="nav-badge">∑</span><span class="nav-label">DRE</span></a>
       <div class="grp-label">Operação</div>
       <a class="navlink" data-page="relatorios" data-label="Relatórios"><span class="nav-badge">▤</span><span class="nav-label">Relatórios</span></a>
       <a class="navlink" data-page="transferencias" data-label="Transferências"><span class="nav-badge">⇄</span><span class="nav-label">Transferências</span></a>
@@ -711,10 +725,10 @@ img { max-width: 100%; }
             <div class="hub-prev" id="prevDesp" style="justify-content:center"></div>
             <div class="hub-info"><span class="nav-badge">🧾</span><div><b>Despesas</b><span>Fixa × variável e ponto de equilíbrio</span></div></div>
           </a>
-          <div class="card hub-card hub-card--breve">
-            <div class="hub-prev">📊</div>
-            <div class="hub-info"><span class="nav-badge">▦</span><div><b>Contábil / DRE</b><span>Futuro — o hub já nasce pronto pro card</span></div></div>
-          </div>
+          <a class="card card--interactive hub-card" onclick="mk.go('dre')">
+            <div class="hub-prev" id="prevDre" style="justify-content:center"></div>
+            <div class="hub-info"><span class="nav-badge">∑</span><div><b>DRE</b><span>Resultado do período, por caixa</span></div></div>
+          </a>
         </div>
         <p class="nota">A prévia do card é dado real, sempre atual — sem screenshot.</p>
       </section>
@@ -758,6 +772,12 @@ img { max-width: 100%; }
       <section data-pg="conciliacao" hidden><div class="viz" id="pn-conciliacao"></div></section>
       <section data-pg="vendas" hidden><div class="viz" id="pn-vendas"></div></section>
       <section data-pg="despesas" hidden><div class="viz" id="pn-despesas"></div></section>
+
+      <!-- ============================ DRE ============================ -->
+      <section data-pg="dre" hidden>
+        <div class="theme-switch theme-switch--text dre-tg" id="dreSw"><a data-d="comp">Competência</a><a data-d="caixa" class="on">Caixa</a></div>
+        <div id="dreCorpo"></div>
+      </section>
 
       <!-- ============================ RELATÓRIOS ============================ -->
       <section data-pg="relatorios" hidden>
@@ -939,19 +959,18 @@ img { max-width: 100%; }
       <!-- ============================ SOBRE E NOVIDADES ============================ -->
       <section data-pg="sobre" hidden>
         <div class="card">
-          <div class="section-head"><h2>Nexus &amp; PJ</h2><span class="badge badge--green">versão 2.2.0</span></div>
+          <div class="section-head"><h2>Nexus &amp; PJ</h2><span class="badge badge--green">versão 2.3.0</span></div>
           <div class="conta-row"><div class="l"><b>Aviso de atualização</b><span>Desligado. Ligado, o sistema só lê o número da última versão e mostra uma faixa quando há versão nova. Não envia dado nenhum.</span></div><label class="flex gap-2" style="align-items:center;cursor:pointer"><input type="checkbox" id="avisoAtu" onchange="document.getElementById('avisoTxt').textContent=this.checked?'Ligado: faixa só para administradores.':'Desligado'"> <span id="avisoTxt">Desligado</span></label></div>
           <div class="conta-row"><div class="l"><b>Ambiente</b><span>Produção. O ambiente de testes tem faixa vermelha na tela.</span></div><span class="badge badge--neutral">produção</span></div>
         </div>
         <div class="card" style="margin-top:16px">
-          <div class="section-head"><h2>O que mudou na 2.2.0</h2></div>
+          <div class="section-head"><h2>O que mudou na 2.3.0</h2></div>
           <div class="ia-lista">
-            <div class="ia-item"><div class="ia-ic">📄</div><div class="ia-corpo"><div class="ia-tt">Aba Relatórios</div><div class="ia-ds">Sete relatórios com prévia na hora e arquivo em PDF, Excel, CSV ou TXT, com o nome da empresa e quem gerou.</div></div></div>
-            <div class="ia-item"><div class="ia-ic">📆</div><div class="ia-corpo"><div class="ia-tt">Próximas 13 semanas</div><div class="ia-ds">O saldo previsto semana a semana, com um colchão mínimo definido pelo administrador.</div></div></div>
-            <div class="ia-item"><div class="ia-ic">🔌</div><div class="ia-corpo"><div class="ia-tt">API de leitura</div><div class="ia-ds">Desligada por padrão: tokens por escopo para outros sistemas lerem os dados, sem nunca gravar.</div></div></div>
-            <div class="ia-item"><div class="ia-ic">🗂️</div><div class="ia-corpo"><div class="ia-tt">Cadastros completos</div><div class="ia-ds">Conta, loja, usuário e empresa com CNPJ, CPF e CEP validados na hora.</div></div></div>
-            <div class="ia-item"><div class="ia-ic">🏢</div><div class="ia-corpo"><div class="ia-tt">Empresa e logo</div><div class="ia-ds">O nome da empresa nos relatórios e o logo da tela de entrada.</div></div></div>
-            <div class="ia-item"><div class="ia-ic">🔔</div><div class="ia-corpo"><div class="ia-tt">Avisos novos</div><div class="ia-ds">Serviço que ficou mais caro, pagamento alto para favorecido novo e semana de caixa apertado.</div></div></div>
+            <div class="ia-item"><div class="ia-ic">∑</div><div class="ia-corpo"><div class="ia-tt">DRE por caixa</div><div class="ia-ds">Receita, impostos, compras, despesas e resultado do período, com os meses em colunas por ano e os totais em negrito.</div></div></div>
+            <div class="ia-item"><div class="ia-ic">🔎</div><div class="ia-corpo"><div class="ia-tt">Camadas que abrem</div><div class="ia-ds">Cada linha abre em grupo, subcategoria e lançamentos, pelo ▸ ou por Tab e Enter.</div></div></div>
+            <div class="ia-item"><div class="ia-ic">⚠️</div><div class="ia-corpo"><div class="ia-tt">A revisar fica fora</div><div class="ia-ds">O que está sem categoria aparece numa linha à parte, com aviso, e não entra no resultado.</div></div></div>
+            <div class="ia-item"><div class="ia-ic">🗓️</div><div class="ia-corpo"><div class="ia-tt">Competência em preparação</div><div class="ia-ds">A tela lista os dados que faltam: estoque, faturamento, impostos apurados e contador.</div></div></div>
+            <div class="ia-item"><div class="ia-ic">📄</div><div class="ia-corpo"><div class="ia-tt">Relatório DRE por caixa</div><div class="ia-ds">Em PDF e Excel, agora com linhas em negrito e recuo.</div></div></div>
           </div>
         </div>
       </section>
@@ -1082,7 +1101,7 @@ img { max-width: 100%; }
     dashboard: 'Dashboard', fluxo: 'Fluxo de caixa', transferencias: 'Transferências',
     importar: 'Importar extrato', assistente: 'Assistente', configuracoes: 'Configurações',
     permissoes: 'Permissões', aparelhos: 'Aparelhos', auditoria: 'Auditoria', lojas: 'Lojas', indicadores: 'Indicadores',
-    rateio: 'Regras de rateio', saude: 'Saúde do sistema', sobre: 'Sobre e novidades', relatorios: 'Relatórios', semanas: 'Próximas 13 semanas', api: 'API e integrações', empresa: 'Empresa e logo',
+    rateio: 'Regras de rateio', saude: 'Saúde do sistema', sobre: 'Sobre e novidades', dre: 'DRE', relatorios: 'Relatórios', semanas: 'Próximas 13 semanas', api: 'API e integrações', empresa: 'Empresa e logo',
     conciliacao: 'Conciliação', vendas: 'Vendas', despesas: 'Despesas'
   };
   var DE_CONFIG = { permissoes: 1, aparelhos: 1, auditoria: 1, lojas: 1, rateio: 1, saude: 1, sobre: 1, api: 1, empresa: 1 };
@@ -1131,6 +1150,7 @@ img { max-width: 100%; }
     if (pg === 'indicadores') renderIndicadores();
     if (PAINEIS_PG[pg]) renderPainel(pg);
     if (pg === 'relatorios') renderRelatorio();
+    if (pg === 'dre') renderDre('caixa');
     document.getElementById('userMenu').classList.remove('open');
     window.scrollTo(0, 0);
     // Home não é destino de navegação: navegar pra qualquer tela fecha o painel.
@@ -1428,7 +1448,7 @@ img { max-width: 100%; }
         return '<tr><td><b>' + x.nome + '</b></td><td>' + x.banco + '</td><td class="num">' + brl(x.ini) + '</td><td class="num">' + mil(x.lanc) + '</td><td class="num">' + x.rev + '</td><td>' + (f.dif ? '<span class="badge badge--amber">diferença ' + brl(f.dif) + '</span>' : '<span class="badge badge--green">fecha</span>') + '</td></tr>';
       }).join('') + '</tbody>';
   }
-  function renderRede() { renderFluxo(); renderPaineis(); renderPrevInd(); renderPrevPaineis(); renderHome(); renderChat(); renderLojasPg(); }
+  function renderRede() { renderFluxo(); renderPaineis(); renderPrevInd(); renderPrevPaineis(); renderPrevDre(); renderHome(); renderChat(); renderLojasPg(); }
 
   function lojaFiltro(id, ir) {
     var l = $('#fLoja'), b = $('#fBanco'), x = lojaPorId(id);
@@ -1963,6 +1983,7 @@ img { max-width: 100%; }
     grupo: ['Despesas por grupo', 'Para onde foi o dinheiro, por grupo de categoria, e o que fugiu do padrão.', ['periodo', 'loja']],
     lojas: ['Resultado por loja', 'Receita, despesa e margem de cada loja, com o rateio aplicado.', ['periodo']],
     conc: ['Conciliação por conta', 'Lançamentos a revisar, quebras de saldo e último lançamento de cada conta.', []],
+    dre: ['DRE por caixa', 'Receita, impostos, compras, despesas e resultado do período, com os meses em colunas.', ['periodo']],
     sem13: ['Projeção das próximas 13 semanas', 'Saldo previsto semana a semana, com o colchão mínimo.', []]
   };
   function relDados(k) {
@@ -1991,6 +2012,10 @@ img { max-width: 100%; }
     }
     if (k === 'conc') {
       return { titulo: RELS.conc[0], filtros: [], html: tabela(['Conta', 'A revisar', 'Quebras de saldo', '1ª quebra', 'Último lançamento', 'Dias sem lançamento'], [['Banco Aurora', '14', '1', '25/09', '25/09', '1'], ['Banco Horizonte', '21', '0', '—', '24/09', '2'], ['Coop. Vale Norte', '6', '0', '—', '16/09', '9']]), obs: '' };
+    }
+    if (k === 'dre') {
+      var q = dreDados(), L = [['Receita bruta', q.rb], ['Impostos sobre vendas', q.imp.map(function (v) { return -v; })], ['Compras pagas', q.comp.map(function (v) { return -v; })], ['Despesas operacionais', q.desp.map(function (v) { return -v; })], ['Resultado operacional', q.res], ['Resultado financeiro', q.fin], ['Resultado do período', q.per]];
+      return { titulo: RELS.dre[0], filtros: [['Período', 'junho a setembro de 2026']], html: tabela(['Linha'].concat(MESES_DRE, ['Total']), L.map(function (l) { var b = /^Resultado/.test(l[0]); return [(b ? '<b>' + l[0] + '</b>' : l[0])].concat(l[1].map(function (v) { return b ? '<b>' + brl(v) + '</b>' : brl(v); }), [b ? '<b>' + brl(soma(l[1])) + '</b>' : brl(soma(l[1]))]); })), obs: 'Por caixa: vale a data do banco. A revisar fica fora, numa linha à parte. PDF e Excel saem com linhas em negrito e recuo.' };
     }
     var S = semanas13();
     return { titulo: RELS.sem13[0], filtros: [['Colchão mínimo', brl(COLCHAO)]], html: tabela(['Semana', 'Entradas', 'Saídas', 'Saldo ao fim', 'Situação'], S.map(function (x) { return [x.rot, brl(x.e), brl(x.s), brl(x.saldo), x.abaixo ? 'abaixo do colchão' : (x.grande ? 'folha e aluguel' : 'ok')]; })), obs: 'Estimativa pelo histórico, não promessa. Cada parcela fixa cai no dia típico do mês.' };
@@ -2036,6 +2061,86 @@ img { max-width: 100%; }
       var c = sv('circle', { cx: x(i), cy: y(w.saldo), r: 4.5, fill: w.abaixo ? 'var(--red)' : 'var(--green)' }, svg); sv('title', {}, c).textContent = w.rot + ': ' + brl(w.saldo);
       if (i % 2 === 0) st(svg, x(i), H - 8, w.rot.slice(0, 5), 'vt', 'middle');
     });
+  }
+
+
+  /* =====================================================================
+     DRE (versão 2.3) — por caixa, com meses em colunas e camadas que abrem:
+     linha da DRE → grupo → subcategoria → lançamentos. Dados fictícios, em centavos.
+     Retirada de sócio, aporte e parcela de empréstimo ficam fora; "a revisar" vai numa linha à parte.
+     ===================================================================== */
+  var SUBS = {
+    'Fornecedores': [['Mercadoria', .82, ['FORNECEDOR ATLAS LTDA', 'FORNECEDOR PAMPA']], ['Frete', .18, ['TRANSPORTADORA SERRA', 'FRETE ENTREGAS']]],
+    'Pessoal': [['Salários', .71, ['FOLHA DE PAGAMENTO', 'ADIANTAMENTO SALARIAL']], ['Encargos', .29, ['GUIA FGTS', 'GUIA INSS']]],
+    'Ocupação': [['Aluguel', .74, ['ALUGUEL — CENTRO', 'ALUGUEL — SHOPPING']], ['Energia', .14, ['ENERGIA ELÉTRICA']], ['Internet e telefone', .12, ['PLANO DE INTERNET']]],
+    'Comerciais': [['Marketing', .55, ['CAMPANHA DE OUTONO']], ['Comissões', .45, ['COMISSÃO DE VENDAS']]],
+    'Administrativas': [['Contador', .38, ['HONORÁRIOS CONTÁBEIS']], ['Sistemas', .4, ['ASSINATURA DE SISTEMAS']], ['Outras', .22, ['MATERIAL DE ESCRITÓRIO']]]
+  };
+  var MESES_DRE = ['jun', 'jul', 'ago', 'set'];
+  function dreDados() {
+    var g = function (nome) { return GRUPOS.filter(function (x) { return x[0] === nome; })[0][2]; };
+    var rb = REC.slice(), imp = g('Impostos (Simples)'), comp = g('Fornecedores');
+    var op = ['Pessoal', 'Ocupação', 'Comerciais', 'Administrativas'].map(function (n) { return g(n); });
+    var desp = rb.map(function (_, i) { return soma(op.map(function (a) { return a[i]; })); });
+    var fin = [-182000, -176000, -190000, -171000];
+    var res = rb.map(function (v, i) { return v - imp[i] - comp[i] - desp[i]; });
+    var per = res.map(function (v, i) { return v + fin[i]; });
+    var rev = [1210000, 980000, 1390000, 165000];
+    return { rb: rb, imp: imp, comp: comp, desp: desp, res: res, fin: fin, per: per, rev: rev, op: op };
+  }
+  function celulas(arr) { return arr.map(function (v) { return '<td class="n' + (v < 0 ? ' neg' : '') + '">' + (v === 0 ? '—' : brl(v)) + '</td>'; }).join('') + '<td class="n' + (soma(arr) < 0 ? ' neg' : '') + '"><b>' + brl(soma(arr)) + '</b></td>'; }
+  function linhaDre(id, nivel, nome, arr, cls, filhos) {
+    var rec = nivel * 20;
+    return '<tr class="' + (cls || '') + '" data-id="' + id + '"' + (nivel ? ' hidden' : '') + ' data-n="' + nivel + '"><td style="padding-left:' + (10 + rec) + 'px">' + (filhos ? '<button class="ex" aria-expanded="false" aria-label="Abrir ' + nome + '">▸</button>' : '<span class="sp"></span>') + nome + '</td>' + celulas(arr) + '</tr>';
+  }
+  function renderDre(modo) {
+    var sw = $('#dreSw'); sw.querySelectorAll('a').forEach(function (a) { a.classList.toggle('on', a.getAttribute('data-d') === modo); a.onclick = function () { renderDre(a.getAttribute('data-d')); }; });
+    var c = $('#dreCorpo');
+    if (modo === 'comp') {
+      c.innerHTML = '<div class="card"><div class="section-head"><h2>DRE por competência</h2><span class="badge badge--neutral">em preparação</span></div><p class="text-mute" style="margin-bottom:10px">Ainda faltam estes dados para fechar a competência:</p><ul class="dre-falta"><li>estoque inicial e final</li><li>faturamento emitido (notas fiscais)</li><li>impostos apurados</li><li>vendas de cartão da operadora, por data de venda</li><li>lançamentos do contador (depreciação, provisões)</li></ul><p class="nota">A DRE por competência virá depois, com a operadora de cartão, o estoque e o contador. Por enquanto, a DRE por caixa já está pronta.</p></div>';
+      return;
+    }
+    var d = dreDados(), h = '', ids = 0;
+    function grupoSubs(prefixo, nome, arr, nivel) {
+      var out = '';
+      SUBS[nome].forEach(function (sb, j) {
+        var sid = prefixo + '-' + j, parte = arr.map(function (v) { return Math.round(v * sb[1]); });
+        out += linhaDre(sid, nivel + 1, sb[0], parte, '', true);
+        sb[2].forEach(function (nl, k) {
+          var lv = parte.map(function (v, m) { return m === 3 ? Math.round(v * (k ? .4 : .6)) : (m === 2 ? Math.round(v * (k ? .45 : .55)) : 0); });
+          out += linhaDre(sid + '-' + k, nivel + 2, nl, lv, '', false);
+        });
+      });
+      return out;
+    }
+    h += linhaDre('rb', 0, 'Receita bruta', d.rb, 't', true);
+    ORIGEM.forEach(function (o, j) { h += linhaDre('rb-' + j, 1, o[0], d.rb.map(function (v, i) { return Math.round(v * o[2][i]); }), '', false); });
+    h += linhaDre('imp', 0, 'Impostos sobre vendas', d.imp.map(function (v) { return -v; }), '', false);
+    h += linhaDre('cp', 0, 'Compras pagas', d.comp.map(function (v) { return -v; }), '', true) + grupoSubs('cp-0', 'Fornecedores', d.comp.map(function (v) { return -v; }), 0).replace(/data-id="cp-0-/g, 'data-id="cp-0-');
+    h += linhaDre('dop', 0, 'Despesas operacionais', d.desp.map(function (v) { return -v; }), '', true);
+    ['Pessoal', 'Ocupação', 'Comerciais', 'Administrativas'].forEach(function (n, j) {
+      h += linhaDre('dop-' + j, 1, n, d.op[j].map(function (v) { return -v; }), '', true) + grupoSubs('dop-' + j, n, d.op[j].map(function (v) { return -v; }), 1);
+    });
+    h += linhaDre('ro', 0, 'Resultado operacional', d.res, 't', false) + linhaDre('rf', 0, 'Resultado financeiro', d.fin, '', false) + linhaDre('rp', 0, 'Resultado do período', d.per, 't', false);
+    h += linhaDre('rv', 0, 'A revisar (fora do resultado)', d.rev.map(function (v) { return -v; }), 'rev', false);
+    c.innerHTML = '<div class="card"><div class="section-head"><h2>DRE por caixa</h2><span class="badge badge--green">vale a data do banco</span></div><div class="dre-wrap"><table class="dre"><thead><tr><th></th><th colspan="4" style="text-align:center">2026</th><th></th></tr><tr><th>Linha</th>' + MESES_DRE.map(function (m) { return '<th>' + m + '</th>'; }).join('') + '<th>Total 2026</th></tr></thead><tbody>' + h + '</tbody></table></div>' +
+      '<p class="nota">Cada linha abre em camadas: linha da DRE → grupo → subcategoria → lançamentos (use o ▸ ou Tab e Enter). Receita de cartão vem líquida da taxa e as compras são as pagas no período. Retirada de sócio, aporte e parcela de empréstimo ficam fora; o que está a revisar (sem categoria) também, nesta linha à parte, com aviso.</p></div>';
+    var linhas = c.querySelectorAll('tbody tr');
+    function filhosDe(tr) { var n = +tr.getAttribute('data-n'), out = [], x = tr.nextElementSibling; while (x && +x.getAttribute('data-n') > n) { out.push(x); x = x.nextElementSibling; } return out; }
+    c.querySelectorAll('.ex').forEach(function (b) {
+      b.onclick = function () {
+        var tr = b.closest('tr'), abrir = b.getAttribute('aria-expanded') !== 'true', n = +tr.getAttribute('data-n');
+        b.setAttribute('aria-expanded', abrir ? 'true' : 'false'); b.textContent = abrir ? '▾' : '▸';
+        filhosDe(tr).forEach(function (f) {
+          if (!abrir) { f.hidden = true; var bb = f.querySelector('.ex'); if (bb) { bb.setAttribute('aria-expanded', 'false'); bb.textContent = '▸'; } }
+          else if (+f.getAttribute('data-n') === n + 1) f.hidden = false;
+        });
+      };
+    });
+  }
+  function renderPrevDre() {
+    var el = $('#prevDre'); if (!el) return; var d = dreDados();
+    el.innerHTML = '<div class="pv"><span>Resultado de setembro</span><b>R$ ' + kfmt(d.per[3]) + '</b></div>' + spark(d.per, 160, 34) + '<div class="pv"><span>Por caixa · competência em preparação</span><b>' + pct1(d.per[3] / d.rb[3]) + '</b></div>';
   }
 
   window.mk = {
