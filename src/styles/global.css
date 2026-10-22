@@ -562,6 +562,11 @@ html[data-cena-viva] .card:hover {
   background: rgb(var(--c-bg-raised) / 0.95);
 }
 
+/* botões de contato: mesmo piso (o texto deles é pequeno) */
+html[data-cena-viva] .btn-rede {
+  background: rgb(var(--c-bg-raised) / 0.9);
+}
+
 /* No celular o texto ocupa a largura toda: véu por igual, sem o brilho do planeta
    (ele encostava no texto do rodapé). */
 @media (width < 48rem) {
