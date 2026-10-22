@@ -566,7 +566,7 @@ html[data-cena-viva] .card:hover {
 @media (width < 48rem) {
   #nx-cena-veu {
     background:
-      radial-gradient(80% 30% at 80% 112%, color-mix(in srgb, var(--pc, #f5b041) 10%, transparent) 0%, transparent 70%),
+      radial-gradient(70% 22% at 85% 112%, color-mix(in srgb, var(--pc, #f5b041) 7%, transparent) 0%, transparent 70%),
       rgb(var(--c-bg) / 0.9);
   }
 }
