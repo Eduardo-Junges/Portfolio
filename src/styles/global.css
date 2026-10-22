@@ -562,11 +562,10 @@ html[data-cena-viva] .card:hover {
   background: rgb(var(--c-bg-raised) / 0.95);
 }
 
-/* No celular o texto ocupa a largura toda: véu por igual. */
+/* No celular o texto ocupa a largura toda: véu por igual, sem o brilho do planeta
+   (ele encostava no texto do rodapé). */
 @media (width < 48rem) {
   #nx-cena-veu {
-    background:
-      radial-gradient(70% 22% at 85% 112%, color-mix(in srgb, var(--pc, #f5b041) 7%, transparent) 0%, transparent 70%),
-      rgb(var(--c-bg) / 0.9);
+    background: rgb(var(--c-bg) / 0.9);
   }
 }
