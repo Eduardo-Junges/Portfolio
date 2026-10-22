@@ -9,15 +9,22 @@
 :root {
   color-scheme: dark;
 
-  /* superfície */
-  --c-bg: 10 18 32; /* azul-tinta profundo */
-  --c-bg-raised: 14 24 41;
+  /*
+   * Paleta do Nexus (a mesma do Nexus Analytics e do Nexus & PJ no tema escuro):
+   * o site e os projetos passam a ser um sistema só. Valores tirados de
+   * utils/layout.py do Nexus Analytics; os de texto, da variante "-tx" que lá
+   * foi ajustada para 4,5:1. Conferidos por scripts/contraste.mjs.
+   */
 
-  /* texto — 5 níveis de hierarquia */
-  --c-ink: 232 237 245;
-  --c-ink-dim: 173 187 205;
-  --c-ink-mute: 124 141 163;
-  --c-ink-faint: 82 98 118;
+  /* superfície */
+  --c-bg: 10 14 26; /* azul-noite do Nexus */
+  --c-bg-raised: 17 24 39;
+
+  /* texto — 4 níveis de hierarquia */
+  --c-ink: 226 232 240;
+  --c-ink-dim: 168 180 198;
+  --c-ink-mute: 136 150 171;
+  --c-ink-faint: 126 141 163;
 
   /* linhas técnicas — 3 intensidades */
   --c-rule: 255 255 255 / 0.07;
@@ -25,27 +32,31 @@
   --c-rule-3: 255 255 255 / 0.24;
 
   /* superfícies translúcidas em camadas */
-  --c-surface: 255 255 255 / 0.04;
-  --c-surface-2: 255 255 255 / 0.07;
-  --c-surface-3: 255 255 255 / 0.1;
+  --c-surface: 255 255 255 / 0.045;
+  --c-surface-2: 255 255 255 / 0.065;
+  --c-surface-3: 255 255 255 / 0.09;
 
-  /* acento — azul cianotipia (links, foco, navegação) */
-  --c-accent: 91 155 213;
-  --c-accent-soft: 91 155 213 / 0.14;
+  /* acento — o azul do Nexus (links, foco, navegação) */
+  --c-accent: 86 147 247;
+  --c-accent-soft: 86 147 247 / 0.14;
 
-  /* sinal — âmbar (métricas, cotas, números que importam) */
-  --c-signal: 224 145 60;
-  --c-signal-soft: 224 145 60 / 0.14;
+  /* sinal — âmbar (métricas, números que importam) */
+  --c-signal: 245 158 11;
+  --c-signal-soft: 245 158 11 / 0.14;
 
-  /* cores por categoria de projeto */
-  --c-cat-automacao: 224 145 60;
-  --c-cat-ia: 168 130 220;
-  --c-cat-dados: 91 155 213;
-  --c-cat-financas: 96 190 150;
-  --c-cat-processos: 214 122 108;
-  --c-cat-sistemas: 130 160 190;
-  --c-cat-desenvolvimento: 110 175 165;
-  --c-cat-produto: 205 165 90;
+  /* cores por categoria de projeto — as cores de dado do Nexus */
+  --c-cat-automacao: 245 158 11;
+  --c-cat-ia: 167 139 250;
+  --c-cat-dados: 96 165 250;
+  --c-cat-financas: 16 185 129;
+  --c-cat-processos: 242 99 99;
+  --c-cat-sistemas: 34 197 224;
+  --c-cat-desenvolvimento: 45 212 191;
+  --c-cat-produto: 234 179 8;
+
+  /* sombra dos cartões (do design system do Nexus & PJ) */
+  --sombra-card: inset 0 1px 0 rgb(255 255 255 / 0.05), 0 14px 36px -20px rgb(0 0 0 / 0.55);
+  --sombra-card-hover: inset 0 1px 0 rgb(255 255 255 / 0.08), 0 22px 48px -18px rgb(0 0 0 / 0.62);
 }
 
 /*
@@ -54,9 +65,8 @@
  * que carimba data-theme antes do primeiro paint. Sem JS, cai no dark,
  * que é o tema principal do site.
  *
- * Contrastes verificados contra o fundo (WCAG AA = 4.5:1 para texto normal):
- * ink 15.8 · ink-dim 7.9 · ink-mute 5.0 · accent 7.6 · signal 4.9
- * ink-faint fica em 3.5 — só para texto grande ou elemento não essencial.
+ * Fundo "papel" (identidade do site), acento e cores de dado do tema claro do
+ * Nexus. Todo texto passa 4,5:1 — scripts/contraste.mjs reprova o que não passar.
  */
 [data-theme='light'] {
   color-scheme: light;
@@ -66,8 +76,8 @@
 
   --c-ink: 19 26 36;
   --c-ink-dim: 62 76 94;
-  --c-ink-mute: 92 105 122;
-  --c-ink-faint: 120 131 146;
+  --c-ink-mute: 72 84 101;
+  --c-ink-faint: 86 98 114;
 
   --c-rule: 19 26 36 / 0.12;
   --c-rule-2: 19 26 36 / 0.2;
@@ -77,20 +87,23 @@
   --c-surface-2: 19 26 36 / 0.06;
   --c-surface-3: 19 26 36 / 0.09;
 
-  --c-accent: 27 77 143;
-  --c-accent-soft: 27 77 143 / 0.1;
+  --c-accent: 24 88 196;
+  --c-accent-soft: 24 88 196 / 0.1;
 
-  --c-signal: 172 80 8;
-  --c-signal-soft: 172 80 8 / 0.12;
+  --c-signal: 138 78 4;
+  --c-signal-soft: 138 78 4 / 0.12;
 
-  --c-cat-automacao: 172 80 8;
-  --c-cat-ia: 118 76 176;
-  --c-cat-dados: 27 77 143;
-  --c-cat-financas: 22 122 84;
-  --c-cat-processos: 168 62 46;
-  --c-cat-sistemas: 72 100 132;
-  --c-cat-desenvolvimento: 26 110 98;
-  --c-cat-produto: 150 106 20;
+  --c-cat-automacao: 166 96 6;
+  --c-cat-ia: 110 64 214;
+  --c-cat-dados: 29 99 214;
+  --c-cat-financas: 5 128 90;
+  --c-cat-processos: 189 39 39;
+  --c-cat-sistemas: 8 122 146;
+  --c-cat-desenvolvimento: 13 120 108;
+  --c-cat-produto: 146 104 6;
+
+  --sombra-card: inset 0 1px 0 rgb(255 255 255 / 0.7), 0 10px 24px -16px rgb(0 0 0 / 0.16);
+  --sombra-card-hover: inset 0 1px 0 rgb(255 255 255 / 0.8), 0 16px 32px -14px rgb(0 0 0 / 0.2);
 }
 
 /* ============================================================
@@ -211,15 +224,17 @@
   border: 1px solid var(--color-rule);
   border-radius: var(--radius-lg);
   background: var(--color-surface);
-  box-shadow: inset 0 1px 0 0 rgb(255 255 255 / 0.05);
+  box-shadow: var(--sombra-card);
   transition:
     border-color var(--dur-base) var(--ease-out-expo),
     background-color var(--dur-base) var(--ease-out-expo),
+    box-shadow var(--dur-base) var(--ease-out-expo),
     transform var(--dur-base) var(--ease-out-expo);
 
   &:hover {
     border-color: var(--color-rule-3);
     background: var(--color-surface-2);
+    box-shadow: var(--sombra-card-hover);
   }
 }
 
@@ -409,9 +424,10 @@
   & h2 {
     margin-top: 2.75em;
     margin-bottom: 0.75em;
-    font-family: var(--font-display);
-    font-size: 1.75rem;
-    line-height: 1.25;
+    font-size: 1.375rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.3;
     color: var(--color-ink);
     text-wrap: balance;
   }
@@ -476,5 +492,81 @@
     font-size: 0.78em;
     letter-spacing: 0.02em;
     color: var(--color-ink-mute);
+  }
+}
+
+/* ============================================================
+   FUNDO VIVO — "sistema solar" (public/cena/, motor do Nexus Analytics)
+   A cena fica ATRÁS de tudo; o conteúdo segue no fluxo normal. Enquanto ela
+   não liga (ou sem WebGL), vale o fundo liso de sempre. O véu usa a cor do
+   próprio tema, então funciona no escuro (espaço) e no claro (atlas no papel).
+   ============================================================ */
+html {
+  background-color: var(--color-bg);
+}
+
+#nx-cena,
+#nx-cena-veu {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 900ms ease;
+}
+
+#nx-cena {
+  z-index: -2;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Véu: forte por trás da COLUNA DE TEXTO e leve depois dela, onde a cena aparece.
+   --fim-texto = borda direita da coluna de leitura (container de 72rem com 2,5rem
+   de respiro + coluna de 42rem + folga). Medido por pixel: todo texto passa 4,5:1
+   no pior ponto da cena (Sol e planetas atrás). A cor do planeta sobe do pé da tela. */
+#nx-cena-veu {
+  --fim-texto: max(calc(50% + 9rem), 47rem);
+  z-index: -1;
+  background:
+    radial-gradient(45% 40% at 90% 112%, color-mix(in srgb, var(--pc, #f5b041) 14%, transparent) 0%, transparent 70%),
+    linear-gradient(
+      90deg,
+      rgb(var(--c-bg) / 0.9) 0,
+      rgb(var(--c-bg) / 0.9) var(--fim-texto),
+      rgb(var(--c-bg) / 0.18) calc(var(--fim-texto) + 14rem)
+    );
+}
+
+html[data-cena-viva] #nx-cena,
+html[data-cena-viva] #nx-cena-veu {
+  opacity: 1;
+}
+
+html[data-cena-viva] body {
+  background: transparent;
+}
+
+html.nx-cena-sem-gl #nx-cena,
+html.nx-cena-sem-gl #nx-cena-veu {
+  display: none;
+}
+
+/* Legibilidade: com a cena, os cartões ganham piso quase opaco (sem desfoque —
+   blur sobre um canvas que anima é recalculado a cada quadro). */
+html[data-cena-viva] .card {
+  background: rgb(var(--c-bg-raised) / 0.9);
+}
+
+html[data-cena-viva] .card:hover {
+  background: rgb(var(--c-bg-raised) / 0.95);
+}
+
+/* No celular o texto ocupa a largura toda: véu por igual. */
+@media (width < 48rem) {
+  #nx-cena-veu {
+    background:
+      radial-gradient(80% 30% at 80% 112%, color-mix(in srgb, var(--pc, #f5b041) 10%, transparent) 0%, transparent 70%),
+      rgb(var(--c-bg) / 0.9);
   }
 }

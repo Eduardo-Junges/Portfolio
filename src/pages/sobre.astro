@@ -1,4 +1,5 @@
 ---
+import { PLANETA_SOBRE } from '../data/cena';
 import Base from '../layouts/Base.astro';
 import BotoesRede from '../components/ui/BotoesRede.astro';
 import { profile } from '../data/profile';
@@ -14,6 +15,7 @@ import { profile } from '../data/profile';
 ---
 
 <Base
+  planeta={PLANETA_SOBRE}
   titulo={`Sobre — ${profile.nomeCurto}`}
   descricao="Analista em operações financeiras que constrói as ferramentas que faltam. Processos, automação e sistemas."
 >
@@ -129,7 +131,7 @@ import { profile } from '../data/profile';
       marcador e recuo, o que desmontaria a grade de botões.
     */}
     <section class="mt-16 max-w-3xl border-t border-rule pt-10">
-      <h2 class="font-display text-2xl leading-snug text-ink">Falar comigo</h2>
+      <h2 class="text-xl leading-snug font-semibold tracking-tight text-ink">Falar comigo</h2>
       <BotoesRede variante="completo" class="mt-6" />
     </section>
   </article>
