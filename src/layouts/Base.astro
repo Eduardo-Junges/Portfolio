@@ -16,6 +16,7 @@ import interLatin from '@fontsource-variable/inter/files/inter-latin-wght-normal
 import serifLatin from '@fontsource/instrument-serif/files/instrument-serif-latin-400-normal.woff2?url';
 import { profile } from '../data/profile';
 import AlternarTema from '../components/ui/AlternarTema.astro';
+import { ROTAS_DA_CENA, VERSAO_CENA } from '../data/cena';
 
 /*
  * Analytics sem cookie e sem identificador de visitante: conta pageview e
@@ -31,9 +32,11 @@ import Analytics from '@vercel/analytics/astro';
 interface Props {
   titulo?: string;
   descricao?: string;
+  /** planeta do fundo vivo ('sol' = visão geral do sistema). Ver src/data/cena.ts */
+  planeta?: string;
 }
 
-const { titulo = profile.seo.titulo, descricao = profile.seo.descricao } = Astro.props;
+const { titulo = profile.seo.titulo, descricao = profile.seo.descricao, planeta = 'sol' } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 ---
@@ -86,6 +89,25 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
   </head>
 
   <body>
+    {/*
+      Fundo vivo "sistema solar" — o motor do Nexus Analytics (public/cena/).
+      Decorativo: nenhuma informação vive no desenho. Só liga depois da página
+      carregada; sem WebGL ou sem JS o site fica como antes, e com "reduzir
+      movimento" vira um quadro parado.
+    */}
+    <canvas
+      id="nx-cena"
+      aria-hidden="true"
+      data-auto="1"
+      data-base="/cena/"
+      data-versao={VERSAO_CENA}
+      data-planeta={planeta}
+      data-rotas={JSON.stringify(ROTAS_DA_CENA)}
+      data-desloc="[-0.42,0.06]"></canvas>
+    <div id="nx-cena-veu" aria-hidden="true"></div>
+    <script is:inline src={`/cena/astro.js?v=${VERSAO_CENA}`} defer></script>
+    <script is:inline src={`/cena/cena.js?v=${VERSAO_CENA}`} defer></script>
+
     <a
       href="#conteudo"
       class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-sm focus:bg-bg-raised focus:px-4 focus:py-2 focus:text-ink"

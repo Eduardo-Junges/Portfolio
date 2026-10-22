@@ -1,4 +1,5 @@
 ---
+import { PLANETA_DO_PROJETO } from '../../data/cena';
 import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import PainelNexus from '../../components/islands/PainelNexus';
@@ -15,7 +16,7 @@ const { Content } = await render(projeto);
 const d = projeto.data;
 ---
 
-<Base titulo={`${d.titulo} — Eduardo Junges`} descricao={d.resumo}>
+<Base titulo={`${d.titulo} — Eduardo Junges`} descricao={d.resumo} planeta={PLANETA_DO_PROJETO[projeto.id] ?? 'netuno'}>
   <article class="container-page py-16 sm:py-24">
     <a
       href="/"
@@ -33,7 +34,7 @@ const d = projeto.data;
         <span class="label-tec text-ink-faint">{rotuloContexto[d.contexto]}</span>
       </div>
 
-      <h1 class="mt-6 font-display text-4xl leading-tight text-balance sm:text-6xl">
+      <h1 class="mt-6 text-4xl leading-tight font-semibold tracking-tight text-balance sm:text-5xl">
         {d.titulo}
       </h1>
       <p class="mt-4 max-w-2xl text-lg text-pretty text-ink-dim">{d.subtitulo}</p>
@@ -87,7 +88,7 @@ const d = projeto.data;
         <p class="mt-2 max-w-2xl leading-relaxed text-pretty text-ink-dim">{d.estadoAtual}</p>
       </div>
 
-      <div class="mt-10 flex flex-wrap items-center gap-2">
+      <div class="mt-10 flex max-w-2xl flex-wrap items-center gap-2">
         {
           d.ferramentas.map((f) => (
             <span class="rounded-xs border border-rule-2 px-2.5 py-1 font-mono text-xs text-ink-mute">
