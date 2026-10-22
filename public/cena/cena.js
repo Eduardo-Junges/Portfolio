@@ -484,8 +484,7 @@
   };
   window.NexusCena = API;
 
-  /* Liga sozinho quando a página traz <canvas id="nx-cena" data-auto="1">. Espera a página
-     terminar de carregar e o navegador ficar livre: o 3D nunca atrasa o primeiro conteúdo. */
+  /* Liga sozinho quando a página traz <canvas id="nx-cena" data-auto="1"> (ver quandoLivre). */
   function nivelSalvo() {
     if (reduzirMovimento()) return 'off';
     var v = ''; try { v = localStorage.getItem('nx-efeitos') || ''; } catch (e) { }
@@ -521,9 +520,26 @@
       });
     }, { passive: true });
   }
+  /* Quando ligar: no primeiro sinal de uso (mexer o mouse, rolar, tecla) ou depois de 6 s parada.
+     Montar a cena (compilar shaders, primeiro quadro) é o único trabalho pesado do site; feito no
+     carregamento, ele disputava a tela com o conteúdo — e numa máquina sem placa de vídeo (como a
+     do PageSpeed) virava mais de 1 s de travamento. Assim, quem só lê nunca espera pelo 3D.
+     Mover o mouse e rolar não contam como interação no INP: ligar aqui não pesa nessa métrica. */
   function quandoLivre() {
-    var vai = function () { if (window.requestIdleCallback) requestIdleCallback(auto, { timeout: 1200 }); else setTimeout(auto, 200); };
-    if (document.readyState === 'complete') vai(); else addEventListener('load', vai, { once: true });
+    var feito = false, SINAIS = ['pointermove', 'scroll', 'wheel', 'keydown'];
+    var vai = function () {
+      if (feito) return; feito = true;
+      SINAIS.forEach(function (ev) { removeEventListener(ev, vai, true); });
+      if (window.requestIdleCallback) requestIdleCallback(auto, { timeout: 800 }); else setTimeout(auto, 50);
+    };
+    var armar = function () {
+      SINAIS.forEach(function (ev) { addEventListener(ev, vai, { capture: true, passive: true }); });
+      setTimeout(vai, 6000);
+    };
+    // quem veio de outra página do site com a cena já está usando o site: liga logo, e o voo
+    // de um planeta para o outro continua sem esperar o mouse
+    var comecar = lido() ? vai : armar;
+    if (document.readyState === 'complete') comecar(); else addEventListener('load', comecar, { once: true });
   }
   quandoLivre();
 })();
