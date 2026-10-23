@@ -1,0 +1,150 @@
+---
+/**
+ * Política de privacidade do Nexus & PJ.
+ *
+ * Premissa que sustenta o texto: o sistema é instalado no servidor da própria
+ * empresa (nada roda em nuvem do desenvolvedor). Cada fato aqui foi conferido no
+ * código do repositório nexus-pj (versão 2.4.0): campos guardados, retenção do
+ * Vigia (90 dias), backups (30 no servidor, 60 na cópia externa), sessão de 30 min,
+ * cookie de aparelho de 400 dias, o que pode sair da rede e só se a empresa ligar.
+ * Mudou o sistema nesses pontos, muda esta página — junto com os termos.
+ */
+import PaginaLegal from '../components/ui/PaginaLegal.astro';
+import { EMAIL } from '../data/redes';
+---
+
+<PaginaLegal
+  titulo="Política de Privacidade"
+  subtitulo="Nexus & PJ"
+  descricao="Como o Nexus & PJ trata os dados: instalado no servidor da própria empresa, com o que sai da rede desligado por padrão."
+  atualizado="23 de outubro de 2026"
+  voltarHref="/projetos/nexus-pj"
+  voltarRotulo="Voltar para Nexus & PJ"
+  irmaoHref="/termos-nexus-pj"
+  irmaoRotulo="Termos de Uso do Nexus & PJ"
+>
+  <p>
+    O Nexus &amp; PJ é um sistema de fechamento de caixa pelo extrato bancário, desenvolvido por
+    Eduardo Henrique Junges. Ele é <strong>instalado no servidor ou computador da própria empresa</strong>
+    e roda na rede dela. Esta política explica quais dados o sistema trata, onde eles ficam e o
+    que pode sair da rede.
+  </p>
+
+  <h2>Quem responde pelos dados</h2>
+  <p>
+    A empresa que instala e usa o sistema é a controladora dos dados que coloca nele, nos termos
+    da Lei Geral de Proteção de Dados (Lei 13.709/2018). O desenvolvedor não recebe, não guarda e
+    não tem acesso a esses dados pela distribuição do sistema: o código é entregue sem nenhum
+    dado, e uma instalação nova nasce vazia. Quando o desenvolvedor presta suporte com acesso ao
+    sistema, ele age em nome da empresa e só com o acesso que ela conceder.
+  </p>
+
+  <h2>Quais dados o sistema trata</h2>
+  <ul>
+    <li>
+      <strong>Usuários:</strong> nome, e-mail, perfil de acesso, cargo e telefone (opcionais) e
+      preferências de tela. A senha é guardada só como hash, o segredo da verificação em duas
+      etapas fica cifrado e os códigos de recuperação, só como hash.
+    </li>
+    <li>
+      <strong>Aparelhos aprovados:</strong> um nome para o aparelho, o endereço IP de origem e as
+      datas de aprovação e de último uso.
+    </li>
+    <li>
+      <strong>Extratos e lançamentos bancários da empresa:</strong> data, valor, descrição e saldo,
+      como vêm do banco. As descrições podem trazer nomes e documentos de
+      clientes, fornecedores ou funcionários. O arquivo original do extrato fica arquivado para
+      conferência.
+    </li>
+    <li>
+      <strong>Cadastros:</strong> contas bancárias (com titular, CPF ou CNPJ do titular, gerente e
+      telefone), lojas, a empresa e as contas a pagar e a receber (com o favorecido).
+    </li>
+    <li>
+      <strong>Conversas com o assistente:</strong> as perguntas e respostas de cada usuário. O
+      modelo de inteligência artificial roda no próprio servidor e não recebe valores nem
+      descrições do extrato: ele só escolhe qual cálculo fazer.
+    </li>
+    <li>
+      <strong>Trilha de auditoria:</strong> quem mudou o quê e quando (cadastros, permissões,
+      categorias, gerações de relatório, leituras pela API).
+    </li>
+    <li>
+      <strong>Vigia de acesso:</strong> nas tentativas suspeitas e nos logins que falham, o IP, o
+      endereço acessado, o método e o navegador. Esses registros são apagados depois de 90 dias.
+    </li>
+  </ul>
+
+  <h2>Onde os dados ficam</h2>
+  <p>
+    Na pasta de dados do servidor da empresa, separada do código, que nunca contém dados. O
+    sistema faz backup diário dessa pasta e guarda os 30 mais recentes no servidor e até 60 na
+    cópia externa que a empresa configurar, com teste de restauração mensal.
+  </p>
+
+  <h2>O que pode sair da rede</h2>
+  <p>
+    Por padrão, nada. Três recursos trocam informação com o exterior, todos desligados até a
+    empresa ligá-los:
+  </p>
+  <ul>
+    <li>
+      <strong>Canal de WhatsApp</strong> (API oficial do WhatsApp, da Meta). Ligado, o que é
+      conversado por ele passa pelos servidores da Meta e do provedor de conexão usado pelo canal.
+      Só números aprovados por um administrador conversam com o sistema, e os números ficam
+      guardados cifrados. As respostas levam o mínimo de dado: valores agregados, e sequências
+      longas de dígitos (como número de conta ou documento) saem mascaradas. Extratos não passam
+      por esse canal.
+    </li>
+    <li>
+      <strong>Aviso de atualização:</strong> consulta só o número da versão mais recente do
+      sistema e não envia nenhum dado da empresa.
+    </li>
+    <li>
+      <strong>API de leitura:</strong> quando o administrador a liga e cria um token, outros
+      sistemas da própria empresa podem ler saldos, lançamentos, relatórios ou a projeção, conforme
+      o escopo do token. A API só lê, e cada leitura fica na auditoria.
+    </li>
+  </ul>
+
+  <h2>Cookies</h2>
+  <p>
+    Só os necessários para o login e a segurança: a sessão, que expira depois de 30 minutos sem
+    uso, e o reconhecimento do aparelho aprovado, válido por até 400 dias. Os dois guardam apenas
+    um código aleatório; no servidor fica só o hash dele. Não há cookies de publicidade nem de
+    rastreamento.
+  </p>
+
+  <h2>Segurança</h2>
+  <p>
+    Permissões por perfil checadas no servidor em toda tela e ação, verificação em duas etapas,
+    aprovação de aparelho, trilha de auditoria, bloqueio de tentativas repetidas e HTTPS opcional
+    na rede da empresa. Nenhuma alteração sugerida pela inteligência artificial é gravada sem a
+    confirmação de um usuário com permissão para isso.
+  </p>
+
+  <h2>Por quanto tempo</h2>
+  <p>
+    Os dados ficam enquanto a empresa usar o sistema e decidir mantê-los. Os registros do Vigia
+    de acesso são apagados depois de 90 dias, e os backups seguem a rotação descrita acima.
+  </p>
+
+  <h2>Direitos dos titulares</h2>
+  <p>
+    Pedidos de acesso, correção ou exclusão de dados pessoais devem ser feitos à empresa que usa
+    o sistema, que é quem decide sobre eles. O sistema permite corrigir cadastros e desativar
+    usuários.
+  </p>
+
+  <h2>Mudanças</h2>
+  <p>
+    Esta política acompanha o sistema: quando uma versão nova mudar o que é tratado ou o que pode
+    sair da rede, ela é atualizada, com a data no topo.
+  </p>
+
+  <h2>Contato</h2>
+  <p>
+    Dúvidas sobre o sistema e esta política:
+    <a href={`mailto:${EMAIL}`} class="text-accent hover:opacity-70">{EMAIL}</a>.
+  </p>
+</PaginaLegal>
