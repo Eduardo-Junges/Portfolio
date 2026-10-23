@@ -1,0 +1,42 @@
+---
+/**
+ * O desenho de cada card do índice — a ideia do Hub do Nexus Analytics
+ * (webapp/hub_svg.py): lê-se a FORMA antes do título. Os dois Nexus já têm a
+ * demonstração viva no card; os projetos da empresa ganham um desenho que diz
+ * o que eles são. Decorativo e abstrato: nenhum número, nada da empresa.
+ *
+ *   contas a receber → a régua de cobrança: etapas ligadas, a última resolvida
+ *   painel do cartão → ranking por eficiência: a barra de cima é a que vale
+ */
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+const desenhos = ['remodelamento-contas-a-receber', 'painel-eficiencia-cartao'];
+---
+
+{
+  desenhos.includes(slug) && (
+    <div class="assinatura mb-6 h-14 text-[var(--cat-color)]" aria-hidden="true">
+      {slug === 'remodelamento-contas-a-receber' && (
+        <svg viewBox="0 0 260 56" preserveAspectRatio="xMinYMid meet" class="h-full w-auto">
+          <line x1="12" y1="28" x2="236" y2="28" stroke="currentColor" stroke-opacity=".28" stroke-width="2" />
+          <line x1="12" y1="28" x2="180" y2="28" stroke="currentColor" stroke-width="2" />
+          {[12, 68, 124, 180].map((x) => (
+            <circle cx={x} cy="28" r="7" fill="var(--color-bg-raised)" stroke="currentColor" stroke-width="2" />
+          ))}
+          <circle cx="236" cy="28" r="10" fill="currentColor" />
+          <path d="M231 28l3.5 3.5 6.5-7" fill="none" stroke="var(--color-bg-raised)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      )}
+      {slug === 'painel-eficiencia-cartao' && (
+        <svg viewBox="0 0 260 56" preserveAspectRatio="xMinYMid meet" class="h-full w-auto">
+          {[0.96, 0.78, 0.64, 0.5, 0.34].map((f, i) => (
+            <rect x="0" y={i * 11 + 1} width={250 * f} height="7" rx="3.5" fill="currentColor" opacity={i === 0 ? 1 : 0.32} />
+          ))}
+        </svg>
+      )}
+    </div>
+  )
+}

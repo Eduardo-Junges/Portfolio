@@ -105,6 +105,7 @@ const NIVEIS = [
       /* modo privado: vale só para esta página */
     }
     marcar(v);
+    document.documentElement.dataset.efeitos = v;
     const cena = (window as unknown as { NexusCena?: { setFx: (f: string) => void } }).NexusCena;
     cena?.setFx(PARA_MOTOR[v]);
   });

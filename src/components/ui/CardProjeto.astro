@@ -13,6 +13,7 @@
 import type { CollectionEntry } from 'astro:content';
 import PainelNexus from '../islands/PainelNexus';
 import MockupNexusPJ from './MockupNexusPJ.astro';
+import AssinaturaProjeto from './AssinaturaProjeto.astro';
 import { formatarPeriodo, rotuloCategoria } from '../../lib/formato';
 
 interface Props {
@@ -49,6 +50,7 @@ const periodo = formatarPeriodo(p.data.inicio, p.data.fim, p.data.precisaoInicio
         )
       }
       <div class="flex flex-1 flex-col p-7 sm:p-8">
+        {!temPainel && !p.data.capa && <AssinaturaProjeto slug={p.id} />}
         <div class="flex flex-wrap items-center justify-between gap-3">
           <span class="chip">
             <span class="chip-dot" aria-hidden="true" />

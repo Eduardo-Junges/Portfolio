@@ -591,3 +591,80 @@ html[data-cena-viva] .btn-rede {
     background: rgb(var(--c-bg-raised) / 0.9);
   }
 }
+
+/* ============================================================
+   DADOS COM VIDA — versão discreta do Nexus & PJ (app/static/css/vida.css)
+   Níveis em <html data-efeitos>: completo = brilho da borda + entrada ao rolar;
+   reduzido = nada disso (a cena segue, com menos quadros); desligado = nada se
+   mexe. Só opacity e transform; nada que mude o layout.
+   ============================================================ */
+
+/* a borda do cartão acende sob o cursor (só Completo, só com mouse) */
+@media (hover: hover) and (pointer: fine) {
+  html[data-efeitos='completo'] .card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(
+      200px circle at var(--mx, 50%) var(--my, 50%),
+      color-mix(in srgb, var(--cat-color, var(--color-accent)) 75%, transparent),
+      transparent 72%
+    );
+    mask:
+      linear-gradient(#000 0 0) content-box exclude,
+      linear-gradient(#000 0 0);
+    transition: opacity var(--dur-base) ease;
+  }
+
+  html[data-efeitos='completo'] .card:hover::after {
+    opacity: 1;
+  }
+}
+
+/* entrada por rolagem: só cartões que começam ABAIXO da dobra (os do topo nunca
+   ficam escondidos — o primeiro conteúdo aparece na hora) */
+@keyframes vida-sobe {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  html[data-efeitos='completo'] .vida-entra {
+    animation: vida-sobe linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 38%;
+  }
+}
+
+html[data-efeitos='completo'] .vida-pre {
+  opacity: 0;
+  transform: translateY(14px);
+}
+
+html[data-efeitos='completo'] .vida-pre.vida-visto {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 520ms var(--ease-out-expo),
+    transform 520ms var(--ease-out-expo);
+}
+
+/* Desligado = nada se mexe (o mesmo bloco de "reduzir movimento") */
+html[data-efeitos='desligado'] *,
+html[data-efeitos='desligado'] *::before,
+html[data-efeitos='desligado'] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
