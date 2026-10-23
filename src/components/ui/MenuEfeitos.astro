@@ -15,7 +15,8 @@ const NIVEIS = [
 ];
 ---
 
-<div class="relative" id="efeitos">
+{/* escondido sem JavaScript: sem script o menu não teria o que fazer */}
+<div class="relative" id="efeitos" hidden>
   <button
     type="button"
     id="efeitos-botao"
@@ -60,6 +61,7 @@ const NIVEIS = [
 </div>
 
 <script>
+  document.getElementById('efeitos')!.hidden = false;
   const CHAVE = 'nx-efeitos';
   const PARA_MOTOR: Record<string, string> = { completo: 'full', reduzido: 'reduced', desligado: 'off' };
   const botao = document.getElementById('efeitos-botao')!;
