@@ -75,8 +75,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
       claro declarados uma única vez em global.css.
     */}
     <script is:inline>
-      // com WebGL, o celular reserva a faixa do topo para a cena (sem pular o layout depois)
-      if (window.WebGLRenderingContext) document.documentElement.classList.add('tem-cena');
       // nível de efeitos (o mesmo vocabulário dos apps Nexus): decide brilho e entrada dos cartões
       try {
         var ef = localStorage.getItem('nx-efeitos');
@@ -116,8 +114,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
       data-versao={VERSAO_CENA}
       data-planeta={planeta}
       data-rotas={JSON.stringify(ROTAS_DA_CENA)}
-      data-desloc="[-0.42,0.06]"
-      data-desloc-celular="[0,-0.62]"></canvas>
+      data-desloc="[-0.42,0.06]"></canvas>
     <div id="nx-cena-veu" aria-hidden="true"></div>
     <script is:inline src={`/cena/astro.js?v=${VERSAO_CENA}`} defer></script>
     <script is:inline src={`/cena/cena.js?v=${VERSAO_CENA}`} defer></script>

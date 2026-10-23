@@ -500,23 +500,10 @@
     if (!c || !c.dataset.auto || c.dataset.ligada) return;
     c.dataset.ligada = '1';
     var rotas = {}; try { rotas = JSON.parse(c.dataset.rotas || '{}'); } catch (e) { }
-    var celular = !!(window.matchMedia && matchMedia('(max-width: 767px)').matches);
-    var desl = [0, 0]; try { desl = JSON.parse((celular && c.dataset.deslocCelular) || c.dataset.desloc || '[0,0]'); } catch (e) { }
+    var desl = [0, 0]; try { desl = JSON.parse(c.dataset.desloc || '[0,0]'); } catch (e) { }
     var api = iniciar({ canvas: c, base: c.dataset.base, versao: c.dataset.versao, rotas: rotas, planeta: c.dataset.planeta || null,
                         fx: nivelSalvo(), desloc: desl });
     if (!api) return;
-    // celular: a faixa do topo mostra a cena clara; ao rolar ela sobe junto com a página
-    // (o véu volta a cobrir o texto). --janela-vis = quanto da faixa ainda está na tela.
-    if (celular) {
-      var pendJ = false, janela = function () {
-        pendJ = false;
-        var px = Math.max(0, innerHeight * 0.3 - (window.scrollY || 0));
-        root.style.setProperty('--janela-vis', px.toFixed(0) + 'px');
-      };
-      janela();
-      addEventListener('scroll', function () { if (!pendJ) { pendJ = true; requestAnimationFrame(janela); } }, { passive: true });
-      addEventListener('resize', janela, { passive: true });
-    }
     // clicar num planeta (numa área VAZIA da página — nunca através de texto ou card) leva à página dele
     var vazio = function (el) { return !!(el && (el === document.body || el === document.documentElement || (el.hasAttribute && el.hasAttribute('data-cena-vazio')))); };
     document.addEventListener('click', function (e) {
