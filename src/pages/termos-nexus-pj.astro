@@ -1,0 +1,117 @@
+---
+/**
+ * Termos de uso do Nexus & PJ.
+ *
+ * Par da política de privacidade (`privacidade-nexus-pj`), com a mesma premissa:
+ * sistema instalado no servidor da própria empresa. Condições comerciais (preço,
+ * prazo, suporte) não estão aqui de propósito: ainda não existem como regra
+ * geral e, quando houver, vão em contrato próprio.
+ */
+import PaginaLegal from '../components/ui/PaginaLegal.astro';
+import { EMAIL } from '../data/redes';
+---
+
+<PaginaLegal
+  titulo="Termos de Uso"
+  subtitulo="Nexus & PJ"
+  descricao="Condições de uso do Nexus & PJ: sistema instalado na empresa, gerencial, com IA que só age com confirmação."
+  atualizado="23 de outubro de 2026"
+  voltarHref="/projetos/nexus-pj"
+  voltarRotulo="Voltar para Nexus & PJ"
+  irmaoHref="/privacidade-nexus-pj"
+  irmaoRotulo="Política de Privacidade do Nexus & PJ"
+>
+  <p>
+    O Nexus &amp; PJ é um sistema de fechamento de caixa pelo extrato bancário, desenvolvido por
+    Eduardo Henrique Junges e instalado no servidor da própria empresa que o usa. Estes termos
+    valem para a empresa e para cada pessoa que ela cadastra como usuária.
+  </p>
+
+  <h2>O que o sistema faz</h2>
+  <p>
+    Lê os extratos das contas da empresa, categoriza os lançamentos e fecha o caixa contra o
+    saldo que os bancos informam. Também mostra painéis, relatórios, DRE por caixa, balancete
+    gerencial, a projeção das próximas 13 semanas e as contas a pagar e a receber. O sistema não
+    inventa dado: o que é estimativa aparece na tela com a origem.
+  </p>
+
+  <h2>Uso permitido</h2>
+  <p>
+    O sistema é para os dados financeiros da própria empresa. Não deve ser usado para guardar
+    dados de outras empresas sem autorização delas, nem para tentar contornar as permissões, a
+    verificação em duas etapas ou a aprovação de aparelhos. As condições comerciais de cada
+    instalação, quando houver, ficam em contrato próprio.
+  </p>
+
+  <h2>Contas e acesso</h2>
+  <p>
+    O administrador da empresa cria os usuários e os perfis, define o que cada perfil vê e
+    altera e aprova os aparelhos. Cada usuário responde pela própria senha e pelo próprio segundo
+    fator. Desligar quem saiu da empresa é responsabilidade do administrador.
+  </p>
+
+  <h2>Não substitui contador nem consultoria</h2>
+  <p>
+    DRE por caixa, balancete, indicadores e projeções são relatórios gerenciais, calculados a
+    partir dos extratos importados. Não são demonstrações contábeis oficiais, não substituem o
+    contador e não cumprem obrigações fiscais. A projeção é estimativa pelo histórico, não
+    promessa. Conferir os números contra os extratos originais e fechar o mês é responsabilidade
+    da empresa.
+  </p>
+
+  <h2>Assistente com inteligência artificial</h2>
+  <p>
+    O assistente roda no próprio servidor. Ele interpreta a pergunta e escolhe o cálculo; os
+    números vêm sempre do mesmo código das telas. Pode entender mal um pedido, e por isso toda
+    alteração que ele sugere só é gravada depois da confirmação de quem tem permissão para fazê-la.
+  </p>
+
+  <h2>Servidor, dados e backups</h2>
+  <p>
+    A empresa responde pelo servidor em que o sistema roda: energia, rede, acesso físico,
+    atualizações do sistema operacional, guarda do arquivo de configuração com os segredos e da
+    cópia externa dos backups. O sistema faz backup diário e testa a restauração todo mês, mas
+    não guarda cópia fora da empresa.
+  </p>
+
+  <h2>Versões e atualizações</h2>
+  <p>
+    O sistema evolui por versões numeradas, e cada uma traz as novidades em linguagem de quem
+    usa. A atualização faz backup antes e volta sozinha à versão anterior se algo falhar. O aviso
+    de versão nova é opcional e vem desligado.
+  </p>
+
+  <h2>Serviços de terceiros</h2>
+  <p>
+    Recursos que dependem de terceiros, como o canal de WhatsApp, ficam desligados até a empresa
+    ligá-los. Ligados, seguem também os termos e as políticas desses serviços. O que passa por
+    eles está na
+    <a href="/privacidade-nexus-pj" class="text-accent hover:opacity-70">Política de Privacidade</a>.
+  </p>
+
+  <h2>Sem garantia</h2>
+  <p>
+    O sistema é fornecido como está, em evolução contínua, sem garantia de funcionamento
+    ininterrupto, de compatibilidade com o extrato de todos os bancos ou de ausência de erros.
+    Na medida permitida pela lei, o desenvolvedor não responde por perdas decorrentes do uso ou da
+    impossibilidade de usar o sistema, salvo o que for combinado em contrato.
+  </p>
+
+  <h2>Propriedade intelectual</h2>
+  <p>
+    O código, o design e a documentação do Nexus &amp; PJ pertencem a Eduardo Henrique Junges. Os
+    dados que a empresa coloca no sistema continuam sendo dela.
+  </p>
+
+  <h2>Mudanças e lei aplicável</h2>
+  <p>
+    Estes termos podem ser atualizados; vale a versão publicada, com a data no topo. São regidos
+    pelas leis brasileiras.
+  </p>
+
+  <h2>Contato</h2>
+  <p>
+    Dúvidas sobre estes termos:
+    <a href={`mailto:${EMAIL}`} class="text-accent hover:opacity-70">{EMAIL}</a>.
+  </p>
+</PaginaLegal>
