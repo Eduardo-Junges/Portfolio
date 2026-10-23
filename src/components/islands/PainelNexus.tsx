@@ -912,11 +912,11 @@ function Hub({
       </div>
       <div className="hub-g">
         {paineis.map((p) => (
-          <button key={p.id} type="button" className="hub-c" onClick={() => abrir(p.id)} aria-label={`Abrir painel ${p.titulo}`}>
+          <button key={p.id} type="button" className="hub-c" onClick={() => abrir(p.id)} aria-labelledby={`hub-t-${p.id}`}>
             <div className="hub-pv">{previas[p.id]}</div>
             <div className="hub-ft">
               <div className="hub-ic" aria-hidden="true">{p.icone}</div>
-              <div><b>{p.titulo}</b><span>{p.legenda}</span></div>
+              <div><b id={`hub-t-${p.id}`}>{p.titulo}</b><span>{p.legenda}</span></div>
             </div>
           </button>
         ))}
@@ -1090,7 +1090,7 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
       <style>{`
         .nx {
           --lm-bg:10,14,26;
-          --lm-text:226,232,240; --lm-text2:100,116,139; --lm-text3:148,163,184;
+          --lm-text:226,232,240; --lm-text2:127,142,163; --lm-text3:148,163,184;
           --lm-blue:59,130,246; --lm-green:16,185,129; --lm-purple:139,92,246;
           --lm-red:239,68,68; --lm-cyan:6,182,212; --lm-amber:245,158,11;
           --nx-bg:rgb(var(--lm-bg));
@@ -1281,6 +1281,7 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
               type="button"
               className={`nx-item ${menuAtivo === n.id ? 'on' : ''}`}
               aria-current={menuAtivo === n.id ? 'page' : undefined}
+              aria-label={n.rotulo /* no card estreito o rótulo some e só o ícone fica */}
               onClick={() => setAba(n.id)}
             >
               <span className="ic" aria-hidden="true">{n.icone}</span>

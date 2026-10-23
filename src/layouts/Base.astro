@@ -77,6 +77,16 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
     <script is:inline>
       // com WebGL, o celular reserva a faixa do topo para a cena (sem pular o layout depois)
       if (window.WebGLRenderingContext) document.documentElement.classList.add('tem-cena');
+      // nível de efeitos (o mesmo vocabulário dos apps Nexus): decide brilho e entrada dos cartões
+      try {
+        var ef = localStorage.getItem('nx-efeitos');
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) ef = 'desligado';
+        else if (ef !== 'completo' && ef !== 'reduzido' && ef !== 'desligado')
+          ef = window.matchMedia('(max-width: 767px), (pointer: coarse)').matches ? 'reduzido' : 'completo';
+        document.documentElement.dataset.efeitos = ef;
+      } catch (e) {
+        document.documentElement.dataset.efeitos = 'completo';
+      }
       try {
         var salvo = localStorage.getItem('tema');
         document.documentElement.dataset.theme =
@@ -137,6 +147,10 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
         dos planetas reais, calculadas para hoje.
       </p>
     </footer>
+
+    <script>
+      import '../lib/vida';
+    </script>
 
     <Analytics />
   </body>
