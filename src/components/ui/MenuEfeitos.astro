@@ -1,0 +1,120 @@
+---
+/**
+ * Menu de efeitos do fundo vivo — o mesmo vocabulário dos apps Nexus:
+ * Completo (tudo), Reduzido (menos quadros e texturas menores) e Desligado
+ * (um quadro parado). A escolha fica em localStorage ('nx-efeitos', a mesma
+ * chave do Nexus & PJ) e vale na hora, sem recarregar.
+ *
+ * "Reduzir movimento" do sistema operacional manda: com ele ligado, a cena fica
+ * parada e o menu só explica por quê.
+ */
+const NIVEIS = [
+  { id: 'completo', rotulo: 'Completo', nota: 'cena animada, texturas cheias' },
+  { id: 'reduzido', rotulo: 'Reduzido', nota: 'menos quadros, menos bateria' },
+  { id: 'desligado', rotulo: 'Desligado', nota: 'um quadro parado' },
+];
+---
+
+<div class="relative" id="efeitos">
+  <button
+    type="button"
+    id="efeitos-botao"
+    class="inline-flex size-9 items-center justify-center rounded-sm border border-rule-2 text-ink-mute transition-colors duration-150 hover:border-rule-3 hover:text-ink"
+    aria-label="Efeitos do fundo"
+    aria-haspopup="true"
+    aria-expanded="false"
+    aria-controls="efeitos-painel"
+  >
+    {/* um planeta com anel: o fundo é um sistema solar */}
+    <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="5"></circle>
+      <path d="M3.5 15.5c-1.4 2 .2 3.2 3.7 2.6 2.9-.5 6.7-2.2 9.9-4.6 3.4-2.5 5.2-5.1 4-6.3-.8-.8-2.6-.6-4.9.3"></path>
+    </svg>
+  </button>
+
+  <div
+    id="efeitos-painel"
+    class="card absolute top-11 right-0 w-64 p-2"
+    role="group"
+    aria-labelledby="efeitos-titulo"
+    hidden
+  >
+    <p id="efeitos-titulo" class="label-tec px-2 pt-1 pb-2">Efeitos do fundo</p>
+    {
+      NIVEIS.map((n) => (
+        <button
+          type="button"
+          data-nivel={n.id}
+          aria-pressed="false"
+          class="flex w-full flex-col items-start rounded-sm px-2 py-1.5 text-left transition-colors duration-150 hover:bg-surface-2 aria-pressed:bg-accent-soft"
+        >
+          <span class="text-sm font-medium text-ink">{n.rotulo}</span>
+          <span class="text-xs text-ink-mute">{n.nota}</span>
+        </button>
+      ))
+    }
+    <p id="efeitos-aviso" class="mt-1 px-2 pb-1 text-xs text-ink-mute" hidden>
+      Seu sistema pede menos movimento: o fundo fica parado.
+    </p>
+  </div>
+</div>
+
+<script>
+  const CHAVE = 'nx-efeitos';
+  const PARA_MOTOR: Record<string, string> = { completo: 'full', reduzido: 'reduced', desligado: 'off' };
+  const botao = document.getElementById('efeitos-botao')!;
+  const painel = document.getElementById('efeitos-painel')!;
+  const calmo = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function ler(): string {
+    try {
+      const v = localStorage.getItem(CHAVE);
+      if (v === 'completo' || v === 'reduzido' || v === 'desligado') return v;
+    } catch {
+      /* sem localStorage: vale o padrão do motor */
+    }
+    // o mesmo padrão do motor: celular/toque começa em Reduzido
+    return window.matchMedia('(max-width: 767px), (pointer: coarse)').matches ? 'reduzido' : 'completo';
+  }
+
+  function marcar(v: string) {
+    painel.querySelectorAll<HTMLButtonElement>('[data-nivel]').forEach((b) => {
+      b.setAttribute('aria-pressed', String(b.dataset.nivel === v));
+      b.disabled = calmo;
+    });
+    document.getElementById('efeitos-aviso')!.hidden = !calmo;
+  }
+
+  function abrir(sim: boolean) {
+    painel.hidden = !sim;
+    botao.setAttribute('aria-expanded', String(sim));
+    if (sim) {
+      marcar(ler());
+      painel.querySelector<HTMLButtonElement>('[aria-pressed="true"]')?.focus();
+    }
+  }
+
+  botao.addEventListener('click', () => abrir(painel.hidden));
+  painel.addEventListener('click', (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-nivel]');
+    if (!b || calmo) return;
+    const v = b.dataset.nivel!;
+    try {
+      localStorage.setItem(CHAVE, v);
+    } catch {
+      /* modo privado: vale só para esta página */
+    }
+    marcar(v);
+    const cena = (window as unknown as { NexusCena?: { setFx: (f: string) => void } }).NexusCena;
+    cena?.setFx(PARA_MOTOR[v]);
+  });
+  document.addEventListener('click', (e) => {
+    if (!painel.hidden && !document.getElementById('efeitos')!.contains(e.target as Node)) abrir(false);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !painel.hidden) {
+      abrir(false);
+      botao.focus();
+    }
+  });
+</script>

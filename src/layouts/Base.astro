@@ -16,6 +16,7 @@ import interLatin from '@fontsource-variable/inter/files/inter-latin-wght-normal
 import serifLatin from '@fontsource/instrument-serif/files/instrument-serif-latin-400-normal.woff2?url';
 import { profile } from '../data/profile';
 import AlternarTema from '../components/ui/AlternarTema.astro';
+import MenuEfeitos from '../components/ui/MenuEfeitos.astro';
 import { ROTAS_DA_CENA, VERSAO_CENA } from '../data/cena';
 
 /*
@@ -74,6 +75,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
       claro declarados uma única vez em global.css.
     */}
     <script is:inline>
+      // com WebGL, o celular reserva a faixa do topo para a cena (sem pular o layout depois)
+      if (window.WebGLRenderingContext) document.documentElement.classList.add('tem-cena');
       try {
         var salvo = localStorage.getItem('tema');
         document.documentElement.dataset.theme =
@@ -103,7 +106,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
       data-versao={VERSAO_CENA}
       data-planeta={planeta}
       data-rotas={JSON.stringify(ROTAS_DA_CENA)}
-      data-desloc="[-0.42,0.06]"></canvas>
+      data-desloc="[-0.42,0.06]"
+      data-desloc-celular="[0,-0.62]"></canvas>
     <div id="nx-cena-veu" aria-hidden="true"></div>
     <script is:inline src={`/cena/astro.js?v=${VERSAO_CENA}`} defer></script>
     <script is:inline src={`/cena/cena.js?v=${VERSAO_CENA}`} defer></script>
@@ -115,13 +119,24 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
       Pular para o conteúdo
     </a>
 
-    <header class="fixed top-0 right-0 z-40 p-4 sm:p-6">
+    <header class="fixed top-0 right-0 z-40 flex items-start gap-2 p-4 sm:p-6">
+      <MenuEfeitos />
       <AlternarTema />
     </header>
 
     <main id="conteudo">
       <slot />
     </main>
+
+    {/* crédito exigido pela licença das texturas (CC BY 4.0) — vale para todas as páginas */}
+    <footer class="container-page pb-10">
+      <p class="max-w-2xl text-xs leading-relaxed text-ink-mute">
+        Fundo: texturas de
+        <a href="https://www.solarsystemscope.com/textures/" class="underline underline-offset-2 hover:text-ink" rel="noopener" target="_blank">Solar System Scope</a>
+        (CC BY 4.0, a partir de dados da NASA) e estrelas do Yale Bright Star Catalogue. Posições
+        dos planetas reais, calculadas para hoje.
+      </p>
+    </footer>
 
     <Analytics />
   </body>

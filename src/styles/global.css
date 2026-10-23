@@ -567,10 +567,27 @@ html[data-cena-viva] .btn-rede {
   background: rgb(var(--c-bg-raised) / 0.9);
 }
 
-/* No celular o texto ocupa a largura toda: véu por igual, sem o brilho do planeta
-   (ele encostava no texto do rodapé). */
+/* Celular: o texto ocupa a largura toda, então o véu é por igual — menos na FAIXA
+   DO TOPO (30% da tela), que fica livre para a cena e sobe junto com a página ao
+   rolar (--janela-vis vem de cena.js). O conteúdo começa abaixo dela; a reserva
+   existe desde o primeiro paint (classe tem-cena), então nada pula quando a cena liga. */
 @media (width < 48rem) {
   #nx-cena-veu {
     background: rgb(var(--c-bg) / 0.9);
+    mask-image: linear-gradient(
+      to bottom,
+      rgb(0 0 0 / 0.22) 0,
+      rgb(0 0 0 / 0.22) max(0px, calc(var(--janela-vis, 30svh) - 5svh)),
+      #000 calc(var(--janela-vis, 30svh) + 3svh)
+    );
+  }
+
+  html.tem-cena:not(.nx-cena-sem-gl) #conteudo {
+    padding-top: 30svh;
+  }
+
+  /* os botões do topo ficam sobre a faixa clara: piso para não sumirem na cena */
+  html[data-cena-viva] body > header button {
+    background: rgb(var(--c-bg-raised) / 0.9);
   }
 }
