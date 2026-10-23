@@ -577,8 +577,8 @@ html[data-cena-viva] .btn-rede {
     mask-image: linear-gradient(
       to bottom,
       rgb(0 0 0 / 0.22) 0,
-      rgb(0 0 0 / 0.22) max(0px, calc(var(--janela-vis, 30svh) - 5svh)),
-      #000 calc(var(--janela-vis, 30svh) + 3svh)
+      rgb(0 0 0 / 0.22) max(0px, calc(var(--janela-vis, 30svh) - 8svh)),
+      #000 var(--janela-vis, 30svh)
     );
   }
 
