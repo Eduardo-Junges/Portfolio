@@ -42,23 +42,24 @@ const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'o
 
 /**
  * Paleta de IDENTIDADE do app (utils/tons.py): um tom por assunto, que nunca é o
- * verde nem o vermelho de significado. `tx` é a cor do texto sobre a faixa no
- * tema escuro, calculada no app para passar AA.
+ * verde nem o vermelho de significado. `tx` e `txClaro` são a cor do texto sobre a
+ * faixa nos temas escuro e claro, calculadas no app para passar AA.
  */
 const TONS = {
-  azul: { base: '59,130,246', tx: '133,178,249', glifo: '⬡' },
-  rosa: { base: '236,72,153', tx: '243,142,192', glifo: '▼' },
-  indigo: { base: '99,102,241', tx: '165,166,247', glifo: '▲' },
-  roxo: { base: '139,92,246', tx: '188,160,250', glifo: '▤' },
-  ambar: { base: '245,158,11', tx: '247,175,55', glifo: '◐' },
-  ciano: { base: '6,182,212', tx: '76,202,224', glifo: '◈' },
-  laranja: { base: '249,115,22', tx: '251,160,97', glifo: '✦' },
-  ardosia: { base: '100,116,139', tx: '165,174,188', glifo: '▦' },
+  azul: { base: '59,130,246', tx: '133,178,249', txClaro: '42,94,177', glifo: '⬡' },
+  rosa: { base: '236,72,153', tx: '243,142,192', txClaro: '165,50,107', glifo: '▼' },
+  indigo: { base: '99,102,241', tx: '165,166,247', txClaro: '77,80,188', glifo: '▲' },
+  roxo: { base: '139,92,246', tx: '188,160,250', txClaro: '106,70,187', glifo: '▤' },
+  ambar: { base: '245,158,11', tx: '247,175,55', txClaro: '137,88,6', glifo: '◐' },
+  ciano: { base: '6,182,212', tx: '76,202,224', txClaro: '3,106,123', glifo: '◈' },
+  laranja: { base: '249,115,22', tx: '251,160,97', txClaro: '154,71,14', glifo: '✦' },
+  ardosia: { base: '100,116,139', tx: '165,174,188', txClaro: '82,95,114', glifo: '▦' },
 } as const;
 type Tom = keyof typeof TONS;
 
 const varsDoTom = (t: Tom) =>
-  ({ '--tom': TONS[t].base, '--tom-tx': `rgb(${TONS[t].tx})`, '--tom-glifo': `'${TONS[t].glifo}'` }) as CSSProperties;
+  ({ '--tom': TONS[t].base, '--tom-txe': `rgb(${TONS[t].tx})`, '--tom-txc': `rgb(${TONS[t].txClaro})`,
+    '--tom-glifo': `'${TONS[t].glifo}'` }) as CSSProperties;
 
 // NAV do app real: a barra lateral recolhida mostra só os ícones
 const NAV = [
@@ -400,7 +401,7 @@ function Medidor({
 
   return (
     <svg className="cht" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={descricao}>
-      <path d={`M ${ponto(180)} A ${r} ${r} 0 0 1 ${ponto(0)}`} fill="none" stroke="hsla(0,0%,100%,.08)" strokeWidth="9" strokeLinecap="round" />
+      <path d={`M ${ponto(180)} A ${r} ${r} 0 0 1 ${ponto(0)}`} fill="none" style={{ stroke: 'var(--nx-trilho)' }} strokeWidth="9" strokeLinecap="round" />
       <path d={`M ${ponto(180)} A ${r} ${r} 0 0 1 ${ponto(fim)}`} fill="none" stroke={cor} strokeWidth="9" strokeLinecap="round" />
       <text x={cx} y={cy - 6} textAnchor="middle" style={{ fontSize: 15, fontWeight: 700, fill: cor }}>
         {Math.round(pct)}%
@@ -663,7 +664,7 @@ function Calendario({ dias, inicio, fim, descricao }: { dias: Record<string, num
       const v = dias[iso] ?? 0;
       quad.push(
         <rect key={iso} x={sIdx * (cel + gap)} y={d * (cel + gap)} width={cel} height={cel} rx="2"
-          fill={v ? COR.vermelho : 'rgba(255,255,255,.06)'} opacity={v ? 0.25 + 0.75 * (v / max) : 1}>
+          fill={v ? COR.vermelho : 'var(--nx-trilho)'} opacity={v ? 0.25 + 0.75 * (v / max) : 1}>
           <title>{`${formatarData(iso)}: ${v ? fmt0(v) : 'sem gasto'}`}</title>
         </rect>
       );
@@ -751,7 +752,7 @@ function SvgRosca({ fatias }: { fatias: { v: number; cor: string }[] }) {
   let off = 0;
   return (
     <svg viewBox="0 0 104 104" width="64" height="64" aria-hidden="true" style={{ flex: 'none' }}>
-      <circle cx="52" cy="52" r={r} fill="none" stroke="rgba(255,255,255,.07)" strokeWidth={sw} />
+      <circle cx="52" cy="52" r={r} fill="none" style={{ stroke: 'var(--nx-trilho)' }} strokeWidth={sw} />
       {fatias.map((f, i) => {
         const frac = Math.max(0, f.v / tot);
         const el = (
@@ -1154,6 +1155,8 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
           --nx-red:rgb(var(--lm-red)); --nx-cyan:rgb(var(--lm-cyan));
           --nx-purple:rgb(var(--lm-purple)); --nx-amber:rgb(var(--lm-amber));
           --nx-surface:hsla(0,0%,100%,.045); --nx-line:hsla(0,0%,100%,.07); --nx-line2:hsla(0,0%,100%,.11);
+          --nx-trilho:hsla(0,0%,100%,.07); --nx-flut:rgb(15,21,34); --nx-grade:rgba(30,42,58,.75);
+          --nx-pilula:#f1f5f9; --nx-pilula-tx:#0f172a; --nx-faixa-a:.22;
           background:var(--nx-bg); border:1px solid var(--nx-line); border-radius:10px;
           overflow:hidden; font-family:'Inter Variable',system-ui,sans-serif;
           color:var(--nx-text); container-type:inline-size; font-size:11px;
@@ -1161,17 +1164,17 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
         /* layout 1.4.0: barra lateral e cabeçalho flutuantes, soltos da borda */
         .nx-shell { display:flex; gap:7px; padding:7px; }
         .nx-side { width:36px; flex-shrink:0; align-self:flex-start; display:flex; flex-direction:column; align-items:center;
-          gap:4px; padding:7px 0; border:1px solid var(--nx-line2); border-radius:12px; background:rgb(15,21,34); }
+          gap:4px; padding:7px 0; border:1px solid var(--nx-line2); border-radius:12px; background:var(--nx-flut); }
         .nx-logo { width:22px; height:22px; border-radius:50%; display:grid; place-items:center; margin-bottom:6px;
           font-size:10px; font-weight:800; color:#fff; background:radial-gradient(circle at 30% 30%,#2a3a5c,#0b1222);
           border:1px solid var(--nx-line2); }
         .nx-item { width:26px; height:26px; border-radius:8px; display:grid; place-items:center; background:none; border:0;
           cursor:pointer; font-family:inherit; font-size:11px; color:var(--nx-text3); transition:background .2s,color .2s; }
-        .nx-item:hover { background:hsla(0,0%,100%,.07); color:var(--nx-text); }
-        .nx-item.on { background:#f1f5f9; color:#0f172a; }
+        .nx-item:hover { background:var(--nx-trilho); color:var(--nx-text); }
+        .nx-item.on { background:var(--nx-pilula); color:var(--nx-pilula-tx); }
         .nx-main { flex:1; min-width:0; }
         .nx-hd { display:flex; align-items:center; gap:7px; min-height:36px; padding:5px 9px;
-          border:1px solid var(--nx-line2); border-radius:12px; background:rgb(15,21,34); }
+          border:1px solid var(--nx-line2); border-radius:12px; background:var(--nx-flut); }
         .nx-mod { width:21px; height:21px; border-radius:7px; flex-shrink:0; display:grid; place-items:center; font-size:10px;
           color:#fff; background:linear-gradient(135deg,rgba(var(--tom),1),rgba(var(--tom),.7)); }
         .nx-hd .t { font-size:10.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; white-space:nowrap; }
@@ -1226,14 +1229,14 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
         .nx-veredito.sec { opacity:.75; }
         /* faixa do bloco: tom do assunto, ícone e título em caixa alta */
         .nx-sec { font-size:8.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--tom-tx);
-          background:rgba(var(--tom),.22); border-bottom:1px solid rgba(var(--tom),.3); padding:5px 10px;
+          background:rgba(var(--tom),var(--nx-faixa-a)); border-bottom:1px solid rgba(var(--tom),.3); padding:5px 10px;
           display:flex; align-items:center; gap:6px; }
         .nx-sec::before { content:var(--tom-glifo); font-size:9px; }
         .nx-abas { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:8px; }
         .nx-aba { font-family:inherit; font-size:9.5px; font-weight:600; color:var(--nx-text3); background:transparent;
           border:1px solid var(--nx-line2); border-radius:999px; padding:3px 9px; cursor:pointer; }
         .nx-aba:hover { color:var(--nx-text); }
-        .nx-aba.on { background:#f1f5f9; color:#0f172a; border-color:#f1f5f9; }
+        .nx-aba.on { background:var(--nx-pilula); color:var(--nx-pilula-tx); border-color:var(--nx-pilula); }
         .nx-alertas { display:flex; flex-direction:column; gap:6px; }
         .nx-alerta { display:flex; align-items:center; gap:8px; padding:7px 9px; border-radius:8px;
           background:rgba(var(--tom),.1); border:1px solid rgba(var(--tom),.35); }
@@ -1246,22 +1249,22 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
         .nx-obj > div { border:1px solid var(--nx-line); border-radius:7px; padding:5px 7px; }
         .nx-obj span { display:block; font-size:8.5px; color:var(--nx-text2); }
         .nx-obj b { font-size:11px; font-variant-numeric:tabular-nums; }
-        .nx-prog { height:6px; border-radius:99px; background:hsla(0,0%,100%,.07); margin-top:8px; overflow:hidden; }
+        .nx-prog { height:6px; border-radius:99px; background:var(--nx-trilho); margin-top:8px; overflow:hidden; }
         .nx-prog i { display:block; height:100%; border-radius:99px; background:linear-gradient(90deg,rgb(249,115,22),rgb(251,160,97)); }
         .nx-calc { display:flex; align-items:center; gap:7px; margin-top:8px; font-size:9.5px; color:var(--nx-text3); }
-        .nx-calc input { font-family:inherit; font-size:9.5px; color:var(--nx-text); background:hsla(0,0%,100%,.05);
-          border:1px solid var(--nx-line2); border-radius:6px; padding:2px 5px; color-scheme:dark; }
+        .nx-calc input { font-family:inherit; font-size:9.5px; color:var(--nx-text); background:var(--nx-trilho);
+          border:1px solid var(--nx-line2); border-radius:6px; padding:2px 5px; color-scheme:var(--nx-esquema,dark); }
         .nx-lg { display:flex; gap:10px; margin-bottom:5px; flex-wrap:wrap; }
         .nx-lg span { display:inline-flex; align-items:center; gap:4px; font-size:8.5px; color:var(--nx-text3); }
         .nx-lg i { width:6px; height:6px; border-radius:50%; display:inline-block; }
         .cht { width:100%; height:auto; display:block; overflow:visible; }
         .cht text { font-size:7px; fill:var(--nx-text2); font-family:'Inter Variable',system-ui,sans-serif; }
-        .cht .gl { stroke:rgba(30,42,58,0.75); stroke-width:.6; }
+        .cht .gl { stroke:var(--nx-grade); stroke-width:.6; }
         .bar-row + .bar-row { margin-top:7px; }
         .bar-hd { display:flex; justify-content:space-between; gap:7px; font-size:10px; }
         .bar-hd .c { color:var(--nx-text3); }
         .bar-hd .v { color:var(--nx-text2); font-variant-numeric:tabular-nums; }
-        .bar-tk { margin-top:3px; height:4px; border-radius:99px; background:hsla(0,0%,100%,.05); overflow:hidden; }
+        .bar-tk { margin-top:3px; height:4px; border-radius:99px; background:var(--nx-trilho); overflow:hidden; }
         .bar-fl { height:100%; border-radius:99px; background:linear-gradient(90deg,var(--nx-blue),var(--nx-purple)); }
         .nx-tb { width:100%; border-collapse:collapse; font-size:10px; }
         .nx-tb th { text-align:left; font-weight:600; font-size:8px; letter-spacing:.5px;
@@ -1275,10 +1278,10 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
         .nx-tb .vl.neg { color:var(--nx-red); }
         .nx-tb .vl.inv { color:var(--nx-blue); }
         .nx-tag { display:inline-block; padding:1px 5px; border-radius:3px; font-size:8.5px;
-          background:hsla(0,0%,100%,.06); color:var(--nx-text2); white-space:nowrap; }
+          background:var(--nx-trilho); color:var(--nx-text2); white-space:nowrap; }
         .nx-scr { max-height:132px; overflow-y:auto; }
         .nx-scr::-webkit-scrollbar { width:5px; }
-        .nx-scr::-webkit-scrollbar-thumb { background:hsla(0,0%,100%,.14); border-radius:99px; }
+        .nx-scr::-webkit-scrollbar-thumb { background:var(--nx-trilho); border-radius:99px; }
         @container (max-width: 400px) { .nx-demo { display:none; } }
         .nx-voltar { background:none; border:1px solid var(--nx-line2); border-radius:999px; padding:2px 8px; cursor:pointer;
           font-family:inherit; font-size:9px; color:var(--nx-text3); white-space:nowrap; }
@@ -1295,7 +1298,7 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
         .hub-c:hover { border-color:var(--nx-blue); transform:translateY(-2px); }
         .hub-pv { flex:1; padding:10px 11px; display:flex; flex-direction:column; gap:6px; min-width:0; min-height:98px; }
         .hub-ft { display:flex; align-items:center; gap:7px; padding:7px 10px;
-          border-top:1px solid var(--nx-line); background:rgba(255,255,255,.025); }
+          border-top:1px solid var(--nx-line); background:var(--nx-trilho); }
         .hub-ic { width:22px; height:22px; border-radius:7px; display:grid; place-items:center; color:#fff;
           background:linear-gradient(135deg,rgba(var(--tom),1),rgba(var(--tom),.7)); font-size:10px; flex:none; }
         .hub-ft b { display:block; font-size:10.5px; }
@@ -1318,10 +1321,21 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
         .hub-row { display:flex; align-items:center; gap:6px; font-size:9px; }
         .hub-row .nm { color:var(--nx-text2); min-width:44px; white-space:nowrap; }
         .hub-row .vl { margin-left:auto; font-variant-numeric:tabular-nums; }
-        .hub-bar { flex:1; height:5px; border-radius:3px; background:rgba(255,255,255,.07); overflow:hidden; min-width:20px; }
+        .hub-bar { flex:1; height:5px; border-radius:3px; background:var(--nx-trilho); overflow:hidden; min-width:20px; }
         .hub-bar i { display:block; height:100%; border-radius:3px; }
         .hub-carts { display:flex; flex-direction:column; gap:6px; margin-top:auto; margin-bottom:auto; }
         .hub-pos { color:var(--nx-green); } .hub-neg { color:var(--nx-red); }
+        .nx [style] { --tom-tx:var(--tom-txe); }
+        /* tema claro do site: o tema "claro" do app (utils/layout.py) */
+        :root[data-theme='light'] .nx {
+          --lm-bg:232,236,243; --lm-text:23,32,46; --lm-text2:95,106,121; --lm-text3:60,72,90;
+          --lm-blue:29,99,214; --lm-green:5,140,98; --lm-purple:110,64,214;
+          --lm-red:206,42,42; --lm-cyan:8,140,166; --lm-amber:176,106,6;
+          --nx-surface:#fff; --nx-line:rgba(19,28,44,.12); --nx-line2:rgba(19,28,44,.18);
+          --nx-trilho:rgba(19,28,44,.08); --nx-flut:#f3f6fa; --nx-grade:rgba(19,28,44,.12);
+          --nx-pilula:#1e293b; --nx-pilula-tx:#fff; --nx-faixa-a:.16; --nx-esquema:light;
+        }
+        :root[data-theme='light'] .nx [style] { --tom-tx:var(--tom-txc); }
         @media (prefers-reduced-motion: reduce) { .nx * { transition:none !important; } }
       `}</style>
 
