@@ -22,4 +22,4 @@ export const ROTAS_DA_CENA: Record<string, string> = {
 };
 
 /** muda quando as texturas ou o motor mudarem — invalida o cache dos arquivos de /cena */
-export const VERSAO_CENA = '1';
+export const VERSAO_CENA = '2';
