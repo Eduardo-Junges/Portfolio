@@ -534,11 +534,13 @@ html {
     linear-gradient(
       90deg,
       rgb(var(--c-bg) / 0.9) 0,
-      rgb(var(--c-bg) / 0.9) var(--fim-texto),
-      rgb(var(--c-bg) / 0.72) calc(var(--fim-texto) + 6rem),
-      rgb(var(--c-bg) / 0.45) calc(var(--fim-texto) + 14rem),
-      rgb(var(--c-bg) / 0.26) calc(var(--fim-texto) + 22rem),
-      rgb(var(--c-bg) / 0.18) calc(var(--fim-texto) + 30rem)
+      rgb(var(--c-bg) / 0.9) calc(var(--fim-texto) - 4rem),
+      rgb(var(--c-bg) / 0.78) var(--fim-texto),
+      rgb(var(--c-bg) / 0.5) calc(var(--fim-texto) + 7rem),
+      rgb(var(--c-bg) / 0.28) calc(var(--fim-texto) + 15rem),
+      rgb(var(--c-bg) / 0.14) calc(var(--fim-texto) + 24rem),
+      rgb(var(--c-bg) / 0.07) calc(var(--fim-texto) + 34rem),
+      rgb(var(--c-bg) / 0.04) calc(var(--fim-texto) + 44rem)
     );
 }
 
@@ -553,11 +555,13 @@ html[data-cena-viva] #nx-cena-veu {
   background: linear-gradient(
     90deg,
     rgb(var(--c-bg) / 0.95) 0,
-    rgb(var(--c-bg) / 0.95) var(--fim-texto),
-    rgb(var(--c-bg) / 0.8) calc(var(--fim-texto) + 5rem),
-    rgb(var(--c-bg) / 0.5) calc(var(--fim-texto) + 13rem),
-    rgb(var(--c-bg) / 0.2) calc(var(--fim-texto) + 22rem),
-    rgb(var(--c-bg) / 0) calc(var(--fim-texto) + 32rem)
+    rgb(var(--c-bg) / 0.95) calc(var(--fim-texto) - 4rem),
+    rgb(var(--c-bg) / 0.8) var(--fim-texto),
+    rgb(var(--c-bg) / 0.46) calc(var(--fim-texto) + 7rem),
+    rgb(var(--c-bg) / 0.24) calc(var(--fim-texto) + 15rem),
+    rgb(var(--c-bg) / 0.1) calc(var(--fim-texto) + 24rem),
+    rgb(var(--c-bg) / 0.04) calc(var(--fim-texto) + 34rem),
+    rgb(var(--c-bg) / 0) calc(var(--fim-texto) + 44rem)
   );
 }
 
