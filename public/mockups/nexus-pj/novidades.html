@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="dark" data-efeitos="completo">
+  <head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<script>
+/* Mockup estático do Nexus & PJ (dados fictícios). Antes do primeiro paint:
+   ?embed = dentro do site (iframe), o tema acompanha o site; fora dele vale o
+   tema escolhido no próprio mockup. */
+(function () {
+  var d = document.documentElement, t = 'dark';
+  var embed = /[?&]embed\b/.test(location.search);
+  try { embed = embed || sessionStorage.getItem('mk-embed') === '1'; if (embed) sessionStorage.setItem('mk-embed', '1'); } catch (e) {}
+  if (embed) {
+    d.classList.add('mk-embed');
+    try { if (parent.document.documentElement.dataset.theme === 'light') t = 'light'; } catch (e) {}
+  } else {
+    try { if (localStorage.getItem('mk-tema') === 'light') t = 'light'; } catch (e) {}
+  }
+  d.setAttribute('data-theme', t);
+  // dentro do site o Dashboard aparece direto, sem a janela de boas-vindas por cima
+  if (embed) {
+    var abrir = HTMLDialogElement.prototype.showModal;
+    HTMLDialogElement.prototype.showModal = function () { if (this.id !== 'hmDlg') abrir.call(this); };
+  }
+  // o mockup não tem servidor: o que o app buscaria vira uma resposta curta
+  var buscar = window.fetch;
+  window.fetch = function (url, o) {
+    var u = String(url);
+    if (u.indexOf('/busca/previa') === 0)
+      return Promise.resolve(new Response('<div class="busca-vazio" style="padding:12px 14px">No mockup a busca não consulta dados. No app, aparecem aqui lançamentos, títulos e telas.</div>', { status: 200 }));
+    if (u.indexOf('/dashboard/dre/lancamentos') === 0)
+      return Promise.resolve(new Response('<tr><td colspan="40" style="padding:8px 14px;opacity:.8">No mockup os lançamentos não abrem. No app, aparecem aqui, um por linha.</td></tr>', { status: 200 }));
+    return buscar ? buscar.apply(this, arguments) : Promise.reject(new Error('sem fetch'));
+  };
+})();
+</script>
+<style>
+  .mk-aviso{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:10000;max-width:min(92vw,460px);
+    padding:10px 14px;border-radius:10px;background:#111827;color:#f3f4f6;border:1px solid rgba(255,255,255,.14);
+    font:500 13px/1.4 system-ui,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .18s}
+  .mk-aviso.on{opacity:1}
+  .mk-selo{position:fixed;right:14px;bottom:14px;z-index:9999;padding:6px 10px;border-radius:999px;font:600 11px/1 system-ui,sans-serif;
+    letter-spacing:.04em;background:rgba(17,24,39,.85);color:#e5e7eb;border:1px solid rgba(255,255,255,.14)}
+  .mk-embed .mk-selo{display:none}
+</style>
+
+    <title>Nexus &amp; PJ — mockup (/novidades)</title>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="static/css/tokens.css">
+    <link rel="stylesheet" href="static/css/vida.css">
+    <style>:root{--tom-azul:59,130,246;--tom-azul-tx:77,141,247;--tom-azul-ic:255,255,255;--tom-rosa:236,72,153;--tom-rosa-tx:238,87,161;--tom-rosa-ic:255,255,255;--tom-indigo:99,102,241;--tom-indigo-tx:127,130,244;--tom-indigo-ic:255,255,255;--tom-roxo:139,92,246;--tom-roxo-tx:158,118,247;--tom-roxo-ic:255,255,255;--tom-ambar:245,158,11;--tom-ambar-tx:245,158,11;--tom-ambar-ic:16,21,31;--tom-ciano:6,182,212;--tom-ciano-tx:6,182,212;--tom-ciano-ic:16,21,31;--tom-laranja:249,115,22;--tom-laranja-tx:249,115,22;--tom-laranja-ic:16,21,31;--tom-ardosia:100,116,139;--tom-ardosia-tx:129,142,161;--tom-ardosia-ic:255,255,255;--tom-alfa:0.16;}
+:root[data-theme="light"]{--tom-azul-tx:44,98,184;--tom-rosa-tx:175,53,113;--tom-indigo-tx:83,86,202;--tom-roxo-tx:113,75,199;--tom-ambar-tx:142,92,6;--tom-ciano-tx:4,111,129;--tom-laranja-tx:164,76,15;--tom-ardosia-tx:87,101,121;--tom-alfa:0.1;}
+.tom-azul{--tom:var(--tom-azul);--tom-tx:rgb(var(--tom-azul-tx));--tom-ic:rgb(var(--tom-azul-ic));}.tom-rosa{--tom:var(--tom-rosa);--tom-tx:rgb(var(--tom-rosa-tx));--tom-ic:rgb(var(--tom-rosa-ic));}.tom-indigo{--tom:var(--tom-indigo);--tom-tx:rgb(var(--tom-indigo-tx));--tom-ic:rgb(var(--tom-indigo-ic));}.tom-roxo{--tom:var(--tom-roxo);--tom-tx:rgb(var(--tom-roxo-tx));--tom-ic:rgb(var(--tom-roxo-ic));}.tom-ambar{--tom:var(--tom-ambar);--tom-tx:rgb(var(--tom-ambar-tx));--tom-ic:rgb(var(--tom-ambar-ic));}.tom-ciano{--tom:var(--tom-ciano);--tom-tx:rgb(var(--tom-ciano-tx));--tom-ic:rgb(var(--tom-ciano-ic));}.tom-laranja{--tom:var(--tom-laranja);--tom-tx:rgb(var(--tom-laranja-tx));--tom-ic:rgb(var(--tom-laranja-ic));}.tom-ardosia{--tom:var(--tom-ardosia);--tom-tx:rgb(var(--tom-ardosia-tx));--tom-ic:rgb(var(--tom-ardosia-ic));}
+.bloco{padding:0;overflow:hidden}
+.faixa{display:flex;align-items:center;gap:8px;padding:8px 14px;background:rgba(var(--tom),var(--tom-alfa));
+  border-bottom:1px solid rgba(var(--tom),.22);color:var(--tom-tx);font-size:11.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.06em}
+.faixa .faixa-ic{font-size:13px;line-height:1}
+.faixa .faixa-titulo{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.faixa .faixa-acoes{display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0;font-weight:500}
+.faixa .faixa-nota{font-weight:500;text-transform:none;letter-spacing:0;opacity:.95}
+.bloco-corpo{padding:14px 16px}
+.ind-card{padding:14px 16px;display:flex;gap:12px;align-items:flex-start}
+.ind-card .ind-ic{flex:0 0 auto;width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+  font-size:17px;background:linear-gradient(135deg,rgb(var(--tom)),rgba(var(--tom),.72));color:var(--tom-ic)}
+.ind-card .ind-txt{min-width:0;flex:1}
+.ind-card .ind-rotulo{font-size:var(--text-xs);color:var(--text-mute);text-transform:uppercase;letter-spacing:.04em}
+.ind-card .ind-valor{font-size:var(--text-2xl);font-weight:700;color:var(--text-100);line-height:1.2;margin-top:2px}
+.ind-card .ind-var{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:6px;font-size:var(--text-xs);color:var(--text-200)}
+.ind-card .chip{display:inline-flex;align-items:center;gap:3px;padding:1px 8px;border-radius:999px;font-weight:600;border:1px solid transparent}
+.ind-card .chip--bom{background:rgba(var(--green-rgb),.14);color:var(--green-text)}
+.ind-card .chip--ruim{background:rgba(var(--red-rgb),.14);color:var(--red-text)}
+.ind-card .chip--neutro{background:var(--overlay-1);color:var(--text-200)}
+.ind-card .ind-nota{font-size:var(--text-xs);color:var(--text-200);margin-top:6px}
+.subabas{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.subaba{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;font-size:12.5px;font-weight:600;
+  color:var(--text-200);background:var(--surface-1);border:1px solid var(--border-1);text-decoration:none;white-space:nowrap;
+  transition:background var(--dur-fast) ease,color var(--dur-fast) ease,border-color var(--dur-fast) ease}
+.subaba .sa-ic{font-size:13px;line-height:1;color:var(--tom-tx,var(--text-200))}
+.subaba:hover{color:var(--text-100);border-color:var(--line-strong)}
+.subaba:focus-visible{outline:2px solid var(--text-200);outline-offset:2px}
+.subaba.on{background:var(--text-100);color:var(--bg);border-color:transparent}
+.subaba.on .sa-ic{color:inherit}
+.mod-ic{flex:none;width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;
+  background:linear-gradient(135deg,rgb(var(--tom)),rgba(var(--tom),.72));color:var(--tom-ic)}
+.mod-periodo{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;font-size:12px;font-weight:600;
+  color:var(--text-200);border:1px solid var(--border-1);background:var(--surface-1);white-space:nowrap}
+@media (max-width:1100px){.mod-periodo{display:none}}
+</style>
+<script src="static/js/chegada.js"></script><script src="static/js/vida.js" defer></script>    <link rel="icon" type="image/png" href="static/branding/icone-dark.png">
+  </head>
+  <body>
+    <div id="appShell" class="shell">
+      
+      <div id="appSidebar" class="sidebar">
+        <div class="brand">
+<a href="index.html" class="brand-btn" title="Ir para o Dashboard"><img src="static/branding/icone-dark.png" alt="" class="brand-icon"><span class="brand-name">Nexus &amp; PJ</span></a>        </div>
+        <nav aria-label="Menu principal">
+          <div class="grp-label">Visão geral</div>
+<a href="index.html" data-label="Dashboard" class="navlink"><span class="nav-badge">⬡</span><span class="nav-label">Dashboard</span></a>          <div class="grp-label">Movimento</div>
+<a href="realizado.html" data-label="Fluxo de caixa" class="navlink"><span class="nav-badge">◧</span><span class="nav-label">Fluxo de caixa</span></a><a href="importar.html" data-label="Importar extrato" class="navlink"><span class="nav-badge">⇓</span><span class="nav-label">Importar extrato</span></a>          <div class="grp-label">Resultados</div>
+<a href="dre.html" data-label="Contábil" class="navlink"><span class="nav-badge">∑</span><span class="nav-label">Contábil</span></a><a href="orcamento.html" data-label="Orçamento" class="navlink"><span class="nav-badge">🎯</span><span class="nav-label">Orçamento</span></a>          <div class="grp-label">Entrega</div>
+<a href="relatorios.html" data-label="Relatórios" class="navlink"><span class="nav-badge">⎙</span><span class="nav-label">Relatórios</span></a>        </nav>
+<button type="button" aria-label="Recolher menu" aria-expanded="true" id="brandToggle" class="sb-borda" title="Recolher/expandir menu" name="brandToggle">‹</button>      </div>
+      <div class="main">
+        <div class="topbar">
+          <div class="title-wrap" style="display:flex;align-items:center;gap:10px;">
+<button type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="appSidebar" id="navAbrir" class="nav-hamb" name="navAbrir">☰</button>            <div class="tom-ardosia" style="display:flex;align-items:center;gap:10px;">
+<span aria-hidden="true" class="mod-ic">▦</span>            </div>
+            <div class="title">Novidades</div>
+<a href="sobre.html" class="voltar-cfg">← Sobre</a>          </div>
+          <div class="actions">
+            <div class="busca-wrap">
+<label class="topbar-ia"><span class="ia-emoji">🔎</span>                <input type="text" name="q" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="buscaPainel" aria-autocomplete="list" data-ia="1" placeholder="Pesquise um valor, nome ou data… ex.: 1200, pix fabricio — ou pergunte à IA" aria-label="Pesquisar no painel ou perguntar à IA" id="buscaInput">
+<kbd>/</kbd></label>              <div role="listbox" aria-label="Resultados da busca" hidden id="buscaPainel" class="busca-painel"></div>
+            </div>
+            <div id="userMenu" class="user-menu">
+<button type="button" onclick="document.getElementById('userMenu').classList.toggle('open')" class="user-menu-trigger">                <div class="av">E</div>
+                <div class="meta">
+                  <div class="name">Eduardo</div>
+                  <div class="role">ADM</div>
+                </div>
+<span class="chev">▾</span></button>              <div class="user-menu-panel">
+<a href="perfil.html" class="um-head" title="Abrir meu perfil" style="display:block;text-decoration:none;color:inherit;">                  <div class="name">Eduardo</div>
+                  <div class="role">eduardo@empresa.exemplo · Perfil ADM</div>
+</a>                <div class="um-row">
+<span>Tema</span><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="theme-switch">                    
+                    <input type="hidden" name="voltar" value="/sobre">
+<button type="submit" name="tema" value="claro">☀</button><button type="submit" name="tema" value="escuro" class="on">☾</button></form>                </div>
+                <div class="um-sep"></div>
+<a href="perfil.html" class="um-item">👤 Meu perfil</a><a href="configuracoes.html" class="um-item">⚙ Configurações</a>                <div class="um-sep"></div>
+<a href="sobre.html" class="um-item">ⓘ Sobre e versão</a><a href="#" data-mk-fora class="um-item">❔ Central de ajuda</a><a href="https://eduardo-junges.vercel.app/privacidade-nexus-pj" target="_blank" rel="noopener" class="um-item">🛡 Política de privacidade</a><a href="https://eduardo-junges.vercel.app/termos-nexus-pj" target="_blank" rel="noopener" class="um-item">📄 Contrato de licença</a>                <div class="um-sep"></div>
+<form enctype="multipart/form-data" method="post" action="#" data-mk-form>                  
+<button type="submit" class="um-item danger">⏻ Sair</button></form>              </div>
+            </div>
+          </div>
+        </div>
+        <div class="body">
+          <div>
+            <p style="color:var(--text-200);font-size:13.5px;">
+Você está na versão 2.5.0<span style="color:var(--text-mute);"> (código dad7a7c)</span>            </p>
+            <div class="card" style="margin-top:20px;">
+              <div class="section-head">
+                <h2>Versão 2.5.0 · 27/10/2026</h2>
+<span class="badge badge--green">instalada</span>              </div>
+              <div>
+                <h3 style="font-size:14px;margin:14px 0 6px;">Novo</h3>
+                <ul style="margin:0 0 0 18px;">
+                  <li style="margin:4px 0;"><b>Área Contábil:</b> DRE, Balancete e <b>Balanço patrimonial gerencial</b> viram abas de uma só área (&quot;Contábil&quot;, no menu lateral). O balanço mostra a posição da empresa em uma data (padrão: hoje) contra o fim do mês anterior: ativo (saldo dos bancos + contas a receber do Planejado), passivo (contas a pagar) e patrimônio líquido gerencial. Imobilizado, estoque, empréstimos e capital entram quando houver dado. Usa a permissão do Balancete.</li>
+                  <li style="margin:4px 0;"><b>Fechamento do mês dentro de Relatórios:</b> sai do menu lateral e de Configurações; passa a ser uma aba de Relatórios.</li>
+                  <li style="margin:4px 0;"><b>Relatórios personalizados:</b> em Relatórios, o bloco <b>Meus relatórios</b> deixa criar tipos de relatório próprios: de onde vêm os dados (lançamentos do extrato ou contas a pagar e a receber), as colunas, um agrupamento (categoria, subcategoria, loja, conta ou mês) e o movimento padrão. O relatório criado entra na lista, com prévia e os mesmos formatos de arquivo (PDF, Excel, CSV, TXT). Criar exige a ação <b>Criar relatórios personalizados</b> (liberada por perfil; ADM e DEV sempre têm); excluir é de quem criou ou de um ADM, com a justificativa.</li>
+                  <li style="margin:4px 0;"><b>Painel Resultado (DRE) no Dashboard:</b> o card da DRE abre um painel com receita bruta e líquida, lucro bruto, EBITDA de caixa e resultado (cada um com a variação contra o período anterior e as margens), mais gráficos: receita líquida × resultado mês a mês, margens, da receita ao resultado e despesas operacionais por linha. A tabela completa continua em Contábil › DRE. O saldo final de cada mês também virou gráfico no painel Fluxo de caixa; no Fluxo de caixa › Consolidado ficam só o saldo inicial de cada banco (cada um na sua cor) e, maior e à direita, o total.</li>
+                  <li style="margin:4px 0;"><b>Menu do seu nome:</b> Meu perfil (senha e verificação em duas etapas), Configurações, Sobre e versão (novidades e aviso de atualização), Central de ajuda, Política de privacidade e Termos de uso (abrem as páginas publicadas). Clicar no nome abre o Meu perfil.</li>
+                  <li style="margin:4px 0;"><b>Perfil Desenvolvedor (DEV):</b> só o dono do sistema. Faz tudo que o ADM faz e é o único que vê Saúde do sistema, WhatsApp, API e integrações e Auditoria. A conta DEV não aparece nem pode ser alterada por um ADM e não se cria pela tela: só pelo script <code>scripts/promover_dev.py</code>, no computador do servidor.</li>
+                  <li style="margin:4px 0;"><b>Senha com validade:</b> vence em 45 dias (30 para ADM e DEV). Nos 10 dias antes aparece um aviso em todas as telas; vencida, o login só deixa trocar a senha. Para trocar a senha é preciso digitar o código do 2FA.</li>
+                  <li style="margin:4px 0;"><b>2FA obrigatório:</b> quem ainda não ativou a verificação em duas etapas é levado a ativá-la no primeiro acesso (<code>NEXUS_CAIXA_2FA_OBRIGATORIO=nao</code> no <code>.env</code> desliga). O código é pedido só em aparelho novo e ao trocar a senha, não em todo login (<code>NEXUS_CAIXA_2FA_MODO=sempre</code> volta a pedir em todo login).</li>
+                  <li style="margin:4px 0;"><b>Máquina nova espera um ADM:</b> o primeiro acesso de um computador ou navegador novo (a partir do segundo aparelho do sistema) fica aguardando um ADM liberar em Configurações › Aparelhos, mesmo com o código do 2FA certo (<code>NEXUS_CAIXA_APARELHO_AUTO_2FA=sim</code> volta ao jeito antigo).</li>
+                  <li style="margin:4px 0;"><b>Cancelar com permissão e justificativa:</b> tudo que a plataforma deixa cancelar, excluir, desativar, revogar ou reabrir (título do Planejado, mês fechado, importação, usuário, categoria, conta, loja, regra de rateio, perfil, agente, orçamento, aparelho, WhatsApp, token da API, logo, tarefa da fila) exige a permissão <b>Cancelar, excluir, desativar e reabrir</b> (liberada por perfil em Perfis e permissões; ADM e DEV sempre têm) e uma <b>justificativa de até 15 linhas</b>, que vai para a Auditoria. Os lançamentos do extrato continuam sem poder ser cancelados.</li>
+                  <li style="margin:4px 0;"><b>Cancelar uma importação:</b> em Importar extrato, a importação enviada com o arquivo errado pode ser cancelada: os lançamentos dela são apagados e o arquivo certo pode ser enviado em seguida. É barrada se algum lançamento estiver em mês fechado, ligado a título baixado, a transferência confirmada ou a comprovante.</li>
+                  <li style="margin:4px 0;"><b>Excluir usuário:</b> o usuário some da lista e não entra mais (perde aparelhos, WhatsApp e tokens de API); a auditoria continua mostrando o que ele fez.</li>
+                </ul>
+              </div>
+              <div>
+                <h3 style="font-size:14px;margin:14px 0 6px;">Melhorado</h3>
+                <ul style="margin:0 0 0 18px;">
+                  <li style="margin:4px 0;"><b>Telas mais compactas:</b> em Importar extrato, o formulário fica à esquerda e o histórico à direita, na mesma tela; no Planejado, os filtros ficam na mesma linha das abas (sem o filtro de Subcategoria); o botão de recolher a barra lateral foi para baixo; as abas (Realizado | Planejado, Contábil, Relatórios | Fechamento, Auditoria | Vigia) ficam no canto superior esquerdo da página, não na barra do topo.</li>
+                  <li style="margin:4px 0;"><b>Tabelas legíveis:</b> títulos de coluna compridos quebram em duas ou mais linhas (em vez de ficar uma palavra por linha na primeira coluna), como no Comparativo do Balancete.</li>
+                  <li style="margin:4px 0;"><b>Efeitos automáticos:</b> os botões Completo/Reduzido/Desligado saíram do menu do usuário. O sistema é sempre completo e reduz sozinho em aparelho fraco ou quando mede quadros lentos (a medição vale por 7 dias).</li>
+                  <li style="margin:4px 0;"><b>QR code do 2FA</b> em quadrado branco com margem, legível no tema escuro.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card" style="margin-top:20px;">
+              <div class="section-head">
+                <h2>Versão 2.4.0 · 21/10/2026</h2>
+              </div>
+              <div>
+                <h3 style="font-size:14px;margin:14px 0 6px;">Novo</h3>
+                <ul style="margin:0 0 0 18px;">
+                  <li style="margin:4px 0;"><b>Plano de contas numerado:</b> cada categoria ganha um código (1 receitas, 2 despesas, 3 neutras; grupos 1.01, subcategorias 1.01.01), já preenchido para quem tem categorias. O código é editável em Categorias (para trocar pela numeração do contador) e a lista passa a seguir essa ordem. Categoria nova sem código ganha o próximo livre.</li>
+                  <li style="margin:4px 0;"><b>Balancete gerencial</b> (barra lateral e Relatórios): por conta do plano (código), o acumulado do ano até a véspera do período, as entradas, as saídas, o líquido do período e o acumulado no fim, com totais em negrito e o resultado do período. Embaixo, a <b>conferência com o saldo dos bancos</b>: a soma de todas as linhas tem que ser igual à variação do saldo das contas; se não fechar, mostra a diferença (costuma ser extrato faltando). O que está sem categoria aparece numa linha à parte.</li>
+                  <li style="margin:4px 0;"><b>Perfis e permissões configuráveis</b> (Configurações › Perfis e permissões): o ADM cria perfis de usuário (ex.: Contador, Gerente de loja) e marca, para cada tela, <b>Sem acesso, Ler ou Editar</b>, mais ações (baixar relatórios, aplicar sugestões da IA, definir o colchão, fechar mês). Dá para duplicar um perfil, desativar (se ninguém usa) e usar o atalho &quot;tudo só leitura&quot;. Já vem pronto o perfil <b>Contador</b> (lê painéis, DRE, balancete, relatórios, lançamentos e fechamento; baixa relatórios; não altera nada). Quem só lê recebe 403 em qualquer gravação, e os botões de editar não aparecem. Usuários, perfis, aparelhos, auditoria, API, empresa e sistema continuam só do ADM. O que cada perfil de hoje (Operador e Visualizador) consegue fazer não muda.</li>
+                  <li style="margin:4px 0;"><b>Fechamento do mês:</b> em Configurações › Fechamento do mês, quem tem a permissão fecha o mês já conferido (em ordem, nunca o mês corrente) e reabre o último com motivo. Depois de fechado, nenhuma alteração entra nos lançamentos dele: nem pela tela, nem pela IA, nem por importação (as linhas de mês fechado ficam de fora e o resumo avisa), nem por mudança de loja. Antes de fechar, um checklist mostra pendências (sem categoria, transferência sem par, quebra de saldo). Ao fechar, o <b>pacote oficial do contador</b> (DRE por caixa, balancete e extrato do mês, em PDF e Excel) fica guardado e pode ser baixado; mudanças posteriores de categoria ou rateio não alteram esse pacote.</li>
+                  <li style="margin:4px 0;"><b>Contas a pagar e a receber (aba Planejado):</b> cadastre o que ainda vai sair ou entrar, com vencimento, favorecido, categoria, loja e conta prevista, repetindo todo mês (mesmo valor) ou dividindo um valor total em parcelas. A lista mostra o que está vencido, o que vence nos próximos 30 dias e o saldo desses dias. Ao pagar, o sistema <b>sugere o lançamento do extrato</b> só quando há um candidato claro (mesmo valor e data perto do vencimento); com dúvida, você escolhe, ou marca como pago sem ligar. A baixa não altera o extrato. O que está em aberto entra na <b>projeção de 13 semanas</b> na data do vencimento, sem contar em dobro o que o histórico já indicava como fixo, e as contas a pagar vencendo em até 3 dias (ou vencidas) viram aviso do Vigia.</li>
+                  <li style="margin:4px 0;"><b>Orçamento × realizado</b> (barra lateral): defina uma meta mensal por categoria (grupo ou subcategoria), para a empresa toda ou por loja, só para um mês ou do mês escolhido até dezembro. A tela mostra o orçado, o realizado (com o rateio por loja já aplicado), a barra de consumo (nunca passa de 100%) e a situação: dentro do limite, perto do limite (90%), estourou, ou meta batida (nas receitas). Orçamento estourado ou perto do limite vira aviso do Vigia. <b>Comparativos:</b> a DRE por caixa e o Balancete ganham um bloco que compara o período com o anterior (mesmo tamanho) e com o mesmo período do ano passado, com a variação em ↗/↘. A permissão <b>Orçamento</b> entra na tela de Perfis (quem já via o Fluxo de caixa passa a poder ler).</li>
+                  <li style="margin:4px 0;"><b>Busca universal no campo do topo:</b> digite um valor (<code>1200</code> traz todos os lançamentos de R$ 1.200, entrada ou saída, e os títulos), palavras (<code>pix fabricio</code> traz os Pix com Fabricio, sem se importar com acento ou maiúscula), uma data (<code>12/10</code>) ou o nome de uma tela, categoria ou loja. A lista abre enquanto você digita (setas e Enter), &quot;Ver todos&quot; abre a página com a tabela e os totais, e Ctrl+Enter (ou uma pergunta, como &quot;quanto entrou esse mês?&quot;) manda para a IA. Cada pessoa só encontra o que o perfil dela pode ver.</li>
+                </ul>
+              </div>
+              <div>
+                <h3 style="font-size:14px;margin:14px 0 6px;">Melhorado</h3>
+                <ul style="margin:0 0 0 18px;">
+                  <li style="margin:4px 0;"><b>Planejado igual ao Realizado:</b> a aba Planejado agora é uma réplica do Realizado, com as duas abas <b>Lançamentos</b> (mesmos filtros, tabela, totais e paginação, com as contas a pagar e a receber por vencimento) e <b>Consolidado</b> (a previsão dia a dia ou por semana, mês, trimestre e ano, com as entradas e saídas por categoria e o <b>saldo previsto</b>: o saldo de hoje das contas mais o que entra e sai nos títulos em aberto). Para não confundir com o extrato, a tabela tem contorno âmbar e o valor aparece em itálico com o selo &quot;previsto&quot;. A situação <b>Vencido</b> (filtro e selo) mostra o que está em aberto e já passou do vencimento, com a linha contornada de vermelho. O formulário de lançar título à mão saiu da tela (os títulos virão do banco do sistema), mas fica guardado e pode ser religado.</li>
+                  <li style="margin:4px 0;"><b>Contorno colorido nas tabelas:</b> em vez de uma tarja, a tabela ganha a cor do assunto no contorno, mais forte: âmbar no Planejado e azul no Realizado e no Consolidado.</li>
+                  <li style="margin:4px 0;"><b>Revisão de segurança e de números (21/10/2026), antes do lançamento:</b> (1) a IA só grava em quem também pode editar a tela de destino, e as respostas e análises do Assistente só mostram números das telas que o perfil enxerga; (2) cada relatório só aparece e só baixa para quem lê a tela de que ele trata; (3) a janela de boas-vindas esconde o total do mês de quem não vê os painéis; (4) a projeção de 13 semanas troca só a ocorrência que um título cobre, em vez de apagar os meses seguintes; (5) mês reaberto volta a ter só a prévia do pacote (o oficial é o do mês fechado), e o checklist de fechamento olha só o mês; (6) o balancete e a DRE concordam quando uma subcategoria neutra fica sob um grupo comum; (7) valor digitado como <code>1.500</code> vale R$ 1.500, nunca R$ 1,50; (8) a busca não mostra a tela de login se a sessão expirar e não reabre o painel depois de fechado; (9) a migration de perfis não depende mais do código vivo e o downgrade volta ao estado antigo sem ampliar acessos.</li>
+                  <li style="margin:4px 0;"><b>Caixinha do valor nos gráficos:</b> passar o mouse (ou usar as setas) mostra o valor de cada série numa caixa em HTML, no modelo do Nexus Analytics, que não depende de animação e por isso aparece sempre; em gráficos de linha e coluna há também a linha de mira.</li>
+                  <li style="margin:4px 0;"><b>Aviso de atualização com repositório privado:</b> o erro &quot;o GitHub respondeu 404&quot; agora explica o motivo (repositório privado sem token de leitura, ou token sem acesso) e onde configurar (<code>NEXUS_ATUALIZACAO_TOKEN</code> no <code>.env</code>).</li>
+                  <li style="margin:4px 0;"><b>Planejado avisa títulos que parecem já pagos:</b> uma faixa conta os títulos em aberto que têm no extrato um lançamento claro que os paga, para você dar a baixa e a projeção de 13 semanas não contar duas vezes.</li>
+                  <li style="margin:4px 0;"><b>Visual novo (layout de módulos):</b> os blocos ganham uma faixa fina colorida com ícone e título, com um tom por assunto (que nunca usa o verde nem o vermelho de significado); os indicadores viram cartões com ícone, valor grande e a variação contra o período anterior; os painéis têm cabeçalho com ícone, título e período, e as abas viram pílulas com ícone (Realizado × Planejado, Lançamentos × Consolidado e Competência × Caixa usam o mesmo componente). A barra lateral fica flutuante, com contador real de lançamentos sem categoria, botão de recolher na borda (lembrado por usuário) e, no celular, vira uma gaveta. O Dashboard ganha os indicadores do mês, <b>alertas inteligentes</b> (caixa apertado, pendências, conciliação em dia; cada um só aparece para quem pode ver a tela) e o card da DRE. A Projeção e o Fluxo de caixa ganham o <b>ritmo do caixa</b>: o que já entrou e saiu no mês contra o esperado, com a barra de progresso e a frase das próximas 13 semanas.</li>
+                  <li style="margin:4px 0;"><b>Barra lateral flutuante:</b> a barra lateral sai da borda da tela (cantos arredondados, superfície sólida do tema), o item ativo fica em pílula, o botão de recolher fica na borda, o contador mostra os lançamentos sem categoria no Fluxo de caixa, o menu recolhido é lembrado por usuário e no celular ela vira uma gaveta (abre pelo botão ☰, fecha com Esc). Os painéis ganham cabeçalho com ícone, título e período, e as abas viram pílulas com ícone (os alternadores Realizado × Planejado, Lançamentos × Consolidado e Competência × Caixa usam o mesmo componente).</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card" style="margin-top:20px;">
+              <div class="section-head">
+                <h2>Versão 2.3.0 · 19/10/2026</h2>
+              </div>
+              <div>
+                <h3 style="font-size:14px;margin:14px 0 6px;">Novo</h3>
+                <ul style="margin:0 0 0 18px;">
+                  <li style="margin:4px 0;"><b>DRE</b> (barra lateral, com dois botões <b>Competência</b> e <b>Caixa</b>, iguais aos de Lançamentos e Consolidado) e <b>relatório DRE por caixa</b>. A DRE por <b>competência</b> ainda está em preparação: a tela lista os dados que faltam (estoque, faturamento, impostos apurados etc.). A DRE por <b>caixa</b>: as linhas da DRE (receita bruta, impostos sobre vendas, compras pagas, despesas operacionais, resultado operacional, resultado financeiro e resultado do período) com os <b>meses em colunas, agrupadas por ano</b>, e os totais em <b>negrito</b>. Cada linha abre em camadas, com recuo: <b>linha da DRE → grupo → subcategoria → lançamentos</b> (o lançamento aparece na coluna do seu mês). Use o ▸ ou Tab e Enter. Retirada de sócio, aporte e parcela de empréstimo ficam <b>fora</b> do resultado; o que está <b>a revisar</b> (sem categoria) também, numa linha à parte com o aviso. Vale a data do banco: receita de cartão vem líquida da taxa e as compras são as pagas no período. A DRE por competência virá depois, com Cielo, estoque e contador. PDF e Excel dos relatórios agora aceitam linhas em negrito e recuo.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card" style="margin-top:20px;">
+              <div class="section-head">
+                <h2>Versão 2.2.0 · 19/10/2026</h2>
+              </div>
+              <div>
+                <h3 style="font-size:14px;margin:14px 0 6px;">Novo</h3>
+                <ul style="margin:0 0 0 18px;">
+                  <li style="margin:4px 0;"><b>Cadastros completos:</b> todos com os dados importantes, validados na hora (CNPJ e CPF com dígito verificador, CEP, estado, telefone, e-mail).</li>
+                  <li style="margin:4px 0;"><b>Conta bancária:</b> código do banco, agência, conta com dígito, chave Pix, titular e CPF/CNPJ do titular, gerente e telefone, observações.</li>
+                  <li style="margin:4px 0;"><b>Loja:</b> razão social, CNPJ (não repete entre lojas), inscrição estadual, data de abertura, endereço completo, telefone, e-mail, responsável e observações.</li>
+                  <li style="margin:4px 0;"><b>Usuário:</b> cargo e telefone.</li>
+                  <li style="margin:4px 0;"><b>Empresa:</b> razão social, CNPJ, inscrição estadual, endereço e contato.</li>
+                  <li style="margin:4px 0;">Tudo é opcional para quem já tem cadastro: nada trava, e se completa quando quiser. Cada mudança fica na auditoria.</li>
+                  <li style="margin:4px 0;"><b>API de leitura</b> (desligada por padrão): em Configurações &gt; API e integrações o ADM liga a API e cria tokens por escopo (saldos, lançamentos, relatórios, projeção) para outros sistemas lerem os dados. Só leitura, tokens guardados só como hash, limite de pedidos e cada leitura na auditoria. A tela também mostra se as credenciais da Cielo estão preenchidas no <code>.env</code>. Guia em <code>docs/API.md</code>.</li>
+                  <li style="margin:4px 0;"><b>Aba Relatórios</b> (menu Operação): filtros num quadro à esquerda e a <b>prévia à direita, que se monta sozinha</b> a cada mudança de filtro; depois gere o arquivo em <b>PDF, Excel, CSV ou TXT</b>. PDF, Excel e TXT saem com o cabeçalho padrão: <b>nome da empresa</b> no topo, título, período e filtros usados, <b>data de geração e quem gerou</b>. O CSV leva só os dados, para entrar direto em outra planilha. Os sete relatórios iniciais usam os mesmos números das telas: extrato, fluxo de caixa diário, entradas por origem, despesas por grupo, resultado por loja, conciliação e projeção de 13 semanas. Cada geração fica na auditoria.</li>
+                  <li style="margin:4px 0;"><b>Empresa e logo</b> (Configurações &gt; Administração): o nome da empresa (que sai no topo dos relatórios) e o logo da tela de entrada. O logo enviado é conferido e regravado; sem ele vale o logo padrão.</li>
+                  <li style="margin:4px 0;"><b>Próximas 13 semanas</b> (nova aba nos painéis): projeção semana a semana do saldo das contas, com o que se repete todo mês (aluguel, contratos, folha), a média das vendas e das saídas variáveis, e um <b>colchão mínimo</b> que o ADM define. É estimativa pelo histórico, não promessa.</li>
+                  <li style="margin:4px 0;"><b>Avisos novos:</b> serviço de preço fixo que ficou mais caro, pagamento alto para um favorecido que nunca apareceu e semana de caixa apertado. Aparecem nos Insights e o Vigia leva por mensagem (uma vez por mês cada).</li>
+                </ul>
+              </div>
+              <div>
+                <h3 style="font-size:14px;margin:14px 0 6px;">Melhorado</h3>
+                <ul style="margin:0 0 0 18px;">
+                  <li style="margin:4px 0;"><b>Entrada pela galáxia:</b> a tela de login (e as de 2º fator, troca de senha e aparelho) ganha uma galáxia ao fundo. Ao entrar, a câmera mergulha até o Sol e o painel abre num círculo de luz; erro de senha aparece no cartão sem recarregar. Sem JavaScript ou sem WebGL, a tela continua como sempre.</li>
+                  <li style="margin:4px 0;"><b>Efeitos por usuário:</b> no menu do usuário, ao lado do tema, escolha <b>Completo</b>, <b>Reduzido</b> ou <b>Desligado</b>. &quot;Reduzir movimento&quot; do sistema vale como Desligado.</li>
+                  <li style="margin:4px 0;"><b>Dados com vida (discreto):</b> a borda dos cartões acende sob o cursor, os KPIs contam na primeira tela depois do login, os cartões entram ao rolar e os gráficos se desenham com a mesma curva. Nada passa do valor real.</li>
+                  <li style="margin:4px 0;"><b>Ler o dado:</b> os gráficos têm linha de mira, funcionam pelo teclado (setas) e trazem <b>Ver como tabela</b>; a variação mostra seta e número.</li>
+                  <li style="margin:4px 0;"><b>Comprovantes em PDF (base pronta, sem tela):</b> o sistema já sabe ler valor, data e beneficiário de um comprovante e ligá-lo ao lançamento do extrato — só sozinho quando não há dúvida. Não há aba para isso: o comprovante vai chegar pelo WhatsApp e ser tratado por baixo dos panos (próximo passo). O nome de quem recebeu, quando existe, aparece no Fluxo de caixa.</li>
+                  <li style="margin:4px 0;"><b>Origem da categoria e medidor de acerto:</b> cada lançamento passa a lembrar se a categoria veio de uma regra da importação, de você ou da IA, e a Saúde do sistema mostra quanto das categorias automáticas você deixou como estavam. Lançamentos antigos ficam sem origem registrada.</li>
+                  <li style="margin:4px 0;"><b>Projeção de 13 semanas mais fiel:</b> vendas do dia a dia com o mesmo rótulo entram pela média semanal (e não como uma parcela fixa num dia só).</li>
+                  <li style="margin:4px 0;">Quando uma regra de aviso quebra, o log registra o nome da regra e o tipo do erro (nunca valor nem descrição).</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card" style="margin-top:20px;">
+              <div class="section-head">
+                <h2>Versão 2.1.0 · 15/10/2026</h2>
+              </div>
+              <div>
+                <h3 style="font-size:14px;margin:14px 0 6px;">Novo</h3>
+                <ul style="margin:0 0 0 18px;">
+                  <li style="margin:4px 0;"><b>Lojas e regras de rateio.</b> Cadastre as lojas, defina a loja padrão de cada conta, escolha a loja de um lançamento e crie regras como &quot;quando aparecer aluguel, dividir 60% / 40% entre duas lojas&quot;. Os painéis já mostram os valores por loja, com o rateio aplicado.</li>
+                  <li style="margin:4px 0;"><b>Grade padrão de categorias</b> com subcategorias e regras automáticas, pronta em toda instalação nova. Cada cliente edita, desativa ou acrescenta. Regras aceitam <code>*</code> (começa com) e <code>!</code> (prioritária).</li>
+                  <li style="margin:4px 0;"><b>Natureza fixa × variável</b> nas categorias, usada no ponto de equilíbrio.</li>
+                  <li style="margin:4px 0;"><b>Painéis do dashboard:</b> Fluxo de caixa (com fluxo diário e saldo das contas), Conciliação, Vendas, Despesas e Lojas, cada um com abas, período com atalhos e filtro de loja.</li>
+                  <li style="margin:4px 0;"><b>Sugestão de transferência entre contas:</b> quando uma conta fica no vermelho e outra tem saldo, o sistema sugere quanto mover; marque uma conta principal para absorver o que faltar.</li>
+                  <li style="margin:4px 0;"><b>Tela Novidades</b> (esta) e número de versão no sistema.</li>
+                  <li style="margin:4px 0;"><b>Instalação guiada:</b> numa instalação nova, a própria tela pede o primeiro administrador (com um código que está num arquivo no servidor, para ninguém de fora tomar o sistema) e já cria a grade padrão de categorias.</li>
+                  <li style="margin:4px 0;"><b>Aviso de atualização opcional</b> (desligado por padrão): em Configurações &gt; Sobre, o ADM pode ligar a consulta que só lê o número da última versão no GitHub e mostra uma faixa quando há versão nova. Não envia nenhum dado do sistema.</li>
+                  <li style="margin:4px 0;"><b>Ambiente de testes</b> separado da produção, com faixa vermelha e atalho próprio.</li>
+                  <li style="margin:4px 0;"><b>Assistente com IA local</b> (desligado por padrão) e <b>canal WhatsApp</b> pela API oficial (desligado até configurar), sempre com confirmação antes de qualquer alteração.</li>
+                  <li style="margin:4px 0;"><b>Saúde do sistema, backup diário com teste de restauração e atualizador com volta atrás automática</b>, agora também &quot;ir para a versão X&quot; (<code>--versao 2.1.0</code>) em instalações clonadas do GitHub.</li>
+                </ul>
+              </div>
+              <div>
+                <h3 style="font-size:14px;margin:14px 0 6px;">Melhorado</h3>
+                <ul style="margin:0 0 0 18px;">
+                  <li style="margin:4px 0;"><b>Leitura de extratos mais robusta:</b> linhas que só informam saldo não viram lançamento; extrato do mais novo para o mais antigo é gravado em ordem; PDF consolidado com sinal no fim e sufixo D/C; o mesmo mês em PDF e planilha não duplica.</li>
+                  <li style="margin:4px 0;"><b>Contraste de texto acessível</b> (WCAG AA) nos temas claro e escuro.</li>
+                  <li style="margin:4px 0;"><b>Filtros no topo</b> de cada painel, deixando mais espaço para os dados.</li>
+                </ul>
+              </div>
+              <div>
+                <h3 style="font-size:14px;margin:14px 0 6px;">Corrigido</h3>
+                <ul style="margin:0 0 0 18px;">
+                  <li style="margin:4px 0;">Duas planilhas de períodos vizinhos não derrubam mais lançamentos verdadeiros um do outro.</li>
+                  <li style="margin:4px 0;">Fechamento do saldo conferido linha a linha em cada importação.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card" style="margin-top:20px;">
+              <div class="section-head">
+                <h2>Versão 2.0.0</h2>
+              </div>
+              <div>
+                <h3 style="font-size:14px;margin:14px 0 6px;">Novo</h3>
+                <ul style="margin:0 0 0 18px;">
+                  <li style="margin:4px 0;">Versão base: importação de extratos (OFX, planilha e PDF), categorias e regras, dashboard, usuários e perfis, aparelhos aprovados, verificação em duas etapas, trilha de auditoria e vigia de acesso.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="navTooltip"></div>
+      <div id="navOverlay" class="nav-overlay"></div>
+<script>document.addEventListener('click',function(e){var m=document.getElementById('userMenu');if(m&&!m.contains(e.target))m.classList.remove('open');});</script><script>(function(){var shell=document.getElementById('appShell');var chave='nx-menu-1';var btn=document.getElementById('brandToggle');function marca(){if(btn){var rec=shell.classList.contains('sidebar-collapsed');btn.setAttribute('aria-expanded',rec?'false':'true');btn.setAttribute('aria-label',rec?'Expandir menu':'Recolher menu');btn.textContent=rec?'›':'‹';}}try{if(localStorage.getItem(chave)==='1')shell.classList.add('sidebar-collapsed');}catch(e){}marca();if(btn)btn.onclick=function(){shell.classList.toggle('sidebar-collapsed');marca();try{localStorage.setItem(chave,shell.classList.contains('sidebar-collapsed')?'1':'0');}catch(e){}};var abrir=document.getElementById('navAbrir'),over=document.getElementById('navOverlay'),barra=document.getElementById('appSidebar');function gaveta(a){shell.classList.toggle('nav-aberta',a);if(abrir)abrir.setAttribute('aria-expanded',a?'true':'false');if(a){var p=barra.querySelector('a');if(p)p.focus();}else if(abrir){abrir.focus();}}if(abrir)abrir.onclick=function(){gaveta(true);};if(over)over.onclick=function(){gaveta(false);};document.addEventListener('keydown',function(e){if(e.key==='Escape'&&shell.classList.contains('nav-aberta'))gaveta(false);if(e.key==='Tab'&&shell.classList.contains('nav-aberta')){var f=barra.querySelectorAll('a,button');if(!f.length)return;var a=f[0],z=f[f.length-1];if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus();}else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus();}}});var tip=document.getElementById('navTooltip');document.querySelectorAll('.navlink').forEach(function(a){a.addEventListener('mouseenter',function(){var recolhida=shell.classList.contains('sidebar-collapsed')&&window.innerWidth>780;if(!recolhida)return;var r=a.getBoundingClientRect();tip.textContent=a.getAttribute('data-label');tip.style.left=(r.right+10)+'px';tip.style.top=(r.top+r.height/2-14)+'px';tip.classList.add('on');});a.addEventListener('mouseleave',function(){tip.classList.remove('on');});});})();</script><script src="static/js/busca.js" defer></script>    </div>
+  <div class="mk-aviso" id="mkAviso" role="status" aria-live="polite"></div>
+<a class="mk-selo" href="login.html" title="Ver a tela de entrada">Mockup · dados fictícios</a>
+<script>
+(function () {
+  var d = document.documentElement, caixa = document.getElementById('mkAviso'), relogio;
+  function avisar(t) {
+    caixa.textContent = t; caixa.classList.add('on');
+    clearTimeout(relogio); relogio = setTimeout(function () { caixa.classList.remove('on'); }, 2600);
+  }
+  function tema(t) {
+    d.setAttribute('data-theme', t);
+    try { if (!d.classList.contains('mk-embed')) localStorage.setItem('mk-tema', t); } catch (e) {}
+    document.querySelectorAll('.theme-switch button[name=tema]').forEach(function (b) {
+      b.classList.toggle('on', (b.value === 'claro') === (t === 'light'));
+    });
+  }
+  tema(d.getAttribute('data-theme'));
+  // dentro do site, o tema acompanha o alternador do site
+  if (d.classList.contains('mk-embed')) try {
+    new MutationObserver(function () { tema(parent.document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'); })
+      .observe(parent.document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  } catch (e) {}
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[data-mk-fora]');
+    if (a) { e.preventDefault(); avisar('Esta tela fica só no app. O mockup mostra as principais.'); return; }
+    var b = e.target.closest('.theme-switch button[name=tema]');
+    if (b) { e.preventDefault(); tema(b.value === 'claro' ? 'light' : 'dark'); }
+  }, true);
+  document.addEventListener('submit', function (e) {
+    var f = e.target.closest('form[data-mk-form]');
+    if (!f) return;
+    e.preventDefault();
+    if (f.querySelector('button[name=tema]')) return;
+    if (f.querySelector('input[name=senha]')) { location.href = 'index.html'; return; }
+    avisar(f.method === 'get' ? 'No mockup os filtros não mudam os dados. No app, a tela recalcula na hora.' : 'Mockup: nada é gravado. No app, isto salva e fica na auditoria.');
+  }, true);
+})();
+</script>
+
+</body>
+</html>

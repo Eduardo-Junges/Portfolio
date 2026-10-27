@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="dark" data-efeitos="completo">
+  <head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<script>
+/* Mockup estático do Nexus & PJ (dados fictícios). Antes do primeiro paint:
+   ?embed = dentro do site (iframe), o tema acompanha o site; fora dele vale o
+   tema escolhido no próprio mockup. */
+(function () {
+  var d = document.documentElement, t = 'dark';
+  var embed = /[?&]embed\b/.test(location.search);
+  try { embed = embed || sessionStorage.getItem('mk-embed') === '1'; if (embed) sessionStorage.setItem('mk-embed', '1'); } catch (e) {}
+  if (embed) {
+    d.classList.add('mk-embed');
+    try { if (parent.document.documentElement.dataset.theme === 'light') t = 'light'; } catch (e) {}
+  } else {
+    try { if (localStorage.getItem('mk-tema') === 'light') t = 'light'; } catch (e) {}
+  }
+  d.setAttribute('data-theme', t);
+  // dentro do site o Dashboard aparece direto, sem a janela de boas-vindas por cima
+  if (embed) {
+    var abrir = HTMLDialogElement.prototype.showModal;
+    HTMLDialogElement.prototype.showModal = function () { if (this.id !== 'hmDlg') abrir.call(this); };
+  }
+  // o mockup não tem servidor: o que o app buscaria vira uma resposta curta
+  var buscar = window.fetch;
+  window.fetch = function (url, o) {
+    var u = String(url);
+    if (u.indexOf('/busca/previa') === 0)
+      return Promise.resolve(new Response('<div class="busca-vazio" style="padding:12px 14px">No mockup a busca não consulta dados. No app, aparecem aqui lançamentos, títulos e telas.</div>', { status: 200 }));
+    if (u.indexOf('/dashboard/dre/lancamentos') === 0)
+      return Promise.resolve(new Response('<tr><td colspan="40" style="padding:8px 14px;opacity:.8">No mockup os lançamentos não abrem. No app, aparecem aqui, um por linha.</td></tr>', { status: 200 }));
+    return buscar ? buscar.apply(this, arguments) : Promise.reject(new Error('sem fetch'));
+  };
+})();
+</script>
+<style>
+  .mk-aviso{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:10000;max-width:min(92vw,460px);
+    padding:10px 14px;border-radius:10px;background:#111827;color:#f3f4f6;border:1px solid rgba(255,255,255,.14);
+    font:500 13px/1.4 system-ui,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .18s}
+  .mk-aviso.on{opacity:1}
+  .mk-selo{position:fixed;right:14px;bottom:14px;z-index:9999;padding:6px 10px;border-radius:999px;font:600 11px/1 system-ui,sans-serif;
+    letter-spacing:.04em;background:rgba(17,24,39,.85);color:#e5e7eb;border:1px solid rgba(255,255,255,.14)}
+  .mk-embed .mk-selo{display:none}
+</style>
+
+    <title>Nexus &amp; PJ — mockup (/relatorios)</title>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="static/css/tokens.css">
+    <link rel="stylesheet" href="static/css/vida.css">
+    <style>:root{--tom-azul:59,130,246;--tom-azul-tx:77,141,247;--tom-azul-ic:255,255,255;--tom-rosa:236,72,153;--tom-rosa-tx:238,87,161;--tom-rosa-ic:255,255,255;--tom-indigo:99,102,241;--tom-indigo-tx:127,130,244;--tom-indigo-ic:255,255,255;--tom-roxo:139,92,246;--tom-roxo-tx:158,118,247;--tom-roxo-ic:255,255,255;--tom-ambar:245,158,11;--tom-ambar-tx:245,158,11;--tom-ambar-ic:16,21,31;--tom-ciano:6,182,212;--tom-ciano-tx:6,182,212;--tom-ciano-ic:16,21,31;--tom-laranja:249,115,22;--tom-laranja-tx:249,115,22;--tom-laranja-ic:16,21,31;--tom-ardosia:100,116,139;--tom-ardosia-tx:129,142,161;--tom-ardosia-ic:255,255,255;--tom-alfa:0.16;}
+:root[data-theme="light"]{--tom-azul-tx:44,98,184;--tom-rosa-tx:175,53,113;--tom-indigo-tx:83,86,202;--tom-roxo-tx:113,75,199;--tom-ambar-tx:142,92,6;--tom-ciano-tx:4,111,129;--tom-laranja-tx:164,76,15;--tom-ardosia-tx:87,101,121;--tom-alfa:0.1;}
+.tom-azul{--tom:var(--tom-azul);--tom-tx:rgb(var(--tom-azul-tx));--tom-ic:rgb(var(--tom-azul-ic));}.tom-rosa{--tom:var(--tom-rosa);--tom-tx:rgb(var(--tom-rosa-tx));--tom-ic:rgb(var(--tom-rosa-ic));}.tom-indigo{--tom:var(--tom-indigo);--tom-tx:rgb(var(--tom-indigo-tx));--tom-ic:rgb(var(--tom-indigo-ic));}.tom-roxo{--tom:var(--tom-roxo);--tom-tx:rgb(var(--tom-roxo-tx));--tom-ic:rgb(var(--tom-roxo-ic));}.tom-ambar{--tom:var(--tom-ambar);--tom-tx:rgb(var(--tom-ambar-tx));--tom-ic:rgb(var(--tom-ambar-ic));}.tom-ciano{--tom:var(--tom-ciano);--tom-tx:rgb(var(--tom-ciano-tx));--tom-ic:rgb(var(--tom-ciano-ic));}.tom-laranja{--tom:var(--tom-laranja);--tom-tx:rgb(var(--tom-laranja-tx));--tom-ic:rgb(var(--tom-laranja-ic));}.tom-ardosia{--tom:var(--tom-ardosia);--tom-tx:rgb(var(--tom-ardosia-tx));--tom-ic:rgb(var(--tom-ardosia-ic));}
+.bloco{padding:0;overflow:hidden}
+.faixa{display:flex;align-items:center;gap:8px;padding:8px 14px;background:rgba(var(--tom),var(--tom-alfa));
+  border-bottom:1px solid rgba(var(--tom),.22);color:var(--tom-tx);font-size:11.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.06em}
+.faixa .faixa-ic{font-size:13px;line-height:1}
+.faixa .faixa-titulo{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.faixa .faixa-acoes{display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0;font-weight:500}
+.faixa .faixa-nota{font-weight:500;text-transform:none;letter-spacing:0;opacity:.95}
+.bloco-corpo{padding:14px 16px}
+.ind-card{padding:14px 16px;display:flex;gap:12px;align-items:flex-start}
+.ind-card .ind-ic{flex:0 0 auto;width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+  font-size:17px;background:linear-gradient(135deg,rgb(var(--tom)),rgba(var(--tom),.72));color:var(--tom-ic)}
+.ind-card .ind-txt{min-width:0;flex:1}
+.ind-card .ind-rotulo{font-size:var(--text-xs);color:var(--text-mute);text-transform:uppercase;letter-spacing:.04em}
+.ind-card .ind-valor{font-size:var(--text-2xl);font-weight:700;color:var(--text-100);line-height:1.2;margin-top:2px}
+.ind-card .ind-var{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:6px;font-size:var(--text-xs);color:var(--text-200)}
+.ind-card .chip{display:inline-flex;align-items:center;gap:3px;padding:1px 8px;border-radius:999px;font-weight:600;border:1px solid transparent}
+.ind-card .chip--bom{background:rgba(var(--green-rgb),.14);color:var(--green-text)}
+.ind-card .chip--ruim{background:rgba(var(--red-rgb),.14);color:var(--red-text)}
+.ind-card .chip--neutro{background:var(--overlay-1);color:var(--text-200)}
+.ind-card .ind-nota{font-size:var(--text-xs);color:var(--text-200);margin-top:6px}
+.subabas{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.subaba{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;font-size:12.5px;font-weight:600;
+  color:var(--text-200);background:var(--surface-1);border:1px solid var(--border-1);text-decoration:none;white-space:nowrap;
+  transition:background var(--dur-fast) ease,color var(--dur-fast) ease,border-color var(--dur-fast) ease}
+.subaba .sa-ic{font-size:13px;line-height:1;color:var(--tom-tx,var(--text-200))}
+.subaba:hover{color:var(--text-100);border-color:var(--line-strong)}
+.subaba:focus-visible{outline:2px solid var(--text-200);outline-offset:2px}
+.subaba.on{background:var(--text-100);color:var(--bg);border-color:transparent}
+.subaba.on .sa-ic{color:inherit}
+.mod-ic{flex:none;width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;
+  background:linear-gradient(135deg,rgb(var(--tom)),rgba(var(--tom),.72));color:var(--tom-ic)}
+.mod-periodo{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;font-size:12px;font-weight:600;
+  color:var(--text-200);border:1px solid var(--border-1);background:var(--surface-1);white-space:nowrap}
+@media (max-width:1100px){.mod-periodo{display:none}}
+</style>
+<script src="static/js/chegada.js"></script><script src="static/js/vida.js" defer></script>    <link rel="icon" type="image/png" href="static/branding/icone-dark.png">
+  </head>
+  <body>
+    <div id="appShell" class="shell">
+      
+      <div id="appSidebar" class="sidebar">
+        <div class="brand">
+<a href="index.html" class="brand-btn" title="Ir para o Dashboard"><img src="static/branding/icone-dark.png" alt="" class="brand-icon"><span class="brand-name">Nexus &amp; PJ</span></a>        </div>
+        <nav aria-label="Menu principal">
+          <div class="grp-label">Visão geral</div>
+<a href="index.html" data-label="Dashboard" class="navlink"><span class="nav-badge">⬡</span><span class="nav-label">Dashboard</span></a>          <div class="grp-label">Movimento</div>
+<a href="realizado.html" data-label="Fluxo de caixa" class="navlink"><span class="nav-badge">◧</span><span class="nav-label">Fluxo de caixa</span></a><a href="importar.html" data-label="Importar extrato" class="navlink"><span class="nav-badge">⇓</span><span class="nav-label">Importar extrato</span></a>          <div class="grp-label">Resultados</div>
+<a href="dre.html" data-label="Contábil" class="navlink"><span class="nav-badge">∑</span><span class="nav-label">Contábil</span></a><a href="orcamento.html" data-label="Orçamento" class="navlink"><span class="nav-badge">🎯</span><span class="nav-label">Orçamento</span></a>          <div class="grp-label">Entrega</div>
+<a href="relatorios.html" data-label="Relatórios" aria-current="page" class="navlink active"><span class="nav-badge">⎙</span><span class="nav-label">Relatórios</span></a>        </nav>
+<button type="button" aria-label="Recolher menu" aria-expanded="true" id="brandToggle" class="sb-borda" title="Recolher/expandir menu" name="brandToggle">‹</button>      </div>
+      <div class="main">
+        <div class="topbar">
+          <div class="title-wrap" style="display:flex;align-items:center;gap:10px;">
+<button type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="appSidebar" id="navAbrir" class="nav-hamb" name="navAbrir">☰</button>            <div class="tom-ardosia" style="display:flex;align-items:center;gap:10px;">
+<span aria-hidden="true" class="mod-ic">⎙</span>            </div>
+            <div class="title">Relatórios</div>
+          </div>
+          <div class="actions">
+            <div class="busca-wrap">
+<label class="topbar-ia"><span class="ia-emoji">🔎</span>                <input type="text" name="q" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="buscaPainel" aria-autocomplete="list" data-ia="1" placeholder="Pesquise um valor, nome ou data… ex.: 1200, pix fabricio — ou pergunte à IA" aria-label="Pesquisar no painel ou perguntar à IA" id="buscaInput">
+<kbd>/</kbd></label>              <div role="listbox" aria-label="Resultados da busca" hidden id="buscaPainel" class="busca-painel"></div>
+            </div>
+            <div id="userMenu" class="user-menu">
+<button type="button" onclick="document.getElementById('userMenu').classList.toggle('open')" class="user-menu-trigger">                <div class="av">E</div>
+                <div class="meta">
+                  <div class="name">Eduardo</div>
+                  <div class="role">ADM</div>
+                </div>
+<span class="chev">▾</span></button>              <div class="user-menu-panel">
+<a href="perfil.html" class="um-head" title="Abrir meu perfil" style="display:block;text-decoration:none;color:inherit;">                  <div class="name">Eduardo</div>
+                  <div class="role">eduardo@empresa.exemplo · Perfil ADM</div>
+</a>                <div class="um-row">
+<span>Tema</span><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="theme-switch">                    
+                    <input type="hidden" name="voltar" value="/relatorios">
+<button type="submit" name="tema" value="claro">☀</button><button type="submit" name="tema" value="escuro" class="on">☾</button></form>                </div>
+                <div class="um-sep"></div>
+<a href="perfil.html" class="um-item">👤 Meu perfil</a><a href="configuracoes.html" class="um-item">⚙ Configurações</a>                <div class="um-sep"></div>
+<a href="sobre.html" class="um-item">ⓘ Sobre e versão</a><a href="#" data-mk-fora class="um-item">❔ Central de ajuda</a><a href="https://eduardo-junges.vercel.app/privacidade-nexus-pj" target="_blank" rel="noopener" class="um-item">🛡 Política de privacidade</a><a href="https://eduardo-junges.vercel.app/termos-nexus-pj" target="_blank" rel="noopener" class="um-item">📄 Contrato de licença</a>                <div class="um-sep"></div>
+<form enctype="multipart/form-data" method="post" action="#" data-mk-form>                  
+<button type="submit" class="um-item danger">⏻ Sair</button></form>              </div>
+            </div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="pagina-modo">
+            <div role="navigation" aria-label="Relatórios e fechamento" class="subabas">
+<a href="relatorios.html" aria-current="page" class="subaba on"><span aria-hidden="true" class="sa-ic">⎙</span>Relatórios</a><a href="fechamento.html" class="subaba"><span aria-hidden="true" class="sa-ic">🔒</span>Fechamento do mês</a>            </div>
+            <div>
+              <div class="rel-layout">
+                <div>
+                  <div class="card rel-filtros">
+<form enctype="multipart/form-data" method="post" action="#" data-mk-form class="rel-form">                      
+                      <div class="rel-grade">
+                        <div class="field full">
+<label>Relatório</label><select name="relatorio" data-usa='{"dre_caixa": ["periodo", "loja"], "balancete": ["periodo", "loja"], "extrato": ["periodo", "loja", "conta", "categoria", "sinal", "a_revisar"], "fluxo_caixa_diario": ["periodo", "loja"], "entradas_por_origem": ["periodo", "loja"], "despesas_por_grupo": ["periodo", "loja"], "resultado_por_loja": ["periodo"], "conciliacao": ["periodo", "loja"], "projecao_13_semanas": []}' data-desc='{"dre_caixa": "Receitas, custos, despesas e resultado do per\u00edodo pelo que entrou e saiu das contas.", "balancete": "Por conta do plano: acumulado do ano, movimento do per\u00edodo e acumulado, com a confer\u00eancia com o saldo dos bancos.", "extrato": "Todos os lan\u00e7amentos do per\u00edodo, com categoria, loja e saldo.", "fluxo_caixa_diario": "Entradas, sa\u00eddas, resultado e saldo das contas, dia a dia.", "entradas_por_origem": "De onde veio o dinheiro: vendas por tipo e outras receitas.", "despesas_por_grupo": "Para onde foi o dinheiro, por grupo de categoria, e o que fugiu do padr\u00e3o.", "resultado_por_loja": "Receita, despesa e margem de cada loja, com o rateio aplicado.", "conciliacao": "Lan\u00e7amentos a revisar, quebras de saldo e \u00faltimo lan\u00e7amento de cada conta.", "projecao_13_semanas": "Saldo previsto semana a semana, com o colch\u00e3o m\u00ednimo."}' id="rel-escolha" class="input"><option value="dre_caixa" selected>DRE por caixa</option><option value="balancete">Balancete gerencial</option><option value="extrato">Extrato de lançamentos</option><option value="fluxo_caixa_diario">Fluxo de caixa diário</option><option value="entradas_por_origem">Entradas por origem</option><option value="despesas_por_grupo">Despesas por grupo</option><option value="resultado_por_loja">Resultado por loja</option><option value="conciliacao">Conciliação por conta</option><option value="projecao_13_semanas">Projeção das próximas 13 semanas</option></select>                          <p id="rel-desc" class="text-mute rel-desc">Receitas, custos, despesas e resultado do período pelo que entrou e saiu das contas.</p>
+                        </div>
+                        <div data-filtro="periodo" class="field">
+<label>De</label>                          <input type="date" name="data_de" value="2026-10-01" class="input">
+                        </div>
+                        <div data-filtro="periodo" class="field">
+<label>Até</label>                          <input type="date" name="data_ate" value="2026-10-27" class="input">
+                        </div>
+                        <div data-filtro="loja" class="field">
+<label>Loja</label><select name="loja" class="input"><option value="">Todas as lojas</option><option value="1">Loja Centro (fictícia)</option><option value="2">Loja Norte (fictícia)</option><option value="3">Loja Sul (fictícia)</option><option value="sem">Sem loja</option></select>                        </div>
+                        <div data-filtro="conta" class="field">
+<label>Conta</label><select name="conta" class="input"><option value="">Todas as contas</option><option value="1">Banco Alfa (fictício)</option><option value="2">Banco Beta (fictício)</option><option value="3">Banco Gama (fictício)</option></select>                        </div>
+                        <div data-filtro="categoria" class="field">
+<label>Categoria</label><select name="categoria" class="input"><option value="">Todas</option><option value="48">Administrativas</option><option value="40">   Aluguel</option><option value="2">   Aplicação</option><option value="31">   Benefícios</option><option value="64">   Combustível</option><option value="54">Comerciais</option><option value="56">   Comissões</option><option value="41">   Condomínio</option><option value="49">   Contabilidade</option><option value="5">Devolução Pix</option><option value="67">   Distribuição de lucros</option><option value="23">   Embalagens</option><option value="30">   Encargos (INSS/FGTS)</option><option value="45">   Energia</option><option value="58">Financeiras</option><option value="20">Fornecedores</option><option value="24">   Fretes</option><option value="29">   Férias/13º</option><option value="35">   ICMS</option><option value="60">   IOF</option><option value="42">   IPTU</option><option value="36">   ISS</option><option value="33">Impostos</option><option value="22">   Insumos</option><option value="61">   Juros/multas</option><option value="53">   Jurídico</option><option value="43">   Manutenção</option><option value="65">   Manutenção</option><option value="55">   Marketing</option><option value="51">   Material de escritório</option><option value="21">   Mercadoria p/ revenda</option><option value="69">Movimentações internas</option><option value="39">Ocupação</option><option value="62">   Parcela de empréstimo</option><option value="38">   Parcelamentos</option><option value="26">Pessoal</option><option value="28">   Pró-labore</option><option value="32">   Rescisões</option><option value="70">   Resgate</option><option value="68">   Retirada pessoal</option><option value="66">Retiradas</option><option value="27">   Salários</option><option value="52">   Seguros</option><option value="25">   Serviços de terceiros</option><option value="34">   Simples/DAS</option><option value="50">   Sistemas</option><option value="59">   Tarifas bancárias</option><option value="57">   Taxa de maquininha</option><option value="37">   Taxas e licenças</option><option value="47">   Telefone/internet</option><option value="1">   Transferência entre contas</option><option value="44">Utilidades</option><option value="63">Veículos</option><option value="46">   Água/saneamento</option><option value="13">   Aporte de sócio</option><option value="9">   Boleto</option><option value="7">   Cartão de crédito</option><option value="8">   Cartão de débito</option><option value="10">   Crediário</option><option value="11">Depósitos</option><option value="19">   Estornos recebidos</option><option value="16">   Juros recebidos</option><option value="17">Outras receitas</option><option value="14">   Outros</option><option value="4">   Pix</option><option value="15">Receitas financeiras</option><option value="18">   Reembolsos</option><option value="3">   Rendimentos</option><option value="12">   Venda</option><option value="6">Vendas</option></select>                        </div>
+                        <div data-filtro="sinal" class="field">
+<label>Movimento</label><select name="sinal" class="input"><option value="todas" selected>Entradas e saídas</option><option value="entradas">Só entradas</option><option value="saidas">Só saídas</option></select>                        </div>
+                        <div data-filtro="a_revisar" class="field full">
+<label>Só a revisar</label>                          <div class="rel-check">
+                            <input type="checkbox" name="a_revisar" value="1" id="rel-revisar">
+<label for="rel-revisar">lançamentos sem categoria</label>                          </div>
+                        </div>
+                      </div>
+                      <div class="rel-acoes">
+                        <div class="field">
+<label>Formato do arquivo</label><select name="formato" class="input"><option value="pdf" selected>PDF</option><option value="xlsx">Excel (.xlsx)</option><option value="csv">CSV</option><option value="txt">TXT</option></select>                        </div>
+<button type="submit" name="acao" value="gerar" class="btn btn--primary">Gerar arquivo</button>                      </div>
+</form>                  </div>
+                  <div class="card" style="margin-top:14px;padding:12px 14px;">
+                    <div class="section-head">
+                      <h2>Meus relatórios</h2>
+                    </div>
+                    <p class="text-mute" style="font-size:12.5px;">Nenhum relatório personalizado ainda.</p>
+<details style="margin-top:10px;"><summary class="btn btn--secondary btn--sm">＋ Novo relatório personalizado</summary><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="form-motivo">                        
+                        <div class="field">
+<label>Nome</label>                          <input name="nome" required minlength="3" maxlength="80" placeholder="ex.: Despesas por loja" class="input">
+                        </div>
+                        <div class="field">
+<label>Descrição (opcional)</label>                          <input name="descricao" maxlength="200" class="input">
+                        </div>
+                        <div class="field">
+<label>De onde vêm os dados</label><select name="fonte" class="input"><option value="extrato">Lançamentos do extrato (realizado)</option><option value="titulos">Contas a pagar e a receber (planejado)</option></select>                        </div>
+                        <div class="field">
+<label>Agrupar</label><select name="agrupar" class="input"><option value="">Sem agrupar (uma linha por registro)</option><option value="categoria">Por categoria</option><option value="subcategoria">Por subcategoria</option><option value="loja">Por loja</option><option value="conta">Por conta</option><option value="mes">Por mês</option></select>                          <p class="text-mute" style="font-size:11.5px;margin:4px 0 0;">Agrupando, o relatório mostra uma linha por grupo (registros, entradas, saídas e resultado) e ignora as colunas.</p>
+                        </div>
+                        <div class="field">
+<label>Colunas — lançamentos do extrato</label>                          <div style="display:flex;flex-wrap:wrap;gap:4px 14px;">
+                            <div class="rel-check">
+                              <input type="checkbox" name="coluna" value="data" checked id="c-e-data">
+<label for="c-e-data">Data</label>                            </div>
+                            <div class="rel-check">
+                              <input type="checkbox" name="coluna" value="conta" id="c-e-conta">
+<label for="c-e-conta">Conta</label>                            </div>
+                            <div class="rel-check">
+                              <input type="checkbox" name="coluna" value="descricao" checked id="c-e-descricao">
+<label for="c-e-descricao">Descrição</label>                            </div>
+                            <div class="rel-check">
+                              <input type="checkbox" name="coluna" value="categoria" id="c-e-categoria">
+<label for="c-e-categoria">Categoria</label>                            </div>
+                            <div class="rel-check">
+                              <input type="checkbox" name="coluna" value="subcategoria" id="c-e-subcategoria">
+<label for="c-e-subcategoria">Subcategoria</label>                            </div>
+                            <div class="rel-check">
+                              <input type="checkbox" name="coluna" value="loja" id="c-e-loja">
+<label for="c-e-loja">Loja</label>                            </div>
+                            <div class="rel-check">
+                              <input type="checkbox" name="coluna" value="valor" checked id="c-e-valor">
+<label for="c-e-valor">Valor</label>                            </div>
+                            <div class="rel-check">
+                              <input type="checkbox" name="coluna" value="saldo" id="c-e-saldo">
+<label for="c-e-saldo">Saldo</label>                            </div>
+                          </div>
+                        </div>
+                        <div class="field">
+<label>Colunas — contas a pagar e a receber</label>                          <div style="display:flex;flex-wrap:wrap;gap:4px 14px;">
+                            <div class="rel-check">
+                              <input type="checkbox" name="coluna" value="vencimento" checked id="c-t-vencimento">
+<label for="c-t-vencimento">Vencimento</label>                            </div>
+                            <div class="rel-check">
+                              <input type="checkbox" name="coluna" value="descricao" checked id="c-t-descricao">
+<label for="c-t-descricao">Descrição</label>                            </div>
+                            <div class="rel-check">
+                              <input type="checkbox" name="coluna" value="favorecido" id="c-t-favorecido">
+<label for="c-t-favorecido">Favorecido</label>                            </div>
+                            <div class="rel-check">
+                              <input type="checkbox" name="coluna" value="tipo" id="c-t-tipo">
+<label for="c-t-tipo">Tipo</label>                            </div>
+                            <div class="rel-check">
+                              <input type="checkbox" name="coluna" value="categoria" id="c-t-categoria">
+<label for="c-t-categoria">Categoria</label>                            </div>
+                            <div class="rel-check">
+                              <input type="checkbox" name="coluna" value="subcategoria" id="c-t-subcategoria">
+<label for="c-t-subcategoria">Subcategoria</label>                            </div>
+                            <div class="rel-check">
+                              <input type="checkbox" name="coluna" value="loja" id="c-t-loja">
+<label for="c-t-loja">Loja</label>                            </div>
+                            <div class="rel-check">
+                              <input type="checkbox" name="coluna" value="conta" id="c-t-conta">
+<label for="c-t-conta">Conta</label>                            </div>
+                            <div class="rel-check">
+                              <input type="checkbox" name="coluna" value="valor" checked id="c-t-valor">
+<label for="c-t-valor">Valor</label>                            </div>
+                            <div class="rel-check">
+                              <input type="checkbox" name="coluna" value="situacao" id="c-t-situacao">
+<label for="c-t-situacao">Situação</label>                            </div>
+                          </div>
+                        </div>
+                        <div class="field">
+<label>Movimento padrão</label><select name="sinal" class="input"><option value="todas">Entradas e saídas</option><option value="entradas">Só entradas</option><option value="saidas">Só saídas</option></select>                        </div>
+                        <div class="field">
+<label>Títulos (só para contas a pagar e a receber)</label><select name="situacao" class="input"><option value="aberto">Em aberto</option><option value="pago">Pagos</option><option value="todas">Todas (menos canceladas)</option></select>                        </div>
+<button type="submit" class="btn btn--primary btn--sm" style="margin-top:10px;">Criar relatório</button></form></details>                  </div>
+                </div>
+                <div id="rel-previa" class="card rel-previa">
+                  <p class="text-mute">Montando a prévia…</p>
+                </div>
+              </div>
+<script>(function(){var s=document.getElementById('rel-escolha');if(!s)return;var usa=JSON.parse(s.getAttribute('data-usa'));var desc=JSON.parse(s.getAttribute('data-desc'));var d=document.getElementById('rel-desc');function ajusta(){var u=usa[s.value]||[];document.querySelectorAll('[data-filtro]').forEach(function(e){e.hidden=u.indexOf(e.getAttribute('data-filtro'))<0;});if(d)d.textContent=desc[s.value]||'';}s.addEventListener('change',ajusta);ajusta();})();</script>            </div>
+          </div>
+        </div>
+      </div>
+      <div id="navTooltip"></div>
+      <div id="navOverlay" class="nav-overlay"></div>
+<script>document.addEventListener('click',function(e){var m=document.getElementById('userMenu');if(m&&!m.contains(e.target))m.classList.remove('open');});</script><script>(function(){var shell=document.getElementById('appShell');var chave='nx-menu-1';var btn=document.getElementById('brandToggle');function marca(){if(btn){var rec=shell.classList.contains('sidebar-collapsed');btn.setAttribute('aria-expanded',rec?'false':'true');btn.setAttribute('aria-label',rec?'Expandir menu':'Recolher menu');btn.textContent=rec?'›':'‹';}}try{if(localStorage.getItem(chave)==='1')shell.classList.add('sidebar-collapsed');}catch(e){}marca();if(btn)btn.onclick=function(){shell.classList.toggle('sidebar-collapsed');marca();try{localStorage.setItem(chave,shell.classList.contains('sidebar-collapsed')?'1':'0');}catch(e){}};var abrir=document.getElementById('navAbrir'),over=document.getElementById('navOverlay'),barra=document.getElementById('appSidebar');function gaveta(a){shell.classList.toggle('nav-aberta',a);if(abrir)abrir.setAttribute('aria-expanded',a?'true':'false');if(a){var p=barra.querySelector('a');if(p)p.focus();}else if(abrir){abrir.focus();}}if(abrir)abrir.onclick=function(){gaveta(true);};if(over)over.onclick=function(){gaveta(false);};document.addEventListener('keydown',function(e){if(e.key==='Escape'&&shell.classList.contains('nav-aberta'))gaveta(false);if(e.key==='Tab'&&shell.classList.contains('nav-aberta')){var f=barra.querySelectorAll('a,button');if(!f.length)return;var a=f[0],z=f[f.length-1];if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus();}else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus();}}});var tip=document.getElementById('navTooltip');document.querySelectorAll('.navlink').forEach(function(a){a.addEventListener('mouseenter',function(){var recolhida=shell.classList.contains('sidebar-collapsed')&&window.innerWidth>780;if(!recolhida)return;var r=a.getBoundingClientRect();tip.textContent=a.getAttribute('data-label');tip.style.left=(r.right+10)+'px';tip.style.top=(r.top+r.height/2-14)+'px';tip.classList.add('on');});a.addEventListener('mouseleave',function(){tip.classList.remove('on');});});})();</script><script src="static/js/busca.js" defer></script>    </div>
+  <div class="mk-aviso" id="mkAviso" role="status" aria-live="polite"></div>
+<a class="mk-selo" href="login.html" title="Ver a tela de entrada">Mockup · dados fictícios</a>
+<script>
+(function () {
+  var d = document.documentElement, caixa = document.getElementById('mkAviso'), relogio;
+  function avisar(t) {
+    caixa.textContent = t; caixa.classList.add('on');
+    clearTimeout(relogio); relogio = setTimeout(function () { caixa.classList.remove('on'); }, 2600);
+  }
+  function tema(t) {
+    d.setAttribute('data-theme', t);
+    try { if (!d.classList.contains('mk-embed')) localStorage.setItem('mk-tema', t); } catch (e) {}
+    document.querySelectorAll('.theme-switch button[name=tema]').forEach(function (b) {
+      b.classList.toggle('on', (b.value === 'claro') === (t === 'light'));
+    });
+  }
+  tema(d.getAttribute('data-theme'));
+  // dentro do site, o tema acompanha o alternador do site
+  if (d.classList.contains('mk-embed')) try {
+    new MutationObserver(function () { tema(parent.document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'); })
+      .observe(parent.document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  } catch (e) {}
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[data-mk-fora]');
+    if (a) { e.preventDefault(); avisar('Esta tela fica só no app. O mockup mostra as principais.'); return; }
+    var b = e.target.closest('.theme-switch button[name=tema]');
+    if (b) { e.preventDefault(); tema(b.value === 'claro' ? 'light' : 'dark'); }
+  }, true);
+  document.addEventListener('submit', function (e) {
+    var f = e.target.closest('form[data-mk-form]');
+    if (!f) return;
+    e.preventDefault();
+    if (f.querySelector('button[name=tema]')) return;
+    if (f.querySelector('input[name=senha]')) { location.href = 'index.html'; return; }
+    avisar(f.method === 'get' ? 'No mockup os filtros não mudam os dados. No app, a tela recalcula na hora.' : 'Mockup: nada é gravado. No app, isto salva e fica na auditoria.');
+  }, true);
+})();
+</script>
+
+</body>
+</html>

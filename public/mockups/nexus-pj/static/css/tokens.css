@@ -1,0 +1,938 @@
+/* ==========================================================================
+   Nexus Caixa — Design System (tokens.css) — v2 (com tema claro/escuro)
+   --------------------------------------------------------------------------
+   Origem dos tokens:
+   - ESTRUTURA (raio, elevação, sombra, motion, tipografia, componentes):
+     hub.asimov.academy (Tailwind v4 compilado) — sem cor de marca deles.
+   - CORES: extraídas do site real de um cliente-piloto (inspecionado
+     logado/via CSS computado):
+       · Ink (preto quase puro) #1e1f20 — cor de texto/logo/botão "COMPRAR" do site.
+       · Branco — fundo do site.
+       · Vermelho #f13131 — cor FIXA usada nas etiquetas de desconto
+         (`.tag-offer-bg`) em toda a loja. É a única cor saturada e consistente
+         da marca (o amarelo/laranja do banner da home é arte de campanha
+         sazonal — não é token de marca, por isso não entrou aqui).
+     Verde/roxo/ciano/âmbar continuam os do Nexus original — o cliente-piloto
+     não tem essas cores na identidade, então não havia o que "pegar" pra
+     elas; ficam
+     mantidas por precisar de mais de 2 cores pra diferenciar categoria/gráfico.
+   - TEMA: --ink é reativo ao tema (preto no claro, quase-branco no escuro) —
+     é a tradução correta de uma marca "preto & branco" pra um app com dois
+     temas (preto/branco sozinhos não funcionam como "accent" em tema escuro).
+     --red é FIXO nos dois temas (funciona em cima de claro ou escuro) e fica
+     reservado pra despesa/perigo/alerta — nunca pra ação primária neutra,
+     pra não confundir "botão" com "número de despesa".
+   Ver docs/design-system/DESIGN_SYSTEM.md para o detalhamento.
+   ========================================================================== */
+
+:root, :root[data-theme="dark"] {
+  /* preto neutro de verdade (sem tom azulado) — coerente com o preto/branco do
+     cliente-piloto; não é mais o navy #0a0e1a do Nexus original */
+  --bg: #000000;
+  --bg-2: #0a0a0a;
+  --surface-1: #121212;
+  --surface-2: #0d0d0d;
+  --border-1: #232323;
+  --border-2: rgba(255, 255, 255, .06);
+
+  --text-100: #f4f4f5;
+  --text-200: #a1a1aa;
+  --text-mute: #7c7c85;        /* era #71717a (3,9–4,4:1); ≥ 4,5:1 — contraste P0, 11/10/2026 */
+
+  --ink: #f4f4f5;              /* accent primário no escuro: quase-branco */
+  --ink-contrast: #14161a;     /* texto em cima de botão --ink */
+
+  --overlay-1: rgba(255, 255, 255, .04);
+  --overlay-2: rgba(255, 255, 255, .05);
+  --overlay-3: rgba(255, 255, 255, .08);
+  --line-soft: rgba(255, 255, 255, .10);
+  --line-strong: rgba(255, 255, 255, .22);
+
+  --shadow-card: inset 0 1px 0 rgba(255, 255, 255, .05), 0 14px 36px -20px rgba(0, 0, 0, .55);
+  --shadow-card-hover: inset 0 1px 0 rgba(255, 255, 255, .08), 0 22px 48px -18px rgba(0, 0, 0, .62);
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, .30);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, .40);
+
+  --ring: 0 0 0 2px rgba(244, 244, 245, .35);
+
+  /* cor de TEXTO de dinheiro/estado (contraste P0, 11/10/2026) — no escuro
+     verde/âmbar/ciano cheios já passam no AA; vermelho/azul/roxo clareiam um
+     pouco; ver DESIGN_SYSTEM.md */
+  --green-text: var(--green);
+  --red-text: #f35252;         /* item 3: vermelho/azul/roxo cheios ficavam 3,9–4,4:1 */
+  --amber-text: var(--amber);
+  --cyan-text: var(--cyan);
+  --purple-text: #9e76f8;
+  --blue-text: #4b8cf6;
+}
+
+:root[data-theme="light"] {
+  --bg: #ffffff;
+  --bg-2: #f7f7f7;
+  --surface-1: #ffffff;
+  --surface-2: #f5f5f6;
+  --border-1: #e1e1e1;         /* borda real do site do cliente-piloto */
+  --border-2: rgba(0, 0, 0, .06);
+
+  --text-100: #1e1f20;         /* ink real do cliente-piloto */
+  --text-200: #55575c;
+  --text-mute: #6d6f74;        /* era #8a8d93 (3,0–3,3:1); ≥ 4,6:1 — contraste P0, 11/10/2026 */
+
+  --ink: #1e1f20;              /* accent primário no claro: preto do cliente-piloto */
+  --ink-contrast: #ffffff;
+
+  --overlay-1: rgba(0, 0, 0, .03);
+  --overlay-2: rgba(0, 0, 0, .05);
+  --overlay-3: rgba(0, 0, 0, .08);
+  --line-soft: rgba(0, 0, 0, .08);
+  --line-strong: rgba(0, 0, 0, .18);
+
+  --shadow-card: inset 0 1px 0 rgba(255, 255, 255, .7), 0 10px 24px -16px rgba(0, 0, 0, .16);
+  --shadow-card-hover: inset 0 1px 0 rgba(255, 255, 255, .8), 0 16px 32px -14px rgba(0, 0, 0, .20);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, .06);
+  --shadow-md: 0 6px 16px rgba(0, 0, 0, .08);
+
+  --ring: 0 0 0 2px rgba(30, 31, 32, .22);
+
+  /* cor de TEXTO no claro: mesmo tom, mais escuro, ≥ 4,6:1 inclusive sobre o
+     fundo tingido do crachá (tests/test_contraste.py) */
+  --green-text: #0a714e;
+  --red-text: #b42424;
+  --amber-text: #8e5b07;
+  --cyan-text: #046e81;
+  --purple-text: #6d43cc;
+  --blue-text: #2b5fb4;
+}
+
+:root {
+  /* ── Cores fixas (não mudam com o tema) ─────────────────────────────── */
+  --red: #f13131; --red-rgb: 241, 49, 49;         /* cliente-piloto — etiqueta de desconto */
+  --green: #10b981; --green-rgb: 16, 185, 129;    /* Nexus — não existe no cliente-piloto */
+  --purple: #8b5cf6; --purple-rgb: 139, 92, 246;  /* Nexus — não existe no cliente-piloto */
+  --cyan: #06b6d4; --cyan-rgb: 6, 182, 212;       /* Nexus — não existe no cliente-piloto */
+  --amber: #f59e0b; --amber-rgb: 245, 158, 11;    /* Nexus — não existe no cliente-piloto */
+  --blue: #3b82f6; --blue-rgb: 59, 130, 246;      /* mantida p/ compat. (gráficos) */
+
+  /* Semântica financeira (fixa — não muda por tela nem por tema) */
+  --receita: var(--green);
+  --despesa: var(--red);
+  --pendente: var(--amber);
+  --neutro: var(--cyan);
+  /* séries de gráfico (08/10/2026): distintas entre si e das cores de status
+     (verde/vermelho/âmbar ficam reservadas pra receita, despesa e "A revisar") */
+  --serie-1: #3b82f6; --serie-2: #10b981; --serie-3: #8b5cf6; --serie-4: #06b6d4;
+  --serie-5: #ec4899; --serie-6: #84cc16; --serie-7: #f97316; --serie-8: #64748b;
+
+  /* ── Raio — hub.asimov.academy ───────────────────────────────────────── */
+  --radius-xs: 3px; --radius-sm: 6px; --radius-md: 12px; --radius-lg: 16px;
+  --radius-xl: 20px; --radius-2xl: 24px; --radius-pill: 9999px;
+  --radius-btn: var(--radius-md);
+
+  /* ── Motion — hub.asimov.academy ────────────────────────────────────── */
+  --ease-pop: cubic-bezier(.16, 1, .3, 1);
+  --ease-standard: cubic-bezier(.4, 0, .2, 1);
+  --dur-fast: .15s; --dur-base: .25s; --dur-slow: .45s;
+
+  /* ── Tipografia ──────────────────────────────────────────────────────── */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --text-xs: .75rem; --text-sm: .875rem; --text-base: 1rem;
+  --text-lg: 1.125rem; --text-xl: 1.25rem; --text-2xl: 1.5rem; --text-3xl: 1.875rem;
+
+  --nxsw: 208px; --nxhh: 60px; --nxsw-collapsed: 68px;
+  --nav-hover-fx: 0 0 0 1px rgba(244, 244, 245, .10), 0 0 16px rgba(244, 244, 245, .14);
+}
+:root[data-theme="light"] { --nav-hover-fx: 0 6px 14px -4px rgba(30, 31, 32, .24); }
+
+* { box-sizing: border-box; }
+html { transition: background var(--dur-base) ease; }
+html, body { margin: 0; background: var(--bg); color: var(--text-100); font-family: var(--font-sans); }
+body, .card, .btn, .input, .navlink { transition: background var(--dur-base) ease, color var(--dur-base) ease, border-color var(--dur-base) ease; }
+
+/* ==========================================================================
+   Botões
+   ========================================================================== */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  height: 2.5rem; padding: 0 1.5rem; border: 0; border-radius: var(--radius-btn);
+  font: 600 var(--text-sm) var(--font-sans); cursor: pointer; white-space: nowrap;
+  text-decoration: none; transition: all var(--dur-base) var(--ease-pop);
+}
+.btn:focus-visible { outline: none; box-shadow: var(--ring); }
+.btn--sm { height: 2rem; padding: 0 1rem; font-size: 13px; }
+
+/* primário = --ink (preto no claro / quase-branco no escuro) — o mesmo
+   padrão do botão "COMPRAR" do cliente-piloto, adaptado pros dois temas */
+.btn--primary { color: var(--ink-contrast); background: var(--ink); }
+.btn--primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+.btn--secondary { color: var(--text-100); background: var(--overlay-2); border: 1px solid var(--line-soft); }
+.btn--secondary:hover { background: var(--overlay-3); }
+
+.btn--soft { color: var(--text-100); background: var(--overlay-1); border: 1px solid var(--border-1); height: 2rem; padding: 0 1rem; font-size: 13px; }
+.btn--soft:hover { background: var(--overlay-2); }
+
+.btn--ghost { color: var(--text-200); background: transparent; }
+.btn--ghost:hover { background: var(--overlay-1); color: var(--text-100); }
+
+
+/* ==========================================================================
+   Cards
+   ========================================================================== */
+.card {
+  position: relative; border-radius: var(--radius-md);
+  background: var(--surface-1); border: 1px solid var(--overlay-3);
+  box-shadow: var(--shadow-card); padding: 16px;
+  transition: transform var(--dur-slow) var(--ease-standard), box-shadow var(--dur-slow) var(--ease-standard), border-color var(--dur-slow) var(--ease-standard);
+}
+.card--interactive:hover { transform: translateY(-4px); border-color: var(--line-strong); box-shadow: var(--shadow-card-hover); }
+.card:focus-visible { outline: none; box-shadow: var(--shadow-card), var(--ring); }
+
+/* .kpi-grid existia só no <style> do mockup (nunca tinha ido pro tokens.css real) —
+   mesma lacuna já encontrada com .shell (Etapa 2) e .filters-row (Etapa 3), fechada
+   do mesmo jeito, nos dois arquivos de tokens.css. `minmax(0,1fr)` (Fase 6.7) evita
+   blowout do grid: sem isto, uma célula com conteúdo largo (ex.: valor de KPI grande)
+   força a COLUNA a crescer além do espaço disponível — `1fr` sozinho não impõe
+   mínimo, então o item nunca encolhe abaixo do seu conteúdo. */
+.kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px; }
+@media (max-width: 1000px) { .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px)  { .kpi-grid { grid-template-columns: minmax(0, 1fr); } }
+/* painel de fluxo de caixa: 2 gráficos lado a lado, 1 por linha no celular (08/10/2026) */
+.dash-2col { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+@media (max-width: 780px) { .dash-2col { grid-template-columns: minmax(0, 1fr); } }
+/* abas entre os painéis do hub (08/10/2026) */
+.painel-topo { display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  flex-wrap: wrap; margin-bottom: 18px; }
+.painel-abas { display: flex; gap: 4px; flex-wrap: wrap; }
+.painel-filtros { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 0; }
+.painel-filtro { padding: 6px 8px; font-size: 12.5px; width: auto; min-width: 0; }
+.painel-filtros input[type="date"].painel-filtro { width: 122px; }
+.painel-filtros select.painel-filtro { max-width: 132px; }
+.painel-aba { padding: 5px 10px; border-radius: 999px; font-size: 12.5px; color: var(--text-200);
+  background: var(--overlay-1); text-decoration: none; }
+.painel-aba:hover { background: var(--overlay-2); }
+.painel-aba--ativa { background: var(--text-100); color: var(--bg); font-weight: 600; }
+
+.kpi-card { padding: 14px 16px; }
+.kpi-card .kpi-label { font-size: var(--text-xs); color: var(--text-mute); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px; }
+.kpi-card .kpi-value { font-size: var(--text-2xl); font-weight: 700; color: var(--text-100); line-height: 1.2; }
+.kpi-card .kpi-delta { font-size: var(--text-xs); margin-top: 6px; display: inline-flex; align-items: center; gap: 4px; }
+.kpi-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px; border-radius: var(--radius-md) var(--radius-md) 0 0; background: linear-gradient(90deg, var(--ink), transparent); }
+.kpi-card.green::before  { background: linear-gradient(90deg, var(--green), transparent); }
+.kpi-card.red::before    { background: linear-gradient(90deg, var(--red), transparent); }
+.kpi-card.purple::before { background: linear-gradient(90deg, var(--purple), transparent); }
+.kpi-card.cyan::before   { background: linear-gradient(90deg, var(--cyan), transparent); }
+.kpi-card.amber::before  { background: linear-gradient(90deg, var(--amber), transparent); }
+
+/* Contraste do cartão no tema claro (Fase 6.8) — achado do Eduardo revendo o
+   mockup (26/09): `--surface-1` (fundo do card) e `--bg` (fundo da página)
+   eram os DOIS #ffffff, só uma borda de 8% de preto separava. Fix: contorno
+   mais forte, fundo do card destacado da página com um degradê radial atrás
+   (`--card-wash`) e `.card` vira vidro fosco de verdade (fundo translúcido +
+   `backdrop-filter: blur`) — as variantes coloridas ganham tingimento sutil no
+   corpo INTEIRO do card, não só a listra do topo que `::before` já dava.
+   Token novo (`--card-wash`), sem mexer em `--surface-1`/`--overlay-3`
+   originais — input, sidebar, topbar e dropdown continuam com fundo opaco. O
+   tema escuro já tinha contraste de sobra (bg #000 x surface #121212) e não
+   foi tocado. */
+:root[data-theme="light"] {
+  --card-wash:
+    radial-gradient(900px 420px at 6% -8%, rgba(30, 31, 32, .05), transparent 55%),
+    radial-gradient(760px 420px at 102% 4%, rgba(var(--red-rgb), .055), transparent 55%);
+}
+:root[data-theme="light"] body { background: var(--card-wash), var(--bg); }
+:root[data-theme="light"] .card {
+  background: linear-gradient(155deg, rgba(255, 255, 255, .82), rgba(247, 247, 247, .58));
+  border-color: rgba(30, 31, 32, .20);
+  backdrop-filter: blur(18px) saturate(170%);
+  -webkit-backdrop-filter: blur(18px) saturate(170%);
+}
+:root[data-theme="light"] .kpi-card.green  { background: linear-gradient(155deg, rgba(var(--green-rgb), .12), rgba(255, 255, 255, .60)); }
+:root[data-theme="light"] .kpi-card.red    { background: linear-gradient(155deg, rgba(var(--red-rgb), .12), rgba(255, 255, 255, .60)); }
+:root[data-theme="light"] .kpi-card.purple { background: linear-gradient(155deg, rgba(var(--purple-rgb), .12), rgba(255, 255, 255, .60)); }
+:root[data-theme="light"] .kpi-card.cyan   { background: linear-gradient(155deg, rgba(var(--cyan-rgb), .12), rgba(255, 255, 255, .60)); }
+:root[data-theme="light"] .kpi-card.amber  { background: linear-gradient(155deg, rgba(var(--amber-rgb), .12), rgba(255, 255, 255, .60)); }
+
+/* .chart-box — novo (o mockup nunca teve gráfico de verdade, só ilustração SVG
+   decorativa no login): altura fixa pro <canvas> do Chart.js, que precisa de um
+   container com tamanho definido quando maintainAspectRatio:false (Etapa 5). */
+.chart-box { position: relative; height: 260px; }
+.chart-box canvas { max-width: 100%; }
+
+/* ==========================================================================
+   Badges / pills
+   ========================================================================== */
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: var(--radius-pill); font: 600 11px/1.5 var(--font-sans); text-transform: uppercase; letter-spacing: .03em; }
+.badge--green  { background: rgba(var(--green-rgb), .14);  color: var(--green-text); }
+.badge--red    { background: rgba(var(--red-rgb), .14);    color: var(--red-text); }
+.badge--amber  { background: rgba(var(--amber-rgb), .14);  color: var(--amber-text); }
+.badge--blue   { background: rgba(var(--blue-rgb), .14);   color: var(--blue-text); }
+.badge--purple { background: rgba(var(--purple-rgb), .14); color: var(--purple-text); }
+.badge--neutral{ background: var(--overlay-2); color: var(--text-200); }
+
+/* ==========================================================================
+   Inputs / forms
+   ========================================================================== */
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: var(--text-xs); color: var(--text-200); font-weight: 500; }
+.input, select.input, textarea.input {
+  background: var(--surface-2); border: 1px solid var(--border-1); color: var(--text-100);
+  border-radius: var(--radius-sm); padding: 9px 12px; font: var(--text-sm) var(--font-sans);
+  transition: border-color var(--dur-fast) ease, box-shadow var(--dur-fast) ease;
+}
+.input::placeholder { color: var(--text-mute); }
+.input:focus-visible { outline: none; border-color: var(--ink); box-shadow: var(--ring); }
+/* Ícone do calendário nativo (input[type=date]) é preto fixo do navegador —
+   sumia no fundo escuro (tema padrão). Invertido no escuro, normal no claro
+   (achado ao vivo, 29/09/2026, feedback do Eduardo). */
+input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+:root[data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator { filter: none; }
+
+/* ==========================================================================
+   Navegação lateral (sidebar)
+   ========================================================================== */
+.nx-sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: var(--nxsw); background: var(--surface-2); border-right: 1px solid var(--border-1); display: flex; flex-direction: column; z-index: 1000; }
+.navlink {
+  display: inline-flex; align-items: center; gap: 10px;
+  font: 500 var(--text-sm)/1 var(--font-sans); letter-spacing: -0.01em;
+  padding: 9px 10px; margin: 2px 6px; border-radius: var(--radius-btn);
+  color: var(--text-mute); text-decoration: none; position: relative;
+  transition: background var(--dur-fast) ease, color var(--dur-fast) ease;
+}
+.navlink:hover { background: var(--overlay-1); color: var(--text-200); }
+.navlink.active { background: var(--overlay-2); color: var(--text-100); font-weight: 600; }
+.navlink.active::before { content: ""; position: absolute; left: -8px; top: 50%; transform: translateY(-50%); width: 3px; height: 18px; background: var(--ink); border-radius: var(--radius-pill); }
+
+/* ==========================================================================
+   Tabela de lançamentos
+   ========================================================================== */
+.tbl { width: 100%; border-collapse: separate; border-spacing: 0; font-size: var(--text-sm); }
+.tbl th { text-align: left; color: var(--text-mute); font-weight: 600; font-size: var(--text-xs); text-transform: uppercase; letter-spacing: .04em; padding: 10px 14px; border-bottom: 1px solid var(--border-1); }
+.tbl td { padding: 12px 14px; border-bottom: 1px solid var(--overlay-1); color: var(--text-100); }
+.tbl tr:hover td { background: var(--overlay-1); }
+.tbl .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+/* Títulos compridos quebram em 2+ linhas (22/10/2026): só as células de número ficam sem quebra; a 1ª coluna
+   (rótulo) ganha largura mínima para não virar uma palavra por linha. */
+.tbl th.num { white-space: normal; }
+.tbl th, .tbl td:first-child { overflow-wrap: break-word; }
+.tbl td:first-child, .tbl th:first-child { min-width: 14ch; }
+.tbl .pos { color: var(--green-text); font-weight: 600; }
+.tbl .neg { color: var(--red-text); font-weight: 600; }
+
+/* ==========================================================================
+   Auth / login (Fase 6.3) — cartão único, vidro fosco. Portado do mockup:
+   substitui o layout antigo de 2 colunas (.auth-shell/.auth-visual/
+   .auth-form-wrap/.auth-card, Etapa 1 — nenhum uso sobrou depois da 6.3).
+   ========================================================================== */
+:root, :root[data-theme="dark"] {
+  --glass: rgba(18, 18, 18, .62);
+  --login-bg: radial-gradient(1200px 600px at 15% 10%, rgba(255, 255, 255, .07), transparent 60%),
+              radial-gradient(900px 500px at 90% 90%, rgba(var(--red-rgb), .10), transparent 60%), #000;
+}
+:root[data-theme="light"] {
+  --glass: rgba(255, 255, 255, .66);
+  --login-bg: radial-gradient(1200px 600px at 15% 10%, rgba(0, 0, 0, .05), transparent 60%),
+              radial-gradient(900px 500px at 90% 90%, rgba(var(--red-rgb), .08), transparent 60%), #f4f4f5;
+}
+.login-bg { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; background: var(--login-bg); }
+.auth-glass { width: 100%; max-width: 400px; padding: 32px; border-radius: var(--radius-xl); background: var(--glass); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid var(--line-soft); box-shadow: var(--shadow-card-hover); }
+.auth-glass h1 { font-size: 20px; margin: 18px 0 4px; }
+.auth-glass .sub { color: var(--text-mute); font-size: 13.5px; margin: 0 0 22px; line-height: 1.5; }
+.auth-glass form { display: flex; flex-direction: column; gap: 14px; }
+.auth-glass .btn { width: 100%; }
+.auth-note { font-size: 12px; color: var(--text-mute); text-align: center; margin-top: 18px; }
+.otp { letter-spacing: .6em; text-align: center; font-size: 22px !important; font-weight: 700; }
+
+/* ==========================================================================
+   Alternador de tema (claro/escuro) — vive dentro do .user-menu (Seção 2.4/2.5
+   do plano: tema + configurações ficam no menu de usuário, não mais na sidebar)
+   ========================================================================== */
+.theme-switch {
+  display: inline-flex; align-items: center; gap: 2px; padding: 3px;
+  background: var(--overlay-1); border: 1px solid var(--border-1); border-radius: var(--radius-pill);
+}
+.theme-switch button, .theme-switch a {
+  border: 0; background: transparent; color: var(--text-mute); cursor: pointer;
+  width: 30px; height: 30px; border-radius: var(--radius-pill); font-size: 14px;
+  display: flex; align-items: center; justify-content: center; transition: all var(--dur-fast) ease;
+  text-decoration: none;
+}
+.theme-switch button.on, .theme-switch a.on { background: var(--surface-1); color: var(--text-100); box-shadow: var(--shadow-sm); }
+/* variante com rótulo de texto (não só ícone) — alternador Realizado/Planejado
+   no topbar da aba Fluxo de caixa (app/paginas.py:alternador_realizado_planejado) */
+.theme-switch--text a { width: auto; height: 26px; padding: 0 12px; font-size: 12.5px; font-weight: 600; }
+/* seletor de efeitos no menu do usuário (completo | reduzido | desligado): botões de texto, mais compactos */
+.user-menu-panel .theme-switch--text button { width: auto; height: 24px; padding: 0 8px; font-size: 11.5px; font-weight: 600; }
+.user-menu-panel .um-row--col { flex-direction: column; align-items: stretch; gap: 6px; }
+.theme-switch--cheio { display: flex; }
+.theme-switch--cheio button { flex: 1 1 0; justify-content: center; }
+
+.title-wrap { display: flex; align-items: center; gap: 14px; }
+
+/* ==========================================================================
+   Logo — carregado de arquivo (app/static/branding/), não hardcoded no HTML
+   ========================================================================== */
+.brand-logo-slot { display: flex; align-items: center; height: 28px; max-width: 168px; }
+.brand-logo-slot img { max-height: 100%; max-width: 100%; object-fit: contain; display: block; }
+
+/* ==========================================================================
+   Menu de usuário (topo direito) — nome/perfil, abre com tema + configurações
+   ========================================================================== */
+.user-menu { position: relative; }
+.user-menu-trigger {
+  display: flex; align-items: center; gap: 10px; padding: 6px 10px 6px 6px;
+  border-radius: var(--radius-pill); background: transparent; border: 1px solid transparent;
+  cursor: pointer; transition: all var(--dur-fast) ease;
+}
+.user-menu-trigger:hover, .user-menu.open .user-menu-trigger { background: var(--overlay-1); border-color: var(--border-1); }
+.user-menu-trigger .av { width: 30px; height: 30px; border-radius: 50%; background: var(--red); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; object-fit: cover; }
+.user-menu-trigger .meta { text-align: left; line-height: 1.25; }
+.user-menu-trigger .name { font-size: 13px; font-weight: 600; color: var(--text-100); }
+.user-menu-trigger .role { font-size: 11px; color: var(--text-mute); }
+.user-menu-trigger .chev { font-size: 10px; color: var(--text-mute); margin-left: 2px; }
+
+.user-menu-panel {
+  position: absolute; top: calc(100% + 8px); right: 0; width: 240px;
+  background: var(--surface-1); border: 1px solid var(--border-1); border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card-hover); padding: 10px; z-index: 40;
+  opacity: 0; visibility: hidden; transform: translateY(-6px);
+  transition: all var(--dur-fast) var(--ease-standard);
+}
+.user-menu.open .user-menu-panel { opacity: 1; visibility: visible; transform: translateY(0); }
+.user-menu-panel .um-head { padding: 6px 8px 10px; border-bottom: 1px solid var(--border-1); margin-bottom: 8px; }
+.user-menu-panel .um-head .name { font-size: 13.5px; font-weight: 600; color: var(--text-100); }
+.user-menu-panel .um-head .role { font-size: 11.5px; color: var(--text-mute); margin-top: 2px; }
+.user-menu-panel .um-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px; font-size: 12.5px; color: var(--text-200); }
+.user-menu-panel .um-item {
+  display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 8px; border-radius: var(--radius-sm);
+  background: transparent; border: 0; color: var(--text-100); font: 500 13px var(--font-sans);
+  text-align: left; cursor: pointer; transition: background var(--dur-fast) ease;
+}
+.user-menu-panel .um-item:hover { background: var(--overlay-1); }
+.user-menu-panel .um-item.danger { color: var(--red-text); }
+.user-menu-panel .um-sep { height: 1px; background: var(--border-1); margin: 6px 0; }
+
+/* ==========================================================================
+   Casca do app (shell) — sidebar + topbar + área de conteúdo
+   Portado do mockup (docs/mockup/mockup_fluxo_caixa.html) na Etapa 2: essas
+   classes existiam só no HTML do mockup, nunca tinham ido pro tokens.css
+   oficial (só o `.navlink` que fica dentro da sidebar tinha sido portado antes).
+   ========================================================================== */
+.shell { display: flex; }
+.sidebar {
+  position: fixed; top: 0; left: 0; bottom: 0; width: var(--nxsw);
+  background: var(--surface-2); border-right: 1px solid var(--border-1);
+  display: flex; flex-direction: column; z-index: 10;
+}
+.sidebar .brand { display: flex; align-items: center; padding: 0 14px; height: var(--nxhh); border-bottom: 1px solid var(--border-1); }
+.brand-icon { width: 30px; height: 30px; flex-shrink: 0; border-radius: 50%; object-fit: cover; display: block; }
+.brand-name { font: 700 var(--text-base)/1 var(--font-sans); letter-spacing: -0.01em; color: var(--text-100); white-space: nowrap; }
+.sidebar nav { flex: 1; padding-top: 10px; padding-bottom: 14px; overflow-y: auto; }
+.sidebar .grp-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-mute); padding: 14px 20px 6px; }
+.nav-badge { width: 30px; height: 30px; flex-shrink: 0; border-radius: 50%; background: var(--overlay-2); display: inline-flex; align-items: center; justify-content: center; font-size: 14px; color: var(--text-200); transition: all var(--dur-fast) ease; }
+.navlink:hover .nav-badge { box-shadow: var(--nav-hover-fx); color: var(--text-100); }
+.navlink.active .nav-badge { background: var(--ink); color: var(--ink-contrast); }
+
+/* Sidebar retrátil (Fase 6.1) — portado do mockup, "#appShell" é o wrapper
+   `.shell` que app/ui.py:shell() dá o id (ver JS embutido lá também). */
+#appShell .sidebar { width: var(--nxsw); transition: width var(--dur-base) var(--ease-standard); overflow: hidden; }
+#appShell .main { margin-left: var(--nxsw); transition: margin-left var(--dur-base) var(--ease-standard); }
+#appShell.sidebar-collapsed .sidebar { width: var(--nxsw-collapsed); }
+#appShell.sidebar-collapsed .main { margin-left: var(--nxsw-collapsed); }
+#appShell.sidebar-collapsed .nav-label,
+#appShell.sidebar-collapsed .grp-label,
+#appShell.sidebar-collapsed .brand-name { display: none; }
+#appShell.sidebar-collapsed .navlink { justify-content: center; padding: 8px 0; margin: 4px 10px; }
+#appShell.sidebar-collapsed .navlink.active::before { left: -10px; }
+.brand-btn { display: flex; align-items: center; gap: 10px; background: none; border: 0; color: var(--text-100); cursor: pointer; padding: 6px; border-radius: var(--radius-sm); }
+.brand-btn:hover { background: var(--overlay-1); }
+#navTooltip { position: fixed; z-index: 3000; padding: 6px 10px; border-radius: var(--radius-sm); background: var(--surface-1); border: 1px solid var(--border-1); box-shadow: var(--shadow-md); font-size: 12.5px; color: var(--text-100); pointer-events: none; opacity: 0; transition: opacity var(--dur-fast) ease; white-space: nowrap; }
+#navTooltip.on { opacity: 1; }
+
+.main { margin-left: var(--nxsw); flex: 1; min-width: 0; }
+.topbar {
+  height: var(--nxhh); display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; border-bottom: 1px solid var(--border-1); background: var(--surface-2);
+  position: sticky; top: 0; z-index: 5;
+}
+.topbar .title { font-size: 14.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+.topbar .actions { display: flex; align-items: center; gap: 14px; }
+/* max-width 1520px + margin:0 auto (Fase 6.7, era 1280px sem centralizar) —
+   telas largas deixavam o conteúdo grudado na sidebar em vez de centralizado
+   no espaço livre. */
+.body { padding: 24px; max-width: 1520px; margin: 0 auto; }
+.tbl-wrap { overflow-x: auto; }
+
+/* Chat de IA na topbar (Fase 6.2) + responsividade (Fase 6.7) — portados
+   juntos do mockup, mesmo bloco de origem lá. */
+.topbar-ia { display: flex; align-items: center; gap: 8px; background: var(--overlay-1); border: 1px solid var(--border-1); border-radius: var(--radius-pill); padding: 3px 5px 3px 12px; min-width: 300px; transition: border-color var(--dur-fast) ease; }
+.topbar-ia:focus-within { border-color: var(--line-strong); }
+.topbar-ia .ia-emoji { font-size: 15px; cursor: pointer; }
+.topbar-ia input { flex: 1; background: transparent; border: 0; outline: none; color: var(--text-100); font: var(--text-sm) var(--font-sans); padding: 6px 0; }
+.topbar-ia input::placeholder { color: var(--text-mute); }
+.topbar-ia kbd { font: 600 10.5px var(--font-sans); color: var(--text-mute); border: 1px solid var(--border-1); border-radius: 5px; padding: 2px 6px; }
+@media (max-width: 780px) {
+  #appShell .sidebar { width: var(--nxsw-collapsed); }
+  #appShell .main { margin-left: var(--nxsw-collapsed); }
+  #appShell .nav-label, #appShell .grp-label, #appShell .brand-name { display: none; }
+  .topbar { flex-wrap: wrap; height: auto; min-height: var(--nxhh); padding: 10px 16px; gap: 10px; }
+  .title-wrap { flex-wrap: wrap; }
+  .topbar-ia { min-width: 0; }
+  .topbar-ia input, .topbar-ia kbd { display: none; }
+  .user-menu-trigger .meta { display: none; }
+  .body { padding: 16px; }
+}
+
+.empty-state { text-align: center; padding: 70px 20px; color: var(--text-mute); }
+.empty-state .ic { font-size: 34px; margin-bottom: 14px; opacity: .6; }
+.empty-state h3 { font-size: 15px; color: var(--text-200); font-weight: 600; margin-bottom: 6px; }
+.empty-state p { font-size: 13.5px; max-width: 420px; margin-inline: auto; line-height: 1.6; }
+
+/* ==========================================================================
+   Cabeçalho de seção (título + contador/ação) — existia só no HTML do mockup
+   (Etapa 3: telas de Categorias/Contas bancárias/Importar/Realizado)
+   ========================================================================== */
+.section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 12px; flex-wrap: wrap; }
+.section-head h2 { font-size: 15px; font-weight: 600; }
+
+/* ==========================================================================
+   Aviso pós-ação (sucesso/erro) — Etapa 3, generalizado do banner ad-hoc que
+   só a tela de login (Etapa 1) tinha
+   ========================================================================== */
+.flash { padding: 10px 14px; border-radius: var(--radius-sm); margin-bottom: 16px; font-size: 13.5px; }
+.flash--erro { background: rgba(var(--red-rgb), .12); color: var(--red-text); }
+.flash--ok { background: rgba(var(--green-rgb), .12); color: var(--green-text); }
+
+/* Filtros de período/conta/categoria (Realizado/Planejado) — existia só no
+   HTML do mockup, igual ao .section-head acima */
+.filters-row { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 18px; flex-wrap: wrap; }
+.filters-row .field { min-width: 150px; }
+
+/* Alternador Lançamentos/Consolidado + filtros numa linha só (Realizado,
+   Fase 5.5 — antes ficavam em duas linhas, portado direto do mockup;
+   apertado a pedido do Eduardo em 29/09/2026 pra caber tudo em cima). Campos
+   com largura fixa pequena (--sm/--md) em vez do min-width:150px genérico do
+   .filters-row — só a Descrição (--lg) cresce se sobrar espaço. */
+.filters-bar { display: flex; align-items: flex-end; gap: 16px; margin-bottom: 18px; flex-wrap: wrap; }
+.filters-bar .theme-switch--text { flex-shrink: 0; }
+/* Planejado (22/10/2026): 8 filtros + botões na MESMA linha das abas; os campos encolhem para caber e só quebram em tela estreita. */
+.filters-bar--linha { flex-wrap: nowrap; gap: 10px; }
+.filters-bar--linha .subabas { flex-wrap: nowrap; flex-shrink: 0; }
+.filters-bar--linha .filters-row--compact { flex-wrap: nowrap; min-width: 0; gap: 6px; }
+.filters-bar--linha .filters-row--compact .field { flex: 1 1 0; width: auto; min-width: 96px; }
+.filters-bar--linha .filters-row--compact .field--md { min-width: 100px; }
+.filters-bar--linha .filters-row--compact .input { padding: 7px 5px; font-size: 12px; text-overflow: ellipsis; }
+.filters-bar--linha .filters-row--compact label { font-size: 11.5px; white-space: nowrap; }
+@media (max-width: 1100px) { .filters-bar--linha, .filters-bar--linha .filters-row--compact { flex-wrap: wrap; } }
+.filters-row--compact { margin-bottom: 0; gap: 8px; flex: 1 1 auto; }
+.filters-row--compact .field { min-width: 0; flex-shrink: 0; }
+.filters-row--compact .field--sm { width: 92px; }
+.filters-row--compact .field--md { width: 112px; }
+.filters-row--compact .field--lg { flex: 1 1 130px; min-width: 110px; }
+.filters-row--compact .input { padding: 7px 9px; font-size: 12.5px; }
+
+/* Paginação do Realizado (Fase 1.4) — "1–100 de N" + Anterior/Próxima */
+.pager { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
+.pager__faixa { font-size: 12.5px; color: var(--text-mute); }
+.pager__botoes { display: flex; gap: 8px; }
+.btn--desabilitado { opacity: .4; pointer-events: none; }
+
+/* Texto de apoio pequeno (legenda abaixo de tabela/gráfico) — Fase 1.6, legenda
+   de Confiança na tela Importar extrato */
+.legenda { font-size: 12px; color: var(--text-mute); line-height: 1.5; }
+
+/* ==========================================================================
+   Assistente — chat com histórico (Fase 1 da IA, 08/08/2026)
+   ========================================================================== */
+.chat-shell { display: flex; flex-direction: column; }
+/* Altura própria (não mais 100vh-menos-topbar): desde 10/08/2026 o cartão de
+   Análises pode aparecer ACIMA do chat na mesma página, com altura variável —
+   um cálculo baseado em viewport quebraria (thread cortada ou vazamento por
+   baixo da tela) dependendo de quantas observações houver. */
+.chat-thread { flex: 1; min-height: 320px; max-height: 55vh; overflow-y: auto; padding: 4px 4px 12px; display: flex; flex-direction: column; gap: 14px; }
+.chat-msg { display: flex; flex-direction: column; max-width: 72%; }
+.chat-msg--usuario { align-self: flex-end; align-items: flex-end; }
+.chat-msg--assistente { align-self: flex-start; align-items: flex-start; }
+.chat-bubble { padding: 10px 14px; border-radius: var(--radius-md); font-size: 14px; line-height: 1.5; white-space: pre-wrap; }
+.chat-msg--usuario .chat-bubble { background: var(--ink); color: var(--ink-contrast); border-bottom-right-radius: 4px; }
+.chat-msg--assistente .chat-bubble { background: var(--surface-1); border: 1px solid var(--border-1); border-bottom-left-radius: 4px; }
+.chat-hora { font-size: 11px; color: var(--text-mute); margin-top: 4px; padding: 0 2px; }
+/* Fase B5 — gráfico do Comunicador */
+.chat-grafico { max-width: 100%; width: 560px; border-radius: var(--radius-md); border: 1px solid var(--border-1); margin-top: 6px; }
+/* Fase B4 — proposta de alteração da IA */
+.chat-proposta { display: flex; align-items: center; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+/* Fase B2 — pergunta na fila da IA local */
+.chat-bubble--pensando { color: var(--text-mute); font-style: italic; display: flex; align-items: center; gap: 8px; }
+.chat-pensando-ponto { width: 8px; height: 8px; border-radius: 50%; background: var(--text-mute); animation: chat-pulsar 1.2s ease-in-out infinite; flex: none; }
+@keyframes chat-pulsar { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .chat-pensando-ponto { animation: none; } }
+.chat-vazio { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; color: var(--text-mute); text-align: center; }
+.chat-sugestoes { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 520px; }
+.chat-sug { padding: 7px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border-1); background: var(--overlay-1); color: var(--text-200); font-size: 13px; text-decoration: none; cursor: pointer; }
+.chat-sug:hover { background: var(--overlay-2); color: var(--text-100); }
+.chat-form { display: flex; gap: 10px; padding-top: 12px; border-top: 1px solid var(--border-1); }
+.chat-form input { flex: 1; }
+.chat-disc { font-size: 12px; color: var(--text-mute); text-align: center; padding-top: 8px; }
+
+/* Configurações como hub (Fase 6.4) — portado do mockup. */
+.cfg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+/* Saúde do sistema (Fase A5 do docs/PLANO_IA.md) — um card por bloco, com semáforo */
+.saude-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 16px; }
+.saude-bloco .section-head { margin-bottom: 6px; }
+.saude-bloco .tbl td { padding-top: 6px; padding-bottom: 6px; }
+.cfg-tile { display: flex; gap: 12px; align-items: flex-start; padding: 14px; text-decoration: none; color: inherit; cursor: pointer; }
+.cfg-tile .nav-badge { width: 36px; height: 36px; font-size: 16px; }
+.cfg-tile b { display: block; font-size: 14px; margin-bottom: 3px; }
+.cfg-tile span { font-size: 12.5px; color: var(--text-mute); }
+.cfg-sec { margin-bottom: 26px; }
+.cfg-sec > h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-mute); margin: 0 0 12px; }
+.conta-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--overlay-1); flex-wrap: wrap; }
+.conta-row:last-child { border-bottom: 0; }
+.conta-row .l b { display: block; font-size: 14px; }
+.conta-row .l span { font-size: 12.5px; color: var(--text-mute); }
+.voltar-cfg { font-size: 13px; color: var(--text-200); text-decoration: none; padding: 5px 10px; border-radius: var(--radius-pill); border: 1px solid var(--border-1); background: var(--overlay-1); }
+.voltar-cfg:hover { color: var(--text-100); }
+
+/* Home — painel central (Fase 6.5, portado do mockup). Não é aba/rota: um
+   <dialog> nativo que a rota "/" abre sozinha a cada carregamento/recarga. */
+.hm-dlg {
+  border: 1px solid var(--border-1); border-radius: var(--radius-lg); padding: 0; color: var(--text-100);
+  /* #appShell é display:flex — sem fixar isto o <dialog> vira item de flex e
+     perde a centralização automática do navegador (achado real do Nexus). */
+  position: fixed; inset: 0; margin: auto;
+  width: min(560px, 92vw); max-height: 86vh; height: fit-content; overflow: auto;
+  /* Cartão SÓLIDO (igual .card) — achado ao vivo (26/09): botar blur na
+     caixa do próprio cartão virava mancha cinza uniforme no tema claro,
+     ilegível. O vidro fosco fica só no fundo (::backdrop), atrás dele. */
+  background: var(--surface-1);
+  box-shadow: var(--shadow-card-hover);
+}
+.hm-dlg::backdrop { background: rgba(0, 0, 0, .5); backdrop-filter: blur(10px) saturate(130%); -webkit-backdrop-filter: blur(10px) saturate(130%); }
+:root[data-theme="light"] .hm-dlg::backdrop { background: rgba(30, 31, 32, .38); }
+.hm-dlg[open] { animation: hmEntra .2s var(--ease-standard); }
+@keyframes hmEntra { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
+.hm-in { padding: 22px 24px 20px; position: relative; }
+.hm-ola { font-size: 19px; font-weight: 700; padding-right: 30px; }
+.hm-sub { font-size: 13.5px; color: var(--text-mute); margin-top: 6px; line-height: 1.55; }
+.hm-sub b { color: var(--text-100); }
+.hm-tit { font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-mute); margin: 18px 0 8px; }
+.hm-pend { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+.hm-cd { display: block; text-decoration: none; border: 1px solid var(--border-1); border-radius: var(--radius-sm); padding: 10px 12px; background: var(--overlay-1); transition: border-color var(--dur-fast) ease, transform var(--dur-fast) ease; }
+.hm-cd:hover { border-color: var(--line-strong); transform: translateY(-2px); }
+.hm-n { font-size: 21px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.hm-t { display: block; font-size: 12.5px; color: var(--text-100); margin-top: 5px; font-weight: 600; }
+.hm-d { display: block; font-size: 11px; color: var(--text-mute); margin-top: 2px; line-height: 1.4; }
+.hm-nt { display: flex; gap: 10px; align-items: flex-start; padding: 9px 10px; border-radius: var(--radius-sm); text-decoration: none; border: 1px solid var(--border-1); background: var(--overlay-1); margin-bottom: 6px; }
+.hm-pt { width: 7px; height: 7px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+.hm-nt-t { display: block; font-size: 13px; font-weight: 600; color: var(--text-100); line-height: 1.35; }
+.hm-nt-x { display: block; font-size: 11.5px; color: var(--text-mute); line-height: 1.45; margin-top: 1px; }
+.hm-x { position: absolute; top: 14px; right: 14px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; color: var(--text-mute); font-size: 18px; line-height: 1; cursor: pointer; border-radius: var(--radius-sm); }
+.hm-x:hover { color: var(--text-100); background: var(--overlay-2); }
+
+/* Dashboard hub (Fase 6.6) — portado do mockup. */
+.hub-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.hub-card { padding: 0; overflow: hidden; cursor: pointer; text-decoration: none; color: inherit; display: block; }
+.hub-prev { height: 150px; padding: 18px; background: linear-gradient(160deg, var(--overlay-2), transparent); border-bottom: 1px solid var(--border-1); display: flex; flex-direction: column; justify-content: flex-end; gap: 9px; }
+.hub-info { padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+.hub-info .nav-badge { width: 36px; height: 36px; font-size: 16px; }
+.hub-info b { display: block; font-size: 14.5px; }
+.hub-info span { font-size: 12.5px; color: var(--text-mute); }
+.mini-bar { display: grid; grid-template-columns: 110px 1fr; align-items: center; gap: 10px; font-size: 11.5px; color: var(--text-mute); }
+.mini-bar i { display: block; height: 10px; border-radius: var(--radius-pill); background: linear-gradient(90deg, var(--ink), rgba(var(--green-rgb), .7)); }
+.hub-card--breve { border-style: dashed; cursor: default; opacity: .75; }
+.hub-card--breve .hub-prev { align-items: center; justify-content: center; font-size: 34px; color: var(--text-mute); }
+
+/* Insights / Revisor de categoria / Agentes de alerta (Fase 1 da IA, parte 2,
+   10/08/2026) — cartão de observação, reaproveitado pelas 3 fontes (só o
+   conteúdo interno muda; alerta de agente nunca tem botão de ação). */
+.ia-lista { display: flex; flex-direction: column; gap: 10px; }
+.ia-lista + .ia-lista { margin-top: 16px; }
+.ia-item { display: flex; gap: 12px; padding: 12px 14px; border-radius: var(--radius-md); background: var(--overlay-1); border: 1px solid var(--border-1); }
+.ia-ic { font-size: 20px; line-height: 1.3; flex-shrink: 0; }
+.ia-corpo { flex: 1; min-width: 0; }
+.ia-tt-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ia-tt { font-weight: 600; font-size: 13.5px; color: var(--text-100); }
+.ia-ds { font-size: 13px; color: var(--text-mute); margin-top: 4px; line-height: 1.5; }
+.ia-acoes { margin-top: 8px; display: flex; gap: 8px; }
+
+/* ==========================================================================
+   Utilitários
+   ========================================================================== */
+.text-mute { color: var(--text-mute); }
+.text-200 { color: var(--text-200); }
+.flex { display: flex; }
+.gap-2 { gap: 8px; } .gap-3 { gap: 12px; } .gap-4 { gap: 16px; }
+.grid { display: grid; }
+.mute { color: var(--text-mute); }
+
+/* ==========================================================================
+   Consolidado (Fase 5.5) — portado do mockup (docs/mockup/mockup_fase2.html),
+   layout validado pelo Eduardo em 28/09/2026 ("siga exatamente ao mockup").
+   ========================================================================== */
+.tbl .grp-th { text-align: center; border-bottom: 1px solid var(--border-1); color: var(--text-200); }
+.tbl th.col-e { color: rgba(var(--green-rgb), .9); }
+.tbl th.col-s { color: rgba(var(--red-rgb), .9); }
+.tbl td.tot, .tbl th.tot { font-weight: 700; }
+.tbl tr.linha-total td { border-top: 1px solid var(--border-1); background: var(--overlay-1); font-weight: 700; }
+.tbl .sep-l { border-left: 1px solid var(--border-1); }
+.fecha { display: inline-flex; width: 24px; height: 24px; border-radius: 50%; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+.fecha.ok { background: rgba(var(--green-rgb), .16); color: var(--green-text); }
+.fecha.alerta { background: rgba(var(--amber-rgb), .18); color: var(--amber-text); }
+.fecha.sem { color: var(--text-mute); }
+.resumo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+.resumo-item { padding: 12px 14px; border-radius: var(--radius-md); background: var(--overlay-1); border: 1px solid var(--border-1); }
+.resumo-item small { display: block; font-size: 11.5px; color: var(--text-mute); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
+.resumo-item b { font-size: 16px; font-variant-numeric: tabular-nums; }
+.nota { font-size: 12.5px; color: var(--text-mute); line-height: 1.6; margin-top: 12px; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--overlay-1); }
+.tbl--compacta th, .tbl--compacta td { padding: 8px 10px; white-space: nowrap; }
+.saude-bloco .tbl--compacta td { white-space: normal; overflow-wrap: break-word; }
+.saude-bloco .tbl--compacta td:first-child { width: 42%; }
+
+/* ── Relatórios (16/10/2026): filtros num quadro largo e baixo à esquerda (sem rolar), prévia compacta à direita ─── */
+.rel-layout { display: grid; grid-template-columns: minmax(400px, 480px) minmax(0, 1fr); gap: 14px; align-items: start; }
+.rel-filtros { padding: 12px 14px; }
+.rel-form { display: flex; flex-direction: column; gap: 10px; }
+.rel-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; }
+.rel-grade .full { grid-column: 1 / -1; }
+.rel-grade[hidden], .rel-grade [hidden] { display: none; }
+.rel-form .field label { font-size: 11.5px; margin-bottom: 3px; display: block; }
+.rel-form .input { height: 34px; padding: 0 10px; font-size: 13px; width: 100%; }
+.rel-check { display: flex; align-items: center; gap: 8px; }
+.rel-form .field .rel-check label { display: inline; margin: 0; font-size: 12.5px; }
+.rel-desc { font-size: 12px; margin: 4px 0 0; line-height: 1.35; }
+.rel-acoes { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: end; }
+.rel-acoes .btn { height: 34px; padding: 0 20px; }
+.rel-previa { min-height: 240px; padding: 10px 12px; font-size: 12px; transition: opacity var(--dur-fast) ease; }
+.rel-previa.htmx-request { opacity: .55; }
+.rel-cab { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding-bottom: 8px; margin-bottom: 6px; border-bottom: 1px solid var(--line-soft); }
+.rel-empresa { font-size: 15px; font-weight: 700; }
+.rel-quando { font-size: 11.5px; text-align: right; }
+.rel-previa .section-head { margin: 2px 0 4px; }
+.rel-previa h2 { font-size: 14px; }
+.rel-previa p { font-size: 11.5px; margin: 2px 0; }
+.rel-previa .tbl th, .rel-previa .tbl td { padding: 4px 6px; font-size: 11.5px; }
+.rel-previa .empty-state { padding: 18px 0; }
+@media (max-width: 1100px) { .rel-layout { grid-template-columns: 1fr; } }
+
+/* ── Cadastros completos (16/10/2026): seções em grade ───────────────────────────────────────────────────────── */
+.cad-secao { margin-top: 14px; }
+.cad-secao:first-of-type { margin-top: 0; }
+.cad-secao h3 { color: var(--text-200); text-transform: uppercase; letter-spacing: .04em; font-size: 11.5px !important; }
+.cad-grade { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px 14px; }
+.cad-grade .cad-cheio, .field.cad-cheio { grid-column: 1 / -1; }
+
+/* ── Aba DRE: meses em colunas agrupadas por ano, camadas que se abrem, totais em negrito ── */
+.dre-ferramentas { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+.dre-wrap { overflow-x: auto; }
+.dre th, .dre td { padding: 7px 12px; white-space: nowrap; }
+.dre thead th { background: var(--surface-1); }
+.dre th.dre-ano { text-align: center; border-bottom: 1px solid var(--border-1); }
+.dre .dre-nome { position: sticky; left: 0; z-index: 2; background: var(--surface-1); text-align: left; min-width: 280px; max-width: 420px; overflow: hidden; text-overflow: ellipsis; }
+.dre thead .dre-nome { z-index: 4; }
+.dre .dre-tg { background: none; border: 0; padding: 0 6px 0 0; color: var(--text-200); cursor: pointer; font-size: 12px; width: 18px; display: inline-block; }
+.dre .dre-tg--vazio { cursor: default; }
+.dre .dre-tg[aria-expanded="true"] { transform: rotate(90deg); }
+.dre .dre-tg:focus-visible { outline: 2px solid var(--text-200); outline-offset: 2px; border-radius: 3px; }
+.dre tr.dre-total td { font-weight: 700; background: var(--overlay-1); }
+.dre tr.dre-total td.dre-nome { background: var(--surface-1); }
+.dre tr.dre-titulo td { color: var(--text-mute); text-transform: uppercase; letter-spacing: .04em; font-size: var(--text-xs); padding-top: 16px; }
+.dre tr.dre-lanc td { color: var(--text-200); font-size: 12.5px; }
+.dre .dre-data { color: var(--text-mute); margin-right: 8px; font-variant-numeric: tabular-nums; }
+.dre .dre-zero { color: var(--text-mute); }
+.dre .v-pos { color: var(--green-text); }
+.dre .v-neg { color: var(--red-text); }
+.dre .dre-mais { color: var(--text-mute); font-style: italic; }
+.dre .dre-tot-col { background: var(--overlay-1); }
+
+/* ── Barra lateral FLUTUANTE (layout novo, L3, 20/10/2026) ──────────────────────────────────────────
+   Descolada da borda (12px), cantos de 20px, superfície SÓLIDA do tema com borda e sombra leves (sem vidro borrado:
+   não há cena atrás e os PCs da loja são fracos). Item ativo em pílula, contador redondo, botão de recolher na borda. */
+:root { --sb-gap: 12px; }
+.sidebar { top: var(--sb-gap); left: var(--sb-gap); bottom: var(--sb-gap); border: 1px solid var(--border-1);
+  border-radius: 20px; box-shadow: var(--shadow-md); background: var(--surface-2); }
+#appShell .sidebar { overflow: visible; }
+.sidebar .brand { border-bottom: 0; padding: 0 12px; }
+.sidebar .brand-btn { text-decoration: none; }
+.sidebar nav { border-radius: 0 0 20px 20px; }
+#appShell .main { margin-left: calc(var(--nxsw) + var(--sb-gap) * 2); }
+#appShell.sidebar-collapsed .main { margin-left: calc(var(--nxsw-collapsed) + var(--sb-gap) * 2); }
+.navlink { border-radius: 999px; }
+.navlink.active { background: var(--overlay-2); box-shadow: inset 0 0 0 1px var(--border-1); }
+.navlink.active::before { display: none; }
+.nav-label { flex: 1; }
+.nav-count { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; display: inline-flex; align-items: center;
+  justify-content: center; font-size: 11px; font-weight: 700; background: var(--text-100); color: var(--bg); font-variant-numeric: tabular-nums; }
+#appShell.sidebar-collapsed .nav-count { position: absolute; top: 0; right: 2px; min-width: 16px; height: 16px; padding: 0 4px; font-size: 10px; }
+.sb-borda { position: absolute; bottom: 22px; right: -12px; width: 24px; height: 24px; border-radius: 50%; padding: 0; line-height: 1;
+  display: flex; align-items: center; justify-content: center; font-size: 15px; cursor: pointer; z-index: 11;
+  background: var(--surface-1); color: var(--text-200); border: 1px solid var(--border-1); box-shadow: var(--shadow-sm); }
+.sb-borda:hover { color: var(--text-100); border-color: var(--line-strong); }
+.sb-borda:focus-visible { outline: 2px solid var(--text-200); outline-offset: 2px; }
+.nav-hamb, .nav-overlay { display: none; }
+@media (max-width: 780px) {
+  /* gaveta: a barra sai da tela e abre por cima, com o fundo escurecido */
+  #appShell .sidebar { width: var(--nxsw); transform: translateX(calc(-100% - var(--sb-gap) * 2)); z-index: 3500;
+    transition: transform var(--dur-base) var(--ease-standard); }
+  #appShell.nav-aberta .sidebar { transform: none; }
+  #appShell .main, #appShell.sidebar-collapsed .main { margin-left: 0; }
+  #appShell .nav-label, #appShell .grp-label, #appShell .brand-name,
+  #appShell.sidebar-collapsed .nav-label, #appShell.sidebar-collapsed .grp-label, #appShell.sidebar-collapsed .brand-name { display: revert; }
+  #appShell.sidebar-collapsed .sidebar { width: var(--nxsw); }
+  #appShell.sidebar-collapsed .navlink { justify-content: flex-start; padding: 9px 10px; margin: 2px 6px; }
+  #appShell.sidebar-collapsed .nav-count { position: static; min-width: 20px; height: 20px; font-size: 11px; padding: 0 6px; }
+  .sb-borda { display: none; }
+  .nav-hamb { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 10px;
+    background: var(--surface-1); color: var(--text-100); border: 1px solid var(--border-1); font-size: 16px; cursor: pointer; }
+  .nav-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, .55); z-index: 3400; opacity: 0; pointer-events: none;
+    transition: opacity var(--dur-base) ease; display: block; }
+  #appShell.nav-aberta .nav-overlay { opacity: 1; pointer-events: auto; }
+}
+
+/* ── Alertas inteligentes do hub (L4) ─────────────────────────────────────────────────────────────── */
+.alertas-hub { display: flex; flex-direction: column; gap: 8px; }
+.alerta-linha { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border-1); background: var(--surface-2); color: inherit; text-decoration: none;
+  transition: border-color var(--dur-fast) ease, background var(--dur-fast) ease; }
+.alerta-linha:hover { border-color: var(--line-strong); background: var(--overlay-1); }
+.alerta-linha:focus-visible { outline: 2px solid var(--text-200); outline-offset: 2px; }
+.alerta-ic { flex: none; width: 30px; height: 30px; border-radius: 9px; display: flex; align-items: center; justify-content: center;
+  font-size: 14px; background: rgba(var(--alerta-cor), .16); color: rgb(var(--alerta-cor-tx)); }
+.alerta-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; font-size: 13px; }
+.alerta-txt b { font-size: 13.5px; color: var(--text-100); }
+.alerta-txt span { color: var(--text-200); }
+.alerta-seta { color: var(--text-mute); font-size: 18px; }
+.alerta--lembrete { --alerta-cor: var(--tom-ambar); --alerta-cor-tx: var(--tom-ambar-tx); }
+.alerta--caixa { --alerta-cor: var(--tom-laranja); --alerta-cor-tx: var(--tom-laranja-tx); }
+.alerta--conquista { --alerta-cor: var(--green-rgb); --alerta-cor-tx: var(--green-rgb); }
+:root[data-theme="light"] .alerta--conquista { --alerta-cor-tx: 10, 113, 78; }
+
+/* ── Ritmo do caixa (L5): barra de progresso que nunca passa de 100% e não anima além do valor ──── */
+.ritmo-linha { margin-bottom: 14px; }
+.ritmo-topo { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+.ritmo-pct { margin-left: auto; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-100); }
+.ritmo-barra { position: relative; height: 10px; border-radius: 999px; background: var(--overlay-2); overflow: visible; }
+.ritmo-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, rgb(var(--tom-laranja)), rgba(var(--tom-laranja), .7)); max-width: 100%; }
+.ritmo-mes { position: absolute; top: -3px; width: 2px; height: 16px; background: var(--text-100); border-radius: 2px; opacity: .85; }
+
+/* ── Orçamento × realizado: barra de consumo (nunca passa de 100%) e comparativos ───────────────── */
+.orc-barra { height: 9px; border-radius: 999px; background: var(--overlay-2); overflow: hidden; display: inline-block; width: 140px; vertical-align: middle; }
+.orc-fill { height: 100%; border-radius: 999px; max-width: 100%; }
+.orc-pct { margin-left: 8px; font-weight: 700; font-variant-numeric: tabular-nums; font-size: 12.5px; }
+.cmp-tbl td.cmp-var, .cmp-tbl th.cmp-var { min-width: 120px; }
+.cmp-tbl td:first-child, .cmp-tbl th:first-child { min-width: 180px; }
+.cmp-tbl th.num { min-width: 130px; }
+.cmp-tbl tr.cmp-total td { font-weight: 700; background: var(--overlay-1); }
+
+/* ── Ajustes da barra flutuante (20/10/2026): faixa do ambiente de testes e alinhamento do menu ───── */
+.sidebar { top: calc(var(--sb-gap) + var(--faixa-amb, 0px)); }
+.topbar { top: var(--faixa-amb, 0px); }
+#appShell { padding-top: var(--faixa-amb, 0px); }
+.sidebar .brand { height: 56px; padding: 0 14px 0 16px; }
+.sidebar nav { padding: 6px 0 14px; }
+.sidebar .grp-label { padding: 18px 20px 6px 18px; letter-spacing: .08em; }
+.navlink { margin: 2px 8px; padding: 8px 10px; }
+@media (min-width: 781px) { #appShell.sidebar-collapsed .navlink { margin: 4px 14px; padding: 6px 0; justify-content: center; } }
+.sidebar nav > .navlink:first-child { margin-top: 4px; }
+
+/* ── Barra do topo flutuante e redonda, irmã da lateral (20/10/2026) ───────────────────────────────── */
+#appShell .main { padding-right: var(--sb-gap); }
+.topbar { margin: var(--sb-gap) 0 0; min-height: 56px; height: 56px; border: 1px solid var(--border-1); border-radius: 20px;
+  top: calc(var(--faixa-amb, 0px) + var(--sb-gap)); padding: 0 18px;
+  box-shadow: 0 -14px 0 0 var(--bg), var(--shadow-sm); }
+@media (max-width: 780px) {
+  #appShell .main { padding-right: 8px; padding-left: 8px; }
+  .topbar { margin-top: 8px; height: auto; border-radius: 16px; top: calc(var(--faixa-amb, 0px) + 8px); padding: 10px 14px; }
+}
+
+/* menu: rótulo em uma linha só e rolagem discreta quando a janela é baixa */
+.sidebar .nav-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.sidebar nav { scrollbar-width: thin; scrollbar-color: var(--border-1) transparent; }
+.sidebar nav::-webkit-scrollbar { width: 6px; }
+.sidebar nav::-webkit-scrollbar-thumb { background: var(--border-1); border-radius: 999px; }
+.sidebar nav::-webkit-scrollbar-track { background: transparent; }
+
+/* ── Busca universal do topo (20/10/2026): o campo + a lista que abre embaixo ───────────────────────── */
+.busca-wrap { position: static; }   /* o painel ancora na barra do topo (sticky), que nunca passa por baixo da lateral */
+.topbar-ia { min-width: 340px; }
+.busca-painel { position: absolute; right: 0; top: calc(100% + 10px); width: min(680px, 100%); max-height: 70vh; overflow-y: auto; z-index: 4000;
+  background: var(--surface-1); border: 1px solid var(--line-strong); border-radius: 16px; box-shadow: var(--shadow-md); padding: 8px; }
+.busca-painel[hidden] { display: none; }
+.busca-grupo { display: flex; align-items: center; gap: 8px; padding: 10px 10px 4px; font-size: 10.5px; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--text-mute); }
+.busca-n { background: var(--overlay-2); color: var(--text-200); border-radius: 999px; padding: 0 7px; font-size: 10.5px; }
+.busca-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 10px; color: inherit; text-decoration: none; }
+.busca-item:hover, .busca-item.ativo { background: var(--overlay-2); }
+.busca-ic { flex: none; width: 26px; height: 26px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  background: var(--overlay-1); color: var(--text-200); font-size: 13px; }
+.busca-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.busca-tit { font-size: 13px; color: var(--text-100); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.busca-sub { font-size: 11.5px; color: var(--text-200); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.busca-val { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.busca-val.pos { color: var(--green-text); }
+.busca-val.neg { color: var(--red-text); }
+.busca-mais .busca-tit { color: var(--text-200); }
+.busca-ia { border-top: 1px solid var(--border-1); margin-top: 6px; border-radius: 0 0 10px 10px; }
+.busca-vazio { padding: 18px 12px; color: var(--text-mute); font-size: 13px; }
+.busca-link { color: inherit; text-decoration: none; border-bottom: 1px dashed var(--overlay-3); }
+.busca-link:hover { border-bottom-color: var(--text-200); }
+@media (max-width: 780px) {
+  .topbar-ia { min-width: 0; flex: 1; }
+  .topbar-ia input { display: block; min-width: 0; }
+  .busca-wrap { flex: 1; min-width: 0; }
+  .busca-painel { position: fixed; left: 8px; right: 8px; top: auto; width: auto; margin-top: 8px; }
+}
+
+/* ── Planejado: espelho do Realizado, com marcas próprias para ninguém confundir com o extrato (20/10/2026) ── */
+/* Contorno colorido forte da tabela (20/10/2026): no lugar de tarja, a tabela inteira ganha a cor do assunto.
+   Planejado = âmbar, Realizado e Consolidado = azul; use `contorno contorno--<tom>` em outros cartões de tabela. */
+.contorno { border: 2px solid var(--contorno, var(--border-1)); }
+.contorno--ambar { --contorno: rgb(var(--tom-ambar)); }
+.contorno--azul { --contorno: rgb(var(--tom-azul)); }
+.contorno--ambar .tbl tbody tr { border-bottom: 1px dashed var(--border-1); }
+.plan-it { font-style: italic; }
+.plan-valor { font-style: italic; }
+.plan-valor::after { content: " previsto"; font-style: normal; font-size: 10px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--amber-text); margin-left: 6px; }
+.plan-vencida { outline: 2px solid var(--red); outline-offset: -2px; background: rgba(var(--red-rgb), .06); }
+
+/* Dica do valor nos gráficos (21/10/2026): o "vz-dica" do Nexus Analytics. HTML sobre o gráfico, sem animação. */
+.nx-dica { position: absolute; left: 0; top: 0; z-index: 6; pointer-events: none; white-space: nowrap; opacity: 0;
+  padding: 10px 12px; border-radius: 10px; font-size: 12.5px; line-height: 1.45; font-variant-numeric: tabular-nums;
+  color: var(--text-100); background: var(--surface-1); border: 1px solid var(--line-strong); box-shadow: var(--shadow-md); }
+.nx-dica.on { opacity: 1; }
+.nx-dica-t { font-weight: 700; margin-bottom: 6px; }
+.nx-dica-l { display: flex; align-items: center; gap: 8px; }
+.nx-dica-l + .nx-dica-l { margin-top: 4px; }
+.nx-dica-b { flex: none; width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 0 1.5px var(--text-100); }
+.nx-dica-x { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--line-strong); color: var(--text-200); }
+.plan-aviso { margin-bottom: 14px; padding: 10px 14px; border-radius: 12px; font-size: 13px; color: var(--text-100);
+  background: rgba(var(--amber-rgb), .10); border: 1px solid rgba(var(--amber-rgb), .45); }
+
+/* Importar extrato (22/10/2026): formulário à esquerda, histórico à direita; o histórico rola por dentro. */
+.importar-grid { display: grid; grid-template-columns: minmax(300px, 380px) minmax(0, 1fr); gap: 20px; align-items: start; }
+.importar-hist .tbl-wrap { max-height: calc(100vh - 250px); overflow: auto; }
+@media (max-width: 1000px) { .importar-grid { grid-template-columns: minmax(0, 1fr); } .importar-hist .tbl-wrap { max-height: none; } }
+
+/* Saldo inicial do período (Realizado › Consolidado, 22/10/2026): bancos coloridos à esquerda, o total grande à direita. */
+.resumo-saldos { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 320px); gap: 16px; align-items: stretch; }
+.resumo-banco { border-left: 4px solid var(--cor-banco, var(--border-1)); }
+.resumo-total { display: flex; flex-direction: column; justify-content: center; border-left: 4px solid var(--blue, var(--text-100));
+  background: linear-gradient(135deg, var(--overlay-2), var(--overlay-1)); }
+.resumo-total b { font-size: 26px; }
+@media (max-width: 800px) { .resumo-saldos { grid-template-columns: minmax(0, 1fr); } }
+
+/* Painel de resultado (22/10/2026): 5 indicadores na mesma linha em tela larga, valor sem quebrar. */
+@media (min-width: 1100px) { .kpi-grid--5 { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+.kpi-grid--5 .ind-valor { font-size: 21px; white-space: nowrap; }
+.pagina-modo > .subabas, .pagina-modo > .theme-switch { margin-bottom: 14px; }
+
+/* Caixa do motivo de cancelamento (22/10/2026): abre ali mesmo, sem JavaScript. */
+.motivo-detalhe > summary { list-style: none; cursor: pointer; }
+.motivo-detalhe > summary::-webkit-details-marker { display: none; }
+.motivo-detalhe[open] { display: block; min-width: 240px; }
+.form-motivo { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; padding: 10px; border: 1px solid var(--border-1); border-radius: var(--radius-md); background: var(--overlay-1); }
+.motivo-rotulo { font-size: 11.5px; color: var(--text-mute); }
+.motivo-texto { min-height: 80px; font-size: 12.5px; resize: vertical; }
+
+/* QR code do 2FA: quadrado branco com margem, para ler bem em qualquer tema. */
+.qr-caixa { background: #fff; padding: 16px; border-radius: 12px; width: fit-content; max-width: 260px; margin: 0 auto 16px; line-height: 0; }
+.qr-caixa svg { width: 100%; height: auto; display: block; }

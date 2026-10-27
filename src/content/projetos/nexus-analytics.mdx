@@ -14,8 +14,8 @@ autoriaDetalhe: >-
 inicio: 2026-05-01
 status: 'ativo'
 estadoAtual: >-
-  Em uso todo dia, na versão 1.2.0. Lê extratos e faturas, projeta o caixa, acompanha objetivos e
-  responde perguntas em português.
+  Em uso todo dia, na versão 1.4.0. Lê extratos e faturas (também direto do e-mail dos bancos),
+  projeta o caixa, acompanha objetivos e responde perguntas em português.
 ferramentas:
   - 'Python 3.12'
   - 'FastHTML'
@@ -38,13 +38,16 @@ pediam minha senha do banco e guardavam meus dados num servidor deles. Não quis
 
 ## Como funciona
 
-Eu jogo o extrato (OFX, CSV, XLS ou PDF) e o sistema lê, separa receita, despesa, investimento e
-transferência e mostra tudo em três telas:
+Eu jogo o extrato (OFX, CSV, XLS ou PDF), ou deixo o sistema buscar no e-mail: ele lê só os PDFs
+que os bancos mandam, de remetente autenticado, e nunca abre link. Depois separa receita, despesa,
+investimento e transferência e mostra tudo em três telas:
 
-- **Dashboard:** um card por painel (visão geral, despesas, receitas, cartões, projeções,
-  investimentos), cada um com um desenho próprio.
+- **Dashboard:** os indicadores do mês, até três alertas (um lembrete, o ritmo do mês e uma
+  conquista) e um card por painel: visão geral, despesas, receitas, cartões, projeções e
+  investimentos.
 - **Lançamentos:** tudo numa tabela só, com filtros de pendência e o saldo fechando no rodapé.
-- **Objetivos:** quando eu chego lá no ritmo de hoje, e quanto antecipa se o dinheiro render.
+- **Objetivos:** quanto falta, quando eu chego lá no ritmo de hoje e quanto guardar por mês para
+  chegar numa data que eu escolho.
 
 Tem ainda avisos (preço que subiu, cobrança incomum, semana de caixa apertado), caixa das próximas
 13 semanas e regras pessoais escritas em português.
@@ -52,7 +55,8 @@ Tem ainda avisos (preço que subiu, cobrança incomum, semana de caixa apertado)
 ## As regras que escrevi antes do código
 
 - **Não mexer no dado:** nenhum valor ou data muda, nenhum lançamento é escondido.
-- **Nada sai da máquina:** o servidor atende só a si mesmo e os cálculos não abrem conexão de rede.
+- **Nada sai da máquina sem eu pedir:** os cálculos não abrem conexão de rede, e e-mail e WhatsApp
+  vêm desligados.
 - **Escrita atômica:** se a luz cair no meio de uma gravação, nada corrompe.
 
 Regra que ninguém confere é só intenção, então são mais de 1.500 verificações automáticas rodando a
@@ -77,7 +81,8 @@ atípico não puxar o futuro.
 ## Visual
 
 O login tem uma galáxia ao fundo e, depois de entrar, a câmera mergulha até o sistema solar com as
-posições reais do dia. Os gráficos se desenham ao aparecer e todo valor aparece ao passar o mouse
+posições reais do dia, e cada planeta abre uma tela. A barra lateral flutua e cada assunto tem a
+sua cor, que nunca é o verde nem o vermelho: esses ficam para dinheiro que entra e que sai. Os gráficos se desenham ao aparecer e todo valor aparece ao passar o mouse
 ou focar, com opção de ver como tabela. Dá pra reduzir os efeitos ou desligar, e todos os textos
 passam o contraste AA nos quatro temas, com teste automático.
 
@@ -103,4 +108,6 @@ todos os números estão certos.
 
 ## Sobre a demonstração
 
-Lá em cima dá pra mexer na réplica com dados fictícios: o hub do Dashboard (cada card abre um painel, com fluxo do dinheiro, cascata do saldo, calendário de gasto e mais), projeções (com o caixa das próximas 13 semanas) e Objetivos.
+Lá em cima dá pra mexer na réplica com dados fictícios: o Dashboard com os alertas e os painéis
+(cada card abre um, com fluxo do dinheiro, cascata do saldo, calendário de gasto e mais), as
+projeções com o caixa das próximas 13 semanas e Objetivos com a calculadora de data.

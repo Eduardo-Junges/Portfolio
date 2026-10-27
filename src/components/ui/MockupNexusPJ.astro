@@ -2,11 +2,11 @@
 /**
  * O mockup do Nexus & PJ, embutido no site.
  *
- * É o mesmo arquivo de `public/mockups/nexus-pj.html` — o link que se manda
- * sozinho — carregado num iframe com `?embed`: sem a barra do mockup, sem a
- * Home abrindo sozinha e com o tema acompanhando o alternador do site.
- * Uma fonte só: mudou o mockup, mudou a demonstração. A reconstrução em React
- * que existia aqui antes envelheceu justamente por ser uma cópia.
+ * São as telas do próprio app, exportadas com dados fictícios por
+ * `scripts/exportar-mockup-pj.mjs` para `public/mockups/nexus-pj/` — o link que
+ * se manda sozinho — e carregadas num iframe com `?embed`: sem o selo do
+ * mockup e com o tema acompanhando o alternador do site. Versão nova do app:
+ * roda o script de novo. Cópia feita à mão envelhece; exportação não.
  *
  * O iframe é desenhado 25% maior e reduzido a 80%. No card do índice (~470px)
  * o app aparece no layout estreito dele, com o menu recolhido; na página do
@@ -18,7 +18,7 @@ interface Props {
 }
 
 const { class: classe } = Astro.props;
-const SRC = '/mockups/nexus-pj.html?v=2.3.0';
+const SRC = '/mockups/nexus-pj/index.html?v=2.5.0';
 ---
 
 <div class={classe}>

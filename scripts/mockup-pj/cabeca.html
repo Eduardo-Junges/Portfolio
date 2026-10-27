@@ -1,0 +1,43 @@
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<script>
+/* Mockup estático do Nexus & PJ (dados fictícios). Antes do primeiro paint:
+   ?embed = dentro do site (iframe), o tema acompanha o site; fora dele vale o
+   tema escolhido no próprio mockup. */
+(function () {
+  var d = document.documentElement, t = 'dark';
+  var embed = /[?&]embed\b/.test(location.search);
+  try { embed = embed || sessionStorage.getItem('mk-embed') === '1'; if (embed) sessionStorage.setItem('mk-embed', '1'); } catch (e) {}
+  if (embed) {
+    d.classList.add('mk-embed');
+    try { if (parent.document.documentElement.dataset.theme === 'light') t = 'light'; } catch (e) {}
+  } else {
+    try { if (localStorage.getItem('mk-tema') === 'light') t = 'light'; } catch (e) {}
+  }
+  d.setAttribute('data-theme', t);
+  // dentro do site o Dashboard aparece direto, sem a janela de boas-vindas por cima
+  if (embed) {
+    var abrir = HTMLDialogElement.prototype.showModal;
+    HTMLDialogElement.prototype.showModal = function () { if (this.id !== 'hmDlg') abrir.call(this); };
+  }
+  // o mockup não tem servidor: o que o app buscaria vira uma resposta curta
+  var buscar = window.fetch;
+  window.fetch = function (url, o) {
+    var u = String(url);
+    if (u.indexOf('/busca/previa') === 0)
+      return Promise.resolve(new Response('<div class="busca-vazio" style="padding:12px 14px">No mockup a busca não consulta dados. No app, aparecem aqui lançamentos, títulos e telas.</div>', { status: 200 }));
+    if (u.indexOf('/dashboard/dre/lancamentos') === 0)
+      return Promise.resolve(new Response('<tr><td colspan="40" style="padding:8px 14px;opacity:.8">No mockup os lançamentos não abrem. No app, aparecem aqui, um por linha.</td></tr>', { status: 200 }));
+    return buscar ? buscar.apply(this, arguments) : Promise.reject(new Error('sem fetch'));
+  };
+})();
+</script>
+<style>
+  .mk-aviso{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:10000;max-width:min(92vw,460px);
+    padding:10px 14px;border-radius:10px;background:#111827;color:#f3f4f6;border:1px solid rgba(255,255,255,.14);
+    font:500 13px/1.4 system-ui,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .18s}
+  .mk-aviso.on{opacity:1}
+  .mk-selo{position:fixed;right:14px;bottom:14px;z-index:9999;padding:6px 10px;border-radius:999px;font:600 11px/1 system-ui,sans-serif;
+    letter-spacing:.04em;background:rgba(17,24,39,.85);color:#e5e7eb;border:1px solid rgba(255,255,255,.14)}
+  .mk-embed .mk-selo{display:none}
+</style>

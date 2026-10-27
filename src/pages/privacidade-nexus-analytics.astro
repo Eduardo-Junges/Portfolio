@@ -2,61 +2,96 @@
 /**
  * Política de privacidade do Nexus Analytics.
  *
- * Existe por exigência do Google (OAuth precisa de uma URL pública de
- * política de privacidade para sair do modo "Teste", onde o token de acesso
- * ao Gmail expira a cada 7 dias). Não é conteúdo do portfólio — é a peça
- * regulatória mínima para a automação de e-mail do projeto funcionar sem
- * reautenticação semanal.
+ * Nasceu em ago/2026 como exigência do Google para o acesso ao Gmail por OAuth.
+ * Desde a 1.3.0 o app lê o e-mail por IMAP com senha de app e não usa mais OAuth,
+ * então o texto passou a descrever o app inteiro. Cada fato foi conferido no
+ * código da versão 1.4.0 (utils/email_caixa.py, utils/segredo.py, utils/auth.py,
+ * carteiro/ e rele/). Mudou o app nesses pontos, muda esta página — junto com os termos.
  */
 import PaginaLegal from '../components/ui/PaginaLegal.astro';
+import { EMAIL } from '../data/redes';
 ---
 
 <PaginaLegal
   titulo="Política de Privacidade"
   subtitulo="Nexus Analytics"
-  descricao="Como o Nexus Analytics usa o acesso ao Gmail: só localmente, só para o próprio autor."
-  atualizado="30 de agosto de 2026"
+  descricao="Como o Nexus Analytics trata os dados: tudo no computador de quem usa, com o que sai dele desligado por padrão."
+  atualizado="27 de outubro de 2026"
   voltarHref="/projetos/nexus-analytics"
   voltarRotulo="Voltar para Nexus Analytics"
   irmaoHref="/termos-nexus-analytics"
   irmaoRotulo="Termos de Uso do Nexus Analytics"
 >
   <p>
-    Nexus Analytics é uma aplicação de uso pessoal e privado, desenvolvida e operada por
-    Eduardo Henrique Junges exclusivamente para automatizar a organização de seus próprios
-    extratos bancários e faturas de cartão de crédito.
+    Nexus Analytics é uma aplicação de finanças pessoais desenvolvida por Eduardo Henrique Junges.
+    Cada pessoa instala <strong>no próprio computador</strong>, e os dados ficam numa pasta dela,
+    separada do código. O desenvolvedor não recebe, não guarda e não tem acesso a esses dados.
   </p>
 
-  <h2>Uso de dados</h2>
-  <p>Esta aplicação acessa uma única conta do Gmail — a do próprio desenvolvedor — para:</p>
+  <h2>Quais dados a aplicação trata</h2>
   <ul>
-    <li>Localizar e-mails de instituições financeiras que contenham extratos ou faturas em anexo.</li>
-    <li>Baixar esses anexos (PDF, CSV, OFX, XLS) e salvá-los localmente, em pastas organizadas por banco.</li>
+    <li>
+      <strong>Extratos e faturas</strong> que a pessoa importa: data, valor, descrição e
+      categoria de cada lançamento, e o arquivo original.
+    </li>
+    <li>
+      <strong>Login:</strong> usuário e senha, guardada só como hash (scrypt), com limite de
+      tentativas.
+    </li>
+    <li>
+      <strong>Configurações:</strong> metas, objetivos, regras de categoria e, se ligados, o
+      número de WhatsApp e o acesso ao e-mail.
+    </li>
   </ul>
 
-  <h2>Compartilhamento de dados</h2>
+  <h2>O que pode sair do computador</h2>
+  <p>Por padrão, nada. Estes recursos são opcionais e só funcionam se a pessoa ligar:</p>
+  <ul>
+    <li>
+      <strong>E-mail dos bancos:</strong> a aplicação lê a caixa de e-mail por IMAP, com uma senha
+      de app guardada cifrada, e baixa só os PDFs de extrato e fatura de remetentes de banco
+      autenticados. Só lê: não apaga, não move, não marca e nunca abre link.
+    </li>
+    <li>
+      <strong>WhatsApp:</strong> mensagens e arquivos trocados com o número do Nexus passam pelo
+      WhatsApp. Só o número cadastrado pela pessoa conversa com ele. No número compartilhado (o
+      relé), o conteúdo fica cifrado com a chave de cada pessoa e é apagado assim que chega ao
+      computador dela, em até 72 horas; quem opera o relé vê, por instantes, o que acabou de chegar
+      e as respostas.
+    </li>
+    <li>
+      <strong>Aviso de atualização:</strong> consulta só o número da versão mais recente e não
+      envia nenhum dado.
+    </li>
+  </ul>
   <p>
-    Nenhum dado é compartilhado com terceiros. Todo o processamento ocorre localmente, na
-    máquina do próprio usuário. Nenhuma informação é enviada, vendida ou disponibilizada a
-    qualquer outra pessoa, empresa ou serviço.
+    O assistente de IA, quando instalado, roda num modelo local, no próprio computador. Não há
+    telemetria, publicidade nem rastreamento.
   </p>
 
-  <h2>Armazenamento</h2>
+  <h2>Segurança e cópias</h2>
   <p>
-    Os arquivos baixados ficam armazenados apenas no computador pessoal do usuário. A
-    aplicação não mantém servidores externos, bancos de dados na nuvem, nem qualquer
-    infraestrutura de terceiros.
+    Login ligado por padrão e segredos cifrados com a proteção do próprio Windows, que não abre em
+    outro computador. A aplicação não mantém cópia em servidor externo: backup e proteção da
+    máquina ficam com quem usa.
   </p>
 
-  <h2>Escopo de acesso ao Google</h2>
+  <h2>Seus dados, suas decisões</h2>
   <p>
-    A aplicação solicita acesso de leitura e organização de e-mails (Gmail API) apenas para a
-    finalidade descrita acima. Nenhum e-mail é enviado, excluído ou modificado em massa.
+    Como tudo fica no seu computador, ver, corrigir, exportar ou apagar os dados é com você: basta
+    usar as telas da aplicação ou a pasta de dados. Desligar o e-mail ou o WhatsApp interrompe na
+    hora o que sai do computador.
+  </p>
+
+  <h2>Mudanças</h2>
+  <p>
+    Esta política acompanha a aplicação: quando uma versão nova mudar o que é tratado ou o que
+    pode sair do computador, ela é atualizada, com a data no topo.
   </p>
 
   <h2>Contato</h2>
   <p>
-    Dúvidas sobre esta política podem ser enviadas para{' '}
-    <a href="mailto:h.junges.14@gmail.com" class="text-accent hover:opacity-70">h.junges.14@gmail.com</a>.
+    Dúvidas sobre esta política:
+    <a href={`mailto:${EMAIL}`} class="text-accent hover:opacity-70">{EMAIL}</a>.
   </p>
 </PaginaLegal>

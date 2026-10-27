@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="dark" data-efeitos="completo">
+  <head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<script>
+/* Mockup estático do Nexus & PJ (dados fictícios). Antes do primeiro paint:
+   ?embed = dentro do site (iframe), o tema acompanha o site; fora dele vale o
+   tema escolhido no próprio mockup. */
+(function () {
+  var d = document.documentElement, t = 'dark';
+  var embed = /[?&]embed\b/.test(location.search);
+  try { embed = embed || sessionStorage.getItem('mk-embed') === '1'; if (embed) sessionStorage.setItem('mk-embed', '1'); } catch (e) {}
+  if (embed) {
+    d.classList.add('mk-embed');
+    try { if (parent.document.documentElement.dataset.theme === 'light') t = 'light'; } catch (e) {}
+  } else {
+    try { if (localStorage.getItem('mk-tema') === 'light') t = 'light'; } catch (e) {}
+  }
+  d.setAttribute('data-theme', t);
+  // dentro do site o Dashboard aparece direto, sem a janela de boas-vindas por cima
+  if (embed) {
+    var abrir = HTMLDialogElement.prototype.showModal;
+    HTMLDialogElement.prototype.showModal = function () { if (this.id !== 'hmDlg') abrir.call(this); };
+  }
+  // o mockup não tem servidor: o que o app buscaria vira uma resposta curta
+  var buscar = window.fetch;
+  window.fetch = function (url, o) {
+    var u = String(url);
+    if (u.indexOf('/busca/previa') === 0)
+      return Promise.resolve(new Response('<div class="busca-vazio" style="padding:12px 14px">No mockup a busca não consulta dados. No app, aparecem aqui lançamentos, títulos e telas.</div>', { status: 200 }));
+    if (u.indexOf('/dashboard/dre/lancamentos') === 0)
+      return Promise.resolve(new Response('<tr><td colspan="40" style="padding:8px 14px;opacity:.8">No mockup os lançamentos não abrem. No app, aparecem aqui, um por linha.</td></tr>', { status: 200 }));
+    return buscar ? buscar.apply(this, arguments) : Promise.reject(new Error('sem fetch'));
+  };
+})();
+</script>
+<style>
+  .mk-aviso{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:10000;max-width:min(92vw,460px);
+    padding:10px 14px;border-radius:10px;background:#111827;color:#f3f4f6;border:1px solid rgba(255,255,255,.14);
+    font:500 13px/1.4 system-ui,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .18s}
+  .mk-aviso.on{opacity:1}
+  .mk-selo{position:fixed;right:14px;bottom:14px;z-index:9999;padding:6px 10px;border-radius:999px;font:600 11px/1 system-ui,sans-serif;
+    letter-spacing:.04em;background:rgba(17,24,39,.85);color:#e5e7eb;border:1px solid rgba(255,255,255,.14)}
+  .mk-embed .mk-selo{display:none}
+</style>
+
+    <title>Nexus &amp; PJ — mockup (/dashboard/projecao)</title>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="static/css/tokens.css">
+    <link rel="stylesheet" href="static/css/vida.css">
+    <style>:root{--tom-azul:59,130,246;--tom-azul-tx:77,141,247;--tom-azul-ic:255,255,255;--tom-rosa:236,72,153;--tom-rosa-tx:238,87,161;--tom-rosa-ic:255,255,255;--tom-indigo:99,102,241;--tom-indigo-tx:127,130,244;--tom-indigo-ic:255,255,255;--tom-roxo:139,92,246;--tom-roxo-tx:158,118,247;--tom-roxo-ic:255,255,255;--tom-ambar:245,158,11;--tom-ambar-tx:245,158,11;--tom-ambar-ic:16,21,31;--tom-ciano:6,182,212;--tom-ciano-tx:6,182,212;--tom-ciano-ic:16,21,31;--tom-laranja:249,115,22;--tom-laranja-tx:249,115,22;--tom-laranja-ic:16,21,31;--tom-ardosia:100,116,139;--tom-ardosia-tx:129,142,161;--tom-ardosia-ic:255,255,255;--tom-alfa:0.16;}
+:root[data-theme="light"]{--tom-azul-tx:44,98,184;--tom-rosa-tx:175,53,113;--tom-indigo-tx:83,86,202;--tom-roxo-tx:113,75,199;--tom-ambar-tx:142,92,6;--tom-ciano-tx:4,111,129;--tom-laranja-tx:164,76,15;--tom-ardosia-tx:87,101,121;--tom-alfa:0.1;}
+.tom-azul{--tom:var(--tom-azul);--tom-tx:rgb(var(--tom-azul-tx));--tom-ic:rgb(var(--tom-azul-ic));}.tom-rosa{--tom:var(--tom-rosa);--tom-tx:rgb(var(--tom-rosa-tx));--tom-ic:rgb(var(--tom-rosa-ic));}.tom-indigo{--tom:var(--tom-indigo);--tom-tx:rgb(var(--tom-indigo-tx));--tom-ic:rgb(var(--tom-indigo-ic));}.tom-roxo{--tom:var(--tom-roxo);--tom-tx:rgb(var(--tom-roxo-tx));--tom-ic:rgb(var(--tom-roxo-ic));}.tom-ambar{--tom:var(--tom-ambar);--tom-tx:rgb(var(--tom-ambar-tx));--tom-ic:rgb(var(--tom-ambar-ic));}.tom-ciano{--tom:var(--tom-ciano);--tom-tx:rgb(var(--tom-ciano-tx));--tom-ic:rgb(var(--tom-ciano-ic));}.tom-laranja{--tom:var(--tom-laranja);--tom-tx:rgb(var(--tom-laranja-tx));--tom-ic:rgb(var(--tom-laranja-ic));}.tom-ardosia{--tom:var(--tom-ardosia);--tom-tx:rgb(var(--tom-ardosia-tx));--tom-ic:rgb(var(--tom-ardosia-ic));}
+.bloco{padding:0;overflow:hidden}
+.faixa{display:flex;align-items:center;gap:8px;padding:8px 14px;background:rgba(var(--tom),var(--tom-alfa));
+  border-bottom:1px solid rgba(var(--tom),.22);color:var(--tom-tx);font-size:11.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.06em}
+.faixa .faixa-ic{font-size:13px;line-height:1}
+.faixa .faixa-titulo{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.faixa .faixa-acoes{display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0;font-weight:500}
+.faixa .faixa-nota{font-weight:500;text-transform:none;letter-spacing:0;opacity:.95}
+.bloco-corpo{padding:14px 16px}
+.ind-card{padding:14px 16px;display:flex;gap:12px;align-items:flex-start}
+.ind-card .ind-ic{flex:0 0 auto;width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+  font-size:17px;background:linear-gradient(135deg,rgb(var(--tom)),rgba(var(--tom),.72));color:var(--tom-ic)}
+.ind-card .ind-txt{min-width:0;flex:1}
+.ind-card .ind-rotulo{font-size:var(--text-xs);color:var(--text-mute);text-transform:uppercase;letter-spacing:.04em}
+.ind-card .ind-valor{font-size:var(--text-2xl);font-weight:700;color:var(--text-100);line-height:1.2;margin-top:2px}
+.ind-card .ind-var{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:6px;font-size:var(--text-xs);color:var(--text-200)}
+.ind-card .chip{display:inline-flex;align-items:center;gap:3px;padding:1px 8px;border-radius:999px;font-weight:600;border:1px solid transparent}
+.ind-card .chip--bom{background:rgba(var(--green-rgb),.14);color:var(--green-text)}
+.ind-card .chip--ruim{background:rgba(var(--red-rgb),.14);color:var(--red-text)}
+.ind-card .chip--neutro{background:var(--overlay-1);color:var(--text-200)}
+.ind-card .ind-nota{font-size:var(--text-xs);color:var(--text-200);margin-top:6px}
+.subabas{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.subaba{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;font-size:12.5px;font-weight:600;
+  color:var(--text-200);background:var(--surface-1);border:1px solid var(--border-1);text-decoration:none;white-space:nowrap;
+  transition:background var(--dur-fast) ease,color var(--dur-fast) ease,border-color var(--dur-fast) ease}
+.subaba .sa-ic{font-size:13px;line-height:1;color:var(--tom-tx,var(--text-200))}
+.subaba:hover{color:var(--text-100);border-color:var(--line-strong)}
+.subaba:focus-visible{outline:2px solid var(--text-200);outline-offset:2px}
+.subaba.on{background:var(--text-100);color:var(--bg);border-color:transparent}
+.subaba.on .sa-ic{color:inherit}
+.mod-ic{flex:none;width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;
+  background:linear-gradient(135deg,rgb(var(--tom)),rgba(var(--tom),.72));color:var(--tom-ic)}
+.mod-periodo{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;font-size:12px;font-weight:600;
+  color:var(--text-200);border:1px solid var(--border-1);background:var(--surface-1);white-space:nowrap}
+@media (max-width:1100px){.mod-periodo{display:none}}
+</style>
+<script src="static/js/chegada.js"></script><script src="static/js/vida.js" defer></script>    <link rel="icon" type="image/png" href="static/branding/icone-dark.png">
+  </head>
+  <body>
+    <div id="appShell" class="shell">
+      
+      <div id="appSidebar" class="sidebar">
+        <div class="brand">
+<a href="index.html" class="brand-btn" title="Ir para o Dashboard"><img src="static/branding/icone-dark.png" alt="" class="brand-icon"><span class="brand-name">Nexus &amp; PJ</span></a>        </div>
+        <nav aria-label="Menu principal">
+          <div class="grp-label">Visão geral</div>
+<a href="index.html" data-label="Dashboard" class="navlink"><span class="nav-badge">⬡</span><span class="nav-label">Dashboard</span></a>          <div class="grp-label">Movimento</div>
+<a href="realizado.html" data-label="Fluxo de caixa" class="navlink"><span class="nav-badge">◧</span><span class="nav-label">Fluxo de caixa</span></a><a href="importar.html" data-label="Importar extrato" class="navlink"><span class="nav-badge">⇓</span><span class="nav-label">Importar extrato</span></a>          <div class="grp-label">Resultados</div>
+<a href="dre.html" data-label="Contábil" class="navlink"><span class="nav-badge">∑</span><span class="nav-label">Contábil</span></a><a href="orcamento.html" data-label="Orçamento" class="navlink"><span class="nav-badge">🎯</span><span class="nav-label">Orçamento</span></a>          <div class="grp-label">Entrega</div>
+<a href="relatorios.html" data-label="Relatórios" class="navlink"><span class="nav-badge">⎙</span><span class="nav-label">Relatórios</span></a>        </nav>
+<button type="button" aria-label="Recolher menu" aria-expanded="true" id="brandToggle" class="sb-borda" title="Recolher/expandir menu" name="brandToggle">‹</button>      </div>
+      <div class="main">
+        <div class="topbar">
+          <div class="title-wrap" style="display:flex;align-items:center;gap:10px;">
+<button type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="appSidebar" id="navAbrir" class="nav-hamb" name="navAbrir">☰</button>            <div class="tom-ambar" style="display:flex;align-items:center;gap:10px;">
+<span aria-hidden="true" class="mod-ic">◐</span>            </div>
+            <div class="title">Projeções</div>
+<a href="index.html" class="voltar-cfg">← Dashboard</a>          </div>
+          <div class="actions">
+            <div class="busca-wrap">
+<label class="topbar-ia"><span class="ia-emoji">🔎</span>                <input type="text" name="q" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="buscaPainel" aria-autocomplete="list" data-ia="1" placeholder="Pesquise um valor, nome ou data… ex.: 1200, pix fabricio — ou pergunte à IA" aria-label="Pesquisar no painel ou perguntar à IA" id="buscaInput">
+<kbd>/</kbd></label>              <div role="listbox" aria-label="Resultados da busca" hidden id="buscaPainel" class="busca-painel"></div>
+            </div>
+            <div id="userMenu" class="user-menu">
+<button type="button" onclick="document.getElementById('userMenu').classList.toggle('open')" class="user-menu-trigger">                <div class="av">E</div>
+                <div class="meta">
+                  <div class="name">Eduardo</div>
+                  <div class="role">ADM</div>
+                </div>
+<span class="chev">▾</span></button>              <div class="user-menu-panel">
+<a href="perfil.html" class="um-head" title="Abrir meu perfil" style="display:block;text-decoration:none;color:inherit;">                  <div class="name">Eduardo</div>
+                  <div class="role">eduardo@empresa.exemplo · Perfil ADM</div>
+</a>                <div class="um-row">
+<span>Tema</span><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="theme-switch">                    
+                    <input type="hidden" name="voltar" value="/dashboard/projecao">
+<button type="submit" name="tema" value="claro">☀</button><button type="submit" name="tema" value="escuro" class="on">☾</button></form>                </div>
+                <div class="um-sep"></div>
+<a href="perfil.html" class="um-item">👤 Meu perfil</a><a href="configuracoes.html" class="um-item">⚙ Configurações</a>                <div class="um-sep"></div>
+<a href="sobre.html" class="um-item">ⓘ Sobre e versão</a><a href="#" data-mk-fora class="um-item">❔ Central de ajuda</a><a href="https://eduardo-junges.vercel.app/privacidade-nexus-pj" target="_blank" rel="noopener" class="um-item">🛡 Política de privacidade</a><a href="https://eduardo-junges.vercel.app/termos-nexus-pj" target="_blank" rel="noopener" class="um-item">📄 Contrato de licença</a>                <div class="um-sep"></div>
+<form enctype="multipart/form-data" method="post" action="#" data-mk-form>                  
+<button type="submit" class="um-item danger">⏻ Sair</button></form>              </div>
+            </div>
+          </div>
+        </div>
+        <div class="body">
+          <div>
+            <div class="painel-topo">
+              <div role="navigation" aria-label="Painéis do Dashboard" class="subabas">
+<a href="fluxo-caixa.html" class="subaba"><span aria-hidden="true" class="sa-ic">◧</span>Fluxo de caixa</a><a href="vendas.html" class="subaba"><span aria-hidden="true" class="sa-ic">▲</span>Vendas</a><a href="despesas.html" class="subaba"><span aria-hidden="true" class="sa-ic">▼</span>Despesas</a><a href="lojas-painel.html" class="subaba"><span aria-hidden="true" class="sa-ic">▦</span>Lojas</a><a href="resultado.html" class="subaba"><span aria-hidden="true" class="sa-ic">∑</span>Resultado (DRE)</a><a href="projecao.html" aria-current="page" class="subaba on"><span aria-hidden="true" class="sa-ic">◐</span>Projeções</a>              </div>
+            </div>
+            <div class="kpi-grid">
+              <div class="card kpi-card">
+                <div class="kpi-label">Saldo hoje</div>
+                <div class="kpi-value">R$ 729.176,00</div>
+                <div class="kpi-delta" style="color:var(--text-200);">soma das contas ativas</div>
+              </div>
+              <div class="card kpi-card">
+                <div class="kpi-label">Saldo previsto em 13 semanas</div>
+                <div class="kpi-value">R$ 622.574,54</div>
+                <div class="kpi-delta" style="color:var(--text-200);">até 25/01/2027</div>
+              </div>
+              <div class="card kpi-card green">
+                <div class="kpi-label">Menor saldo previsto</div>
+                <div class="kpi-value">R$ 622.574,54</div>
+                <div class="kpi-delta" style="color:var(--text-200);">na semana de 19/01</div>
+              </div>
+              <div class="card kpi-card green">
+                <div class="kpi-label">Semanas abaixo do colchão</div>
+                <div class="kpi-value">0</div>
+                <div class="kpi-delta" style="color:var(--text-200);">colchão não definido (aviso só se ficar negativo)</div>
+              </div>
+            </div>
+            <div class="card bloco" style="margin-top:20px;">
+              <div class="faixa tom-laranja">
+<span aria-hidden="true" class="faixa-ic">✦</span><span class="faixa-titulo">Ritmo do caixa</span><span class="faixa-nota">10/2026</span>              </div>
+              <div class="bloco-corpo">
+                <div>
+                  <p class="text-mute" style="font-size:12.5px;margin-bottom:10px;">Dia 27 de 31 — 87% do mês já passou (marca na barra),</p>
+                  <div class="ritmo-linha">
+                    <div class="ritmo-topo">
+<b>Entradas</b><span class="text-mute" style="font-size:12.5px;">R$ 232.084,86 de R$ 277.942,11 esperados no mês</span><span class="ritmo-pct">84%</span>                    </div>
+                    <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="84" aria-label="Entradas: 84% do esperado no mês" class="ritmo-barra">
+                      <div class="ritmo-fill" style="width:83.5%;"></div>
+                      <div class="ritmo-mes" title="87% do mês já passou" style="left:87.1%;"></div>
+                    </div>
+                    <div class="text-mute" style="font-size:12px;margin-top:4px;">Nesse ritmo, fica abaixo do esperado para o dia</div>
+                  </div>
+                  <div class="ritmo-linha">
+                    <div class="ritmo-topo">
+<b>Saídas</b><span class="text-mute" style="font-size:12.5px;">R$ 215.675,14 de R$ 247.712,39 esperados no mês</span><span class="ritmo-pct">87%</span>                    </div>
+                    <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="87" aria-label="Saídas: 87% do esperado no mês" class="ritmo-barra">
+                      <div class="ritmo-fill" style="width:87.1%;"></div>
+                      <div class="ritmo-mes" title="87% do mês já passou" style="left:87.1%;"></div>
+                    </div>
+                    <div class="text-mute" style="font-size:12px;margin-top:4px;">Nesse ritmo, fica acima do esperado para o dia</div>
+                  </div>
+                  <div class="ritmo-13" style="margin-top:12px;font-size:13px;">
+<span style="color:var(--green-text);">✓ </span>Nas próximas 13 semanas, o saldo fica acima do colchão em todas as semanas.                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card bloco" style="margin-top:20px;">
+              <div class="faixa tom-ambar">
+<span aria-hidden="true" class="faixa-ic">◐</span><span class="faixa-titulo">Saldo previsto semana a semana</span><span class="faixa-nota">projeção, não promessa</span>              </div>
+              <div class="bloco-corpo">
+                <div class="chart-box">
+<canvas id="chart-projecao"></canvas>                </div>
+              </div>
+            </div>
+            <div class="card bloco" style="margin-top:20px;">
+              <div class="faixa tom-ambar">
+<span aria-hidden="true" class="faixa-ic">◐</span><span class="faixa-titulo">Semana a semana</span>              </div>
+              <div class="bloco-corpo">
+                <div class="tbl-wrap">
+                  <table class="tbl">
+                    <thead>
+                      <tr>
+                        <th>Semana</th>
+                        <th class="num">Entradas</th>
+                        <th class="num">Saídas</th>
+                        <th class="num">Saldo ao fim</th>
+                        <th>Maiores itens fixos</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>27/10 a 02/11</td>
+                        <td class="num">R$ 80.250,18</td>
+                        <td class="num">R$ 56.065,19</td>
+                        <td class="num">R$ 753.360,99</td>
+                        <td class="text-mute">Cartão a liquidar Centro +R$ 8.400,00; Encargos INSS/FGTS −R$ 7.300,00; Cartão a liquidar Norte +R$ 5.900,00</td>
+                      </tr>
+                      <tr>
+                        <td>03/11 a 09/11</td>
+                        <td class="num">R$ 61.580,05</td>
+                        <td class="num">R$ 128.607,45</td>
+                        <td class="num">R$ 686.333,60</td>
+                        <td class="text-mute">Compra mercadoria Distribuidora Beta −R$ 18.400,00; Folha de pagamento Centro −R$ 17.000,00; DAS Simples Nacional −R$ 15.800,00</td>
+                      </tr>
+                      <tr>
+                        <td>10/11 a 16/11</td>
+                        <td class="num">R$ 55.750,18</td>
+                        <td class="num">R$ 44.870,66</td>
+                        <td class="num">R$ 697.213,12</td>
+                        <td class="text-mute">Compra mercadoria Indústria Delta −R$ 9.800,00; Embalagens −R$ 1.900,00; Crediário lojas +R$ 1.800,00</td>
+                      </tr>
+                      <tr>
+                        <td>17/11 a 23/11</td>
+                        <td class="num">R$ 54.590,18</td>
+                        <td class="num">R$ 53.387,64</td>
+                        <td class="num">R$ 698.415,67</td>
+                        <td class="text-mute">simples nacional −R$ 16.806,99; Seguro empresarial −R$ 3.300,00; Campanha de marketing −R$ 3.000,00</td>
+                      </tr>
+                      <tr>
+                        <td>24/11 a 30/11</td>
+                        <td class="num">R$ 68.250,18</td>
+                        <td class="num">R$ 60.050,19</td>
+                        <td class="num">R$ 706.615,66</td>
+                        <td class="text-mute">Distribuição de lucros −R$ 9.500,00; Cartão a liquidar Centro +R$ 8.400,00; Encargos INSS/FGTS −R$ 7.300,00</td>
+                      </tr>
+                      <tr>
+                        <td>01/12 a 07/12</td>
+                        <td class="num">R$ 63.980,05</td>
+                        <td class="num">R$ 116.947,45</td>
+                        <td class="num">R$ 653.648,27</td>
+                        <td class="text-mute">Compra mercadoria Distribuidora Beta −R$ 18.400,00; Folha de pagamento Centro −R$ 17.000,00; DAS Simples Nacional −R$ 15.800,00</td>
+                      </tr>
+                      <tr>
+                        <td>08/12 a 14/12</td>
+                        <td class="num">R$ 58.050,18</td>
+                        <td class="num">R$ 46.470,64</td>
+                        <td class="num">R$ 665.227,81</td>
+                        <td class="text-mute">Compra mercadoria Atacado Gama −R$ 12.600,00; Venda a prazo Cliente Gama +R$ 2.300,00; Embalagens −R$ 1.900,00</td>
+                      </tr>
+                      <tr>
+                        <td>15/12 a 21/12</td>
+                        <td class="num">R$ 53.950,18</td>
+                        <td class="num">R$ 61.087,66</td>
+                        <td class="num">R$ 658.090,34</td>
+                        <td class="text-mute">simples nacional −R$ 16.806,99; Compra mercadoria Indústria Delta −R$ 9.800,00; Campanha de marketing −R$ 3.000,00</td>
+                      </tr>
+                      <tr>
+                        <td>22/12 a 28/12</td>
+                        <td class="num">R$ 53.950,18</td>
+                        <td class="num">R$ 30.420,19</td>
+                        <td class="num">R$ 681.620,33</td>
+                        <td class="text-mute">tarifa pacote −R$ 139,55</td>
+                      </tr>
+                      <tr>
+                        <td>29/12 a 04/01</td>
+                        <td class="num">R$ 78.280,05</td>
+                        <td class="num">R$ 114.350,64</td>
+                        <td class="num">R$ 645.549,75</td>
+                        <td class="text-mute">Compra mercadoria Distribuidora Beta −R$ 18.400,00; Folha de pagamento Centro −R$ 17.000,00; Folha de pagamento Norte −R$ 11.700,00</td>
+                      </tr>
+                      <tr>
+                        <td>05/01 a 11/01</td>
+                        <td class="num">R$ 56.250,18</td>
+                        <td class="num">R$ 67.297,45</td>
+                        <td class="num">R$ 634.502,48</td>
+                        <td class="text-mute">DAS Simples Nacional −R$ 15.800,00; Compra mercadoria Atacado Gama −R$ 12.600,00; retirada pessoal −R$ 2.876,80</td>
+                      </tr>
+                      <tr>
+                        <td>12/01 a 18/01</td>
+                        <td class="num">R$ 55.750,18</td>
+                        <td class="num">R$ 36.380,66</td>
+                        <td class="num">R$ 653.872,00</td>
+                        <td class="text-mute">Campanha de marketing −R$ 3.000,00; Embalagens −R$ 1.900,00; Crediário lojas +R$ 1.800,00</td>
+                      </tr>
+                      <tr>
+                        <td>19/01 a 25/01</td>
+                        <td class="num">R$ 53.950,18</td>
+                        <td class="num">R$ 85.247,64</td>
+                        <td class="num">R$ 622.574,54</td>
+                        <td class="text-mute">folha centro −R$ 16.960,00; simples nacional −R$ 16.806,99; folha norte −R$ 11.660,00</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="card bloco" style="margin-top:20px;">
+              <div class="faixa tom-ambar">
+<span aria-hidden="true" class="faixa-ic">◐</span><span class="faixa-titulo">Como foi calculado</span>              </div>
+              <div class="bloco-corpo">
+                <div>
+                  <ul>
+                    <li>Base: 4 meses completos (06/2026 a 09/2026); transferências entre contas ficam fora.</li>
+                    <li>Entradas e saídas fixas: só o que se repete com valor estável (1 entrada(s), 14 saída(s)).</li>
+                    <li>Entradas variáveis (vendas do dia a dia): média de R$ 53.950 por semana.</li>
+                    <li>Saídas variáveis: média de R$ 30.281 por semana.</li>
+                  </ul>
+<form enctype="multipart/form-data" method="post" action="#" data-mk-form class="painel-filtros">                    
+<label for="colchao">Colchão mínimo (R$)</label>                    <input type="text" inputmode="decimal" name="colchao" value="0,00" id="colchao" class="input" style="max-width:140px;">
+<button type="submit" class="btn btn--secondary btn--sm">Salvar</button></form>                </div>
+              </div>
+            </div>
+<script src="static/js/chart.umd.min.js"></script><script>window.NXDASH = {"projecao": {"labels": ["27/10", "03/11", "10/11", "17/11", "24/11", "01/12", "08/12", "15/12", "22/12", "29/12", "05/01", "12/01", "19/01"], "saldo": [753360.99, 686333.6, 697213.12, 698415.67, 706615.66, 653648.27, 665227.81, 658090.34, 681620.33, 645549.75, 634502.48, 653872.0, 622574.54], "colchao": 0.0}};</script><script src="static/js/dashboard.js"></script>          </div>
+        </div>
+      </div>
+      <div id="navTooltip"></div>
+      <div id="navOverlay" class="nav-overlay"></div>
+<script>document.addEventListener('click',function(e){var m=document.getElementById('userMenu');if(m&&!m.contains(e.target))m.classList.remove('open');});</script><script>(function(){var shell=document.getElementById('appShell');var chave='nx-menu-1';var btn=document.getElementById('brandToggle');function marca(){if(btn){var rec=shell.classList.contains('sidebar-collapsed');btn.setAttribute('aria-expanded',rec?'false':'true');btn.setAttribute('aria-label',rec?'Expandir menu':'Recolher menu');btn.textContent=rec?'›':'‹';}}try{if(localStorage.getItem(chave)==='1')shell.classList.add('sidebar-collapsed');}catch(e){}marca();if(btn)btn.onclick=function(){shell.classList.toggle('sidebar-collapsed');marca();try{localStorage.setItem(chave,shell.classList.contains('sidebar-collapsed')?'1':'0');}catch(e){}};var abrir=document.getElementById('navAbrir'),over=document.getElementById('navOverlay'),barra=document.getElementById('appSidebar');function gaveta(a){shell.classList.toggle('nav-aberta',a);if(abrir)abrir.setAttribute('aria-expanded',a?'true':'false');if(a){var p=barra.querySelector('a');if(p)p.focus();}else if(abrir){abrir.focus();}}if(abrir)abrir.onclick=function(){gaveta(true);};if(over)over.onclick=function(){gaveta(false);};document.addEventListener('keydown',function(e){if(e.key==='Escape'&&shell.classList.contains('nav-aberta'))gaveta(false);if(e.key==='Tab'&&shell.classList.contains('nav-aberta')){var f=barra.querySelectorAll('a,button');if(!f.length)return;var a=f[0],z=f[f.length-1];if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus();}else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus();}}});var tip=document.getElementById('navTooltip');document.querySelectorAll('.navlink').forEach(function(a){a.addEventListener('mouseenter',function(){var recolhida=shell.classList.contains('sidebar-collapsed')&&window.innerWidth>780;if(!recolhida)return;var r=a.getBoundingClientRect();tip.textContent=a.getAttribute('data-label');tip.style.left=(r.right+10)+'px';tip.style.top=(r.top+r.height/2-14)+'px';tip.classList.add('on');});a.addEventListener('mouseleave',function(){tip.classList.remove('on');});});})();</script><script src="static/js/busca.js" defer></script>    </div>
+  <div class="mk-aviso" id="mkAviso" role="status" aria-live="polite"></div>
+<a class="mk-selo" href="login.html" title="Ver a tela de entrada">Mockup · dados fictícios</a>
+<script>
+(function () {
+  var d = document.documentElement, caixa = document.getElementById('mkAviso'), relogio;
+  function avisar(t) {
+    caixa.textContent = t; caixa.classList.add('on');
+    clearTimeout(relogio); relogio = setTimeout(function () { caixa.classList.remove('on'); }, 2600);
+  }
+  function tema(t) {
+    d.setAttribute('data-theme', t);
+    try { if (!d.classList.contains('mk-embed')) localStorage.setItem('mk-tema', t); } catch (e) {}
+    document.querySelectorAll('.theme-switch button[name=tema]').forEach(function (b) {
+      b.classList.toggle('on', (b.value === 'claro') === (t === 'light'));
+    });
+  }
+  tema(d.getAttribute('data-theme'));
+  // dentro do site, o tema acompanha o alternador do site
+  if (d.classList.contains('mk-embed')) try {
+    new MutationObserver(function () { tema(parent.document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'); })
+      .observe(parent.document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  } catch (e) {}
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[data-mk-fora]');
+    if (a) { e.preventDefault(); avisar('Esta tela fica só no app. O mockup mostra as principais.'); return; }
+    var b = e.target.closest('.theme-switch button[name=tema]');
+    if (b) { e.preventDefault(); tema(b.value === 'claro' ? 'light' : 'dark'); }
+  }, true);
+  document.addEventListener('submit', function (e) {
+    var f = e.target.closest('form[data-mk-form]');
+    if (!f) return;
+    e.preventDefault();
+    if (f.querySelector('button[name=tema]')) return;
+    if (f.querySelector('input[name=senha]')) { location.href = 'index.html'; return; }
+    avisar(f.method === 'get' ? 'No mockup os filtros não mudam os dados. No app, a tela recalcula na hora.' : 'Mockup: nada é gravado. No app, isto salva e fica na auditoria.');
+  }, true);
+})();
+</script>
+
+</body>
+</html>

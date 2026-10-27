@@ -14,8 +14,9 @@ autoriaDetalhe: >-
 inicio: 2026-08-01
 status: 'ativo'
 estadoAtual: >-
-  Versão 2.3.0, rodando local. Login com perfis e 2FA, importação de extrato, fechamento dia a dia, várias lojas
-  com rateio, painéis, relatórios em PDF e Excel, DRE por caixa e IA local. Canal de WhatsApp em desenvolvimento e validação junto à Meta.
+  Versão 2.5.0, rodando local. Fluxo de caixa realizado e planejado, área contábil (DRE, balancete e
+  balanço gerencial), orçamento, fechamento do mês, relatórios próprios e IA local. Canal de WhatsApp
+  em desenvolvimento e validação junto à Meta.
 ferramentas:
   - 'Python'
   - 'FastHTML'
@@ -43,50 +44,47 @@ do Nexus Analytics, e o motor de leitura de extrato veio de lá.
 
 ## O que já roda
 
-- **Acesso:** três perfis (administrador, quem lança, quem só vê), verificação em duas etapas,
-  aprovação de aparelho e trilha de auditoria.
-- **Fluxo de Caixa:** importa extrato, categoriza e mostra o saldo real. O **Consolidado** fecha o
-  dia com o saldo calculado, o saldo dos bancos e a diferença entre os dois.
+- **Acesso:** perfis configuráveis (o administrador cria, por exemplo, um perfil Contador e marca
+  o que cada um lê ou edita), verificação em duas etapas, senha com validade, máquina nova esperando
+  liberação e trilha de auditoria. Cancelar ou excluir qualquer coisa pede permissão e justificativa.
+- **Fluxo de Caixa:** importa extrato, categoriza e mostra o saldo real. O **Realizado** fecha o dia
+  contra o saldo dos bancos; o **Planejado** traz as contas a pagar e a receber e sugere o lançamento
+  do extrato que pagou cada uma.
+- **Área Contábil:** DRE por caixa, balancete gerencial (que confere com a variação do saldo dos
+  bancos) e balanço patrimonial gerencial, sobre um plano de contas numerado.
+- **Orçamento × realizado:** meta mensal por categoria e por loja, com aviso quando estoura.
 - **Várias lojas:** cada lançamento tem uma loja, e o rateio entre lojas é calculado na hora do
   relatório. Sem regra, vira "Sem loja", nunca chuta.
-- **Painéis:** um hub com Fluxo de caixa, Conciliação, Lojas e outros, com filtro de loja e
-  período, mostrando margem, dias de caixa e ponto de equilíbrio.
-- **Relatórios:** sete relatórios (extrato, fluxo diário, entradas por origem, despesas por grupo,
-  resultado por loja, conciliação e projeção) com a prévia montada na hora e arquivo em PDF, Excel,
-  CSV ou TXT, com o nome da empresa e quem gerou. Os números são os mesmos das telas.
-- **DRE por caixa:** receita, impostos, compras, despesas e resultado do período, com os meses em
-  colunas e cada linha abrindo em grupo, subcategoria e lançamentos. O que está sem categoria fica
-  numa linha à parte, fora do resultado. A DRE por competência ainda está em preparação.
-- **Próximas 13 semanas:** o saldo previsto semana a semana, com um colchão mínimo definido pelo
-  administrador. É estimativa pelo histórico, não promessa.
-- **API de leitura** (desligada por padrão): tokens por escopo para outros sistemas lerem os dados,
-  sem nunca gravar.
-- **Cadastros completos** de conta, loja, usuário e empresa, com CNPJ, CPF e CEP validados na hora.
+- **Painéis:** Fluxo de caixa, Vendas, Despesas, Lojas, Resultado (DRE) e Projeções, com filtro de
+  loja e período.
+- **Relatórios:** prontos ou montados pela própria pessoa, em PDF, Excel, CSV ou TXT, com os mesmos
+  números das telas. O **fechamento do mês** trava o mês conferido e guarda o pacote do contador.
+- **Próximas 13 semanas:** o saldo previsto semana a semana, já com as contas a pagar e a receber. É
+  estimativa, não promessa.
+- **Busca no topo:** um valor, uma palavra ou uma data acha lançamentos, títulos e telas.
 - **IA local:** um assistente que responde sobre o caixa. O modelo só escolhe a ferramenta e nunca
-  vê valor de extrato. Pedido de alterar algo vira uma proposta que a pessoa confirma. Testei com
-  159 perguntas e chegou a 92% de acerto.
-- **Segurança de operação:** backup automático, tela de saúde do sistema e atualização em um clique
-  que volta sozinha se algo falhar.
-- **Versões e instalação:** cada versão traz as novidades em linguagem de quem usa, o app mostra a
-  versão e o que mudou, e uma instalação nova pede o primeiro administrador numa tela guiada, com
-  código que só quem está no servidor tem.
+  vê valor de extrato. Pedido de alterar algo vira uma proposta que a pessoa confirma.
+- **Operação:** backup automático, saúde do sistema, atualização em um clique que volta sozinha se
+  algo falhar e API de leitura (desligada por padrão).
 
 ## Decisões que valem contar
 
 - **"A revisar" entra no total do dia.** O saldo fecha com o extrato mesmo antes de categorizar tudo.
 - **Sem extrato não é o mesmo que não fechou.** Dia sem extrato mostra um traço, não uma diferença.
 - **A IA propõe, a pessoa confirma.** Nenhuma alteração acontece sem um "sim".
+- **Mês fechado não muda.** Nem tela, nem IA, nem importação mexem nele, e o pacote do contador
+  fica como foi entregue.
 - **Virou produto.** Nome, cor e logo saíram do código, e cada instalação troca a marca sozinha.
 
 ## Mockup
 
-O mockup lá em cima reproduz o app com dados fictícios, incluindo o **fechamento por loja** e uma
-tela de **indicadores financeiros**.
+O mockup lá em cima são as telas do próprio app, exportadas com dados fictícios. Dá para navegar
+pelo menu e pelas abas; só não grava nada.
 
-[Abrir o mockup em tela cheia →](/mockups/nexus-pj.html?v=2.3.0)
+[Abrir o mockup em tela cheia →](/mockups/nexus-pj/index.html?v=2.5.0)
 
 ## Próximos passos
 
 - Canal de WhatsApp, em desenvolvimento e validação junto à Meta.
 - Servidor dedicado dentro da rede da empresa.
-- Tela de planejamento do caixa.
+- DRE por competência.

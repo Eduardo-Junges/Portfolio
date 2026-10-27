@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="28" viewBox="0 0 180 28">
+  <title>Nexus Caixa — placeholder (tema escuro)</title>
+  <!-- Placeholder até o logo final da empresa ser definido (Seção 2.6 do plano).
+       Trocar este arquivo (mesmo nome/local) atualiza o logo em toda a aplicação,
+       sem mexer em código. Cor fixa (não currentColor): carregado via <img src>,
+       que não herda cor do CSS da página — por isso duas variantes, uma por tema. -->
+  <text x="0" y="20" font-family="Inter, ui-sans-serif, system-ui, sans-serif"
+        font-size="18" font-weight="800" letter-spacing="-0.3" fill="#f4f4f5">Nexus Caixa</text>
+</svg>
