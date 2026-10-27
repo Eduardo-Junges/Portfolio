@@ -4,7 +4,7 @@
  *
  * Premissa que sustenta o texto: o sistema é instalado no servidor da própria
  * empresa (nada roda em nuvem do desenvolvedor). Cada fato aqui foi conferido no
- * código do repositório nexus-pj (versão 2.4.0): campos guardados, retenção do
+ * código do repositório nexus-pj (versão 2.5.0): campos guardados, retenção do
  * Vigia (90 dias), backups (30 no servidor, 60 na cópia externa), sessão de 30 min,
  * cookie de aparelho de 400 dias, o que pode sair da rede e só se a empresa ligar.
  * Mudou o sistema nesses pontos, muda esta página — junto com os termos.
@@ -17,7 +17,7 @@ import { EMAIL } from '../data/redes';
   titulo="Política de Privacidade"
   subtitulo="Nexus & PJ"
   descricao="Como o Nexus & PJ trata os dados: instalado no servidor da própria empresa, com o que sai da rede desligado por padrão."
-  atualizado="23 de outubro de 2026"
+  atualizado="27 de outubro de 2026"
   voltarHref="/projetos/nexus-pj"
   voltarRotulo="Voltar para Nexus & PJ"
   irmaoHref="/termos-nexus-pj"
@@ -36,15 +36,16 @@ import { EMAIL } from '../data/redes';
     da Lei Geral de Proteção de Dados (Lei 13.709/2018). O desenvolvedor não recebe, não guarda e
     não tem acesso a esses dados pela distribuição do sistema: o código é entregue sem nenhum
     dado, e uma instalação nova nasce vazia. Quando o desenvolvedor presta suporte com acesso ao
-    sistema, ele age em nome da empresa e só com o acesso que ela conceder.
+    sistema, ele age em nome da empresa e só com o acesso que ela conceder: o perfil de suporte só
+    é criado direto no servidor, e o que ele faz fica na auditoria.
   </p>
 
   <h2>Quais dados o sistema trata</h2>
   <ul>
     <li>
-      <strong>Usuários:</strong> nome, e-mail, perfil de acesso, cargo e telefone (opcionais) e
-      preferências de tela. A senha é guardada só como hash, o segredo da verificação em duas
-      etapas fica cifrado e os códigos de recuperação, só como hash.
+      <strong>Usuários:</strong> nome, e-mail, perfil de acesso, cargo e telefone (opcionais),
+      preferências de tela e a data da última troca de senha. A senha é guardada só como hash, o
+      segredo da verificação em duas etapas fica cifrado e os códigos de recuperação, só como hash.
     </li>
     <li>
       <strong>Aparelhos aprovados:</strong> um nome para o aparelho, o endereço IP de origem e as
@@ -67,7 +68,8 @@ import { EMAIL } from '../data/redes';
     </li>
     <li>
       <strong>Trilha de auditoria:</strong> quem mudou o quê e quando (cadastros, permissões,
-      categorias, gerações de relatório, leituras pela API).
+      categorias, gerações de relatório, leituras pela API) e, em todo cancelamento ou exclusão, a
+      justificativa escrita por quem fez.
     </li>
     <li>
       <strong>Vigia de acesso:</strong> nas tentativas suspeitas e nos logins que falham, o IP, o
@@ -111,15 +113,17 @@ import { EMAIL } from '../data/redes';
   <p>
     Só os necessários para o login e a segurança: a sessão, que expira depois de 30 minutos sem
     uso, e o reconhecimento do aparelho aprovado, válido por até 400 dias. Os dois guardam apenas
-    um código aleatório; no servidor fica só o hash dele. Não há cookies de publicidade nem de
+    um código aleatório; no servidor fica só o hash dele. O navegador guarda ainda, nele mesmo, se
+    os efeitos visuais rodam completos ou reduzidos. Não há cookies de publicidade nem de
     rastreamento.
   </p>
 
   <h2>Segurança</h2>
   <p>
-    Permissões por perfil checadas no servidor em toda tela e ação, verificação em duas etapas,
-    aprovação de aparelho, trilha de auditoria, bloqueio de tentativas repetidas e HTTPS opcional
-    na rede da empresa. Nenhuma alteração sugerida pela inteligência artificial é gravada sem a
+    Permissões por perfil checadas no servidor em toda tela e ação, verificação em duas etapas
+    obrigatória, senha com validade (45 dias, ou 30 para administradores), computador novo
+    esperando a liberação de um administrador, trilha de auditoria, bloqueio de tentativas
+    repetidas e HTTPS opcional na rede da empresa. Nenhuma alteração sugerida pela inteligência artificial é gravada sem a
     confirmação de um usuário com permissão para isso.
   </p>
 
@@ -132,8 +136,9 @@ import { EMAIL } from '../data/redes';
   <h2>Direitos dos titulares</h2>
   <p>
     Pedidos de acesso, correção ou exclusão de dados pessoais devem ser feitos à empresa que usa
-    o sistema, que é quem decide sobre eles. O sistema permite corrigir cadastros e desativar
-    usuários.
+    o sistema, que é quem decide sobre eles. O sistema permite corrigir cadastros e desativar ou
+    excluir usuários. Um usuário excluído perde o acesso e sai das listas, mas o nome dele continua
+    na auditoria, no histórico do que fez.
   </p>
 
   <h2>Mudanças</h2>

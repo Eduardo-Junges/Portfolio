@@ -1,0 +1,84 @@
+/* Nexus & PJ — "dados com vida" (versão discreta) e a entrada pela galáxia.
+ *
+ * Regras (docs/pedidos/PEDIDO_GALAXIA_E_DADOS_COM_VIDA.md):
+ *  - o movimento não mente: nada de mola em barra/valor; o número final é o do servidor;
+ *  - só `transform`, `opacity`, `clip-path`/máscara; nada de animar width/height/top/left/filtro;
+ *  - níveis por usuário em <html data-efeitos="completo|reduzido|desligado">; "reduzir movimento" do sistema vale como
+ *    Desligado. Desligado = nada se mexe e o valor final aparece direto.
+ */
+
+/* ── nível Desligado e "reduzir movimento": bloco global que faltava ─────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important; transition-delay: 0s !important; scroll-behavior: auto !important;
+  }
+}
+html[data-efeitos="desligado"] *, html[data-efeitos="desligado"] *::before, html[data-efeitos="desligado"] *::after {
+  animation-duration: .001ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important;
+  transition-duration: .001ms !important; transition-delay: 0s !important; scroll-behavior: auto !important;
+}
+
+/* ── chegada depois da galáxia: o círculo que abre ───────────────────────────────────────────────── */
+@property --nx-r { syntax: '<length>'; inherits: false; initial-value: 0px; }
+html.nx-chegando::before, html.nx-chegada-suave::before {
+  content: ''; position: fixed; inset: 0; z-index: 100000; pointer-events: none; background-color: #000;
+}
+html.nx-chegando::before {
+  /* o mesmo último quadro do mergulho: o Sol como uma estrela morna no meio do escuro */
+  background-image: radial-gradient(circle at 50% 50%, rgba(255, 232, 190, .96) 0, rgba(255, 205, 130, .38) 6px, rgba(255, 190, 110, 0) 70px);
+  /* borda macia de 48 px; o círculo precisa cobrir a diagonal da tela (metade da diagonal < 0,71 × a maior dimensão) */
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, transparent var(--nx-r), #000 calc(var(--nx-r) + 48px));
+          mask-image: radial-gradient(circle at 50% 50%, transparent var(--nx-r), #000 calc(var(--nx-r) + 48px));
+  animation: nx-abre 650ms cubic-bezier(.4, 0, .2, 1) 120ms forwards;
+}
+html.nx-chegada-suave::before { animation: nx-esmaece 200ms ease-out forwards; }
+@keyframes nx-abre { from { --nx-r: 0px; } to { --nx-r: 82vmax; } }
+@keyframes nx-esmaece { from { opacity: 1; } to { opacity: 0; } }
+
+/* ── telas de entrada (login, 2FA, ...) com a galáxia ao fundo ──────────────────────────────────── */
+#galaxia-cv { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; display: none; background: #000; }
+html.galaxia-on #galaxia-cv { display: block; }
+html.galaxia-on body { background: #000; }
+html.galaxia-on .login-bg { position: relative; z-index: 1; background: transparent; }
+/* vidro escuro SÓ opaco: blur sobre um canvas que anima é recalculado a cada quadro (pesa nos PCs da loja) */
+html.galaxia-on .auth-glass {
+  background: rgba(10, 12, 18, .97); -webkit-backdrop-filter: none; backdrop-filter: none;
+  --text-mute: #8a8a94;   /* o texto de apoio precisa de 4,5:1 mesmo sobre o ponto mais claro da galáxia (tests/test_galaxia_login.py) */
+  border-color: rgba(255, 255, 255, .14); box-shadow: 0 24px 80px rgba(0, 0, 0, .65);
+  transition: opacity 260ms ease-out, transform 260ms ease-out;
+}
+html.galaxia-on .auth-glass.au-some { opacity: 0; transform: scale(.97); pointer-events: none; }
+.auth-glass.au-some { opacity: 0; pointer-events: none; transition: opacity 200ms ease-out; }
+.auth-glass.au-treme { animation: au-treme 320ms cubic-bezier(.36, .07, .19, .97); }
+@keyframes au-treme { 10%, 90% { transform: translateX(-1px); } 20%, 80% { transform: translateX(2px); } 30%, 50%, 70% { transform: translateX(-4px); } 40%, 60% { transform: translateX(4px); } }
+#au-abrindo { position: fixed; left: 0; right: 0; bottom: 14vh; z-index: 2; text-align: center; color: rgba(255, 255, 255, .86);
+  font-size: 14px; letter-spacing: .04em; opacity: 0; transition: opacity 300ms ease-out; pointer-events: none; }
+#au-abrindo.on { opacity: 1; }
+#au-abrindo[hidden] { display: none; }
+
+/* ── cartões: a borda acende sob o cursor (só Completo; luz neutra na cor de destaque, sem inclinação 3D) ───────── */
+html[data-efeitos="completo"] .card::after {
+  content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none; opacity: 0;
+  background: radial-gradient(190px circle at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--ink) 60%, transparent), transparent 72%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+          mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  transition: opacity var(--dur-base) ease;
+}
+html[data-efeitos="completo"] .card:hover::after { opacity: 1; }
+
+/* leitor de tela lê só o valor final dos KPIs (o texto que conta fica escondido dele) */
+.nx-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* ── entrada dos cartões por rolagem: uma vez por cartão, só opacity e transform ──────────────────────────────── */
+@keyframes nx-sobe { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@supports (animation-timeline: view()) {
+  html[data-efeitos="completo"] .vida-entra { animation: nx-sobe linear both; animation-timeline: view(); animation-range: entry 0% entry 38%; }
+}
+html[data-efeitos="completo"] .vida-pre { opacity: 0; transform: translateY(14px); }
+html[data-efeitos="completo"] .vida-pre.vida-visto { opacity: 1; transform: none; transition: opacity var(--dur-slow) var(--ease-standard), transform var(--dur-slow) var(--ease-standard); }
+
+/* ── ler o dado: foco do teclado no gráfico e "Ver como tabela" ───────────────────────────────────────────────── */
+.chart-box canvas:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: var(--radius-sm); }
+.nx-tabela-barra { margin-top: 8px; }
+.nx-tabela { margin-top: 8px; max-height: 280px; overflow: auto; }

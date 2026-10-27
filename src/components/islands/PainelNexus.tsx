@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from 'react';
+import { useMemo, useState, type CSSProperties, type ReactNode } from 'react';
 import {
   lancamentosDemo,
   contasDemo,
@@ -13,9 +13,10 @@ import {
  * Réplica da interface real do Nexus Analytics, com dados fictícios.
  *
  * Estrutura, paleta, tipografia e componentes vêm do código do app real
- * (utils/layout.py, app.py e pages/*.py): sidebar de 6 abas, header com status,
- * KPI cards com faixa colorida e ícone, e — em cada aba — os mesmos blocos que
- * o app monta. Os títulos não são inventados; são os do `render(...)` de cada
+ * (versão 1.4.0, utils/layout.py, utils/tons.py e webapp/main.py): barra lateral
+ * flutuante, cabeçalho de módulo com o ícone na cor de identidade do assunto,
+ * cartões de indicador, blocos com faixa colorida, alertas inteligentes e — em
+ * cada painel — os mesmos blocos que o app monta. Os títulos não são inventados; são os do `render(...)` de cada
  * página:
  *
  *   Dashboard      Receita × Despesa — Mensal · Saldo por Mês — Bancos ·
@@ -39,21 +40,41 @@ import {
 
 const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
 
-// NAV do app real (utils/layout.py)
+/**
+ * Paleta de IDENTIDADE do app (utils/tons.py): um tom por assunto, que nunca é o
+ * verde nem o vermelho de significado. `tx` é a cor do texto sobre a faixa no
+ * tema escuro, calculada no app para passar AA.
+ */
+const TONS = {
+  azul: { base: '59,130,246', tx: '133,178,249', glifo: '⬡' },
+  rosa: { base: '236,72,153', tx: '243,142,192', glifo: '▼' },
+  indigo: { base: '99,102,241', tx: '165,166,247', glifo: '▲' },
+  roxo: { base: '139,92,246', tx: '188,160,250', glifo: '▤' },
+  ambar: { base: '245,158,11', tx: '247,175,55', glifo: '◐' },
+  ciano: { base: '6,182,212', tx: '76,202,224', glifo: '◈' },
+  laranja: { base: '249,115,22', tx: '251,160,97', glifo: '✦' },
+  ardosia: { base: '100,116,139', tx: '165,174,188', glifo: '▦' },
+} as const;
+type Tom = keyof typeof TONS;
+
+const varsDoTom = (t: Tom) =>
+  ({ '--tom': TONS[t].base, '--tom-tx': `rgb(${TONS[t].tx})`, '--tom-glifo': `'${TONS[t].glifo}'` }) as CSSProperties;
+
+// NAV do app real: a barra lateral recolhida mostra só os ícones
 const NAV = [
-  { id: 'dashboard', rotulo: 'Dashboard', icone: '⬡' },
-  { id: 'lancamentos', rotulo: 'Lançamentos', icone: '☰' },
-  { id: 'objetivos', rotulo: 'Objetivos', icone: '◎' },
+  { id: 'dashboard', rotulo: 'Dashboard', icone: '⬡', tom: 'azul' },
+  { id: 'lancamentos', rotulo: 'Lançamentos', icone: '▦', tom: 'ardosia' },
+  { id: 'objetivos', rotulo: 'Objetivos', icone: '✦', tom: 'laranja' },
 ] as const;
 
 /** Painéis que o Hub abre: no app real perderam a aba própria e vivem atrás dos cards. */
 const PAINEIS = [
-  { id: 'visaogeral', icone: '⬡', titulo: 'Visão geral', legenda: 'KPIs, tendência e orçamentos' },
-  { id: 'despesas', icone: '▼', titulo: 'Despesas', legenda: 'para onde o dinheiro foi' },
-  { id: 'receitas', icone: '▲', titulo: 'Receitas', legenda: 'de onde ele veio' },
-  { id: 'cartoes', icone: '▤', titulo: 'Cartões', legenda: 'faturas e parcelas' },
-  { id: 'projecoes', icone: '◔', titulo: 'Projeções', legenda: 'o que vem pela frente' },
-  { id: 'investimentos', icone: '◇', titulo: 'Investimentos', legenda: 'patrimônio e rendimento' },
+  { id: 'visaogeral', icone: '⬡', titulo: 'Visão geral', legenda: 'KPIs, tendência e orçamentos', tom: 'azul' },
+  { id: 'despesas', icone: '▼', titulo: 'Despesas', legenda: 'para onde o dinheiro foi', tom: 'rosa' },
+  { id: 'receitas', icone: '▲', titulo: 'Receitas', legenda: 'de onde ele veio', tom: 'indigo' },
+  { id: 'cartoes', icone: '▤', titulo: 'Cartões', legenda: 'faturas e parcelas', tom: 'roxo' },
+  { id: 'projecoes', icone: '◐', titulo: 'Projeções', legenda: 'o que vem pela frente', tom: 'ambar' },
+  { id: 'investimentos', icone: '◈', titulo: 'Investimentos', legenda: 'patrimônio e rendimento', tom: 'ciano' },
 ] as const;
 
 type PainelId = (typeof PAINEIS)[number]['id'];
@@ -411,11 +432,12 @@ function BarrasH({ itens }: { itens: { rotulo: string; valor: number; texto?: st
   );
 }
 
-function Bloco({ titulo, children }: { titulo: string; children: ReactNode }) {
+/** Bloco do layout novo: faixa fina no tom do assunto, com ícone e título em caixa alta. */
+function Bloco({ titulo, children, tom }: { titulo: string; children: ReactNode; tom?: Tom }) {
   return (
-    <div className="nx-card">
+    <div className="nx-card" style={tom ? varsDoTom(tom) : undefined}>
       <div className="nx-sec">{titulo}</div>
-      {children}
+      <div className="nx-bc">{children}</div>
     </div>
   );
 }
@@ -445,7 +467,7 @@ interface Kpi {
 
 function Kpis({ lista }: { lista: Kpi[] }) {
   return (
-    <div className="nx-kpis">
+    <div className="nx-kpis" style={{ '--n': lista.length } as CSSProperties}>
       {lista.map((k) => (
         <div key={k.label} className={`kpi ${k.cor}`}>
           <div className="kpi-hd">
@@ -915,7 +937,7 @@ function Hub({
           <button key={p.id} type="button" className="hub-c" onClick={() => abrir(p.id)} aria-labelledby={`hub-t-${p.id}`}>
             <div className="hub-pv">{previas[p.id]}</div>
             <div className="hub-ft">
-              <div className="hub-ic" aria-hidden="true">{p.icone}</div>
+              <div className="hub-ic" aria-hidden="true" style={varsDoTom(p.tom)}>{p.icone}</div>
               <div><b id={`hub-t-${p.id}`}>{p.titulo}</b><span>{p.legenda}</span></div>
             </div>
           </button>
@@ -928,6 +950,8 @@ function Hub({
 
 export default function PainelNexus({ className = '', compacto = false }: Props) {
   const [aba, setAba] = useState<AbaId>('dashboard');
+  // calculadora de Objetivos: a data que a pessoa escolheu, por objetivo ('AAAA-MM')
+  const [datas, setDatas] = useState<Record<string, string>>({});
 
   // largura do viewBox: estreita no compacto para o texto do eixo sobreviver à redução
   const W = compacto ? 210 : 330;
@@ -979,7 +1003,9 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
   }, [meses, serieReceita, serieDespesa, serieInvest]);
 
   const painelAberto = PAINEIS.find((p) => p.id === aba);
-  const rotuloAba = painelAberto?.titulo ?? NAV.find((n) => n.id === aba)?.rotulo ?? '';
+  const navAba = NAV.find((n) => n.id === aba);
+  const rotuloAba = painelAberto?.titulo ?? navAba?.rotulo ?? '';
+  const tomAba: Tom = painelAberto?.tom ?? navAba?.tom ?? 'azul';
   const menuAtivo = painelAberto ? 'dashboard' : aba;
 
   // ── dados por aba ───────────────────────────────────────────────────────────
@@ -1085,6 +1111,35 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
 
   const cartoes = contasDemo.filter((c) => c.tipo === 'cartao');
 
+  // Alertas inteligentes do Dashboard (até 3 linhas: lembrete, ritmo do mês e
+  // conquista). Tudo sai dos lançamentos fictícios; o ritmo descreve, não prevê.
+  const despesaMediana = mediana(serieDespesa.slice(0, -1));
+  const alertas: { tom: Tom; icone: string; titulo: string; texto: string }[] = [];
+  const proxFatura = [...cartoes].sort((a, b) => (a.vencimento ?? 0) - (b.vencimento ?? 0))[0];
+  if (proxFatura) {
+    const v = soma(doMes.filter((l) => l.origem === proxFatura.id));
+    alertas.push({ tom: 'roxo', icone: '▤', titulo: `Fatura do ${proxFatura.rotulo} vence dia ${proxFatura.vencimento}`,
+      texto: `${fmt0(v)} em compras de ${rotuloMes(mesAtual)}.` });
+  }
+  if (despesaMediana > 0) {
+    const d = ((despesaMes - despesaMediana) / despesaMediana) * 100;
+    alertas.push({ tom: 'ambar', icone: '◐', titulo: `Ritmo do mês: ${pct1(Math.abs(d))} ${d >= 0 ? 'acima' : 'abaixo'} do normal`,
+      texto: `Saiu ${fmt0(despesaMes)} em ${rotuloMes(mesAtual)}; a mediana dos meses anteriores é ${fmt0(despesaMediana)}.` });
+  }
+  if (receitaMes - despesaMes > 0)
+    alertas.push({ tom: 'indigo', icone: '✓', titulo: `${rotuloCompetencia(mesAtual)} fechou no azul`,
+      texto: `Sobrou ${fmt0(receitaMes - despesaMes)} (receita ${fmt0(receitaMes)} − despesa ${fmt0(despesaMes)}).` });
+
+  // Objetivos: quanto guardar por mês para chegar na data escolhida
+  const mesesAte = (aaaamm: string) => {
+    const [a, m] = aaaamm.split('-').map(Number);
+    return (a - 2026) * 12 + (m - 9); // conta a partir de set/2026, o mês seguinte ao último lançamento
+  };
+  const aaaammDe = (n: number) => {
+    const d = new Date(2026, 8 + n, 1);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  };
+
   return (
     <div className={`nx ${compacto ? 'nx-cmp' : ''} ${className}`}>
       <style>{`
@@ -1103,38 +1158,35 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
           overflow:hidden; font-family:'Inter Variable',system-ui,sans-serif;
           color:var(--nx-text); container-type:inline-size; font-size:11px;
         }
-        .nx-shell { display:flex; }
-        .nx-side { width:112px; flex-shrink:0; border-right:1px solid var(--nx-line);
-          background:linear-gradient(180deg,rgba(15,21,32,.72),rgba(10,14,26,.55)); padding:9px 0; }
-        .nx-logo { display:flex; align-items:center; gap:7px; padding:1px 9px 11px; }
-        .nx-logo .ic { width:20px; height:20px; border-radius:6px; flex-shrink:0;
-          background:linear-gradient(135deg,var(--nx-blue),var(--nx-purple));
-          display:flex; align-items:center; justify-content:center; font-size:10px; color:#fff; }
-        .nx-logo .tx { font-size:11px; font-weight:600; }
-        .nx-item { display:flex; align-items:center; gap:8px; padding:6px 11px; width:100%;
-          background:none; border:0; cursor:pointer; position:relative;
-          font-size:10.5px; color:var(--nx-text2); text-align:left; font-family:inherit;
-          transition:background .2s,color .2s; }
-        .nx-item:hover { background:rgba(var(--lm-blue),.06); color:var(--nx-text3); }
-        .nx-item.on { background:rgba(var(--lm-blue),.15); color:var(--nx-blue); font-weight:600; }
-        .nx-item.on::before { content:''; position:absolute; left:0; top:50%; transform:translateY(-50%);
-          width:2px; height:13px; background:var(--nx-blue); border-radius:0 2px 2px 0; }
-        .nx-item .ic { font-size:11px; width:14px; text-align:center; }
+        /* layout 1.4.0: barra lateral e cabeçalho flutuantes, soltos da borda */
+        .nx-shell { display:flex; gap:7px; padding:7px; }
+        .nx-side { width:36px; flex-shrink:0; align-self:flex-start; display:flex; flex-direction:column; align-items:center;
+          gap:4px; padding:7px 0; border:1px solid var(--nx-line2); border-radius:12px; background:rgb(15,21,34); }
+        .nx-logo { width:22px; height:22px; border-radius:50%; display:grid; place-items:center; margin-bottom:6px;
+          font-size:10px; font-weight:800; color:#fff; background:radial-gradient(circle at 30% 30%,#2a3a5c,#0b1222);
+          border:1px solid var(--nx-line2); }
+        .nx-item { width:26px; height:26px; border-radius:8px; display:grid; place-items:center; background:none; border:0;
+          cursor:pointer; font-family:inherit; font-size:11px; color:var(--nx-text3); transition:background .2s,color .2s; }
+        .nx-item:hover { background:hsla(0,0%,100%,.07); color:var(--nx-text); }
+        .nx-item.on { background:#f1f5f9; color:#0f172a; }
         .nx-main { flex:1; min-width:0; }
-        .nx-hd { display:flex; align-items:center; gap:8px; height:36px; padding:0 12px;
-          border-bottom:1px solid var(--nx-line); background:rgba(15,21,32,.72); }
-        .nx-hd .t { font-size:11.5px; font-weight:600; }
+        .nx-hd { display:flex; align-items:center; gap:7px; min-height:36px; padding:5px 9px;
+          border:1px solid var(--nx-line2); border-radius:12px; background:rgb(15,21,34); }
+        .nx-mod { width:21px; height:21px; border-radius:7px; flex-shrink:0; display:grid; place-items:center; font-size:10px;
+          color:#fff; background:linear-gradient(135deg,rgba(var(--tom),1),rgba(var(--tom),.7)); }
+        .nx-hd .t { font-size:10.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; white-space:nowrap; }
         .nx-dot { width:6px; height:6px; border-radius:50%; background:var(--nx-green);
           box-shadow:0 0 5px var(--nx-green); flex-shrink:0; }
-        .nx-busca { margin-left:auto; font-size:9px; color:var(--nx-text2); border:1px solid var(--nx-line);
+        .nx-busca { margin-left:auto; font-size:9px; color:var(--nx-text2); border:1px solid var(--nx-line2);
           border-radius:999px; padding:3px 9px; white-space:nowrap; }
-        @container (max-width: 520px) { .nx-busca { display:none; } }
-        .nx-hd .per { margin-left:8px; font-size:9.5px; color:var(--nx-text2); white-space:nowrap; }
-        .nx-demo { color:rgba(var(--lm-text2),.75); }
+        @container (max-width: 560px) { .nx-busca { display:none; } .nx-hd .per { margin-left:auto; } }
+        .nx-hd .per { font-size:9px; color:var(--nx-text3); white-space:nowrap; border:1px solid var(--nx-line2);
+          border-radius:999px; padding:3px 8px; }
+        .nx-demo { color:var(--nx-text2); }
         .nx-av { width:21px; height:21px; border-radius:50%; font-size:9px; font-weight:600; color:#fff;
           flex-shrink:0; background:linear-gradient(135deg,var(--nx-blue),var(--nx-purple));
           display:flex; align-items:center; justify-content:center; }
-        .nx-body { padding:10px; }
+        .nx-body { padding:8px 0 0; }
         .nx-kpis { display:grid; grid-template-columns:repeat(2,1fr); gap:7px; }
         .nx-grid2 { display:grid; gap:8px; margin-top:8px; }
         /* 460px: abaixo disso os 4 KPIs lado a lado ficariam com o valor cortado
@@ -1143,52 +1195,62 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
            para o card do índice caber em meia largura: exigir mais espremeria a
            coluna de texto e o card voltaria a crescer pelo outro lado. */
         @container (min-width: 460px) {
-          .nx-kpis { grid-template-columns:repeat(4,1fr); }
+          .nx-kpis { grid-template-columns:repeat(var(--n,4),1fr); }
           .nx-grid2 { grid-template-columns:1fr 1fr; }
         }
         .kpi { background:var(--nx-surface); border:1px solid var(--nx-line); border-radius:8px;
           padding:8px 9px; position:relative; overflow:hidden; transition:transform .2s,border-color .2s; }
         .kpi::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
         .kpi:hover { transform:translateY(-2px); border-color:var(--nx-line2); }
-        .kpi.green::before { background:linear-gradient(90deg,var(--nx-green),transparent); }
-        .kpi.red::before { background:linear-gradient(90deg,var(--nx-red),transparent); }
-        .kpi.blue::before { background:linear-gradient(90deg,var(--nx-blue),transparent); }
-        .kpi.cyan::before { background:linear-gradient(90deg,var(--nx-cyan),transparent); }
-        .kpi.purple::before { background:linear-gradient(90deg,var(--nx-purple),transparent); }
-        .kpi.amber::before { background:linear-gradient(90deg,var(--nx-amber),transparent); }
         .kpi-hd { display:flex; justify-content:space-between; align-items:flex-start; gap:5px; }
-        .kpi-lb { font-size:8px; font-weight:600; letter-spacing:.7px; text-transform:uppercase;
-          color:var(--nx-text2); line-height:1.3; }
+        .kpi-lb { font-size:8.5px; font-weight:500; color:var(--nx-text3); line-height:1.3; }
         .kpi-vl { font-size:13.5px; font-weight:700; letter-spacing:-.4px; line-height:1.2;
           font-variant-numeric:tabular-nums; margin-top:2px; }
-        .kpi.green .kpi-vl { color:var(--nx-green); }
-        .kpi.red .kpi-vl { color:var(--nx-red); }
-        .kpi.blue .kpi-vl { color:var(--nx-blue); }
-        .kpi.cyan .kpi-vl { color:var(--nx-cyan); }
-        .kpi.purple .kpi-vl { color:var(--nx-purple); }
-        .kpi.amber .kpi-vl { color:var(--nx-amber); }
-        .kpi-ic { width:19px; height:19px; border-radius:6px; flex-shrink:0;
-          display:flex; align-items:center; justify-content:center; font-size:10px; }
-        .kpi.green .kpi-ic { background:rgba(var(--lm-green),.15); color:var(--nx-green); }
-        .kpi.red .kpi-ic { background:rgba(var(--lm-red),.15); color:var(--nx-red); }
-        .kpi.blue .kpi-ic { background:rgba(var(--lm-blue),.15); color:var(--nx-blue); }
-        .kpi.cyan .kpi-ic { background:rgba(var(--lm-cyan),.15); color:var(--nx-cyan); }
-        .kpi.purple .kpi-ic { background:rgba(var(--lm-purple),.15); color:var(--nx-purple); }
-        .kpi.amber .kpi-ic { background:rgba(var(--lm-amber),.15); color:var(--nx-amber); }
+        /* o valor fica no texto; a cor do cartão é a de identidade do assunto (utils/tons.py) */
+        .kpi { --tom:59,130,246; }
+        .kpi.green { --tom:99,102,241; } .kpi.red { --tom:236,72,153; } .kpi.blue { --tom:59,130,246; }
+        .kpi.cyan { --tom:6,182,212; } .kpi.purple { --tom:139,92,246; } .kpi.amber { --tom:245,158,11; }
+        .kpi::before { background:linear-gradient(90deg,rgba(var(--tom),1),transparent); }
+        .kpi-ic { width:21px; height:21px; border-radius:7px; flex-shrink:0; display:flex; align-items:center;
+          justify-content:center; font-size:10px; color:#fff; background:linear-gradient(135deg,rgba(var(--tom),1),rgba(var(--tom),.7)); }
         .kpi-ft { margin-top:5px; display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
         .kpi-dl { display:inline-flex; align-items:center; gap:2px; padding:1px 4px; border-radius:3px;
           font-size:8.5px; font-weight:600; }
         .up { background:rgba(var(--lm-green),.15); color:var(--nx-green); }
         .down { background:rgba(var(--lm-red),.15); color:var(--nx-red); }
         .kpi-nt { color:var(--nx-text2); font-size:8.5px; }
-        .nx-card { background:var(--nx-surface); border:1px solid var(--nx-line); border-radius:8px;
-          padding:9px 10px; margin-top:8px; }
+        .nx-card { background:var(--nx-surface); border:1px solid var(--nx-line); border-radius:8px; margin-top:8px; overflow:hidden; }
+        .nx-bc { padding:9px 10px; }
         .nx-grid2 > .nx-card { margin-top:0; }
         .nx-veredito { margin:8px 0 0; font-size:12px; line-height:1.5; color:var(--nx-text, inherit); }
         .nx-veredito.sec { opacity:.75; }
-        .nx-sec { font-size:9.5px; font-weight:600; color:var(--nx-text); margin-bottom:8px;
+        /* faixa do bloco: tom do assunto, ícone e título em caixa alta */
+        .nx-sec { font-size:8.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--tom-tx);
+          background:rgba(var(--tom),.22); border-bottom:1px solid rgba(var(--tom),.3); padding:5px 10px;
           display:flex; align-items:center; gap:6px; }
-        .nx-sec::before { content:''; width:2px; height:11px; border-radius:2px; background:var(--nx-blue); flex-shrink:0; }
+        .nx-sec::before { content:var(--tom-glifo); font-size:9px; }
+        .nx-abas { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:8px; }
+        .nx-aba { font-family:inherit; font-size:9.5px; font-weight:600; color:var(--nx-text3); background:transparent;
+          border:1px solid var(--nx-line2); border-radius:999px; padding:3px 9px; cursor:pointer; }
+        .nx-aba:hover { color:var(--nx-text); }
+        .nx-aba.on { background:#f1f5f9; color:#0f172a; border-color:#f1f5f9; }
+        .nx-alertas { display:flex; flex-direction:column; gap:6px; }
+        .nx-alerta { display:flex; align-items:center; gap:8px; padding:7px 9px; border-radius:8px;
+          background:rgba(var(--tom),.1); border:1px solid rgba(var(--tom),.35); }
+        .nx-alerta .ic { width:20px; height:20px; border-radius:6px; display:grid; place-items:center; flex:none;
+          font-size:10px; background:rgba(var(--tom),.22); color:var(--tom-tx); }
+        .nx-alerta b { display:block; font-size:10px; color:var(--tom-tx); }
+        .nx-alerta span { display:block; font-size:9px; color:var(--nx-text3); }
+        .nx-alerta .sx { margin-left:auto; color:var(--tom-tx); font-size:12px; }
+        .nx-obj { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
+        .nx-obj > div { border:1px solid var(--nx-line); border-radius:7px; padding:5px 7px; }
+        .nx-obj span { display:block; font-size:8.5px; color:var(--nx-text2); }
+        .nx-obj b { font-size:11px; font-variant-numeric:tabular-nums; }
+        .nx-prog { height:6px; border-radius:99px; background:hsla(0,0%,100%,.07); margin-top:8px; overflow:hidden; }
+        .nx-prog i { display:block; height:100%; border-radius:99px; background:linear-gradient(90deg,rgb(249,115,22),rgb(251,160,97)); }
+        .nx-calc { display:flex; align-items:center; gap:7px; margin-top:8px; font-size:9.5px; color:var(--nx-text3); }
+        .nx-calc input { font-family:inherit; font-size:9.5px; color:var(--nx-text); background:hsla(0,0%,100%,.05);
+          border:1px solid var(--nx-line2); border-radius:6px; padding:2px 5px; color-scheme:dark; }
         .nx-lg { display:flex; gap:10px; margin-bottom:5px; flex-wrap:wrap; }
         .nx-lg span { display:inline-flex; align-items:center; gap:4px; font-size:8.5px; color:var(--nx-text3); }
         .nx-lg i { width:6px; height:6px; border-radius:50%; display:inline-block; }
@@ -1217,16 +1279,10 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
         .nx-scr { max-height:132px; overflow-y:auto; }
         .nx-scr::-webkit-scrollbar { width:5px; }
         .nx-scr::-webkit-scrollbar-thumb { background:hsla(0,0%,100%,.14); border-radius:99px; }
-        @container (max-width: 400px) {
-          .nx-side { width:38px; }
-          .nx-logo .tx, .nx-item .rot { display:none; }
-          .nx-item { justify-content:center; padding:7px 0; }
-          .nx-logo { justify-content:center; padding:1px 0 10px; }
-          .nx-demo { display:none; }
-        }
-        .nx-voltar { background:none; border:0; padding:0 0 8px; cursor:pointer; font-family:inherit;
-          font-size:10px; color:var(--nx-text2); }
-        .nx-voltar:hover { color:var(--nx-blue); }
+        @container (max-width: 400px) { .nx-demo { display:none; } }
+        .nx-voltar { background:none; border:1px solid var(--nx-line2); border-radius:999px; padding:2px 8px; cursor:pointer;
+          font-family:inherit; font-size:9px; color:var(--nx-text3); white-space:nowrap; }
+        .nx-voltar:hover { color:var(--nx-text); }
         .hub-g { display:grid; gap:8px; grid-template-columns:1fr; }
         @container (min-width: 420px) { .hub-g { grid-template-columns:1fr 1fr; } }
         @container (min-width: 640px) { .hub-g { grid-template-columns:repeat(3,1fr); } }
@@ -1240,8 +1296,8 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
         .hub-pv { flex:1; padding:10px 11px; display:flex; flex-direction:column; gap:6px; min-width:0; min-height:98px; }
         .hub-ft { display:flex; align-items:center; gap:7px; padding:7px 10px;
           border-top:1px solid var(--nx-line); background:rgba(255,255,255,.025); }
-        .hub-ic { width:22px; height:22px; border-radius:6px; display:grid; place-items:center;
-          background:rgba(255,255,255,.06); font-size:11px; flex:none; }
+        .hub-ic { width:22px; height:22px; border-radius:7px; display:grid; place-items:center; color:#fff;
+          background:linear-gradient(135deg,rgba(var(--tom),1),rgba(var(--tom),.7)); font-size:10px; flex:none; }
         .hub-ft b { display:block; font-size:10.5px; }
         .hub-ft span { display:block; font-size:9px; color:var(--nx-text2); }
         .hub-big { font-size:17px; font-weight:700; font-variant-numeric:tabular-nums; line-height:1.1; }
@@ -1270,33 +1326,38 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
       `}</style>
 
       <div className="nx-shell">
+        {/* barra lateral flutuante, recolhida: só os ícones, como o app abre */}
         <nav className="nx-side" aria-label="Navegação do painel">
-          <div className="nx-logo">
-            <span className="ic" aria-hidden="true">◈</span>
-            <span className="tx">Nexus</span>
-          </div>
+          <div className="nx-logo" aria-hidden="true">N</div>
           {NAV.map((n) => (
             <button
               key={n.id}
               type="button"
               className={`nx-item ${menuAtivo === n.id ? 'on' : ''}`}
               aria-current={menuAtivo === n.id ? 'page' : undefined}
-              aria-label={n.rotulo /* no card estreito o rótulo some e só o ícone fica */}
+              aria-label={n.rotulo}
+              title={n.rotulo}
               onClick={() => setAba(n.id)}
             >
-              <span className="ic" aria-hidden="true">{n.icone}</span>
-              <span className="rot">{n.rotulo}</span>
+              <span aria-hidden="true">{n.icone}</span>
             </button>
           ))}
         </nav>
 
-        <div className="nx-main">
+        <div className="nx-main" style={varsDoTom(tomAba)}>
+          {/* cabeçalho de módulo: ícone no quadrado da cor de identidade + TÍTULO */}
           <header className="nx-hd">
-            <span className="nx-dot" aria-hidden="true" />
+            <span className="nx-mod" aria-hidden="true">{painelAberto?.icone ?? navAba?.icone}</span>
             <span className="t">{rotuloAba}</span>
+            {painelAberto && (
+              <button type="button" className="nx-voltar" onClick={() => setAba('dashboard')}>
+                ← Dashboard
+              </button>
+            )}
+            <span className="nx-dot" aria-hidden="true" />
             <span className="nx-busca" aria-hidden="true">Pergunte ao assistente…</span>
             <span className="per">
-              {rotuloCompetencia(mesAtual)}
+              ◷ {rotuloCompetencia(mesAtual)}
               <span className="nx-demo"> · dados fictícios</span>
             </span>
             <span className="nx-av" aria-hidden="true">E</span>
@@ -1304,13 +1365,43 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
 
           <div className="nx-body">
             {painelAberto && (
-              <button type="button" className="nx-voltar" onClick={() => setAba('dashboard')}>
-                ← Painéis
-              </button>
+              <div className="nx-abas" role="group" aria-label="Painéis">
+                {PAINEIS.map((p) => (
+                  <button key={p.id} type="button" className={`nx-aba ${p.id === aba ? 'on' : ''}`}
+                    aria-pressed={p.id === aba} onClick={() => setAba(p.id)}>
+                    <span aria-hidden="true">{p.icone}</span> {p.titulo}
+                  </button>
+                ))}
+              </div>
             )}
 
             {/* ── Hub: a entrada do Dashboard ───────────────────────────── */}
             {aba === 'dashboard' && (
+              <>
+              {/* no card do índice o Dashboard abre direto nos painéis: KPIs e alertas só na página do projeto */}
+              {!compacto && <Kpis
+                lista={[
+                  { label: `Receitas · ${rotuloMes(mesAtual)}`, valor: fmt0(receitaMes), cor: 'green', icone: '▲',
+                    delta: variacao(receitaMes, soma(doTipo(doMesAnterior, 'receita'))), bomSeSobe: true },
+                  { label: `Despesas · ${rotuloMes(mesAtual)}`, valor: fmt0(despesaMes), cor: 'red', icone: '▼',
+                    delta: variacao(despesaMes, soma(doTipo(doMesAnterior, 'despesa'))), bomSeSobe: false },
+                  { label: `Saldo do mês · ${rotuloMes(mesAtual)}`, valor: fmt0(receitaMes - despesaMes), cor: 'blue', icone: '⬡',
+                    nota: 'receita menos despesa' },
+                ]}
+              />}
+              {!compacto && (
+                <Bloco titulo="Alertas inteligentes" tom="azul">
+                  <div className="nx-alertas">
+                    {alertas.slice(0, 3).map((a) => (
+                      <div key={a.titulo} className="nx-alerta" style={varsDoTom(a.tom)}>
+                        <span className="ic" aria-hidden="true">{a.icone}</span>
+                        <div><b>{a.titulo}</b><span>{a.texto}</span></div>
+                        <span className="sx" aria-hidden="true">›</span>
+                      </div>
+                    ))}
+                  </div>
+                </Bloco>
+              )}
               <Hub
                 paineis={PAINEIS}
                 abrir={(id) => setAba(id)}
@@ -1325,6 +1416,7 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
                 patrimonio={patrimonio}
                 mesAtual={rotuloMes(mesAtual)}
               />
+              </>
             )}
 
             {/* ── Visão geral ───────────────────────────────────────────── */}
@@ -1785,31 +1877,47 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
               <>
                 <Kpis
                   lista={[
-                    { label: 'Objetivos Ativos', valor: String(planos.length), cor: 'blue', icone: '◎' },
-                    { label: 'Aporte Mensal Total', valor: fmt0(planos.reduce((s, o) => s + o.aporte, 0)), cor: 'green', icone: '▲',
-                      nota: 'somando todos os objetivos' },
-                    { label: 'Já Guardado', valor: fmt0(planos.reduce((s, o) => s + o.atual, 0)), cor: 'purple', icone: '◇' },
+                    { label: 'Somando tudo', valor: fmt0(planos.reduce((s, o) => s + Math.max(0, o.alvo - o.atual), 0)), cor: 'amber', icone: '✦',
+                      nota: `falta, em ${planos.length} objetivos` },
+                    { label: 'Já separado', valor: fmt0(planos.reduce((s, o) => s + o.atual, 0)), cor: 'cyan', icone: '◈',
+                      nota: `de ${fmt0(planos.reduce((s, o) => s + o.alvo, 0))}` },
+                    { label: 'Seu ritmo hoje', valor: fmt0(sobraMedia), cor: 'blue', icone: '⬡',
+                      nota: `por mês · sobra mediana de ${meses.length} meses` },
                   ]}
                 />
                 <div className="nx-grid2">
-                  {planos.map((o) => (
-                    <Bloco key={o.nome} titulo={o.nome}>
-                      <Medidor
-                        pct={(o.atual / o.alvo) * 100}
-                        nota={`${fmt0(o.atual)} de ${fmt0(o.alvo)}`}
-                        cor={o.noPrazo ? COR.verde : COR.ambar} W={W} H={H}
-                        descricao={`${o.nome}: ${pct1((o.atual / o.alvo) * 100)} do alvo.`}
-                      />
-                      <p className="nx-veredito">
-                        No ritmo de hoje ({fmt0(o.aporte)}/mês) você chega em <b>{o.chega}</b>
-                        {o.noPrazo ? ` — dentro do prazo (${o.prazo}).` : ` — depois do prazo (${o.prazo}).`}
-                      </p>
-                      <p className="nx-veredito sec">
-                        Rendendo <b>{pct1(taxaRendimentoDemoAA * 100)} a.a.</b>, os mesmos {fmt0(o.aporte)}/mês chegam em{' '}
-                        <b>{o.chegaJuros}</b>{o.mesesAntes > 0 ? ` — ${o.mesesAntes} ${o.mesesAntes === 1 ? 'mês antes' : 'meses antes'}.` : '.'}
-                      </p>
-                    </Bloco>
-                  ))}
+                  {planos.map((o) => {
+                    const falta = Math.max(0, o.alvo - o.atual);
+                    const pct = Math.min(100, (o.atual / o.alvo) * 100);
+                    const data = datas[o.nome] ?? aaaammDe(o.prazoMeses);
+                    const n = Math.max(1, mesesAte(data));
+                    const [ano, mes] = data.split('-').map(Number);
+                    return (
+                      <Bloco key={o.nome} titulo={o.nome} tom="laranja">
+                        <div className="nx-obj">
+                          <div><span>guardado</span><b>{fmt0(o.atual)}</b></div>
+                          <div><span>meta</span><b>{fmt0(o.alvo)}</b></div>
+                          <div><span>falta</span><b>{fmt0(falta)}</b></div>
+                        </div>
+                        <div className="nx-prog" role="img" aria-label={`${pct1(pct)} da meta`}>
+                          <i style={{ width: `${pct}%` }} />
+                        </div>
+                        <p className="nx-veredito">
+                          Nesse ritmo ({fmt0(o.aporte)}/mês), você chega em <b>{o.chega}</b>
+                          {o.noPrazo ? ' — dentro do prazo.' : ` — depois do prazo (${o.prazo}).`}
+                        </p>
+                        <label className="nx-calc">
+                          <span>Quero chegar em</span>
+                          <input type="month" value={data} min={aaaammDe(1)}
+                            onChange={(e) => e.target.value && setDatas((d) => ({ ...d, [o.nome]: e.target.value }))} />
+                        </label>
+                        <p className="nx-veredito sec" aria-live="polite">
+                          Guardando <b>{fmt0(falta / n)}</b> por mês, você chega em {MESES[mes - 1]}/{ano}.
+                          {' '}Rendendo {pct1(taxaRendimentoDemoAA * 100)} a.a., o ritmo de hoje chega em {o.chegaJuros}.
+                        </p>
+                      </Bloco>
+                    );
+                  })}
                 </div>
               </>
             )}

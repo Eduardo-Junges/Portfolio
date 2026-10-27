@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="dark" data-efeitos="completo">
+  <head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<script>
+/* Mockup estático do Nexus & PJ (dados fictícios). Antes do primeiro paint:
+   ?embed = dentro do site (iframe), o tema acompanha o site; fora dele vale o
+   tema escolhido no próprio mockup. */
+(function () {
+  var d = document.documentElement, t = 'dark';
+  var embed = /[?&]embed\b/.test(location.search);
+  try { embed = embed || sessionStorage.getItem('mk-embed') === '1'; if (embed) sessionStorage.setItem('mk-embed', '1'); } catch (e) {}
+  if (embed) {
+    d.classList.add('mk-embed');
+    try { if (parent.document.documentElement.dataset.theme === 'light') t = 'light'; } catch (e) {}
+  } else {
+    try { if (localStorage.getItem('mk-tema') === 'light') t = 'light'; } catch (e) {}
+  }
+  d.setAttribute('data-theme', t);
+  // dentro do site o Dashboard aparece direto, sem a janela de boas-vindas por cima
+  if (embed) {
+    var abrir = HTMLDialogElement.prototype.showModal;
+    HTMLDialogElement.prototype.showModal = function () { if (this.id !== 'hmDlg') abrir.call(this); };
+  }
+  // o mockup não tem servidor: o que o app buscaria vira uma resposta curta
+  var buscar = window.fetch;
+  window.fetch = function (url, o) {
+    var u = String(url);
+    if (u.indexOf('/busca/previa') === 0)
+      return Promise.resolve(new Response('<div class="busca-vazio" style="padding:12px 14px">No mockup a busca não consulta dados. No app, aparecem aqui lançamentos, títulos e telas.</div>', { status: 200 }));
+    if (u.indexOf('/dashboard/dre/lancamentos') === 0)
+      return Promise.resolve(new Response('<tr><td colspan="40" style="padding:8px 14px;opacity:.8">No mockup os lançamentos não abrem. No app, aparecem aqui, um por linha.</td></tr>', { status: 200 }));
+    return buscar ? buscar.apply(this, arguments) : Promise.reject(new Error('sem fetch'));
+  };
+})();
+</script>
+<style>
+  .mk-aviso{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:10000;max-width:min(92vw,460px);
+    padding:10px 14px;border-radius:10px;background:#111827;color:#f3f4f6;border:1px solid rgba(255,255,255,.14);
+    font:500 13px/1.4 system-ui,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .18s}
+  .mk-aviso.on{opacity:1}
+  .mk-selo{position:fixed;right:14px;bottom:14px;z-index:9999;padding:6px 10px;border-radius:999px;font:600 11px/1 system-ui,sans-serif;
+    letter-spacing:.04em;background:rgba(17,24,39,.85);color:#e5e7eb;border:1px solid rgba(255,255,255,.14)}
+  .mk-embed .mk-selo{display:none}
+</style>
+
+    <title>Nexus &amp; PJ — mockup (/assistente)</title>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="static/css/tokens.css">
+    <link rel="stylesheet" href="static/css/vida.css">
+    <style>:root{--tom-azul:59,130,246;--tom-azul-tx:77,141,247;--tom-azul-ic:255,255,255;--tom-rosa:236,72,153;--tom-rosa-tx:238,87,161;--tom-rosa-ic:255,255,255;--tom-indigo:99,102,241;--tom-indigo-tx:127,130,244;--tom-indigo-ic:255,255,255;--tom-roxo:139,92,246;--tom-roxo-tx:158,118,247;--tom-roxo-ic:255,255,255;--tom-ambar:245,158,11;--tom-ambar-tx:245,158,11;--tom-ambar-ic:16,21,31;--tom-ciano:6,182,212;--tom-ciano-tx:6,182,212;--tom-ciano-ic:16,21,31;--tom-laranja:249,115,22;--tom-laranja-tx:249,115,22;--tom-laranja-ic:16,21,31;--tom-ardosia:100,116,139;--tom-ardosia-tx:129,142,161;--tom-ardosia-ic:255,255,255;--tom-alfa:0.16;}
+:root[data-theme="light"]{--tom-azul-tx:44,98,184;--tom-rosa-tx:175,53,113;--tom-indigo-tx:83,86,202;--tom-roxo-tx:113,75,199;--tom-ambar-tx:142,92,6;--tom-ciano-tx:4,111,129;--tom-laranja-tx:164,76,15;--tom-ardosia-tx:87,101,121;--tom-alfa:0.1;}
+.tom-azul{--tom:var(--tom-azul);--tom-tx:rgb(var(--tom-azul-tx));--tom-ic:rgb(var(--tom-azul-ic));}.tom-rosa{--tom:var(--tom-rosa);--tom-tx:rgb(var(--tom-rosa-tx));--tom-ic:rgb(var(--tom-rosa-ic));}.tom-indigo{--tom:var(--tom-indigo);--tom-tx:rgb(var(--tom-indigo-tx));--tom-ic:rgb(var(--tom-indigo-ic));}.tom-roxo{--tom:var(--tom-roxo);--tom-tx:rgb(var(--tom-roxo-tx));--tom-ic:rgb(var(--tom-roxo-ic));}.tom-ambar{--tom:var(--tom-ambar);--tom-tx:rgb(var(--tom-ambar-tx));--tom-ic:rgb(var(--tom-ambar-ic));}.tom-ciano{--tom:var(--tom-ciano);--tom-tx:rgb(var(--tom-ciano-tx));--tom-ic:rgb(var(--tom-ciano-ic));}.tom-laranja{--tom:var(--tom-laranja);--tom-tx:rgb(var(--tom-laranja-tx));--tom-ic:rgb(var(--tom-laranja-ic));}.tom-ardosia{--tom:var(--tom-ardosia);--tom-tx:rgb(var(--tom-ardosia-tx));--tom-ic:rgb(var(--tom-ardosia-ic));}
+.bloco{padding:0;overflow:hidden}
+.faixa{display:flex;align-items:center;gap:8px;padding:8px 14px;background:rgba(var(--tom),var(--tom-alfa));
+  border-bottom:1px solid rgba(var(--tom),.22);color:var(--tom-tx);font-size:11.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.06em}
+.faixa .faixa-ic{font-size:13px;line-height:1}
+.faixa .faixa-titulo{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.faixa .faixa-acoes{display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0;font-weight:500}
+.faixa .faixa-nota{font-weight:500;text-transform:none;letter-spacing:0;opacity:.95}
+.bloco-corpo{padding:14px 16px}
+.ind-card{padding:14px 16px;display:flex;gap:12px;align-items:flex-start}
+.ind-card .ind-ic{flex:0 0 auto;width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+  font-size:17px;background:linear-gradient(135deg,rgb(var(--tom)),rgba(var(--tom),.72));color:var(--tom-ic)}
+.ind-card .ind-txt{min-width:0;flex:1}
+.ind-card .ind-rotulo{font-size:var(--text-xs);color:var(--text-mute);text-transform:uppercase;letter-spacing:.04em}
+.ind-card .ind-valor{font-size:var(--text-2xl);font-weight:700;color:var(--text-100);line-height:1.2;margin-top:2px}
+.ind-card .ind-var{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:6px;font-size:var(--text-xs);color:var(--text-200)}
+.ind-card .chip{display:inline-flex;align-items:center;gap:3px;padding:1px 8px;border-radius:999px;font-weight:600;border:1px solid transparent}
+.ind-card .chip--bom{background:rgba(var(--green-rgb),.14);color:var(--green-text)}
+.ind-card .chip--ruim{background:rgba(var(--red-rgb),.14);color:var(--red-text)}
+.ind-card .chip--neutro{background:var(--overlay-1);color:var(--text-200)}
+.ind-card .ind-nota{font-size:var(--text-xs);color:var(--text-200);margin-top:6px}
+.subabas{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.subaba{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;font-size:12.5px;font-weight:600;
+  color:var(--text-200);background:var(--surface-1);border:1px solid var(--border-1);text-decoration:none;white-space:nowrap;
+  transition:background var(--dur-fast) ease,color var(--dur-fast) ease,border-color var(--dur-fast) ease}
+.subaba .sa-ic{font-size:13px;line-height:1;color:var(--tom-tx,var(--text-200))}
+.subaba:hover{color:var(--text-100);border-color:var(--line-strong)}
+.subaba:focus-visible{outline:2px solid var(--text-200);outline-offset:2px}
+.subaba.on{background:var(--text-100);color:var(--bg);border-color:transparent}
+.subaba.on .sa-ic{color:inherit}
+.mod-ic{flex:none;width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;
+  background:linear-gradient(135deg,rgb(var(--tom)),rgba(var(--tom),.72));color:var(--tom-ic)}
+.mod-periodo{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;font-size:12px;font-weight:600;
+  color:var(--text-200);border:1px solid var(--border-1);background:var(--surface-1);white-space:nowrap}
+@media (max-width:1100px){.mod-periodo{display:none}}
+</style>
+<script src="static/js/chegada.js"></script><script src="static/js/vida.js" defer></script>    <link rel="icon" type="image/png" href="static/branding/icone-dark.png">
+  </head>
+  <body>
+    <div id="appShell" class="shell">
+      
+      <div id="appSidebar" class="sidebar">
+        <div class="brand">
+<a href="index.html" class="brand-btn" title="Ir para o Dashboard"><img src="static/branding/icone-dark.png" alt="" class="brand-icon"><span class="brand-name">Nexus &amp; PJ</span></a>        </div>
+        <nav aria-label="Menu principal">
+          <div class="grp-label">Visão geral</div>
+<a href="index.html" data-label="Dashboard" class="navlink"><span class="nav-badge">⬡</span><span class="nav-label">Dashboard</span></a>          <div class="grp-label">Movimento</div>
+<a href="realizado.html" data-label="Fluxo de caixa" class="navlink"><span class="nav-badge">◧</span><span class="nav-label">Fluxo de caixa</span></a><a href="importar.html" data-label="Importar extrato" class="navlink"><span class="nav-badge">⇓</span><span class="nav-label">Importar extrato</span></a>          <div class="grp-label">Resultados</div>
+<a href="dre.html" data-label="Contábil" class="navlink"><span class="nav-badge">∑</span><span class="nav-label">Contábil</span></a><a href="orcamento.html" data-label="Orçamento" class="navlink"><span class="nav-badge">🎯</span><span class="nav-label">Orçamento</span></a>          <div class="grp-label">Entrega</div>
+<a href="relatorios.html" data-label="Relatórios" class="navlink"><span class="nav-badge">⎙</span><span class="nav-label">Relatórios</span></a>        </nav>
+<button type="button" aria-label="Recolher menu" aria-expanded="true" id="brandToggle" class="sb-borda" title="Recolher/expandir menu" name="brandToggle">‹</button>      </div>
+      <div class="main">
+        <div class="topbar">
+          <div class="title-wrap" style="display:flex;align-items:center;gap:10px;">
+<button type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="appSidebar" id="navAbrir" class="nav-hamb" name="navAbrir">☰</button>            <div class="tom-ardosia" style="display:flex;align-items:center;gap:10px;">
+<span aria-hidden="true" class="mod-ic">▦</span>            </div>
+            <div class="title">Assistente</div>
+          </div>
+          <div class="actions">
+            <div class="busca-wrap">
+<label class="topbar-ia"><span class="ia-emoji">🔎</span>                <input type="text" name="q" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="buscaPainel" aria-autocomplete="list" data-ia="1" placeholder="Pesquise um valor, nome ou data… ex.: 1200, pix fabricio — ou pergunte à IA" aria-label="Pesquisar no painel ou perguntar à IA" id="buscaInput">
+<kbd>/</kbd></label>              <div role="listbox" aria-label="Resultados da busca" hidden id="buscaPainel" class="busca-painel"></div>
+            </div>
+            <div id="userMenu" class="user-menu">
+<button type="button" onclick="document.getElementById('userMenu').classList.toggle('open')" class="user-menu-trigger">                <div class="av">E</div>
+                <div class="meta">
+                  <div class="name">Eduardo</div>
+                  <div class="role">ADM</div>
+                </div>
+<span class="chev">▾</span></button>              <div class="user-menu-panel">
+<a href="perfil.html" class="um-head" title="Abrir meu perfil" style="display:block;text-decoration:none;color:inherit;">                  <div class="name">Eduardo</div>
+                  <div class="role">eduardo@empresa.exemplo · Perfil ADM</div>
+</a>                <div class="um-row">
+<span>Tema</span><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="theme-switch">                    
+                    <input type="hidden" name="voltar" value="/assistente">
+<button type="submit" name="tema" value="claro">☀</button><button type="submit" name="tema" value="escuro" class="on">☾</button></form>                </div>
+                <div class="um-sep"></div>
+<a href="perfil.html" class="um-item">👤 Meu perfil</a><a href="configuracoes.html" class="um-item">⚙ Configurações</a>                <div class="um-sep"></div>
+<a href="sobre.html" class="um-item">ⓘ Sobre e versão</a><a href="#" data-mk-fora class="um-item">❔ Central de ajuda</a><a href="https://eduardo-junges.vercel.app/privacidade-nexus-pj" target="_blank" rel="noopener" class="um-item">🛡 Política de privacidade</a><a href="https://eduardo-junges.vercel.app/termos-nexus-pj" target="_blank" rel="noopener" class="um-item">📄 Contrato de licença</a>                <div class="um-sep"></div>
+<form enctype="multipart/form-data" method="post" action="#" data-mk-form>                  
+<button type="submit" class="um-item danger">⏻ Sair</button></form>              </div>
+            </div>
+          </div>
+        </div>
+        <div class="body">
+          <div>
+            <div class="chat-shell">
+              <div id="chat-thread" class="chat-thread">
+                <div class="chat-vazio">
+<span style="font-size:32px;">💬</span>                  <p>Pergunte sobre saldo, receita, despesa, categoria ou banco — a resposta sempre vem com o número real dos seus lançamentos.</p>
+                  <div class="chat-sugestoes">
+<button type="button" class="chat-sug">Qual meu saldo?</button><button type="button" class="chat-sug">Quanto entrou esse mês?</button><button type="button" class="chat-sug">Quanto gastei esse mês?</button><button type="button" class="chat-sug">Quais minhas maiores despesas?</button><button type="button" class="chat-sug">Como está a evolução mensal?</button>                  </div>
+                </div>
+              </div>
+<form enctype="multipart/form-data" id="chat-form" class="chat-form" name="chat-form">                <input type="text" name="pergunta" placeholder="Pergunte sobre suas finanças..." autocomplete="off" required id="chat-input" class="input">
+<button type="submit" class="btn btn--primary">Enviar</button></form>              <div class="chat-disc">
+🔒 As respostas são calculadas localmente, a partir dos seus lançamentos — nada sai deste servidor. <a href="#" data-mk-fora>Usar pelo WhatsApp</a>              </div>
+<script>document.body.addEventListener('htmx:afterSwap', function(e){if(e.detail.target && e.detail.target.id==='chat-thread'){e.detail.target.scrollTop = e.detail.target.scrollHeight;}});document.body.addEventListener('htmx:afterRequest', function(e){if(e.target && e.target.id==='chat-form'){e.target.reset();var i=document.getElementById('chat-input'); if(i) i.focus();}});(function(){var q;try{q=sessionStorage.getItem('nx-pergunta-pendente');}catch(e){q=null;}if(!q)return;try{sessionStorage.removeItem('nx-pergunta-pendente');}catch(e){}function disparar(){var i=document.getElementById('chat-input');if(i){i.value=q;document.getElementById('chat-form').requestSubmit();}}if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',disparar);}else{disparar();}})();</script>            </div>
+            <div class="card" style="margin-bottom:20px;">
+              <div class="section-head">
+                <h2>🔎 Análises</h2>
+<span class="badge badge--neutral">19 observação(ões)</span>              </div>
+              <div>
+                <div class="ia-lista">
+                  <div class="ia-item">
+<span class="ia-ic">🗓</span>                    <div class="ia-corpo">
+                      <div class="ia-tt-row">
+<span class="ia-tt">4 conta(s) a pagar vencida(s) (desde 06/10)</span><span class="badge badge--red">alerta</span>                      </div>
+                      <p class="ia-ds">5 conta(s) somam R$ 11.875,00; a mais antiga vence em 06/10. Algumas já venceram e seguem em aberto. Baixe no Planejado quando pagar.</p>
+                    </div>
+                  </div>
+                  <div class="ia-item">
+<span class="ia-ic">🎯</span>                    <div class="ia-corpo">
+                      <div class="ia-tt-row">
+<span class="ia-tt">Orçamento estourado: Retiradas (10/2026)</span><span class="badge badge--red">alerta</span>                      </div>
+                      <p class="ia-ds">Retiradas: R$ 12.107,41 de R$ 6.500,00 orçados (186%). Mais 5 categoria(s) no limite.</p>
+                    </div>
+                  </div>
+                  <div class="ia-item">
+<span class="ia-ic">📈</span>                    <div class="ia-corpo">
+                      <div class="ia-tt-row">
+<span class="ia-tt">Distribuição de lucros subiu em outubro/2026</span><span class="badge badge--amber">aviso</span>                      </div>
+                      <p class="ia-ds">R$ 9.450,00 este mês vs R$ 0,00 no mês passado (R$ 9.450,00 a mais).</p>
+                    </div>
+                  </div>
+                  <div class="ia-item">
+<span class="ia-ic">📈</span>                    <div class="ia-corpo">
+                      <div class="ia-tt-row">
+<span class="ia-tt">Insumos subiu em outubro/2026</span><span class="badge badge--amber">aviso</span>                      </div>
+                      <p class="ia-ds">R$ 2.568,05 este mês vs R$ 0,00 no mês passado (R$ 2.568,05 a mais).</p>
+                    </div>
+                  </div>
+                  <div class="ia-item">
+<span class="ia-ic">📈</span>                    <div class="ia-corpo">
+                      <div class="ia-tt-row">
+<span class="ia-tt">Marketing subiu em outubro/2026</span><span class="badge badge--amber">aviso</span>                      </div>
+                      <p class="ia-ds">R$ 3.484,75 este mês vs R$ 2.279,13 no mês passado (R$ 1.205,62 a mais).</p>
+                    </div>
+                  </div>
+                  <div class="ia-item">
+<span class="ia-ic">⚠️</span>                    <div class="ia-corpo">
+                      <div class="ia-tt-row">
+<span class="ia-tt">1 possível(is) cobrança(s) duplicada(s)</span><span class="badge badge--amber">aviso</span>                      </div>
+                      <p class="ia-ds">Mesmo valor, no mesmo banco, em poucos dias: R$ 18,86 em 22/10. Vale conferir se não é lançamento repetido.</p>
+                    </div>
+                  </div>
+                  <div class="ia-item">
+<span class="ia-ic">⏰</span>                    <div class="ia-corpo">
+                      <div class="ia-tt-row">
+<span class="ia-tt">Receita de "vendas cartao" ainda não apareceu</span><span class="badge badge--amber">aviso</span>                      </div>
+                      <p class="ia-ds">Costuma cair por volta do dia 15, valor médio R$ 652,95 — já é dia 27 e não veio este mês.</p>
+                    </div>
+                  </div>
+                  <div class="ia-item">
+<span class="ia-ic">⏰</span>                    <div class="ia-corpo">
+                      <div class="ia-tt-row">
+<span class="ia-tt">Receita de "vendas loja" ainda não apareceu</span><span class="badge badge--amber">aviso</span>                      </div>
+                      <p class="ia-ds">Costuma cair por volta do dia 15, valor médio R$ 508,80 — já é dia 27 e não veio este mês.</p>
+                    </div>
+                  </div>
+                  <div class="ia-item">
+<span class="ia-ic">⏰</span>                    <div class="ia-corpo">
+                      <div class="ia-tt-row">
+<span class="ia-tt">Receita de "liquidacao cliente" ainda não apareceu</span><span class="badge badge--amber">aviso</span>                      </div>
+                      <p class="ia-ds">Costuma cair por volta do dia 15, valor médio R$ 311,27 — já é dia 27 e não veio este mês.</p>
+                    </div>
+                  </div>
+                  <div class="ia-item">
+<span class="ia-ic">🔎</span>                    <div class="ia-corpo">
+                      <div class="ia-tt-row">
+<span class="ia-tt">Gasto atípico em Distribuição de lucros</span><span class="badge badge--amber">aviso</span>                      </div>
+                      <p class="ia-ds">R$ 9.450,00 este mês vs média de R$ 3.150,00 nos 3 mês(es) anteriores.</p>
+                    </div>
+                  </div>
+                  <div class="ia-item">
+<span class="ia-ic">🔎</span>                    <div class="ia-corpo">
+                      <div class="ia-tt-row">
+<span class="ia-tt">Gasto atípico em Insumos</span><span class="badge badge--amber">aviso</span>                      </div>
+                      <p class="ia-ds">R$ 2.568,05 este mês vs média de R$ 1.265,00 nos 3 mês(es) anteriores.</p>
+                    </div>
+                  </div>
+                  <div class="ia-item">
+<span class="ia-ic">🔎</span>                    <div class="ia-corpo">
+                      <div class="ia-tt-row">
+<span class="ia-tt">Gasto atípico em Manutenção</span><span class="badge badge--amber">aviso</span>                      </div>
+                      <p class="ia-ds">R$ 1.514,55 este mês vs média de R$ 502,50 nos 3 mês(es) anteriores.</p>
+                    </div>
+                  </div>
+                  <div class="ia-item">
+<span class="ia-ic">📊</span>                    <div class="ia-corpo">
+                      <div class="ia-tt-row">
+<span class="ia-tt">Resumo de outubro/2026</span><span class="badge badge--blue">info</span>                      </div>
+                      <p class="ia-ds">Entrou R$ 232.084,86, saiu R$ 215.675,14. Sobrou R$ 16.409,72.</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="ia-lista">
+                  <div class="ia-item">
+<span class="ia-ic">🧠</span>                    <div class="ia-corpo">
+                      <div class="ia-tt-row">
+<span class="ia-tt">"vendas cartao" está categorizado de formas diferentes</span><span class="badge badge--green">confiança alta</span><span class="badge badge--neutral">1878 lançamento(s)</span><span class="badge badge--neutral">R$ 852.854,39</span>                      </div>
+                      <p class="ia-ds">3756 lançamento(s) parecido(s) com "vendas cartao" estão em Cartão de crédito, mas 1878 está(ão) em outra categoria. Provavelmente deveriam ser todos Cartão de crédito.</p>
+                      <div class="ia-acoes">
+<form enctype="multipart/form-data" method="post" action="#" data-mk-form style="display:inline;">                          
+                          <input type="hidden" name="tipo" value="recategorizar">
+                          <input type="hidden" name="escopo" value="termo">
+                          <input type="hidden" name="categoria_id" value="7">
+                          <input type="hidden" name="termo" value="vendas cartao">
+<button type="submit" class="btn btn--soft btn--sm">Aplicar</button></form><form enctype="multipart/form-data" method="post" action="#" data-mk-form style="display:inline;">                          
+                          <input type="hidden" name="tipo" value="ignorar_sugestao">
+                          <input type="hidden" name="sugestao_id" value="7a6deb7d36">
+<button type="submit" class="btn btn--ghost btn--sm">Dispensar</button></form>                      </div>
+                    </div>
+                  </div>
+                  <div class="ia-item">
+<span class="ia-ic">🧠</span>                    <div class="ia-corpo">
+                      <div class="ia-tt-row">
+<span class="ia-tt">Lançamento de R$ 91.364,08 parece estar na categoria errada</span><span class="badge badge--amber">confiança media</span><span class="badge badge--neutral">1 lançamento(s)</span><span class="badge badge--neutral">R$ 91.364,08</span>                      </div>
+                      <p class="ia-ds">"Transferência entre contas" é uma categoria de despesa, mas este lançamento tem valor positivo (dinheiro entrando) — pode ser um estorno ou lançamento na categoria errada. Categoria sugerida: Rendimentos.</p>
+                      <div class="ia-acoes">
+<form enctype="multipart/form-data" method="post" action="#" data-mk-form style="display:inline;">                          
+                          <input type="hidden" name="tipo" value="recategorizar">
+                          <input type="hidden" name="escopo" value="tx">
+                          <input type="hidden" name="categoria_id" value="3">
+                          <input type="hidden" name="lancamento_ids" value="6291">
+<button type="submit" class="btn btn--soft btn--sm">Aplicar</button></form><form enctype="multipart/form-data" method="post" action="#" data-mk-form style="display:inline;">                          
+                          <input type="hidden" name="tipo" value="ignorar_sugestao">
+                          <input type="hidden" name="sugestao_id" value="0655d31c92">
+<button type="submit" class="btn btn--ghost btn--sm">Dispensar</button></form>                      </div>
+                    </div>
+                  </div>
+                  <div class="ia-item">
+<span class="ia-ic">🧠</span>                    <div class="ia-corpo">
+                      <div class="ia-tt-row">
+<span class="ia-tt">Lançamento de R$ 65.897,86 parece estar na categoria errada</span><span class="badge badge--amber">confiança media</span><span class="badge badge--neutral">1 lançamento(s)</span><span class="badge badge--neutral">R$ 65.897,86</span>                      </div>
+                      <p class="ia-ds">"Transferência entre contas" é uma categoria de despesa, mas este lançamento tem valor positivo (dinheiro entrando) — pode ser um estorno ou lançamento na categoria errada. Categoria sugerida: Rendimentos.</p>
+                      <div class="ia-acoes">
+<form enctype="multipart/form-data" method="post" action="#" data-mk-form style="display:inline;">                          
+                          <input type="hidden" name="tipo" value="recategorizar">
+                          <input type="hidden" name="escopo" value="tx">
+                          <input type="hidden" name="categoria_id" value="3">
+                          <input type="hidden" name="lancamento_ids" value="6293">
+<button type="submit" class="btn btn--soft btn--sm">Aplicar</button></form><form enctype="multipart/form-data" method="post" action="#" data-mk-form style="display:inline;">                          
+                          <input type="hidden" name="tipo" value="ignorar_sugestao">
+                          <input type="hidden" name="sugestao_id" value="31c3cb0800">
+<button type="submit" class="btn btn--ghost btn--sm">Dispensar</button></form>                      </div>
+                    </div>
+                  </div>
+                  <div class="ia-item">
+<span class="ia-ic">🧠</span>                    <div class="ia-corpo">
+                      <div class="ia-tt-row">
+<span class="ia-tt">Lançamento de R$ 24.535,28 parece estar na categoria errada</span><span class="badge badge--amber">confiança media</span><span class="badge badge--neutral">1 lançamento(s)</span><span class="badge badge--neutral">R$ 24.535,28</span>                      </div>
+                      <p class="ia-ds">"Transferência entre contas" é uma categoria de despesa, mas este lançamento tem valor positivo (dinheiro entrando) — pode ser um estorno ou lançamento na categoria errada. Categoria sugerida: Rendimentos.</p>
+                      <div class="ia-acoes">
+<form enctype="multipart/form-data" method="post" action="#" data-mk-form style="display:inline;">                          
+                          <input type="hidden" name="tipo" value="recategorizar">
+                          <input type="hidden" name="escopo" value="tx">
+                          <input type="hidden" name="categoria_id" value="3">
+                          <input type="hidden" name="lancamento_ids" value="2279">
+<button type="submit" class="btn btn--soft btn--sm">Aplicar</button></form><form enctype="multipart/form-data" method="post" action="#" data-mk-form style="display:inline;">                          
+                          <input type="hidden" name="tipo" value="ignorar_sugestao">
+                          <input type="hidden" name="sugestao_id" value="29a2531882">
+<button type="submit" class="btn btn--ghost btn--sm">Dispensar</button></form>                      </div>
+                    </div>
+                  </div>
+                  <div class="ia-item">
+<span class="ia-ic">🧠</span>                    <div class="ia-corpo">
+                      <div class="ia-tt-row">
+<span class="ia-tt">Lançamento de R$ 23.618,35 parece estar na categoria errada</span><span class="badge badge--amber">confiança media</span><span class="badge badge--neutral">1 lançamento(s)</span><span class="badge badge--neutral">R$ 23.618,35</span>                      </div>
+                      <p class="ia-ds">"Transferência entre contas" é uma categoria de despesa, mas este lançamento tem valor positivo (dinheiro entrando) — pode ser um estorno ou lançamento na categoria errada. Categoria sugerida: Rendimentos.</p>
+                      <div class="ia-acoes">
+<form enctype="multipart/form-data" method="post" action="#" data-mk-form style="display:inline;">                          
+                          <input type="hidden" name="tipo" value="recategorizar">
+                          <input type="hidden" name="escopo" value="tx">
+                          <input type="hidden" name="categoria_id" value="3">
+                          <input type="hidden" name="lancamento_ids" value="1105">
+<button type="submit" class="btn btn--soft btn--sm">Aplicar</button></form><form enctype="multipart/form-data" method="post" action="#" data-mk-form style="display:inline;">                          
+                          <input type="hidden" name="tipo" value="ignorar_sugestao">
+                          <input type="hidden" name="sugestao_id" value="41c712300a">
+<button type="submit" class="btn btn--ghost btn--sm">Dispensar</button></form>                      </div>
+                    </div>
+                  </div>
+                  <div class="ia-item">
+<span class="ia-ic">🧠</span>                    <div class="ia-corpo">
+                      <div class="ia-tt-row">
+<span class="ia-tt">Lançamento de R$ 18.832,18 parece estar na categoria errada</span><span class="badge badge--amber">confiança media</span><span class="badge badge--neutral">1 lançamento(s)</span><span class="badge badge--neutral">R$ 18.832,18</span>                      </div>
+                      <p class="ia-ds">"Transferência entre contas" é uma categoria de despesa, mas este lançamento tem valor positivo (dinheiro entrando) — pode ser um estorno ou lançamento na categoria errada. Categoria sugerida: Rendimentos.</p>
+                      <div class="ia-acoes">
+<form enctype="multipart/form-data" method="post" action="#" data-mk-form style="display:inline;">                          
+                          <input type="hidden" name="tipo" value="recategorizar">
+                          <input type="hidden" name="escopo" value="tx">
+                          <input type="hidden" name="categoria_id" value="3">
+                          <input type="hidden" name="lancamento_ids" value="2281">
+<button type="submit" class="btn btn--soft btn--sm">Aplicar</button></form><form enctype="multipart/form-data" method="post" action="#" data-mk-form style="display:inline;">                          
+                          <input type="hidden" name="tipo" value="ignorar_sugestao">
+                          <input type="hidden" name="sugestao_id" value="15889e92fe">
+<button type="submit" class="btn btn--ghost btn--sm">Dispensar</button></form>                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="navTooltip"></div>
+      <div id="navOverlay" class="nav-overlay"></div>
+<script>document.addEventListener('click',function(e){var m=document.getElementById('userMenu');if(m&&!m.contains(e.target))m.classList.remove('open');});</script><script>(function(){var shell=document.getElementById('appShell');var chave='nx-menu-1';var btn=document.getElementById('brandToggle');function marca(){if(btn){var rec=shell.classList.contains('sidebar-collapsed');btn.setAttribute('aria-expanded',rec?'false':'true');btn.setAttribute('aria-label',rec?'Expandir menu':'Recolher menu');btn.textContent=rec?'›':'‹';}}try{if(localStorage.getItem(chave)==='1')shell.classList.add('sidebar-collapsed');}catch(e){}marca();if(btn)btn.onclick=function(){shell.classList.toggle('sidebar-collapsed');marca();try{localStorage.setItem(chave,shell.classList.contains('sidebar-collapsed')?'1':'0');}catch(e){}};var abrir=document.getElementById('navAbrir'),over=document.getElementById('navOverlay'),barra=document.getElementById('appSidebar');function gaveta(a){shell.classList.toggle('nav-aberta',a);if(abrir)abrir.setAttribute('aria-expanded',a?'true':'false');if(a){var p=barra.querySelector('a');if(p)p.focus();}else if(abrir){abrir.focus();}}if(abrir)abrir.onclick=function(){gaveta(true);};if(over)over.onclick=function(){gaveta(false);};document.addEventListener('keydown',function(e){if(e.key==='Escape'&&shell.classList.contains('nav-aberta'))gaveta(false);if(e.key==='Tab'&&shell.classList.contains('nav-aberta')){var f=barra.querySelectorAll('a,button');if(!f.length)return;var a=f[0],z=f[f.length-1];if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus();}else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus();}}});var tip=document.getElementById('navTooltip');document.querySelectorAll('.navlink').forEach(function(a){a.addEventListener('mouseenter',function(){var recolhida=shell.classList.contains('sidebar-collapsed')&&window.innerWidth>780;if(!recolhida)return;var r=a.getBoundingClientRect();tip.textContent=a.getAttribute('data-label');tip.style.left=(r.right+10)+'px';tip.style.top=(r.top+r.height/2-14)+'px';tip.classList.add('on');});a.addEventListener('mouseleave',function(){tip.classList.remove('on');});});})();</script><script src="static/js/busca.js" defer></script>    </div>
+  <div class="mk-aviso" id="mkAviso" role="status" aria-live="polite"></div>
+<a class="mk-selo" href="login.html" title="Ver a tela de entrada">Mockup · dados fictícios</a>
+<script>
+(function () {
+  var d = document.documentElement, caixa = document.getElementById('mkAviso'), relogio;
+  function avisar(t) {
+    caixa.textContent = t; caixa.classList.add('on');
+    clearTimeout(relogio); relogio = setTimeout(function () { caixa.classList.remove('on'); }, 2600);
+  }
+  function tema(t) {
+    d.setAttribute('data-theme', t);
+    try { if (!d.classList.contains('mk-embed')) localStorage.setItem('mk-tema', t); } catch (e) {}
+    document.querySelectorAll('.theme-switch button[name=tema]').forEach(function (b) {
+      b.classList.toggle('on', (b.value === 'claro') === (t === 'light'));
+    });
+  }
+  tema(d.getAttribute('data-theme'));
+  // dentro do site, o tema acompanha o alternador do site
+  if (d.classList.contains('mk-embed')) try {
+    new MutationObserver(function () { tema(parent.document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'); })
+      .observe(parent.document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  } catch (e) {}
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[data-mk-fora]');
+    if (a) { e.preventDefault(); avisar('Esta tela fica só no app. O mockup mostra as principais.'); return; }
+    var b = e.target.closest('.theme-switch button[name=tema]');
+    if (b) { e.preventDefault(); tema(b.value === 'claro' ? 'light' : 'dark'); }
+  }, true);
+  document.addEventListener('submit', function (e) {
+    var f = e.target.closest('form[data-mk-form]');
+    if (!f) return;
+    e.preventDefault();
+    if (f.querySelector('button[name=tema]')) return;
+    if (f.querySelector('input[name=senha]')) { location.href = 'index.html'; return; }
+    avisar(f.method === 'get' ? 'No mockup os filtros não mudam os dados. No app, a tela recalcula na hora.' : 'Mockup: nada é gravado. No app, isto salva e fica na auditoria.');
+  }, true);
+})();
+</script>
+
+</body>
+</html>

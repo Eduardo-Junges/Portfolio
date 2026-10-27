@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="dark" data-efeitos="completo">
+  <head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<script>
+/* Mockup estático do Nexus & PJ (dados fictícios). Antes do primeiro paint:
+   ?embed = dentro do site (iframe), o tema acompanha o site; fora dele vale o
+   tema escolhido no próprio mockup. */
+(function () {
+  var d = document.documentElement, t = 'dark';
+  var embed = /[?&]embed\b/.test(location.search);
+  try { embed = embed || sessionStorage.getItem('mk-embed') === '1'; if (embed) sessionStorage.setItem('mk-embed', '1'); } catch (e) {}
+  if (embed) {
+    d.classList.add('mk-embed');
+    try { if (parent.document.documentElement.dataset.theme === 'light') t = 'light'; } catch (e) {}
+  } else {
+    try { if (localStorage.getItem('mk-tema') === 'light') t = 'light'; } catch (e) {}
+  }
+  d.setAttribute('data-theme', t);
+  // dentro do site o Dashboard aparece direto, sem a janela de boas-vindas por cima
+  if (embed) {
+    var abrir = HTMLDialogElement.prototype.showModal;
+    HTMLDialogElement.prototype.showModal = function () { if (this.id !== 'hmDlg') abrir.call(this); };
+  }
+  // o mockup não tem servidor: o que o app buscaria vira uma resposta curta
+  var buscar = window.fetch;
+  window.fetch = function (url, o) {
+    var u = String(url);
+    if (u.indexOf('/busca/previa') === 0)
+      return Promise.resolve(new Response('<div class="busca-vazio" style="padding:12px 14px">No mockup a busca não consulta dados. No app, aparecem aqui lançamentos, títulos e telas.</div>', { status: 200 }));
+    if (u.indexOf('/dashboard/dre/lancamentos') === 0)
+      return Promise.resolve(new Response('<tr><td colspan="40" style="padding:8px 14px;opacity:.8">No mockup os lançamentos não abrem. No app, aparecem aqui, um por linha.</td></tr>', { status: 200 }));
+    return buscar ? buscar.apply(this, arguments) : Promise.reject(new Error('sem fetch'));
+  };
+})();
+</script>
+<style>
+  .mk-aviso{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:10000;max-width:min(92vw,460px);
+    padding:10px 14px;border-radius:10px;background:#111827;color:#f3f4f6;border:1px solid rgba(255,255,255,.14);
+    font:500 13px/1.4 system-ui,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .18s}
+  .mk-aviso.on{opacity:1}
+  .mk-selo{position:fixed;right:14px;bottom:14px;z-index:9999;padding:6px 10px;border-radius:999px;font:600 11px/1 system-ui,sans-serif;
+    letter-spacing:.04em;background:rgba(17,24,39,.85);color:#e5e7eb;border:1px solid rgba(255,255,255,.14)}
+  .mk-embed .mk-selo{display:none}
+</style>
+
+    <title>Nexus &amp; PJ — mockup (/dashboard/balanco)</title>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="static/css/tokens.css">
+    <link rel="stylesheet" href="static/css/vida.css">
+    <style>:root{--tom-azul:59,130,246;--tom-azul-tx:77,141,247;--tom-azul-ic:255,255,255;--tom-rosa:236,72,153;--tom-rosa-tx:238,87,161;--tom-rosa-ic:255,255,255;--tom-indigo:99,102,241;--tom-indigo-tx:127,130,244;--tom-indigo-ic:255,255,255;--tom-roxo:139,92,246;--tom-roxo-tx:158,118,247;--tom-roxo-ic:255,255,255;--tom-ambar:245,158,11;--tom-ambar-tx:245,158,11;--tom-ambar-ic:16,21,31;--tom-ciano:6,182,212;--tom-ciano-tx:6,182,212;--tom-ciano-ic:16,21,31;--tom-laranja:249,115,22;--tom-laranja-tx:249,115,22;--tom-laranja-ic:16,21,31;--tom-ardosia:100,116,139;--tom-ardosia-tx:129,142,161;--tom-ardosia-ic:255,255,255;--tom-alfa:0.16;}
+:root[data-theme="light"]{--tom-azul-tx:44,98,184;--tom-rosa-tx:175,53,113;--tom-indigo-tx:83,86,202;--tom-roxo-tx:113,75,199;--tom-ambar-tx:142,92,6;--tom-ciano-tx:4,111,129;--tom-laranja-tx:164,76,15;--tom-ardosia-tx:87,101,121;--tom-alfa:0.1;}
+.tom-azul{--tom:var(--tom-azul);--tom-tx:rgb(var(--tom-azul-tx));--tom-ic:rgb(var(--tom-azul-ic));}.tom-rosa{--tom:var(--tom-rosa);--tom-tx:rgb(var(--tom-rosa-tx));--tom-ic:rgb(var(--tom-rosa-ic));}.tom-indigo{--tom:var(--tom-indigo);--tom-tx:rgb(var(--tom-indigo-tx));--tom-ic:rgb(var(--tom-indigo-ic));}.tom-roxo{--tom:var(--tom-roxo);--tom-tx:rgb(var(--tom-roxo-tx));--tom-ic:rgb(var(--tom-roxo-ic));}.tom-ambar{--tom:var(--tom-ambar);--tom-tx:rgb(var(--tom-ambar-tx));--tom-ic:rgb(var(--tom-ambar-ic));}.tom-ciano{--tom:var(--tom-ciano);--tom-tx:rgb(var(--tom-ciano-tx));--tom-ic:rgb(var(--tom-ciano-ic));}.tom-laranja{--tom:var(--tom-laranja);--tom-tx:rgb(var(--tom-laranja-tx));--tom-ic:rgb(var(--tom-laranja-ic));}.tom-ardosia{--tom:var(--tom-ardosia);--tom-tx:rgb(var(--tom-ardosia-tx));--tom-ic:rgb(var(--tom-ardosia-ic));}
+.bloco{padding:0;overflow:hidden}
+.faixa{display:flex;align-items:center;gap:8px;padding:8px 14px;background:rgba(var(--tom),var(--tom-alfa));
+  border-bottom:1px solid rgba(var(--tom),.22);color:var(--tom-tx);font-size:11.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.06em}
+.faixa .faixa-ic{font-size:13px;line-height:1}
+.faixa .faixa-titulo{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.faixa .faixa-acoes{display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0;font-weight:500}
+.faixa .faixa-nota{font-weight:500;text-transform:none;letter-spacing:0;opacity:.95}
+.bloco-corpo{padding:14px 16px}
+.ind-card{padding:14px 16px;display:flex;gap:12px;align-items:flex-start}
+.ind-card .ind-ic{flex:0 0 auto;width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+  font-size:17px;background:linear-gradient(135deg,rgb(var(--tom)),rgba(var(--tom),.72));color:var(--tom-ic)}
+.ind-card .ind-txt{min-width:0;flex:1}
+.ind-card .ind-rotulo{font-size:var(--text-xs);color:var(--text-mute);text-transform:uppercase;letter-spacing:.04em}
+.ind-card .ind-valor{font-size:var(--text-2xl);font-weight:700;color:var(--text-100);line-height:1.2;margin-top:2px}
+.ind-card .ind-var{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:6px;font-size:var(--text-xs);color:var(--text-200)}
+.ind-card .chip{display:inline-flex;align-items:center;gap:3px;padding:1px 8px;border-radius:999px;font-weight:600;border:1px solid transparent}
+.ind-card .chip--bom{background:rgba(var(--green-rgb),.14);color:var(--green-text)}
+.ind-card .chip--ruim{background:rgba(var(--red-rgb),.14);color:var(--red-text)}
+.ind-card .chip--neutro{background:var(--overlay-1);color:var(--text-200)}
+.ind-card .ind-nota{font-size:var(--text-xs);color:var(--text-200);margin-top:6px}
+.subabas{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.subaba{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;font-size:12.5px;font-weight:600;
+  color:var(--text-200);background:var(--surface-1);border:1px solid var(--border-1);text-decoration:none;white-space:nowrap;
+  transition:background var(--dur-fast) ease,color var(--dur-fast) ease,border-color var(--dur-fast) ease}
+.subaba .sa-ic{font-size:13px;line-height:1;color:var(--tom-tx,var(--text-200))}
+.subaba:hover{color:var(--text-100);border-color:var(--line-strong)}
+.subaba:focus-visible{outline:2px solid var(--text-200);outline-offset:2px}
+.subaba.on{background:var(--text-100);color:var(--bg);border-color:transparent}
+.subaba.on .sa-ic{color:inherit}
+.mod-ic{flex:none;width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;
+  background:linear-gradient(135deg,rgb(var(--tom)),rgba(var(--tom),.72));color:var(--tom-ic)}
+.mod-periodo{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;font-size:12px;font-weight:600;
+  color:var(--text-200);border:1px solid var(--border-1);background:var(--surface-1);white-space:nowrap}
+@media (max-width:1100px){.mod-periodo{display:none}}
+</style>
+<script src="static/js/chegada.js"></script><script src="static/js/vida.js" defer></script>    <link rel="icon" type="image/png" href="static/branding/icone-dark.png">
+  </head>
+  <body>
+    <div id="appShell" class="shell">
+      
+      <div id="appSidebar" class="sidebar">
+        <div class="brand">
+<a href="index.html" class="brand-btn" title="Ir para o Dashboard"><img src="static/branding/icone-dark.png" alt="" class="brand-icon"><span class="brand-name">Nexus &amp; PJ</span></a>        </div>
+        <nav aria-label="Menu principal">
+          <div class="grp-label">Visão geral</div>
+<a href="index.html" data-label="Dashboard" class="navlink"><span class="nav-badge">⬡</span><span class="nav-label">Dashboard</span></a>          <div class="grp-label">Movimento</div>
+<a href="realizado.html" data-label="Fluxo de caixa" class="navlink"><span class="nav-badge">◧</span><span class="nav-label">Fluxo de caixa</span></a><a href="importar.html" data-label="Importar extrato" class="navlink"><span class="nav-badge">⇓</span><span class="nav-label">Importar extrato</span></a>          <div class="grp-label">Resultados</div>
+<a href="dre.html" data-label="Contábil" aria-current="page" class="navlink active"><span class="nav-badge">∑</span><span class="nav-label">Contábil</span></a><a href="orcamento.html" data-label="Orçamento" class="navlink"><span class="nav-badge">🎯</span><span class="nav-label">Orçamento</span></a>          <div class="grp-label">Entrega</div>
+<a href="relatorios.html" data-label="Relatórios" class="navlink"><span class="nav-badge">⎙</span><span class="nav-label">Relatórios</span></a>        </nav>
+<button type="button" aria-label="Recolher menu" aria-expanded="true" id="brandToggle" class="sb-borda" title="Recolher/expandir menu" name="brandToggle">‹</button>      </div>
+      <div class="main">
+        <div class="topbar">
+          <div class="title-wrap" style="display:flex;align-items:center;gap:10px;">
+<button type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="appSidebar" id="navAbrir" class="nav-hamb" name="navAbrir">☰</button>            <div class="tom-ciano" style="display:flex;align-items:center;gap:10px;">
+<span aria-hidden="true" class="mod-ic">∑</span>            </div>
+            <div class="title">Contábil</div>
+          </div>
+          <div class="actions">
+<span class="mod-periodo">📅 <span>posição em 27/10/2026</span></span>            <div class="busca-wrap">
+<label class="topbar-ia"><span class="ia-emoji">🔎</span>                <input type="text" name="q" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="buscaPainel" aria-autocomplete="list" data-ia="1" placeholder="Pesquise um valor, nome ou data… ex.: 1200, pix fabricio — ou pergunte à IA" aria-label="Pesquisar no painel ou perguntar à IA" id="buscaInput">
+<kbd>/</kbd></label>              <div role="listbox" aria-label="Resultados da busca" hidden id="buscaPainel" class="busca-painel"></div>
+            </div>
+            <div id="userMenu" class="user-menu">
+<button type="button" onclick="document.getElementById('userMenu').classList.toggle('open')" class="user-menu-trigger">                <div class="av">E</div>
+                <div class="meta">
+                  <div class="name">Eduardo</div>
+                  <div class="role">ADM</div>
+                </div>
+<span class="chev">▾</span></button>              <div class="user-menu-panel">
+<a href="perfil.html" class="um-head" title="Abrir meu perfil" style="display:block;text-decoration:none;color:inherit;">                  <div class="name">Eduardo</div>
+                  <div class="role">eduardo@empresa.exemplo · Perfil ADM</div>
+</a>                <div class="um-row">
+<span>Tema</span><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="theme-switch">                    
+                    <input type="hidden" name="voltar" value="/dashboard/balanco">
+<button type="submit" name="tema" value="claro">☀</button><button type="submit" name="tema" value="escuro" class="on">☾</button></form>                </div>
+                <div class="um-sep"></div>
+<a href="perfil.html" class="um-item">👤 Meu perfil</a><a href="configuracoes.html" class="um-item">⚙ Configurações</a>                <div class="um-sep"></div>
+<a href="sobre.html" class="um-item">ⓘ Sobre e versão</a><a href="#" data-mk-fora class="um-item">❔ Central de ajuda</a><a href="https://eduardo-junges.vercel.app/privacidade-nexus-pj" target="_blank" rel="noopener" class="um-item">🛡 Política de privacidade</a><a href="https://eduardo-junges.vercel.app/termos-nexus-pj" target="_blank" rel="noopener" class="um-item">📄 Contrato de licença</a>                <div class="um-sep"></div>
+<form enctype="multipart/form-data" method="post" action="#" data-mk-form>                  
+<button type="submit" class="um-item danger">⏻ Sair</button></form>              </div>
+            </div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="pagina-modo">
+            <div role="navigation" aria-label="Área contábil" class="subabas">
+<a href="dre.html" class="subaba"><span aria-hidden="true" class="sa-ic">∑</span>DRE</a><a href="balancete.html" class="subaba"><span aria-hidden="true" class="sa-ic">⚖</span>Balancete</a><a href="balanco.html" aria-current="page" class="subaba on"><span aria-hidden="true" class="sa-ic">▦</span>Balanço patrimonial</a>            </div>
+            <div>
+<form enctype="multipart/form-data" method="get" action="#" data-mk-form class="painel-filtros" style="margin-bottom:16px;"><label for="data">Posição em</label>                <input type="date" name="data" value="2026-10-27" max="2026-10-27" id="data" class="input painel-filtro">
+<button type="submit" class="btn btn--secondary btn--sm">Ver</button></form>              <div class="card bloco" style="">
+                <div class="faixa tom-ciano">
+<span aria-hidden="true" class="faixa-ic">◈</span><span class="faixa-titulo">Balanço patrimonial gerencial</span><span class="faixa-nota">posição em uma data</span>                </div>
+                <div class="bloco-corpo">
+                  <div class="tbl-wrap dre-wrap">
+                    <table class="tbl dre">
+                      <thead>
+                        <tr>
+                          <th>Conta</th>
+                          <th class="num">Em 27/10/2026</th>
+                          <th class="num">Fim do mês anterior (30/09/2026)</th>
+                          <th class="num">Variação</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td class="dre-titulo">ATIVO</td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                        </tr>
+                        <tr class="">
+                          <td style="padding-left:28px;">Disponível nos bancos</td>
+                          <td class="num">R$ 729.176,00</td>
+                          <td class="num">R$ 704.466,28</td>
+                          <td class="num">+3,5%</td>
+                        </tr>
+                        <tr class="">
+                          <td style="padding-left:48px;">Banco Alfa (fictício)</td>
+                          <td class="num">R$ 75.341,14</td>
+                          <td class="num">R$ 83.668,68</td>
+                          <td class="num">-10,0%</td>
+                        </tr>
+                        <tr class="">
+                          <td style="padding-left:48px;">Banco Beta (fictício)</td>
+                          <td class="num">R$ 371.822,19</td>
+                          <td class="num">R$ 353.005,61</td>
+                          <td class="num">+5,3%</td>
+                        </tr>
+                        <tr class="">
+                          <td style="padding-left:48px;">Banco Gama (fictício)</td>
+                          <td class="num">R$ 282.012,67</td>
+                          <td class="num">R$ 267.791,99</td>
+                          <td class="num">+5,3%</td>
+                        </tr>
+                        <tr class="">
+                          <td style="padding-left:28px;">Contas a receber</td>
+                          <td class="num">R$ 161.040,00</td>
+                          <td class="num">R$ 0,00</td>
+                          <td class="num">—</td>
+                        </tr>
+                        <tr class="">
+                          <td style="padding-left:48px;">A vencer</td>
+                          <td class="num">R$ 153.740,00</td>
+                          <td class="num">R$ 0,00</td>
+                          <td class="num">—</td>
+                        </tr>
+                        <tr class="">
+                          <td style="padding-left:48px;">Vencidas</td>
+                          <td class="num">R$ 7.300,00</td>
+                          <td class="num">R$ 0,00</td>
+                          <td class="num">—</td>
+                        </tr>
+                        <tr class="dre-total">
+                          <td style="padding-left:8px;">Total do ativo</td>
+                          <td class="num">R$ 890.216,00</td>
+                          <td class="num">R$ 704.466,28</td>
+                          <td class="num">+26,4%</td>
+                        </tr>
+                        <tr>
+                          <td class="dre-titulo">PASSIVO</td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                        </tr>
+                        <tr class="">
+                          <td style="padding-left:28px;">Contas a pagar</td>
+                          <td class="num">R$ 480.975,00</td>
+                          <td class="num">R$ 0,00</td>
+                          <td class="num">—</td>
+                        </tr>
+                        <tr class="">
+                          <td style="padding-left:48px;">A vencer</td>
+                          <td class="num">R$ 476.400,00</td>
+                          <td class="num">R$ 0,00</td>
+                          <td class="num">—</td>
+                        </tr>
+                        <tr class="">
+                          <td style="padding-left:48px;">Vencidas</td>
+                          <td class="num">R$ 4.575,00</td>
+                          <td class="num">R$ 0,00</td>
+                          <td class="num">—</td>
+                        </tr>
+                        <tr class="dre-total">
+                          <td style="padding-left:8px;">Total do passivo</td>
+                          <td class="num">R$ 480.975,00</td>
+                          <td class="num">R$ 0,00</td>
+                          <td class="num">—</td>
+                        </tr>
+                        <tr class="dre-total">
+                          <td style="padding-left:8px;">PATRIMÔNIO LÍQUIDO GERENCIAL (ativo − passivo)</td>
+                          <td class="num">R$ 409.241,00</td>
+                          <td class="num">R$ 704.466,28</td>
+                          <td class="num">-41,9%</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <p class="nota">
+<span>Versão gerencial: </span>o ativo é o saldo dos bancos (o que o próprio banco informa) mais as contas a receber do Planejado; o passivo são as contas a pagar. Imobilizado, estoque, empréstimos e capital entram quando houver dado. Na data de comparação, o que estava em aberto é aproximado (título cancelado fica de fora).              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="navTooltip"></div>
+      <div id="navOverlay" class="nav-overlay"></div>
+<script>document.addEventListener('click',function(e){var m=document.getElementById('userMenu');if(m&&!m.contains(e.target))m.classList.remove('open');});</script><script>(function(){var shell=document.getElementById('appShell');var chave='nx-menu-1';var btn=document.getElementById('brandToggle');function marca(){if(btn){var rec=shell.classList.contains('sidebar-collapsed');btn.setAttribute('aria-expanded',rec?'false':'true');btn.setAttribute('aria-label',rec?'Expandir menu':'Recolher menu');btn.textContent=rec?'›':'‹';}}try{if(localStorage.getItem(chave)==='1')shell.classList.add('sidebar-collapsed');}catch(e){}marca();if(btn)btn.onclick=function(){shell.classList.toggle('sidebar-collapsed');marca();try{localStorage.setItem(chave,shell.classList.contains('sidebar-collapsed')?'1':'0');}catch(e){}};var abrir=document.getElementById('navAbrir'),over=document.getElementById('navOverlay'),barra=document.getElementById('appSidebar');function gaveta(a){shell.classList.toggle('nav-aberta',a);if(abrir)abrir.setAttribute('aria-expanded',a?'true':'false');if(a){var p=barra.querySelector('a');if(p)p.focus();}else if(abrir){abrir.focus();}}if(abrir)abrir.onclick=function(){gaveta(true);};if(over)over.onclick=function(){gaveta(false);};document.addEventListener('keydown',function(e){if(e.key==='Escape'&&shell.classList.contains('nav-aberta'))gaveta(false);if(e.key==='Tab'&&shell.classList.contains('nav-aberta')){var f=barra.querySelectorAll('a,button');if(!f.length)return;var a=f[0],z=f[f.length-1];if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus();}else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus();}}});var tip=document.getElementById('navTooltip');document.querySelectorAll('.navlink').forEach(function(a){a.addEventListener('mouseenter',function(){var recolhida=shell.classList.contains('sidebar-collapsed')&&window.innerWidth>780;if(!recolhida)return;var r=a.getBoundingClientRect();tip.textContent=a.getAttribute('data-label');tip.style.left=(r.right+10)+'px';tip.style.top=(r.top+r.height/2-14)+'px';tip.classList.add('on');});a.addEventListener('mouseleave',function(){tip.classList.remove('on');});});})();</script><script src="static/js/busca.js" defer></script>    </div>
+  <div class="mk-aviso" id="mkAviso" role="status" aria-live="polite"></div>
+<a class="mk-selo" href="login.html" title="Ver a tela de entrada">Mockup · dados fictícios</a>
+<script>
+(function () {
+  var d = document.documentElement, caixa = document.getElementById('mkAviso'), relogio;
+  function avisar(t) {
+    caixa.textContent = t; caixa.classList.add('on');
+    clearTimeout(relogio); relogio = setTimeout(function () { caixa.classList.remove('on'); }, 2600);
+  }
+  function tema(t) {
+    d.setAttribute('data-theme', t);
+    try { if (!d.classList.contains('mk-embed')) localStorage.setItem('mk-tema', t); } catch (e) {}
+    document.querySelectorAll('.theme-switch button[name=tema]').forEach(function (b) {
+      b.classList.toggle('on', (b.value === 'claro') === (t === 'light'));
+    });
+  }
+  tema(d.getAttribute('data-theme'));
+  // dentro do site, o tema acompanha o alternador do site
+  if (d.classList.contains('mk-embed')) try {
+    new MutationObserver(function () { tema(parent.document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'); })
+      .observe(parent.document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  } catch (e) {}
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[data-mk-fora]');
+    if (a) { e.preventDefault(); avisar('Esta tela fica só no app. O mockup mostra as principais.'); return; }
+    var b = e.target.closest('.theme-switch button[name=tema]');
+    if (b) { e.preventDefault(); tema(b.value === 'claro' ? 'light' : 'dark'); }
+  }, true);
+  document.addEventListener('submit', function (e) {
+    var f = e.target.closest('form[data-mk-form]');
+    if (!f) return;
+    e.preventDefault();
+    if (f.querySelector('button[name=tema]')) return;
+    if (f.querySelector('input[name=senha]')) { location.href = 'index.html'; return; }
+    avisar(f.method === 'get' ? 'No mockup os filtros não mudam os dados. No app, a tela recalcula na hora.' : 'Mockup: nada é gravado. No app, isto salva e fica na auditoria.');
+  }, true);
+})();
+</script>
+
+</body>
+</html>

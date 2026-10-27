@@ -1,0 +1,2337 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="dark" data-efeitos="completo">
+  <head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<script>
+/* Mockup estático do Nexus & PJ (dados fictícios). Antes do primeiro paint:
+   ?embed = dentro do site (iframe), o tema acompanha o site; fora dele vale o
+   tema escolhido no próprio mockup. */
+(function () {
+  var d = document.documentElement, t = 'dark';
+  var embed = /[?&]embed\b/.test(location.search);
+  try { embed = embed || sessionStorage.getItem('mk-embed') === '1'; if (embed) sessionStorage.setItem('mk-embed', '1'); } catch (e) {}
+  if (embed) {
+    d.classList.add('mk-embed');
+    try { if (parent.document.documentElement.dataset.theme === 'light') t = 'light'; } catch (e) {}
+  } else {
+    try { if (localStorage.getItem('mk-tema') === 'light') t = 'light'; } catch (e) {}
+  }
+  d.setAttribute('data-theme', t);
+  // dentro do site o Dashboard aparece direto, sem a janela de boas-vindas por cima
+  if (embed) {
+    var abrir = HTMLDialogElement.prototype.showModal;
+    HTMLDialogElement.prototype.showModal = function () { if (this.id !== 'hmDlg') abrir.call(this); };
+  }
+  // o mockup não tem servidor: o que o app buscaria vira uma resposta curta
+  var buscar = window.fetch;
+  window.fetch = function (url, o) {
+    var u = String(url);
+    if (u.indexOf('/busca/previa') === 0)
+      return Promise.resolve(new Response('<div class="busca-vazio" style="padding:12px 14px">No mockup a busca não consulta dados. No app, aparecem aqui lançamentos, títulos e telas.</div>', { status: 200 }));
+    if (u.indexOf('/dashboard/dre/lancamentos') === 0)
+      return Promise.resolve(new Response('<tr><td colspan="40" style="padding:8px 14px;opacity:.8">No mockup os lançamentos não abrem. No app, aparecem aqui, um por linha.</td></tr>', { status: 200 }));
+    return buscar ? buscar.apply(this, arguments) : Promise.reject(new Error('sem fetch'));
+  };
+})();
+</script>
+<style>
+  .mk-aviso{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:10000;max-width:min(92vw,460px);
+    padding:10px 14px;border-radius:10px;background:#111827;color:#f3f4f6;border:1px solid rgba(255,255,255,.14);
+    font:500 13px/1.4 system-ui,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .18s}
+  .mk-aviso.on{opacity:1}
+  .mk-selo{position:fixed;right:14px;bottom:14px;z-index:9999;padding:6px 10px;border-radius:999px;font:600 11px/1 system-ui,sans-serif;
+    letter-spacing:.04em;background:rgba(17,24,39,.85);color:#e5e7eb;border:1px solid rgba(255,255,255,.14)}
+  .mk-embed .mk-selo{display:none}
+</style>
+
+    <title>Nexus &amp; PJ — mockup (/realizado)</title>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="static/css/tokens.css">
+    <link rel="stylesheet" href="static/css/vida.css">
+    <style>:root{--tom-azul:59,130,246;--tom-azul-tx:77,141,247;--tom-azul-ic:255,255,255;--tom-rosa:236,72,153;--tom-rosa-tx:238,87,161;--tom-rosa-ic:255,255,255;--tom-indigo:99,102,241;--tom-indigo-tx:127,130,244;--tom-indigo-ic:255,255,255;--tom-roxo:139,92,246;--tom-roxo-tx:158,118,247;--tom-roxo-ic:255,255,255;--tom-ambar:245,158,11;--tom-ambar-tx:245,158,11;--tom-ambar-ic:16,21,31;--tom-ciano:6,182,212;--tom-ciano-tx:6,182,212;--tom-ciano-ic:16,21,31;--tom-laranja:249,115,22;--tom-laranja-tx:249,115,22;--tom-laranja-ic:16,21,31;--tom-ardosia:100,116,139;--tom-ardosia-tx:129,142,161;--tom-ardosia-ic:255,255,255;--tom-alfa:0.16;}
+:root[data-theme="light"]{--tom-azul-tx:44,98,184;--tom-rosa-tx:175,53,113;--tom-indigo-tx:83,86,202;--tom-roxo-tx:113,75,199;--tom-ambar-tx:142,92,6;--tom-ciano-tx:4,111,129;--tom-laranja-tx:164,76,15;--tom-ardosia-tx:87,101,121;--tom-alfa:0.1;}
+.tom-azul{--tom:var(--tom-azul);--tom-tx:rgb(var(--tom-azul-tx));--tom-ic:rgb(var(--tom-azul-ic));}.tom-rosa{--tom:var(--tom-rosa);--tom-tx:rgb(var(--tom-rosa-tx));--tom-ic:rgb(var(--tom-rosa-ic));}.tom-indigo{--tom:var(--tom-indigo);--tom-tx:rgb(var(--tom-indigo-tx));--tom-ic:rgb(var(--tom-indigo-ic));}.tom-roxo{--tom:var(--tom-roxo);--tom-tx:rgb(var(--tom-roxo-tx));--tom-ic:rgb(var(--tom-roxo-ic));}.tom-ambar{--tom:var(--tom-ambar);--tom-tx:rgb(var(--tom-ambar-tx));--tom-ic:rgb(var(--tom-ambar-ic));}.tom-ciano{--tom:var(--tom-ciano);--tom-tx:rgb(var(--tom-ciano-tx));--tom-ic:rgb(var(--tom-ciano-ic));}.tom-laranja{--tom:var(--tom-laranja);--tom-tx:rgb(var(--tom-laranja-tx));--tom-ic:rgb(var(--tom-laranja-ic));}.tom-ardosia{--tom:var(--tom-ardosia);--tom-tx:rgb(var(--tom-ardosia-tx));--tom-ic:rgb(var(--tom-ardosia-ic));}
+.bloco{padding:0;overflow:hidden}
+.faixa{display:flex;align-items:center;gap:8px;padding:8px 14px;background:rgba(var(--tom),var(--tom-alfa));
+  border-bottom:1px solid rgba(var(--tom),.22);color:var(--tom-tx);font-size:11.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.06em}
+.faixa .faixa-ic{font-size:13px;line-height:1}
+.faixa .faixa-titulo{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.faixa .faixa-acoes{display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0;font-weight:500}
+.faixa .faixa-nota{font-weight:500;text-transform:none;letter-spacing:0;opacity:.95}
+.bloco-corpo{padding:14px 16px}
+.ind-card{padding:14px 16px;display:flex;gap:12px;align-items:flex-start}
+.ind-card .ind-ic{flex:0 0 auto;width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+  font-size:17px;background:linear-gradient(135deg,rgb(var(--tom)),rgba(var(--tom),.72));color:var(--tom-ic)}
+.ind-card .ind-txt{min-width:0;flex:1}
+.ind-card .ind-rotulo{font-size:var(--text-xs);color:var(--text-mute);text-transform:uppercase;letter-spacing:.04em}
+.ind-card .ind-valor{font-size:var(--text-2xl);font-weight:700;color:var(--text-100);line-height:1.2;margin-top:2px}
+.ind-card .ind-var{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:6px;font-size:var(--text-xs);color:var(--text-200)}
+.ind-card .chip{display:inline-flex;align-items:center;gap:3px;padding:1px 8px;border-radius:999px;font-weight:600;border:1px solid transparent}
+.ind-card .chip--bom{background:rgba(var(--green-rgb),.14);color:var(--green-text)}
+.ind-card .chip--ruim{background:rgba(var(--red-rgb),.14);color:var(--red-text)}
+.ind-card .chip--neutro{background:var(--overlay-1);color:var(--text-200)}
+.ind-card .ind-nota{font-size:var(--text-xs);color:var(--text-200);margin-top:6px}
+.subabas{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.subaba{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;font-size:12.5px;font-weight:600;
+  color:var(--text-200);background:var(--surface-1);border:1px solid var(--border-1);text-decoration:none;white-space:nowrap;
+  transition:background var(--dur-fast) ease,color var(--dur-fast) ease,border-color var(--dur-fast) ease}
+.subaba .sa-ic{font-size:13px;line-height:1;color:var(--tom-tx,var(--text-200))}
+.subaba:hover{color:var(--text-100);border-color:var(--line-strong)}
+.subaba:focus-visible{outline:2px solid var(--text-200);outline-offset:2px}
+.subaba.on{background:var(--text-100);color:var(--bg);border-color:transparent}
+.subaba.on .sa-ic{color:inherit}
+.mod-ic{flex:none;width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;
+  background:linear-gradient(135deg,rgb(var(--tom)),rgba(var(--tom),.72));color:var(--tom-ic)}
+.mod-periodo{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;font-size:12px;font-weight:600;
+  color:var(--text-200);border:1px solid var(--border-1);background:var(--surface-1);white-space:nowrap}
+@media (max-width:1100px){.mod-periodo{display:none}}
+</style>
+<script src="static/js/chegada.js"></script><script src="static/js/vida.js" defer></script>    <link rel="icon" type="image/png" href="static/branding/icone-dark.png">
+  </head>
+  <body>
+    <div id="appShell" class="shell">
+      
+      <div id="appSidebar" class="sidebar">
+        <div class="brand">
+<a href="index.html" class="brand-btn" title="Ir para o Dashboard"><img src="static/branding/icone-dark.png" alt="" class="brand-icon"><span class="brand-name">Nexus &amp; PJ</span></a>        </div>
+        <nav aria-label="Menu principal">
+          <div class="grp-label">Visão geral</div>
+<a href="index.html" data-label="Dashboard" class="navlink"><span class="nav-badge">⬡</span><span class="nav-label">Dashboard</span></a>          <div class="grp-label">Movimento</div>
+<a href="realizado.html" data-label="Fluxo de caixa" aria-current="page" class="navlink active"><span class="nav-badge">◧</span><span class="nav-label">Fluxo de caixa</span></a><a href="importar.html" data-label="Importar extrato" class="navlink"><span class="nav-badge">⇓</span><span class="nav-label">Importar extrato</span></a>          <div class="grp-label">Resultados</div>
+<a href="dre.html" data-label="Contábil" class="navlink"><span class="nav-badge">∑</span><span class="nav-label">Contábil</span></a><a href="orcamento.html" data-label="Orçamento" class="navlink"><span class="nav-badge">🎯</span><span class="nav-label">Orçamento</span></a>          <div class="grp-label">Entrega</div>
+<a href="relatorios.html" data-label="Relatórios" class="navlink"><span class="nav-badge">⎙</span><span class="nav-label">Relatórios</span></a>        </nav>
+<button type="button" aria-label="Recolher menu" aria-expanded="true" id="brandToggle" class="sb-borda" title="Recolher/expandir menu" name="brandToggle">‹</button>      </div>
+      <div class="main">
+        <div class="topbar">
+          <div class="title-wrap" style="display:flex;align-items:center;gap:10px;">
+<button type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="appSidebar" id="navAbrir" class="nav-hamb" name="navAbrir">☰</button>            <div class="tom-ardosia" style="display:flex;align-items:center;gap:10px;">
+<span aria-hidden="true" class="mod-ic">◧</span>            </div>
+            <div class="title">Realizado</div>
+          </div>
+          <div class="actions">
+            <div class="busca-wrap">
+<label class="topbar-ia"><span class="ia-emoji">🔎</span>                <input type="text" name="q" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="buscaPainel" aria-autocomplete="list" data-ia="1" placeholder="Pesquise um valor, nome ou data… ex.: 1200, pix fabricio — ou pergunte à IA" aria-label="Pesquisar no painel ou perguntar à IA" id="buscaInput">
+<kbd>/</kbd></label>              <div role="listbox" aria-label="Resultados da busca" hidden id="buscaPainel" class="busca-painel"></div>
+            </div>
+            <div id="userMenu" class="user-menu">
+<button type="button" onclick="document.getElementById('userMenu').classList.toggle('open')" class="user-menu-trigger">                <div class="av">E</div>
+                <div class="meta">
+                  <div class="name">Eduardo</div>
+                  <div class="role">ADM</div>
+                </div>
+<span class="chev">▾</span></button>              <div class="user-menu-panel">
+<a href="perfil.html" class="um-head" title="Abrir meu perfil" style="display:block;text-decoration:none;color:inherit;">                  <div class="name">Eduardo</div>
+                  <div class="role">eduardo@empresa.exemplo · Perfil ADM</div>
+</a>                <div class="um-row">
+<span>Tema</span><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="theme-switch">                    
+                    <input type="hidden" name="voltar" value="/realizado">
+<button type="submit" name="tema" value="claro">☀</button><button type="submit" name="tema" value="escuro" class="on">☾</button></form>                </div>
+                <div class="um-sep"></div>
+<a href="perfil.html" class="um-item">👤 Meu perfil</a><a href="configuracoes.html" class="um-item">⚙ Configurações</a>                <div class="um-sep"></div>
+<a href="sobre.html" class="um-item">ⓘ Sobre e versão</a><a href="#" data-mk-fora class="um-item">❔ Central de ajuda</a><a href="https://eduardo-junges.vercel.app/privacidade-nexus-pj" target="_blank" rel="noopener" class="um-item">🛡 Política de privacidade</a><a href="https://eduardo-junges.vercel.app/termos-nexus-pj" target="_blank" rel="noopener" class="um-item">📄 Contrato de licença</a>                <div class="um-sep"></div>
+<form enctype="multipart/form-data" method="post" action="#" data-mk-form>                  
+<button type="submit" class="um-item danger">⏻ Sair</button></form>              </div>
+            </div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="pagina-modo">
+            <div role="navigation" aria-label="Realizado ou planejado" class="subabas">
+<a href="realizado.html" aria-current="page" class="subaba on"><span aria-hidden="true" class="sa-ic">◧</span>Realizado</a><a href="planejado.html" class="subaba"><span aria-hidden="true" class="sa-ic">◔</span>Planejado</a>            </div>
+            <div>
+              <div class="filters-bar">
+                <div role="navigation" aria-label="Visão do fluxo de caixa" class="subabas">
+<a href="realizado.html" aria-current="page" class="subaba on"><span aria-hidden="true" class="sa-ic">▤</span>Lançamentos</a><a href="realizado.html" class="subaba"><span aria-hidden="true" class="sa-ic">Σ</span>Consolidado</a>                </div>
+<form enctype="multipart/form-data" method="get" action="#" data-mk-form class="filters-row filters-row--compact">                  <div class="field field--sm">
+<label>Banco</label><select name="conta_id" class="input"><option value="">Todos</option><option value="1">Banco Alfa (fictício)</option><option value="2">Banco Beta (fictício)</option><option value="3">Banco Gama (fictício)</option></select>                  </div>
+                  <div class="field field--sm">
+<label>Loja</label><select name="loja" class="input"><option value="">Todas</option><option value="1">Loja Centro (fictícia)</option><option value="2">Loja Norte (fictícia)</option><option value="3">Loja Sul (fictícia)</option><option value="sem">Sem loja</option></select>                  </div>
+                  <div class="field field--md">
+<label>Categoria</label><select name="categoria_id" class="input"><option value="">Todas</option><option value="a_revisar">A revisar</option><option value="48">Administrativas</option><option value="54">Comerciais</option><option value="11">Depósitos</option><option value="5">Devolução Pix</option><option value="58">Financeiras</option><option value="20">Fornecedores</option><option value="33">Impostos</option><option value="69">Movimentações internas</option><option value="39">Ocupação</option><option value="17">Outras receitas</option><option value="26">Pessoal</option><option value="15">Receitas financeiras</option><option value="66">Retiradas</option><option value="44">Utilidades</option><option value="6">Vendas</option><option value="63">Veículos</option></select>                  </div>
+                  <div class="field field--md">
+<label>Subcategoria</label><select name="subcategoria_id" class="input"><option value="">Todas</option><option value="40">Ocupação › Aluguel</option><option value="2">Movimentações internas › Aplicação</option><option value="13">Depósitos › Aporte de sócio</option><option value="31">Pessoal › Benefícios</option><option value="9">Vendas › Boleto</option><option value="7">Vendas › Cartão de crédito</option><option value="8">Vendas › Cartão de débito</option><option value="64">Veículos › Combustível</option><option value="56">Comerciais › Comissões</option><option value="41">Ocupação › Condomínio</option><option value="49">Administrativas › Contabilidade</option><option value="10">Vendas › Crediário</option><option value="67">Retiradas › Distribuição de lucros</option><option value="23">Fornecedores › Embalagens</option><option value="30">Pessoal › Encargos (INSS/FGTS)</option><option value="45">Utilidades › Energia</option><option value="19">Outras receitas › Estornos recebidos</option><option value="24">Fornecedores › Fretes</option><option value="29">Pessoal › Férias/13º</option><option value="35">Impostos › ICMS</option><option value="60">Financeiras › IOF</option><option value="42">Ocupação › IPTU</option><option value="36">Impostos › ISS</option><option value="22">Fornecedores › Insumos</option><option value="16">Receitas financeiras › Juros recebidos</option><option value="61">Financeiras › Juros/multas</option><option value="53">Administrativas › Jurídico</option><option value="43">Ocupação › Manutenção</option><option value="65">Veículos › Manutenção</option><option value="55">Comerciais › Marketing</option><option value="51">Administrativas › Material de escritório</option><option value="21">Fornecedores › Mercadoria p/ revenda</option><option value="14">Depósitos › Outros</option><option value="62">Financeiras › Parcela de empréstimo</option><option value="38">Impostos › Parcelamentos</option><option value="4">Vendas › Pix</option><option value="28">Pessoal › Pró-labore</option><option value="18">Outras receitas › Reembolsos</option><option value="3">Receitas financeiras › Rendimentos</option><option value="32">Pessoal › Rescisões</option><option value="70">Movimentações internas › Resgate</option><option value="68">Retiradas › Retirada pessoal</option><option value="27">Pessoal › Salários</option><option value="52">Administrativas › Seguros</option><option value="25">Fornecedores › Serviços de terceiros</option><option value="34">Impostos › Simples/DAS</option><option value="50">Administrativas › Sistemas</option><option value="59">Financeiras › Tarifas bancárias</option><option value="57">Comerciais › Taxa de maquininha</option><option value="37">Impostos › Taxas e licenças</option><option value="47">Utilidades › Telefone/internet</option><option value="1">Movimentações internas › Transferência entre contas</option><option value="12">Depósitos › Venda</option><option value="46">Utilidades › Água/saneamento</option></select>                  </div>
+                  <div class="field field--sm">
+<label>Tipo</label><select name="tipo" class="input"><option value="">Todos</option><option value="receita">Receita</option><option value="despesa">Despesa</option></select>                  </div>
+                  <div class="field field--md">
+<label>De</label>                    <input type="date" name="data_de" value="" class="input">
+                  </div>
+                  <div class="field field--md">
+<label>Até</label>                    <input type="date" name="data_ate" value="" class="input">
+                  </div>
+                  <div class="flex gap-2" style="align-self:flex-end;flex-shrink:0;">
+<button type="submit" class="btn btn--secondary btn--sm">Filtrar</button><a href="realizado.html" class="btn btn--ghost btn--sm">Limpar</a>                  </div>
+</form>              </div>
+              <div class="card contorno contorno--azul">
+                <div class="section-head">
+                  <h2>Lançamentos — Realizado</h2>
+<span class="badge badge--neutral">13.816 lançamento(s)</span>                </div>
+                <div class="tbl-wrap">
+                  <table class="tbl">
+                    <thead>
+                      <tr>
+                        <th></th>
+                        <th>Data</th>
+                        <th>Descrição</th>
+                        <th>Categoria</th>
+                        <th>Subcategoria</th>
+                        <th>Tipo</th>
+                        <th>Banco</th>
+                        <th class="num">Valor</th>
+                        <th class="num">Saldo</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td></td>
+                        <td>27/10/2026</td>
+                        <td>
+COMISSAO VENDEDORES SUL                        </td>
+                        <td>
+<span class="badge badge--red">Comerciais</span>                        </td>
+                        <td>Comissões</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 17,00</td>
+                        <td class="num">R$ 282.012,67</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>27/10/2026</td>
+                        <td>
+TARIFA MAQUININHA ADQUIRENTE SUL 27/10                        </td>
+                        <td>
+<span class="badge badge--red">Comerciais</span>                        </td>
+                        <td>Taxa de maquininha</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 17,14</td>
+                        <td class="num">R$ 282.029,67</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<button type="button" onclick="document.querySelectorAll('[data-grupo=\'g2\']').forEach(function(r){r.hidden=!r.hidden});this.textContent=this.textContent=='+'?'−':'+'" class="btn btn--soft btn--sm" style="padding:0 10px;">+</button>                        </td>
+                        <td>27/10/2026</td>
+                        <td>2 lançamentos</td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>Banco Gama (fictício)</td>
+                        <td class="num pos">+ R$ 699,73</td>
+                        <td class="num">—</td>
+                        <td></td>
+                      </tr>
+                      <tr data-grupo="g2" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>27/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA PIX LOJA SUL 27/10 #4                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 476,86</td>
+                        <td class="num">R$ 281.823,94</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr data-grupo="g2" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>27/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA PIX LOJA SUL 27/10 #5                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 222,87</td>
+                        <td class="num">R$ 282.046,81</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>27/10/2026</td>
+                        <td>
+VENDAS DIA CARTAO DEBITO LOJA SUL 27/10 #3                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de débito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 216,42</td>
+                        <td class="num">R$ 281.347,08</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<button type="button" onclick="document.querySelectorAll('[data-grupo=\'g4\']').forEach(function(r){r.hidden=!r.hidden});this.textContent=this.textContent=='+'?'−':'+'" class="btn btn--soft btn--sm" style="padding:0 10px;">+</button>                        </td>
+                        <td>27/10/2026</td>
+                        <td>2 lançamentos</td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>Banco Gama (fictício)</td>
+                        <td class="num pos">+ R$ 891,52</td>
+                        <td class="num">—</td>
+                        <td></td>
+                      </tr>
+                      <tr data-grupo="g4" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>27/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA CARTAO CREDITO LOJA SUL 27/10 #1                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 609,80</td>
+                        <td class="num">R$ 280.848,94</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr data-grupo="g4" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>27/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA CARTAO CREDITO LOJA SUL 27/10 #2                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 281,72</td>
+                        <td class="num">R$ 281.130,66</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>27/10/2026</td>
+                        <td>
+COMISSAO VENDEDORES NORTE                        </td>
+                        <td>
+<span class="badge badge--red">Comerciais</span>                        </td>
+                        <td>Comissões</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 17,17</td>
+                        <td class="num">R$ 371.822,19</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>27/10/2026</td>
+                        <td>
+TARIFA MAQUININHA ADQUIRENTE NORTE 27/10                        </td>
+                        <td>
+<span class="badge badge--red">Comerciais</span>                        </td>
+                        <td>Taxa de maquininha</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 30,71</td>
+                        <td class="num">R$ 371.839,36</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<button type="button" onclick="document.querySelectorAll('[data-grupo=\'g7\']').forEach(function(r){r.hidden=!r.hidden});this.textContent=this.textContent=='+'?'−':'+'" class="btn btn--soft btn--sm" style="padding:0 10px;">+</button>                        </td>
+                        <td>27/10/2026</td>
+                        <td>2 lançamentos</td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>Banco Beta (fictício)</td>
+                        <td class="num pos">+ R$ 1.260,08</td>
+                        <td class="num">—</td>
+                        <td></td>
+                      </tr>
+                      <tr data-grupo="g7" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>27/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA PIX LOJA NORTE 27/10 #4                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 921,29</td>
+                        <td class="num">R$ 371.531,28</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr data-grupo="g7" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>27/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA PIX LOJA NORTE 27/10 #5                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 338,79</td>
+                        <td class="num">R$ 371.870,07</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>27/10/2026</td>
+                        <td>
+VENDAS DIA CARTAO DEBITO LOJA NORTE 27/10 #3                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de débito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 523,35</td>
+                        <td class="num">R$ 370.609,99</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<button type="button" onclick="document.querySelectorAll('[data-grupo=\'g9\']').forEach(function(r){r.hidden=!r.hidden});this.textContent=this.textContent=='+'?'−':'+'" class="btn btn--soft btn--sm" style="padding:0 10px;">+</button>                        </td>
+                        <td>27/10/2026</td>
+                        <td>2 lançamentos</td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>Banco Beta (fictício)</td>
+                        <td class="num pos">+ R$ 1.560,69</td>
+                        <td class="num">—</td>
+                        <td></td>
+                      </tr>
+                      <tr data-grupo="g9" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>27/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA CARTAO CREDITO LOJA NORTE 27/10 #1                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 1.058,07</td>
+                        <td class="num">R$ 369.584,02</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr data-grupo="g9" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>27/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA CARTAO CREDITO LOJA NORTE 27/10 #2                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 502,62</td>
+                        <td class="num">R$ 370.086,64</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>27/10/2026</td>
+                        <td>
+COMISSAO VENDEDORES CENTRO                        </td>
+                        <td>
+<span class="badge badge--red">Comerciais</span>                        </td>
+                        <td>Comissões</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 20,92</td>
+                        <td class="num">R$ 75.341,14</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>27/10/2026</td>
+                        <td>
+TARIFA MAQUININHA ADQUIRENTE CENTRO 27/10                        </td>
+                        <td>
+<span class="badge badge--red">Comerciais</span>                        </td>
+                        <td>Taxa de maquininha</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 34,39</td>
+                        <td class="num">R$ 75.362,06</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<button type="button" onclick="document.querySelectorAll('[data-grupo=\'g12\']').forEach(function(r){r.hidden=!r.hidden});this.textContent=this.textContent=='+'?'−':'+'" class="btn btn--soft btn--sm" style="padding:0 10px;">+</button>                        </td>
+                        <td>27/10/2026</td>
+                        <td>2 lançamentos</td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>Banco Alfa (fictício)</td>
+                        <td class="num pos">+ R$ 1.339,46</td>
+                        <td class="num">—</td>
+                        <td></td>
+                      </tr>
+                      <tr data-grupo="g12" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>27/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA PIX LOJA CENTRO 27/10 #4                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 795,75</td>
+                        <td class="num">R$ 74.852,74</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr data-grupo="g12" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>27/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA PIX LOJA CENTRO 27/10 #5                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 543,71</td>
+                        <td class="num">R$ 75.396,45</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>27/10/2026</td>
+                        <td>
+VENDAS DIA CARTAO DEBITO LOJA CENTRO 27/10 #3                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de débito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 647,22</td>
+                        <td class="num">R$ 74.056,99</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<button type="button" onclick="document.querySelectorAll('[data-grupo=\'g14\']').forEach(function(r){r.hidden=!r.hidden});this.textContent=this.textContent=='+'?'−':'+'" class="btn btn--soft btn--sm" style="padding:0 10px;">+</button>                        </td>
+                        <td>27/10/2026</td>
+                        <td>2 lançamentos</td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>Banco Alfa (fictício)</td>
+                        <td class="num pos">+ R$ 1.888,47</td>
+                        <td class="num">—</td>
+                        <td></td>
+                      </tr>
+                      <tr data-grupo="g14" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>27/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA CARTAO CREDITO LOJA CENTRO 27/10 #1                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 1.318,83</td>
+                        <td class="num">R$ 72.840,13</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr data-grupo="g14" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>27/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA CARTAO CREDITO LOJA CENTRO 27/10 #2                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 569,64</td>
+                        <td class="num">R$ 73.409,77</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>26/10/2026</td>
+                        <td>
+POSTO COMBUSTIVEL ABASTECIMENTO FROTA                        </td>
+                        <td>
+<span class="badge badge--red">Veículos</span>                        </td>
+                        <td>Combustível</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 229,10</td>
+                        <td class="num">R$ 71.521,30</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>26/10/2026</td>
+                        <td>
+TARIFA MAQUININHA ADQUIRENTE SUL 26/10                        </td>
+                        <td>
+<span class="badge badge--red">Comerciais</span>                        </td>
+                        <td>Taxa de maquininha</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 18,99</td>
+                        <td class="num">R$ 280.239,14</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<button type="button" onclick="document.querySelectorAll('[data-grupo=\'g17\']').forEach(function(r){r.hidden=!r.hidden});this.textContent=this.textContent=='+'?'−':'+'" class="btn btn--soft btn--sm" style="padding:0 10px;">+</button>                        </td>
+                        <td>26/10/2026</td>
+                        <td>2 lançamentos</td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>Banco Gama (fictício)</td>
+                        <td class="num pos">+ R$ 730,05</td>
+                        <td class="num">—</td>
+                        <td></td>
+                      </tr>
+                      <tr data-grupo="g17" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>26/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA PIX LOJA SUL 26/10 #4                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 453,41</td>
+                        <td class="num">R$ 279.981,49</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr data-grupo="g17" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>26/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA PIX LOJA SUL 26/10 #5                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 276,64</td>
+                        <td class="num">R$ 280.258,13</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>26/10/2026</td>
+                        <td>
+VENDAS DIA CARTAO DEBITO LOJA SUL 26/10 #3                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de débito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 281,87</td>
+                        <td class="num">R$ 279.528,08</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<button type="button" onclick="document.querySelectorAll('[data-grupo=\'g19\']').forEach(function(r){r.hidden=!r.hidden});this.textContent=this.textContent=='+'?'−':'+'" class="btn btn--soft btn--sm" style="padding:0 10px;">+</button>                        </td>
+                        <td>26/10/2026</td>
+                        <td>2 lançamentos</td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>Banco Gama (fictício)</td>
+                        <td class="num pos">+ R$ 935,25</td>
+                        <td class="num">—</td>
+                        <td></td>
+                      </tr>
+                      <tr data-grupo="g19" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>26/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA CARTAO CREDITO LOJA SUL 26/10 #1                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 650,46</td>
+                        <td class="num">R$ 278.961,42</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr data-grupo="g19" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>26/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA CARTAO CREDITO LOJA SUL 26/10 #2                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 284,79</td>
+                        <td class="num">R$ 279.246,21</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>26/10/2026</td>
+                        <td>
+TARIFA MAQUININHA ADQUIRENTE NORTE 26/10                        </td>
+                        <td>
+<span class="badge badge--red">Comerciais</span>                        </td>
+                        <td>Taxa de maquininha</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 26,04</td>
+                        <td class="num">R$ 368.525,95</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<button type="button" onclick="document.querySelectorAll('[data-grupo=\'g21\']').forEach(function(r){r.hidden=!r.hidden});this.textContent=this.textContent=='+'?'−':'+'" class="btn btn--soft btn--sm" style="padding:0 10px;">+</button>                        </td>
+                        <td>26/10/2026</td>
+                        <td>2 lançamentos</td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>Banco Beta (fictício)</td>
+                        <td class="num pos">+ R$ 873,55</td>
+                        <td class="num">—</td>
+                        <td></td>
+                      </tr>
+                      <tr data-grupo="g21" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>26/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA PIX LOJA NORTE 26/10 #4                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 549,10</td>
+                        <td class="num">R$ 368.227,54</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr data-grupo="g21" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>26/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA PIX LOJA NORTE 26/10 #5                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 324,45</td>
+                        <td class="num">R$ 368.551,99</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>26/10/2026</td>
+                        <td>
+VENDAS DIA CARTAO DEBITO LOJA NORTE 26/10 #3                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de débito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 453,43</td>
+                        <td class="num">R$ 367.678,44</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<button type="button" onclick="document.querySelectorAll('[data-grupo=\'g23\']').forEach(function(r){r.hidden=!r.hidden});this.textContent=this.textContent=='+'?'−':'+'" class="btn btn--soft btn--sm" style="padding:0 10px;">+</button>                        </td>
+                        <td>26/10/2026</td>
+                        <td>2 lançamentos</td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>Banco Beta (fictício)</td>
+                        <td class="num pos">+ R$ 1.402,68</td>
+                        <td class="num">—</td>
+                        <td></td>
+                      </tr>
+                      <tr data-grupo="g23" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>26/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA CARTAO CREDITO LOJA NORTE 26/10 #1                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 817,17</td>
+                        <td class="num">R$ 366.639,50</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr data-grupo="g23" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>26/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA CARTAO CREDITO LOJA NORTE 26/10 #2                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 585,51</td>
+                        <td class="num">R$ 367.225,01</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>26/10/2026</td>
+                        <td>
+TARIFA MAQUININHA ADQUIRENTE CENTRO 26/10                        </td>
+                        <td>
+<span class="badge badge--red">Comerciais</span>                        </td>
+                        <td>Taxa de maquininha</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 28,51</td>
+                        <td class="num">R$ 71.750,40</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<button type="button" onclick="document.querySelectorAll('[data-grupo=\'g25\']').forEach(function(r){r.hidden=!r.hidden});this.textContent=this.textContent=='+'?'−':'+'" class="btn btn--soft btn--sm" style="padding:0 10px;">+</button>                        </td>
+                        <td>26/10/2026</td>
+                        <td>2 lançamentos</td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>Banco Alfa (fictício)</td>
+                        <td class="num pos">+ R$ 1.011,27</td>
+                        <td class="num">—</td>
+                        <td></td>
+                      </tr>
+                      <tr data-grupo="g25" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>26/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA PIX LOJA CENTRO 26/10 #4                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 631,60</td>
+                        <td class="num">R$ 71.399,24</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr data-grupo="g25" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>26/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA PIX LOJA CENTRO 26/10 #5                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 379,67</td>
+                        <td class="num">R$ 71.778,91</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>26/10/2026</td>
+                        <td>
+VENDAS DIA CARTAO DEBITO LOJA CENTRO 26/10 #3                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de débito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 471,67</td>
+                        <td class="num">R$ 70.767,64</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<button type="button" onclick="document.querySelectorAll('[data-grupo=\'g27\']').forEach(function(r){r.hidden=!r.hidden});this.textContent=this.textContent=='+'?'−':'+'" class="btn btn--soft btn--sm" style="padding:0 10px;">+</button>                        </td>
+                        <td>26/10/2026</td>
+                        <td>2 lançamentos</td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>Banco Alfa (fictício)</td>
+                        <td class="num pos">+ R$ 1.619,77</td>
+                        <td class="num">—</td>
+                        <td></td>
+                      </tr>
+                      <tr data-grupo="g27" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>26/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA CARTAO CREDITO LOJA CENTRO 26/10 #1                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 1.024,68</td>
+                        <td class="num">R$ 69.700,88</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr data-grupo="g27" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>26/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA CARTAO CREDITO LOJA CENTRO 26/10 #2                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 595,09</td>
+                        <td class="num">R$ 70.295,97</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>25/10/2026</td>
+                        <td>
+FOLHA PAGAMENTO SUL                        </td>
+                        <td>
+<span class="badge badge--red">Pessoal</span>                        </td>
+                        <td>Salários</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 9.540,00</td>
+                        <td class="num">R$ 278.310,96</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>25/10/2026</td>
+                        <td>
+FOLHA PAGAMENTO NORTE                        </td>
+                        <td>
+<span class="badge badge--red">Pessoal</span>                        </td>
+                        <td>Salários</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 11.660,00</td>
+                        <td class="num">R$ 365.822,33</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>25/10/2026</td>
+                        <td>
+FOLHA PAGAMENTO CENTRO                        </td>
+                        <td>
+<span class="badge badge--red">Pessoal</span>                        </td>
+                        <td>Salários</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 16.960,00</td>
+                        <td class="num">R$ 68.676,20</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>24/10/2026</td>
+                        <td>
+COMISSAO VENDEDORES SUL                        </td>
+                        <td>
+<span class="badge badge--red">Comerciais</span>                        </td>
+                        <td>Comissões</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 41,64</td>
+                        <td class="num">R$ 287.850,96</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>24/10/2026</td>
+                        <td>
+TARIFA MAQUININHA ADQUIRENTE SUL 24/10                        </td>
+                        <td>
+<span class="badge badge--red">Comerciais</span>                        </td>
+                        <td>Taxa de maquininha</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 27,07</td>
+                        <td class="num">R$ 287.892,60</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<button type="button" onclick="document.querySelectorAll('[data-grupo=\'g33\']').forEach(function(r){r.hidden=!r.hidden});this.textContent=this.textContent=='+'?'−':'+'" class="btn btn--soft btn--sm" style="padding:0 10px;">+</button>                        </td>
+                        <td>24/10/2026</td>
+                        <td>2 lançamentos</td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>Banco Gama (fictício)</td>
+                        <td class="num pos">+ R$ 886,04</td>
+                        <td class="num">—</td>
+                        <td></td>
+                      </tr>
+                      <tr data-grupo="g33" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>24/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA PIX LOJA SUL 24/10 #4                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 629,51</td>
+                        <td class="num">R$ 287.663,14</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr data-grupo="g33" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>24/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA PIX LOJA SUL 24/10 #5                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 256,53</td>
+                        <td class="num">R$ 287.919,67</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>24/10/2026</td>
+                        <td>
+VENDAS DIA CARTAO DEBITO LOJA SUL 24/10 #3                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de débito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 427,97</td>
+                        <td class="num">R$ 287.033,63</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<button type="button" onclick="document.querySelectorAll('[data-grupo=\'g35\']').forEach(function(r){r.hidden=!r.hidden});this.textContent=this.textContent=='+'?'−':'+'" class="btn btn--soft btn--sm" style="padding:0 10px;">+</button>                        </td>
+                        <td>24/10/2026</td>
+                        <td>2 lançamentos</td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>Banco Gama (fictício)</td>
+                        <td class="num pos">+ R$ 1.857,33</td>
+                        <td class="num">—</td>
+                        <td></td>
+                      </tr>
+                      <tr data-grupo="g35" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>24/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA CARTAO CREDITO LOJA SUL 24/10 #1                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 1.290,48</td>
+                        <td class="num">R$ 286.038,81</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr data-grupo="g35" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>24/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA CARTAO CREDITO LOJA SUL 24/10 #2                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 566,85</td>
+                        <td class="num">R$ 286.605,66</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>24/10/2026</td>
+                        <td>
+COMISSAO VENDEDORES NORTE                        </td>
+                        <td>
+<span class="badge badge--red">Comerciais</span>                        </td>
+                        <td>Comissões</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 30,07</td>
+                        <td class="num">R$ 377.482,33</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>24/10/2026</td>
+                        <td>
+TARIFA MAQUININHA ADQUIRENTE NORTE 24/10                        </td>
+                        <td>
+<span class="badge badge--red">Comerciais</span>                        </td>
+                        <td>Taxa de maquininha</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 40,94</td>
+                        <td class="num">R$ 377.512,40</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<button type="button" onclick="document.querySelectorAll('[data-grupo=\'g38\']').forEach(function(r){r.hidden=!r.hidden});this.textContent=this.textContent=='+'?'−':'+'" class="btn btn--soft btn--sm" style="padding:0 10px;">+</button>                        </td>
+                        <td>24/10/2026</td>
+                        <td>2 lançamentos</td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>Banco Beta (fictício)</td>
+                        <td class="num pos">+ R$ 1.271,44</td>
+                        <td class="num">—</td>
+                        <td></td>
+                      </tr>
+                      <tr data-grupo="g38" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>24/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA PIX LOJA NORTE 24/10 #4                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 812,72</td>
+                        <td class="num">R$ 377.094,62</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr data-grupo="g38" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>24/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA PIX LOJA NORTE 24/10 #5                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 458,72</td>
+                        <td class="num">R$ 377.553,34</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>24/10/2026</td>
+                        <td>
+VENDAS DIA CARTAO DEBITO LOJA NORTE 24/10 #3                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de débito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 680,67</td>
+                        <td class="num">R$ 376.281,90</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<button type="button" onclick="document.querySelectorAll('[data-grupo=\'g40\']').forEach(function(r){r.hidden=!r.hidden});this.textContent=this.textContent=='+'?'−':'+'" class="btn btn--soft btn--sm" style="padding:0 10px;">+</button>                        </td>
+                        <td>24/10/2026</td>
+                        <td>2 lançamentos</td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>Banco Beta (fictício)</td>
+                        <td class="num pos">+ R$ 2.018,90</td>
+                        <td class="num">—</td>
+                        <td></td>
+                      </tr>
+                      <tr data-grupo="g40" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>24/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA CARTAO CREDITO LOJA NORTE 24/10 #1                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 1.204,42</td>
+                        <td class="num">R$ 374.786,75</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr data-grupo="g40" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>24/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA CARTAO CREDITO LOJA NORTE 24/10 #2                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 814,48</td>
+                        <td class="num">R$ 375.601,23</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>24/10/2026</td>
+                        <td>
+COMISSAO VENDEDORES CENTRO                        </td>
+                        <td>
+<span class="badge badge--red">Comerciais</span>                        </td>
+                        <td>Comissões</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 33,15</td>
+                        <td class="num">R$ 85.636,20</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>24/10/2026</td>
+                        <td>
+TARIFA MAQUININHA ADQUIRENTE CENTRO 24/10                        </td>
+                        <td>
+<span class="badge badge--red">Comerciais</span>                        </td>
+                        <td>Taxa de maquininha</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 59,65</td>
+                        <td class="num">R$ 85.669,35</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<button type="button" onclick="document.querySelectorAll('[data-grupo=\'g43\']').forEach(function(r){r.hidden=!r.hidden});this.textContent=this.textContent=='+'?'−':'+'" class="btn btn--soft btn--sm" style="padding:0 10px;">+</button>                        </td>
+                        <td>24/10/2026</td>
+                        <td>2 lançamentos</td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>Banco Alfa (fictício)</td>
+                        <td class="num pos">+ R$ 2.147,72</td>
+                        <td class="num">—</td>
+                        <td></td>
+                      </tr>
+                      <tr data-grupo="g43" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>24/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA PIX LOJA CENTRO 24/10 #4                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 1.353,48</td>
+                        <td class="num">R$ 84.934,76</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr data-grupo="g43" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>24/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA PIX LOJA CENTRO 24/10 #5                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 794,24</td>
+                        <td class="num">R$ 85.729,00</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>24/10/2026</td>
+                        <td>
+VENDAS DIA CARTAO DEBITO LOJA CENTRO 24/10 #3                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de débito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 998,73</td>
+                        <td class="num">R$ 83.581,28</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<button type="button" onclick="document.querySelectorAll('[data-grupo=\'g45\']').forEach(function(r){r.hidden=!r.hidden});this.textContent=this.textContent=='+'?'−':'+'" class="btn btn--soft btn--sm" style="padding:0 10px;">+</button>                        </td>
+                        <td>24/10/2026</td>
+                        <td>2 lançamentos</td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>Banco Alfa (fictício)</td>
+                        <td class="num pos">+ R$ 2.926,52</td>
+                        <td class="num">—</td>
+                        <td></td>
+                      </tr>
+                      <tr data-grupo="g45" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>24/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA CARTAO CREDITO LOJA CENTRO 24/10 #1                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 2.080,60</td>
+                        <td class="num">R$ 81.736,63</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr data-grupo="g45" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>24/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA CARTAO CREDITO LOJA CENTRO 24/10 #2                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 845,92</td>
+                        <td class="num">R$ 82.582,55</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>23/10/2026</td>
+                        <td>
+PAGTO INDUSTRIA DELTA SA COMPRA SUL                        </td>
+                        <td>
+<span class="badge badge--red">Fornecedores</span>                        </td>
+                        <td>Mercadoria p/ revenda</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 5.756,82</td>
+                        <td class="num">R$ 284.748,33</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>23/10/2026</td>
+                        <td>
+TARIFA MAQUININHA ADQUIRENTE SUL 23/10                        </td>
+                        <td>
+<span class="badge badge--red">Comerciais</span>                        </td>
+                        <td>Taxa de maquininha</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 22,32</td>
+                        <td class="num">R$ 290.505,15</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<button type="button" onclick="document.querySelectorAll('[data-grupo=\'g48\']').forEach(function(r){r.hidden=!r.hidden});this.textContent=this.textContent=='+'?'−':'+'" class="btn btn--soft btn--sm" style="padding:0 10px;">+</button>                        </td>
+                        <td>23/10/2026</td>
+                        <td>2 lançamentos</td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>Banco Gama (fictício)</td>
+                        <td class="num pos">+ R$ 873,95</td>
+                        <td class="num">—</td>
+                        <td></td>
+                      </tr>
+                      <tr data-grupo="g48" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>23/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA PIX LOJA SUL 23/10 #4                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 623,02</td>
+                        <td class="num">R$ 290.276,54</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr data-grupo="g48" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>23/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA PIX LOJA SUL 23/10 #5                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 250,93</td>
+                        <td class="num">R$ 290.527,47</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>23/10/2026</td>
+                        <td>
+VENDAS DIA CARTAO DEBITO LOJA SUL 23/10 #3                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de débito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 461,92</td>
+                        <td class="num">R$ 289.653,52</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<button type="button" onclick="document.querySelectorAll('[data-grupo=\'g50\']').forEach(function(r){r.hidden=!r.hidden});this.textContent=this.textContent=='+'?'−':'+'" class="btn btn--soft btn--sm" style="padding:0 10px;">+</button>                        </td>
+                        <td>23/10/2026</td>
+                        <td>2 lançamentos</td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>Banco Gama (fictício)</td>
+                        <td class="num pos">+ R$ 1.521,97</td>
+                        <td class="num">—</td>
+                        <td></td>
+                      </tr>
+                      <tr data-grupo="g50" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>23/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA CARTAO CREDITO LOJA SUL 23/10 #1                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 1.029,71</td>
+                        <td class="num">R$ 288.699,34</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr data-grupo="g50" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>23/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA CARTAO CREDITO LOJA SUL 23/10 #2                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 492,26</td>
+                        <td class="num">R$ 289.191,60</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>23/10/2026</td>
+                        <td>
+PAGTO ATACADO GAMA COMERCIO COMPRA NORTE                        </td>
+                        <td>
+<span class="badge badge--red">Fornecedores</span>                        </td>
+                        <td>Mercadoria p/ revenda</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 7.648,94</td>
+                        <td class="num">R$ 373.582,33</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>23/10/2026</td>
+                        <td>
+TARIFA MAQUININHA ADQUIRENTE NORTE 23/10                        </td>
+                        <td>
+<span class="badge badge--red">Comerciais</span>                        </td>
+                        <td>Taxa de maquininha</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 27,97</td>
+                        <td class="num">R$ 381.231,27</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<button type="button" onclick="document.querySelectorAll('[data-grupo=\'g53\']').forEach(function(r){r.hidden=!r.hidden});this.textContent=this.textContent=='+'?'−':'+'" class="btn btn--soft btn--sm" style="padding:0 10px;">+</button>                        </td>
+                        <td>23/10/2026</td>
+                        <td>2 lançamentos</td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>Banco Beta (fictício)</td>
+                        <td class="num pos">+ R$ 986,93</td>
+                        <td class="num">—</td>
+                        <td></td>
+                      </tr>
+                      <tr data-grupo="g53" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>23/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA PIX LOJA NORTE 23/10 #4                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 584,65</td>
+                        <td class="num">R$ 380.856,96</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr data-grupo="g53" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>23/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA PIX LOJA NORTE 23/10 #5                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 402,28</td>
+                        <td class="num">R$ 381.259,24</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>23/10/2026</td>
+                        <td>
+VENDAS DIA CARTAO DEBITO LOJA NORTE 23/10 #3                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de débito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 483,85</td>
+                        <td class="num">R$ 380.272,31</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<button type="button" onclick="document.querySelectorAll('[data-grupo=\'g55\']').forEach(function(r){r.hidden=!r.hidden});this.textContent=this.textContent=='+'?'−':'+'" class="btn btn--soft btn--sm" style="padding:0 10px;">+</button>                        </td>
+                        <td>23/10/2026</td>
+                        <td>2 lançamentos</td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>Banco Beta (fictício)</td>
+                        <td class="num pos">+ R$ 1.277,62</td>
+                        <td class="num">—</td>
+                        <td></td>
+                      </tr>
+                      <tr data-grupo="g55" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>23/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA CARTAO CREDITO LOJA NORTE 23/10 #1                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 920,44</td>
+                        <td class="num">R$ 379.431,28</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr data-grupo="g55" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>23/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA CARTAO CREDITO LOJA NORTE 23/10 #2                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 357,18</td>
+                        <td class="num">R$ 379.788,46</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>23/10/2026</td>
+                        <td>
+PAGTO INDUSTRIA DELTA SA COMPRA CENTRO                        </td>
+                        <td>
+<span class="badge badge--red">Fornecedores</span>                        </td>
+                        <td>Mercadoria p/ revenda</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 11.196,34</td>
+                        <td class="num">R$ 79.656,03</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>23/10/2026</td>
+                        <td>
+TARIFA MAQUININHA ADQUIRENTE CENTRO 23/10                        </td>
+                        <td>
+<span class="badge badge--red">Comerciais</span>                        </td>
+                        <td>Taxa de maquininha</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 29,57</td>
+                        <td class="num">R$ 90.852,37</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<button type="button" onclick="document.querySelectorAll('[data-grupo=\'g58\']').forEach(function(r){r.hidden=!r.hidden});this.textContent=this.textContent=='+'?'−':'+'" class="btn btn--soft btn--sm" style="padding:0 10px;">+</button>                        </td>
+                        <td>23/10/2026</td>
+                        <td>2 lançamentos</td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>Banco Alfa (fictício)</td>
+                        <td class="num pos">+ R$ 1.335,42</td>
+                        <td class="num">—</td>
+                        <td></td>
+                      </tr>
+                      <tr data-grupo="g58" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>23/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA PIX LOJA CENTRO 23/10 #4                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 856,69</td>
+                        <td class="num">R$ 90.403,21</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr data-grupo="g58" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>23/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA PIX LOJA CENTRO 23/10 #5                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 478,73</td>
+                        <td class="num">R$ 90.881,94</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>23/10/2026</td>
+                        <td>
+VENDAS DIA CARTAO DEBITO LOJA CENTRO 23/10 #3                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de débito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 507,56</td>
+                        <td class="num">R$ 89.546,52</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<button type="button" onclick="document.querySelectorAll('[data-grupo=\'g60\']').forEach(function(r){r.hidden=!r.hidden});this.textContent=this.textContent=='+'?'−':'+'" class="btn btn--soft btn--sm" style="padding:0 10px;">+</button>                        </td>
+                        <td>23/10/2026</td>
+                        <td>2 lançamentos</td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>Banco Alfa (fictício)</td>
+                        <td class="num pos">+ R$ 1.873,26</td>
+                        <td class="num">—</td>
+                        <td></td>
+                      </tr>
+                      <tr data-grupo="g60" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>23/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA CARTAO CREDITO LOJA CENTRO 23/10 #1                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 1.204,99</td>
+                        <td class="num">R$ 88.370,69</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr data-grupo="g60" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>23/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA CARTAO CREDITO LOJA CENTRO 23/10 #2                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 668,27</td>
+                        <td class="num">R$ 89.038,96</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>22/10/2026</td>
+                        <td>
+INSUMOS LIMPEZA E CONSUMO SUL                        </td>
+                        <td>
+<span class="badge badge--red">Fornecedores</span>                        </td>
+                        <td>Insumos</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 562,55</td>
+                        <td class="num">R$ 287.669,63</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>22/10/2026</td>
+                        <td>
+TARIFA MAQUININHA ADQUIRENTE SUL 22/10                        </td>
+                        <td>
+<span class="badge badge--red">Comerciais</span>                        </td>
+                        <td>Taxa de maquininha</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 18,86</td>
+                        <td class="num">R$ 288.232,18</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<button type="button" onclick="document.querySelectorAll('[data-grupo=\'g63\']').forEach(function(r){r.hidden=!r.hidden});this.textContent=this.textContent=='+'?'−':'+'" class="btn btn--soft btn--sm" style="padding:0 10px;">+</button>                        </td>
+                        <td>22/10/2026</td>
+                        <td>2 lançamentos</td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>Banco Gama (fictício)</td>
+                        <td class="num pos">+ R$ 708,94</td>
+                        <td class="num">—</td>
+                        <td></td>
+                      </tr>
+                      <tr data-grupo="g63" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>22/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA PIX LOJA SUL 22/10 #4                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 395,50</td>
+                        <td class="num">R$ 287.937,60</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr data-grupo="g63" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>22/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA PIX LOJA SUL 22/10 #5                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 313,44</td>
+                        <td class="num">R$ 288.251,04</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>22/10/2026</td>
+                        <td>
+VENDAS DIA CARTAO DEBITO LOJA SUL 22/10 #3                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de débito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 310,20</td>
+                        <td class="num">R$ 287.542,10</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<button type="button" onclick="document.querySelectorAll('[data-grupo=\'g65\']').forEach(function(r){r.hidden=!r.hidden});this.textContent=this.textContent=='+'?'−':'+'" class="btn btn--soft btn--sm" style="padding:0 10px;">+</button>                        </td>
+                        <td>22/10/2026</td>
+                        <td>2 lançamentos</td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>Banco Gama (fictício)</td>
+                        <td class="num pos">+ R$ 1.048,27</td>
+                        <td class="num">—</td>
+                        <td></td>
+                      </tr>
+                      <tr data-grupo="g65" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>22/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA CARTAO CREDITO LOJA SUL 22/10 #1                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 682,29</td>
+                        <td class="num">R$ 286.865,92</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr data-grupo="g65" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>22/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA CARTAO CREDITO LOJA SUL 22/10 #2                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Gama (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Sul (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 365,98</td>
+                        <td class="num">R$ 287.231,90</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>22/10/2026</td>
+                        <td>
+INSUMOS LIMPEZA E CONSUMO NORTE                        </td>
+                        <td>
+<span class="badge badge--red">Fornecedores</span>                        </td>
+                        <td>Insumos</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 808,53</td>
+                        <td class="num">R$ 378.510,84</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>22/10/2026</td>
+                        <td>
+TARIFA MAQUININHA ADQUIRENTE NORTE 22/10                        </td>
+                        <td>
+<span class="badge badge--red">Comerciais</span>                        </td>
+                        <td>Taxa de maquininha</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 29,72</td>
+                        <td class="num">R$ 379.319,37</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<button type="button" onclick="document.querySelectorAll('[data-grupo=\'g68\']').forEach(function(r){r.hidden=!r.hidden});this.textContent=this.textContent=='+'?'−':'+'" class="btn btn--soft btn--sm" style="padding:0 10px;">+</button>                        </td>
+                        <td>22/10/2026</td>
+                        <td>2 lançamentos</td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>Banco Beta (fictício)</td>
+                        <td class="num pos">+ R$ 1.270,32</td>
+                        <td class="num">—</td>
+                        <td></td>
+                      </tr>
+                      <tr data-grupo="g68" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>22/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA PIX LOJA NORTE 22/10 #4                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 913,66</td>
+                        <td class="num">R$ 378.992,43</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr data-grupo="g68" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>22/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA PIX LOJA NORTE 22/10 #5                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Pix</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 356,66</td>
+                        <td class="num">R$ 379.349,09</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>22/10/2026</td>
+                        <td>
+VENDAS DIA CARTAO DEBITO LOJA NORTE 22/10 #3                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de débito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 371,11</td>
+                        <td class="num">R$ 378.078,77</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<button type="button" onclick="document.querySelectorAll('[data-grupo=\'g70\']').forEach(function(r){r.hidden=!r.hidden});this.textContent=this.textContent=='+'?'−':'+'" class="btn btn--soft btn--sm" style="padding:0 10px;">+</button>                        </td>
+                        <td>22/10/2026</td>
+                        <td>2 lançamentos</td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>Banco Beta (fictício)</td>
+                        <td class="num pos">+ R$ 1.653,31</td>
+                        <td class="num">—</td>
+                        <td></td>
+                      </tr>
+                      <tr data-grupo="g70" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>22/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA CARTAO CREDITO LOJA NORTE 22/10 #1                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 1.251,62</td>
+                        <td class="num">R$ 377.305,97</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr data-grupo="g70" hidden style="background:var(--overlay-1);">
+                        <td></td>
+                        <td>22/10/2026</td>
+                        <td style="padding-left:28px;color:var(--text-200);font-size:13px;">
+VENDAS DIA CARTAO CREDITO LOJA NORTE 22/10 #2                        </td>
+                        <td>
+<span class="badge badge--green">Vendas</span>                        </td>
+                        <td>Cartão de crédito</td>
+                        <td class="pos">Receita</td>
+                        <td>
+Banco Beta (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Norte (fictícia)</div>
+                        </td>
+                        <td class="num pos">+ R$ 401,69</td>
+                        <td class="num">R$ 377.707,66</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>22/10/2026</td>
+                        <td>
+INSUMOS LIMPEZA E CONSUMO CENTRO                        </td>
+                        <td>
+<span class="badge badge--red">Fornecedores</span>                        </td>
+                        <td>Insumos</td>
+                        <td class="neg">Despesa</td>
+                        <td>
+Banco Alfa (fictício)                          <div style="font-size:11.5px;color:var(--text-mute);">Loja Centro (fictícia)</div>
+                        </td>
+                        <td class="num neg">− R$ 1.196,97</td>
+                        <td class="num">R$ 87.165,70</td>
+                        <td>
+<a href="#" data-mk-fora class="btn btn--ghost btn--sm" title="Editar lançamento">✎</a>                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div style="display:flex;gap:22px;flex-wrap:wrap;justify-content:flex-end;font-size:13.5px;padding-top:12px;border-top:1px solid var(--border-1);margin-top:6px;">
+<span>Receita <span style="color:var(--green-text);font-weight:600;">R$ 5.499.596,94</span></span><span>Despesa <span style="color:var(--red-text);font-weight:600;">R$ 4.823.820,94</span></span><span>Resultado <span style="font-weight:600;">R$ 675.776,00</span></span><span style="color:var(--text-mute);">categoria neutra não entra na conta</span>                </div>
+                <div class="pager">
+<span class="pager__faixa">1–100 de 13.816</span>                  <div class="pager__botoes">
+<a href="?pagina=0" class="btn btn--secondary btn--sm btn--desabilitado">‹ Anterior</a><a href="?pagina=2" class="btn btn--secondary btn--sm">Próxima ›</a>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="navTooltip"></div>
+      <div id="navOverlay" class="nav-overlay"></div>
+<script>document.addEventListener('click',function(e){var m=document.getElementById('userMenu');if(m&&!m.contains(e.target))m.classList.remove('open');});</script><script>(function(){var shell=document.getElementById('appShell');var chave='nx-menu-1';var btn=document.getElementById('brandToggle');function marca(){if(btn){var rec=shell.classList.contains('sidebar-collapsed');btn.setAttribute('aria-expanded',rec?'false':'true');btn.setAttribute('aria-label',rec?'Expandir menu':'Recolher menu');btn.textContent=rec?'›':'‹';}}try{if(localStorage.getItem(chave)==='1')shell.classList.add('sidebar-collapsed');}catch(e){}marca();if(btn)btn.onclick=function(){shell.classList.toggle('sidebar-collapsed');marca();try{localStorage.setItem(chave,shell.classList.contains('sidebar-collapsed')?'1':'0');}catch(e){}};var abrir=document.getElementById('navAbrir'),over=document.getElementById('navOverlay'),barra=document.getElementById('appSidebar');function gaveta(a){shell.classList.toggle('nav-aberta',a);if(abrir)abrir.setAttribute('aria-expanded',a?'true':'false');if(a){var p=barra.querySelector('a');if(p)p.focus();}else if(abrir){abrir.focus();}}if(abrir)abrir.onclick=function(){gaveta(true);};if(over)over.onclick=function(){gaveta(false);};document.addEventListener('keydown',function(e){if(e.key==='Escape'&&shell.classList.contains('nav-aberta'))gaveta(false);if(e.key==='Tab'&&shell.classList.contains('nav-aberta')){var f=barra.querySelectorAll('a,button');if(!f.length)return;var a=f[0],z=f[f.length-1];if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus();}else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus();}}});var tip=document.getElementById('navTooltip');document.querySelectorAll('.navlink').forEach(function(a){a.addEventListener('mouseenter',function(){var recolhida=shell.classList.contains('sidebar-collapsed')&&window.innerWidth>780;if(!recolhida)return;var r=a.getBoundingClientRect();tip.textContent=a.getAttribute('data-label');tip.style.left=(r.right+10)+'px';tip.style.top=(r.top+r.height/2-14)+'px';tip.classList.add('on');});a.addEventListener('mouseleave',function(){tip.classList.remove('on');});});})();</script><script src="static/js/busca.js" defer></script>    </div>
+  <div class="mk-aviso" id="mkAviso" role="status" aria-live="polite"></div>
+<a class="mk-selo" href="login.html" title="Ver a tela de entrada">Mockup · dados fictícios</a>
+<script>
+(function () {
+  var d = document.documentElement, caixa = document.getElementById('mkAviso'), relogio;
+  function avisar(t) {
+    caixa.textContent = t; caixa.classList.add('on');
+    clearTimeout(relogio); relogio = setTimeout(function () { caixa.classList.remove('on'); }, 2600);
+  }
+  function tema(t) {
+    d.setAttribute('data-theme', t);
+    try { if (!d.classList.contains('mk-embed')) localStorage.setItem('mk-tema', t); } catch (e) {}
+    document.querySelectorAll('.theme-switch button[name=tema]').forEach(function (b) {
+      b.classList.toggle('on', (b.value === 'claro') === (t === 'light'));
+    });
+  }
+  tema(d.getAttribute('data-theme'));
+  // dentro do site, o tema acompanha o alternador do site
+  if (d.classList.contains('mk-embed')) try {
+    new MutationObserver(function () { tema(parent.document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'); })
+      .observe(parent.document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  } catch (e) {}
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[data-mk-fora]');
+    if (a) { e.preventDefault(); avisar('Esta tela fica só no app. O mockup mostra as principais.'); return; }
+    var b = e.target.closest('.theme-switch button[name=tema]');
+    if (b) { e.preventDefault(); tema(b.value === 'claro' ? 'light' : 'dark'); }
+  }, true);
+  document.addEventListener('submit', function (e) {
+    var f = e.target.closest('form[data-mk-form]');
+    if (!f) return;
+    e.preventDefault();
+    if (f.querySelector('button[name=tema]')) return;
+    if (f.querySelector('input[name=senha]')) { location.href = 'index.html'; return; }
+    avisar(f.method === 'get' ? 'No mockup os filtros não mudam os dados. No app, a tela recalcula na hora.' : 'Mockup: nada é gravado. No app, isto salva e fica na auditoria.');
+  }, true);
+})();
+</script>
+
+</body>
+</html>
