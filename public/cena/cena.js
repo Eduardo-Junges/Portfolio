@@ -1,7 +1,8 @@
 /* Fundo vivo "sistema solar" do site — o mesmo motor do Nexus Analytics (webapp/static/cena/cena.js),
  * WebGL próprio, sem bibliotecas. O que mudou para o site:
- *   • tema CLARO também tem cena: o canvas fica transparente sobre o papel (sem céu nem estrelas),
- *     órbitas em traço escuro e os brilhos misturados por alfa pré-multiplicado — como um atlas;
+ *   • o espaço é escuro nos dois temas (decisão do Eduardo, 27/10/2026): no tema claro só o véu
+ *     da coluna de texto vira papel. O modo "atlas" (canvas transparente, órbitas em traço escuro,
+ *     alfa pré-multiplicado) continua no motor, desligado: `claro` não liga mais com o tema;
  *   • "sol" = visão geral do sistema (a home); cada página aponta para o seu planeta e a câmera voa
  *     de um para o outro ao navegar (planeta e câmera ficam em sessionStorage);
  *   • texturas em WebP: 1K no Completo, 512 no Reduzido/celular; carregam depois da página;
@@ -444,7 +445,7 @@
     for (var i = 0; i < telas.length; i++) { var t = telas[i]; if (!t || !ROTAS[B[i].n]) continue; var dd = Math.hypot(x - t.x, y - t.y); if (dd < t.r + 8 && dd < bd) { bd = dd; best = B[i].n; } }
     return best;
   }
-  function lerTema() { claro = root.getAttribute('data-theme') === 'light'; pend = true; }
+  function lerTema() { claro = false; pend = true; }   // espaço escuro também no tema claro
 
   function iniciar(o) {
     o = o || {};

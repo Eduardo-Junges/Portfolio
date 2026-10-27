@@ -543,6 +543,17 @@ html[data-cena-viva] #nx-cena-veu {
   opacity: 1;
 }
 
+/* Tema claro: o espaço continua escuro, como é. O papel cobre só a coluna de
+   texto e some depois dela, sem lavar a cena de cinza. */
+[data-theme='light'] #nx-cena-veu {
+  background: linear-gradient(
+    90deg,
+    rgb(var(--c-bg) / 0.95) 0,
+    rgb(var(--c-bg) / 0.95) var(--fim-texto),
+    rgb(var(--c-bg) / 0) calc(var(--fim-texto) + 14rem)
+  );
+}
+
 html[data-cena-viva] body {
   background: transparent;
 }
@@ -567,15 +578,19 @@ html[data-cena-viva] .btn-rede {
   background: rgb(var(--c-bg-raised) / 0.9);
 }
 
+/* os botões fixos do topo passam por cima da cena (no claro, sobre o espaço escuro): piso para não sumirem */
+html[data-cena-viva] body > header button {
+  background: rgb(var(--c-bg-raised) / 0.9);
+}
+
 /* Celular: o texto ocupa a largura toda — véu por igual, sem o brilho do planeta. */
 @media (width < 48rem) {
   #nx-cena-veu {
     background: rgb(var(--c-bg) / 0.9);
   }
 
-  /* os botões fixos do topo passam por cima da cena: piso para não sumirem nela */
-  html[data-cena-viva] body > header button {
-    background: rgb(var(--c-bg-raised) / 0.9);
+  [data-theme='light'] #nx-cena-veu {
+    background: rgb(var(--c-bg) / 0.95);
   }
 }
 
