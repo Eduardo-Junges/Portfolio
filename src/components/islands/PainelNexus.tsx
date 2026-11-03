@@ -1191,6 +1191,7 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
           display:flex; align-items:center; justify-content:center; }
         .nx-body { padding:8px 0 0; }
         .nx-kpis { display:grid; grid-template-columns:repeat(2,1fr); gap:7px; }
+        .nx-kpis > :last-child:nth-child(odd) { grid-column:1 / -1; }   /* ímpar em 2 colunas: o último ocupa a linha */
         .nx-grid2 { display:grid; gap:8px; margin-top:8px; }
         /* 460px: abaixo disso os 4 KPIs lado a lado ficariam com o valor cortado
            e os dois gráficos, ilegíveis. Container query, não media query — o que
@@ -1199,6 +1200,7 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
            coluna de texto e o card voltaria a crescer pelo outro lado. */
         @container (min-width: 460px) {
           .nx-kpis { grid-template-columns:repeat(var(--n,4),1fr); }
+          .nx-kpis > :last-child:nth-child(odd) { grid-column:auto; }
           .nx-grid2 { grid-template-columns:1fr 1fr; }
         }
         .kpi { background:var(--nx-surface); border:1px solid var(--nx-line); border-radius:8px;

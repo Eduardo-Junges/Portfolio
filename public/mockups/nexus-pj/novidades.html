@@ -140,11 +140,24 @@
         <div class="body">
           <div>
             <p style="color:var(--text-200);font-size:13.5px;">
-Você está na versão 2.5.0<span style="color:var(--text-mute);"> (código dad7a7c)</span>            </p>
+Você está na versão 2.5.1<span style="color:var(--text-mute);"> (código 1462b03)</span>            </p>
+            <div class="card" style="margin-top:20px;">
+              <div class="section-head">
+                <h2>Versão 2.5.1 · 28/10/2026</h2>
+<span class="badge badge--green">instalada</span>              </div>
+              <div>
+                <h3 style="font-size:14px;margin:14px 0 6px;">Corrigido</h3>
+                <ul style="margin:0 0 0 18px;">
+                  <li style="margin:4px 0;"><b>Primeiro acesso e senha vencida com a verificação em duas etapas obrigatória:</b> o usuário novo (ou com a senha redefinida pelo ADM, ou vencida) que ainda não ativou o 2FA ficava indo e voltando entre &quot;Trocar senha&quot; e &quot;Ativar 2FA&quot; e não conseguia entrar. Agora troca a senha primeiro e, em seguida, ativa o 2FA e entra. Quem já tem 2FA continua digitando o código ao trocar a senha.</li>
+                  <li style="margin:4px 0;"><b>Computador ou navegador novo esperando um ADM:</b> quem entrava num aparelho ainda não liberado e estava com a senha ou o 2FA pendente ficava num vai-e-volta entre telas e nunca via o aviso &quot;aguardando aprovação&quot; nem o botão Sair. Agora a tela de espera abre e dá para sair.</li>
+                  <li style="margin:4px 0;"><b>Segurança:</b> o sistema deixou de entregar, por conta própria, arquivos soltos da pasta onde roda (pacotes do contador, extratos, cópias). Os arquivos só saem pelas telas de download, com a permissão de cada perfil, e pelos arquivos do próprio visual do sistema (<code>/static</code> e a logo/ícone da empresa).</li>
+                </ul>
+              </div>
+            </div>
             <div class="card" style="margin-top:20px;">
               <div class="section-head">
                 <h2>Versão 2.5.0 · 27/10/2026</h2>
-<span class="badge badge--green">instalada</span>              </div>
+              </div>
               <div>
                 <h3 style="font-size:14px;margin:14px 0 6px;">Novo</h3>
                 <ul style="margin:0 0 0 18px;">
