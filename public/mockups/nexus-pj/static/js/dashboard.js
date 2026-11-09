@@ -15,6 +15,18 @@
   Chart.defaults.borderColor = cor("--overlay-3");
   Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
 
+  function depoisDaChegada(fn) {                       // o círculo de chegada do login cobre a tela: espera ele abrir
+    const r = document.documentElement; let n = 0;
+    (function t() { if (r.classList.contains("nx-chegando") && n++ < 30) setTimeout(t, 100); else fn(); })();
+  }
+  function criar(el, config) {
+    const montar = () => new Chart(el, config);
+    if (!completo || !("IntersectionObserver" in window)) { montar(); return; }
+    if (el.getBoundingClientRect().top < window.innerHeight * 0.95) { depoisDaChegada(montar); return; }
+    const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { io.disconnect(); montar(); } }, { rootMargin: "0px 0px -8% 0px" });
+    io.observe(el);
+  }
+
   const moeda = (v) => "R$ " + Number(v).toLocaleString("pt-BR", { maximumFractionDigits: 0 });
 
   // ── "dados com vida" nos gráficos (16/10/2026) ─────────────────────────────────────────────────────────────────
@@ -22,7 +34,25 @@
   // Nível por usuário em <html data-efeitos>; "reduzir movimento" do sistema vale como desligado.
   const calmo = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
   const nivel = calmo ? "desligado" : (document.documentElement.getAttribute("data-efeitos") || "completo");
-  Chart.defaults.animation = nivel === "desligado" ? false : { duration: nivel === "reduzido" ? 280 : 800, easing: "easeOutCubic" };
+  const completo = nivel === "completo";
+
+  // ── gráficos mais vivos (29/10/2026) ───────────────────────────────────────────────────────────────────────────
+  // Só no Completo: barras e fatias entram em cascata, o gráfico só é criado quando aparece na tela (a entrada é vista, não
+  // perdida embaixo da dobra), o total da rosca conta até o valor e a ponta da linha pulsa duas vezes. Em qualquer nível:
+  // degradê nas barras e na área das linhas, brilho no ponto sob o mouse. Easing que desacelera e termina em 1: nada passa do valor.
+  function escalonar(ctx) {
+    if (!completo || ctx.type !== "data" || ctx.mode !== "default" || ctx.chart._nxEntrou) return 0;
+    const tipo = ctx.chart.getDatasetMeta(ctx.datasetIndex).type;
+    if (tipo !== "bar" && tipo !== "doughnut") return 0;
+    const n = Math.max(1, (ctx.chart.data.labels || []).length);
+    return ctx.dataIndex * Math.min(45, 500 / n) + ctx.datasetIndex * 90;
+  }
+  Chart.defaults.animation = nivel === "desligado" ? false : {
+    duration: nivel === "reduzido" ? 280 : 800, easing: "easeOutQuart", delay: escalonar,
+    onProgress(a) { a.chart._nxProg = a.currentStep / a.numSteps; },
+    onComplete(a) { if (!a.chart._nxEntrou) { a.chart._nxEntrou = true; pulsar(a.chart); } },
+  };
+  Chart.defaults.animations.colors = false;      // o degradê é um objeto do canvas: o Chart.js não sabe interpolar cor assim (e a animação trava)
 
   // Caixinha do valor ao passar o mouse (21/10/2026): é a "dica" do Nexus Analytics — um <div> HTML atualizado direto
   // no evento do mouse, sem animação. A caixinha desenhada no canvas pelo Chart.js dependia de requestAnimationFrame
@@ -32,7 +62,7 @@
   // formato dos números na tabela alternativa e no anúncio do teclado
   function formatoDe(canvas) {
     const id = (canvas && canvas.id) || "";
-    if (/margem/.test(id)) return (v) => Number(v).toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + "%";
+    if (/margem|proporcao/.test(id)) return (v) => Number(v).toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + "%";
     if (/a-revisar/.test(id)) return (v) => Number(v).toLocaleString("pt-BR", { maximumFractionDigits: 0 }) + " lanç.";
     // zero não leva sinal ("-0,00" é ruído do float); negativo no mesmo estilo do resto do app
     return (v) => {
@@ -40,6 +70,7 @@
       return (n < 0 ? "− " : "") + "R$ " + Math.abs(n).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     };
   }
+  const valorDe = (d, i) => (d.valorTabela ? d.valorTabela[i] : d.data[i]);
   const vazio = (v) => v === null || v === undefined || (typeof v === "number" && !isFinite(v));
   const textoSeguro = (t) => document.createTextNode(String(t === undefined || t === null ? "" : t));
 
@@ -60,7 +91,7 @@
       function corDe(it) {
         const ds = it.dataset;
         for (const k of ["backgroundColor", "borderColor"]) {
-          let c = ds[k];
+          let c = k === "backgroundColor" && ds._nxCor !== undefined ? ds._nxCor : ds[k];     // a cor sólida, não o degradê
           if (typeof c === "function") { try { c = c({ chart, dataIndex: it.dataIndex, datasetIndex: it.datasetIndex, dataset: ds, raw: it.raw, parsed: it.parsed }); } catch (e) { c = null; } }
           if (Array.isArray(c)) c = c[it.dataIndex];
           if (typeof c === "string" && c) return c;
@@ -171,6 +202,134 @@
   };
   Chart.register(nxMira);
 
+  // ── degradê, brilho no ponto ativo, pulso na ponta da linha e total no centro da rosca ─────────────────────────
+  const _cv = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
+  const _alfa = new Map();
+  function comAlfa(c, a) {                              // qualquer cor CSS (hex, rgb, var já resolvida) → rgba
+    const k = c + "|" + a;
+    if (_alfa.has(k)) return _alfa.get(k);
+    _cv.clearRect(0, 0, 1, 1); _cv.fillStyle = "#000"; _cv.fillStyle = c; _cv.fillRect(0, 0, 1, 1);
+    const d = _cv.getImageData(0, 0, 1, 1).data, r = "rgba(" + d[0] + "," + d[1] + "," + d[2] + "," + a + ")";
+    _alfa.set(k, r); return r;
+  }
+  function degrade(chart, c, horizontal, area) {
+    const a = chart.chartArea;
+    if (!a || typeof c !== "string") return c;
+    const g = horizontal && !area ? chart.ctx.createLinearGradient(a.left, 0, a.right, 0) : chart.ctx.createLinearGradient(0, a.top, 0, a.bottom);
+    if (area) { g.addColorStop(0, comAlfa(c, 0.30)); g.addColorStop(1, comAlfa(c, 0)); }
+    else if (horizontal) { g.addColorStop(0, comAlfa(c, 0.55)); g.addColorStop(1, c); }
+    else { g.addColorStop(0, c); g.addColorStop(1, comAlfa(c, 0.55)); }
+    return g;
+  }
+  Chart.register({
+    id: "nxGradiente",
+    beforeUpdate(chart) {
+      const linhas = chart.data.datasets.filter((d) => (d.type || chart.config.type) === "line" && !d.borderDash).length;
+      chart.data.datasets.forEach((ds) => {
+        const tipo = ds.type || chart.config.type;
+        if (ds._nxCor === undefined && typeof ds.backgroundColor !== "function") ds._nxCor = ds.backgroundColor;
+        if (ds._nxCor === undefined) return;
+        const base = ds._nxCor;
+        if (tipo === "bar") {
+          const horizontal = chart.options.indexAxis === "y";
+          ds.backgroundColor = (ctx) => degrade(ctx.chart, Array.isArray(base) ? base[ctx.dataIndex] : base, horizontal, false);
+        } else if (tipo === "line" && !ds.borderDash && !ds.semDegrade && linhas <= 2) {     // área só com 1 ou 2 linhas (mais que isso embola)
+          ds.fill = "origin";
+          ds.pointBackgroundColor = ds.pointBackgroundColor || base;
+          ds.backgroundColor = (ctx) => degrade(ctx.chart, base, false, true);
+        }
+      });
+    },
+  });
+  // a caixinha da legenda usa a cor sólida, não o degradê
+  const gerarLegenda = Chart.defaults.plugins.legend.labels.generateLabels;
+  Chart.defaults.plugins.legend.labels.generateLabels = function (chart) {
+    const itens = gerarLegenda(chart);
+    itens.forEach((it) => { const ds = chart.data.datasets[it.datasetIndex]; if (ds && typeof ds._nxCor === "string") it.fillStyle = ds._nxCor; });
+    return itens;
+  };
+
+  // o ponto/barra/fatia sob o mouse ganha um brilho na própria cor (só desenha enquanto há ponto ativo)
+  Chart.register({
+    id: "nxBrilho",
+    afterDatasetsDraw(chart) {
+      const ativos = chart._nxAtivos || [], ctx = chart.ctx;
+      ativos.forEach((a) => {
+        const el = a.element, ds = chart.data.datasets[a.datasetIndex];
+        if (!el || !ds) return;
+        const base = ds._nxCor !== undefined ? ds._nxCor : ds.backgroundColor;
+        let c = Array.isArray(base) ? base[a.index] : base;
+        if (typeof c !== "string") c = cor("--text-200");
+        ctx.save();
+        ctx.shadowColor = comAlfa(c, 0.85); ctx.shadowBlur = 16;
+        if (chart.getDatasetMeta(a.datasetIndex).type === "line") {
+          ctx.beginPath(); ctx.arc(el.x, el.y, 4.5, 0, Math.PI * 2);
+          ctx.fillStyle = c; ctx.fill();
+          ctx.shadowBlur = 0; ctx.lineWidth = 1.5; ctx.strokeStyle = cor("--text-100"); ctx.stroke();
+        } else {
+          el.draw(ctx);
+        }
+        ctx.restore();
+      });
+    },
+  });
+
+  // depois que a linha termina de se desenhar, a ponta pulsa duas vezes (1,6 s no total) e para
+  function pulsar(chart) {
+    if (!completo || chart.config.type !== "line" || document.visibilityState !== "visible" || chart.data.datasets.some((d) => d.semDegrade)) return;
+    const di = chart.data.datasets.findIndex((d, i) => !d.borderDash && !chart.getDatasetMeta(i).hidden);
+    if (di < 0) return;
+    const ds = chart.data.datasets[di], pts = chart.getDatasetMeta(di).data;
+    let i = ds.data.length - 1;
+    while (i >= 0 && vazio(ds.data[i])) i--;
+    if (i < 0 || !pts[i]) return;
+    const c = typeof ds._nxCor === "string" ? ds._nxCor : (typeof ds.borderColor === "string" ? ds.borderColor : cor("--text-200"));
+    const t0 = performance.now(), dur = 1600;
+    (function quadro(t) {
+      const p = (t - t0) / dur;
+      if (p >= 1 || !chart.canvas.isConnected) { chart._nxPulso = null; if (chart.canvas.isConnected) chart.draw(); return; }
+      chart._nxPulso = { x: pts[i].x, y: pts[i].y, c, q: (p * 2) % 1 };
+      chart.draw();
+      requestAnimationFrame(quadro);
+    })(t0);
+  }
+  Chart.register({
+    id: "nxPulso",
+    afterDatasetsDraw(chart) {
+      const u = chart._nxPulso;
+      if (!u) return;
+      const ctx = chart.ctx;
+      ctx.save();
+      ctx.beginPath(); ctx.arc(u.x, u.y, 4 + 14 * u.q, 0, Math.PI * 2);
+      ctx.lineWidth = 2; ctx.strokeStyle = comAlfa(u.c, (0.6 * (1 - u.q)).toFixed(3)); ctx.stroke();
+      ctx.beginPath(); ctx.arc(u.x, u.y, 4, 0, Math.PI * 2); ctx.fillStyle = u.c; ctx.fill();
+      ctx.restore();
+    },
+  });
+
+  // total no meio da rosca: conta de zero até o valor (no Completo, na entrada) e termina EXATAMENTE nele
+  Chart.register({
+    id: "nxCentro",
+    afterDatasetsDraw(chart) {
+      if (chart.config.type !== "doughnut" || !chart.chartArea) return;
+      const a = chart.chartArea, ctx = chart.ctx, fam = Chart.defaults.font.family;
+      const dentro = (Math.min(a.right - a.left, a.bottom - a.top) / 2 - 8) * 0.62;      // 8 = hoverOffset; 0,62 = cutout
+      if (dentro < 36) return;
+      const total = (chart.data.datasets[0].data || []).reduce((s, v) => s + (Number(v) || 0), 0);
+      const p = completo && !chart._nxEntrou ? Math.min(1, chart._nxProg || 0) : 1;
+      const texto = moeda(p >= 1 ? total : total * (1 - Math.pow(1 - p, 4)));
+      let fonte = Math.max(12, Math.min(22, dentro * 0.34));
+      ctx.save();
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.font = "700 " + fonte + "px " + fam;
+      while (fonte > 11 && ctx.measureText(moeda(total)).width > dentro * 1.7) { fonte -= 1; ctx.font = "700 " + fonte + "px " + fam; }
+      const cx = (a.left + a.right) / 2, cy = (a.top + a.bottom) / 2;
+      ctx.fillStyle = cor("--text-100"); ctx.fillText(texto, cx, cy + 7);
+      ctx.fillStyle = cor("--text-mute"); ctx.font = "500 11px " + fam; ctx.fillText("Total", cx, cy - fonte * 0.6);
+      ctx.restore();
+    },
+  });
+
   // acessibilidade e leitura do dado: foco pelo teclado (← → Home End Esc), anúncio e "Ver como tabela"
   Chart.register({
     id: "nxLer",
@@ -195,7 +354,7 @@
         idx = Math.max(0, Math.min(n - 1, novo));
         const els = [];
         chart.data.datasets.forEach((d, di) => {
-          if (chart.getDatasetMeta(di).hidden || vazio(d.data[idx])) return;
+          if (chart.getDatasetMeta(di).hidden || vazio(valorDe(d, idx))) return;
           els.push({ datasetIndex: di, index: idx });
         });
         if (!els.length) return;
@@ -204,7 +363,7 @@
         const fmt = formatoDe(canvas);
         aviso.textContent = String(rotulos()[idx]) + ": " + chart.data.datasets
           .filter((d, di) => els.some((e) => e.datasetIndex === di))
-          .map((d) => (d.label ? d.label + " " : "") + fmt(d.data[idx])).join("; ");
+          .map((d) => (d.label ? d.label + " " : "") + fmt(valorDe(d, idx))).join("; ");
       }
       canvas.addEventListener("keydown", (e) => {
         if (e.key === "ArrowRight") { e.preventDefault(); ir(idx < 0 ? 0 : idx + 1); }
@@ -236,7 +395,7 @@
         rotulos().forEach((r, i) => {
           const tr = document.createElement("tr");
           const td0 = document.createElement("td"); td0.appendChild(textoSeguro(r)); tr.appendChild(td0);
-          chart.data.datasets.forEach((d) => { const td = document.createElement("td"); td.className = "num"; td.appendChild(textoSeguro(vazio(d.data[i]) ? "—" : fmt(d.data[i]))); tr.appendChild(td); });
+          chart.data.datasets.forEach((d) => { const td = document.createElement("td"); td.className = "num"; td.appendChild(textoSeguro(vazio(valorDe(d, i)) ? "—" : fmt(valorDe(d, i)))); tr.appendChild(td); });
           tb.appendChild(tr);
         });
         t.appendChild(tb);
@@ -256,7 +415,7 @@
     const el = document.getElementById("chart-saldo-conta");
     const d = CFG.saldo_por_conta;
     if (!el || !d || !d.labels.length) return;
-    new Chart(el, {
+    criar(el, {
       type: "bar",
       data: {
         labels: d.labels,
@@ -284,7 +443,7 @@
     const el = document.getElementById("chart-despesa-categoria");
     const d = CFG.despesa_por_categoria;
     if (!el || !d || !d.labels.length) return;
-    new Chart(el, {
+    criar(el, {
       type: "bar",
       data: {
         labels: d.labels,
@@ -312,7 +471,7 @@
     const el = document.getElementById("chart-evolucao-mensal");
     const d = CFG.evolucao_mensal;
     if (!el || !d || !d.labels.length) return;
-    new Chart(el, {
+    criar(el, {
       type: "bar",
       data: {
         labels: d.labels,
@@ -338,7 +497,7 @@
     const el = document.getElementById("chart-resultado-loja");
     const d = CFG.resultado_por_loja;
     if (!el || !d || !d.labels.length) return;
-    new Chart(el, {
+    criar(el, {
       type: "bar",
       data: {
         labels: d.labels,
@@ -376,7 +535,7 @@
     fmt = fmt || moeda;
     const el = document.getElementById(id);
     if (!el || !d || !d.labels.length) return;
-    new Chart(el, {
+    criar(el, {
       type: "bar",
       data: { labels: d.labels, datasets: [{ data: d.valores, backgroundColor: d.labels.map(corFn), borderRadius: 5, maxBarThickness: 26 }] },
       options: {
@@ -392,11 +551,11 @@
     if (!el || !d || !d.labels.length) return;
     const pal = PALETA();
     const total = d.valores.reduce((a, b) => a + b, 0) || 1;
-    new Chart(el, {
+    criar(el, {
       type: "doughnut",
-      data: { labels: d.labels, datasets: [{ data: d.valores, backgroundColor: d.labels.map((n, i) => (n === "A revisar" ? cor("--amber") : pal[i % pal.length])), borderWidth: 0 }] },
+      data: { labels: d.labels, datasets: [{ data: d.valores, backgroundColor: d.labels.map((n, i) => (n === "A revisar" ? cor("--amber") : pal[i % pal.length])), borderWidth: 0, hoverOffset: 8 }] },
       options: {
-        responsive: true, maintainAspectRatio: false, cutout: "62%",
+        responsive: true, maintainAspectRatio: false, cutout: "62%", layout: { padding: 4 },
         plugins: {
           legend: { position: "right", labels: { boxWidth: 10, boxHeight: 10 } },
           tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${moeda(ctx.parsed)} (${((ctx.parsed / total) * 100).toFixed(1).replace(".", ",")}%)` } },
@@ -409,7 +568,7 @@
     const el = document.getElementById(id);
     if (!el || !d || !d.labels.length || !d.series.length) return;
     const pal = PALETA();
-    new Chart(el, {
+    criar(el, {
       type: tipo,
       data: {
         labels: d.labels,
@@ -431,6 +590,68 @@
     });
   }
 
+  // Composição em %: cada tipo ocupa a sua fatia dos 100% do mês (área empilhada). A dica traz o % e o valor em reais.
+  function areaProporcao(id, d) {
+    const el = document.getElementById(id);
+    if (!el || !d || d.labels.length < 2 || !d.series.length) return;
+    // meses sem nenhum movimento nas pontas não têm proporção: o gráfico começa no primeiro mês com dado e termina no último
+    const tem = d.labels.map((_, i) => d.series.some((x) => (x.valores[i] || 0) > 0));
+    const a = tem.indexOf(true), z = tem.lastIndexOf(true);
+    if (a < 0 || z - a < 1) { const caixa = el.closest(".card"); if (caixa) caixa.hidden = true; return; }
+    d = { labels: d.labels.slice(a, z + 1), series: d.series.map((x) => ({ nome: x.nome, valores: x.valores.slice(a, z + 1) })) };
+    const pal = PALETA();
+    const totais = d.labels.map((_, i) => d.series.reduce((s, x) => s + Math.max(0, x.valores[i] || 0), 0));
+    const pct = (x, i) => (totais[i] > 0 ? (Math.max(0, x.valores[i] || 0) / totais[i]) * 100 : 0);
+    const p1 = (v) => Number(v).toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + "%";
+    criar(el, {
+      type: "line",
+      data: {
+        labels: d.labels,
+        datasets: d.series.map((s, i) => {
+          const c = s.nome === "A revisar" ? cor("--amber") : pal[i % pal.length];
+          return { label: s.nome, data: d.labels.map((_, k) => pct(s, k)), reais: s.valores, semDegrade: true, fill: true,
+            borderColor: c, backgroundColor: comAlfa(c, 0.78), borderWidth: 1.5, pointRadius: 0, pointHoverRadius: 0, tension: 0.3 };
+        }),
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { position: "bottom", labels: { boxWidth: 10, boxHeight: 10 } },
+          tooltip: { callbacks: {
+            label: (ctx) => `${ctx.dataset.label}: ${p1(ctx.dataset.data[ctx.dataIndex])} (${moeda(ctx.dataset.reais[ctx.dataIndex])})`,
+            afterBody: (itens) => "Total do mês: " + moeda(totais[itens[0].dataIndex]),
+          } },
+        },
+        scales: { x: {}, y: { stacked: true, min: 0, max: 100, ticks: { callback: (v) => v + "%" } } },
+      },
+    });
+  }
+
+  // Cascata: da receita ao resultado. Cada degrau flutua do acumulado anterior até o novo; a última barra é o total (do servidor).
+  function cascata(id, d) {
+    const el = document.getElementById(id);
+    if (!el || !d || d.labels.length < 2) return;
+    const n = d.valores.length, rs = (v) => (v < 0 ? "− " : "") + moeda(Math.abs(v));
+    let acc = 0;
+    const faixas = d.valores.map((v, i) => { if (i === n - 1) return [0, v]; const de = acc; acc += v; return [de, acc]; });
+    const cores = d.valores.map((v, i) => (i === n - 1 ? cor("--cyan") : v >= 0 ? cor("--green") : cor("--red")));
+    criar(el, {
+      type: "bar",
+      data: { labels: d.labels, datasets: [{ data: faixas, valorTabela: d.valores, backgroundColor: cores, borderRadius: 4, borderSkipped: false, maxBarThickness: 56 }] },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: {
+            label: (ctx) => rs(d.valores[ctx.dataIndex]),
+            afterBody: (itens) => (itens[0].dataIndex === n - 1 ? "" : "Acumulado: " + rs(faixas[itens[0].dataIndex][1])),
+          } },
+        },
+        scales: { y: { ticks: { callback: moeda } } },
+      },
+    });
+  }
+
   function montarFluxoDiario() {
     const el = document.getElementById("chart-fluxo-diario");
     const d = CFG.fluxo_diario;
@@ -443,7 +664,7 @@
     if (comSaldo) {
       ds.push({ type: "line", label: "Saldo no fim do dia", data: d.saldo, borderColor: cor("--cyan"), backgroundColor: cor("--cyan"), pointRadius: 0, tension: 0.2, yAxisID: "y2", spanGaps: true });
     }
-    new Chart(el, {
+    criar(el, {
       data: { labels: d.labels, datasets: ds },
       options: {
         responsive: true, maintainAspectRatio: false,
@@ -464,7 +685,7 @@
     const el = document.getElementById("chart-evolucao-margem");
     const d = CFG.evolucao_margem;
     if (!el || !d || !d.labels.length) return;
-    new Chart(el, {
+    criar(el, {
       type: "line",
       data: { labels: d.labels, datasets: [{ label: "Margem", data: d.valores, borderColor: cor("--green"), backgroundColor: cor("--green"), tension: 0.25, spanGaps: true }] },
       options: {
@@ -479,7 +700,7 @@
     const el = document.getElementById("chart-dia-semana");
     const d = CFG.dia_semana;
     if (!el || !d || !d.labels.length) return;
-    new Chart(el, {
+    criar(el, {
       type: "bar",
       data: { labels: d.labels, datasets: [{ data: d.valores, backgroundColor: cor("--green"), borderRadius: 5, maxBarThickness: 34 }] },
       options: {
@@ -495,15 +716,18 @@
     const d = CFG.projecao;
     if (!el || !d || !d.labels.length) return;
     const datasets = [{ label: "Saldo previsto", data: d.saldo, borderColor: cor("--blue"), backgroundColor: cor("--blue"), tension: 0.2 }];
+    if (d.saldo_split) {   // cenário com split payment (estimativa com premissas digitadas)
+      datasets.push({ label: "Com split (estimativa)", data: d.saldo_split, borderColor: cor("--purple"), backgroundColor: cor("--purple"), borderDash: [3, 3], tension: 0.2 });
+    }
     if (d.colchao > 0) {
       datasets.push({ label: "Colchão mínimo", data: d.labels.map(() => d.colchao), borderColor: cor("--amber"), borderDash: [6, 4], pointRadius: 0 });
     }
-    new Chart(el, {
+    criar(el, {
       type: "line",
       data: { labels: d.labels, datasets: datasets },
       options: {
         responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: d.colchao > 0 }, tooltip: { callbacks: { label: (ctx) => ctx.dataset.label + ": " + moeda(ctx.parsed.y) } } },
+        plugins: { legend: { display: d.colchao > 0 || !!d.saldo_split }, tooltip: { callbacks: { label: (ctx) => ctx.dataset.label + ": " + moeda(ctx.parsed.y) } } },
         scales: { y: { ticks: { callback: moeda } } },
       },
     });
@@ -515,7 +739,7 @@
     const d = CFG.dre_margens;
     if (!el || !d || !d.labels.length) return;
     const pal = PALETA();
-    new Chart(el, {
+    criar(el, {
       type: "line",
       data: { labels: d.labels, datasets: d.series.map((s, i) => ({ label: s.nome, data: s.valores, borderColor: pal[i % pal.length], backgroundColor: pal[i % pal.length], tension: 0.25, spanGaps: true })) },
       options: {
@@ -527,10 +751,7 @@
   }
   series("chart-dre-evolucao", CFG.dre_evolucao, "bar", false);
   montarMargensDre();
-  (function () {                                   // composição: verde o que entra, vermelho o que sai
-    const d = CFG.dre_composicao;
-    barraH("chart-dre-composicao", d, (rot) => (d.valores[d.labels.indexOf(rot)] >= 0 ? cor("--green") : cor("--red")));
-  })();
+  cascata("chart-dre-composicao", CFG.dre_composicao);                // da receita ao resultado: verde entra, vermelho sai
   rosca("chart-dre-despesas", CFG.dre_despesas);
   series("chart-saldo-mensal", CFG.saldo_mensal, "line", false);
 
@@ -545,7 +766,9 @@
   rosca("chart-participacao-loja", CFG.participacao_loja);
   rosca("chart-fixa-variavel", CFG.fixa_variavel);
   series("chart-evolucao-origem", CFG.evolucao_origem, "bar", true);
+  areaProporcao("chart-receita-proporcao", CFG.evolucao_origem);
   series("chart-evolucao-grupo", CFG.evolucao_grupo, "bar", true);
+  areaProporcao("chart-despesa-proporcao", CFG.evolucao_grupo);
   series("chart-evolucao-loja", CFG.evolucao_loja, "line", false);
   montarSaldoPorConta();
   montarResultadoPorLoja();

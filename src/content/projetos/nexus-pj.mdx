@@ -14,9 +14,9 @@ autoriaDetalhe: >-
 inicio: 2026-08-01
 status: 'ativo'
 estadoAtual: >-
-  Versão 2.5.1, rodando local. Fluxo de caixa realizado e planejado, área contábil (DRE, balancete e
-  balanço gerencial), orçamento, fechamento do mês, relatórios próprios e IA local. Canal de WhatsApp
-  em desenvolvimento e validação junto à Meta.
+  Versão 2.6.0, rodando local. Fluxo de caixa realizado e planejado, recebíveis de cartão e Pix,
+  área contábil (DRE, balancete e balanço completo), orçamento, fechamento do mês, relatórios próprios
+  e IA local. Canal de WhatsApp em desenvolvimento e validação junto à Meta.
 ferramentas:
   - 'Python'
   - 'FastHTML'
@@ -47,12 +47,23 @@ do Nexus Analytics, e o motor de leitura de extrato veio de lá.
 - **Acesso:** perfis configuráveis (o administrador cria, por exemplo, um perfil Contador e marca
   o que cada um lê ou edita), verificação em duas etapas, senha com validade, máquina nova esperando
   liberação e trilha de auditoria. Cancelar ou excluir qualquer coisa pede permissão e justificativa.
+  Convite, código de segurança e recuperação de senha por e-mail ficam prontos, desligados até a
+  empresa configurar o envio.
 - **Fluxo de Caixa:** importa extrato, categoriza e mostra o saldo real. O **Realizado** fecha o dia
   contra o saldo dos bancos; o **Planejado** traz as contas a pagar e a receber e sugere o lançamento
   do extrato que pagou cada uma.
+- **Recebíveis de cartão e Pix:** importa o arquivo da maquininha, confere bruto, taxa e líquido
+  linha a linha e liga cada lote ao crédito que caiu no extrato. O que não fecha vira aviso, nunca
+  ajuste.
 - **Área Contábil:** DRE por caixa, balancete gerencial (que confere com a variação do saldo dos
-  bancos) e balanço patrimonial gerencial, sobre um plano de contas numerado.
-- **Orçamento × realizado:** meta mensal por categoria e por loja, com aviso quando estoura.
+  bancos) e balanço patrimonial completo, com ativo e passivo em dois quadros, sobre um plano de
+  contas numerado.
+- **Reforma tributária:** categorias novas (CBS, IBS, Imposto Seletivo), regime informado com
+  vigência, calendário de datas no radar e um cenário opcional de split payment na projeção. O
+  sistema não calcula imposto nem dá parecer: o regime e as premissas são sempre os que a pessoa
+  informou.
+- **Orçamento × realizado:** meta mensal por categoria e por loja, com o ritmo do mês e aviso
+  quando estoura.
 - **Várias lojas:** cada lançamento tem uma loja, e o rateio entre lojas é calculado na hora do
   relatório. Sem regra, vira "Sem loja", nunca chuta.
 - **Painéis:** Fluxo de caixa, Vendas, Despesas, Lojas, Resultado (DRE) e Projeções, com filtro de
@@ -63,7 +74,8 @@ do Nexus Analytics, e o motor de leitura de extrato veio de lá.
   estimativa, não promessa.
 - **Busca no topo:** um valor, uma palavra ou uma data acha lançamentos, títulos e telas.
 - **IA local:** um assistente que responde sobre o caixa. O modelo só escolhe a ferramenta e nunca
-  vê valor de extrato. Pedido de alterar algo vira uma proposta que a pessoa confirma.
+  vê valor de extrato. Pedido de alterar algo vira uma proposta que a pessoa confirma. Pergunta que
+  pede opinião tributária recebe sempre o mesmo texto: a decisão é do contador.
 - **Operação:** backup automático, saúde do sistema, atualização em um clique que volta sozinha se
   algo falhar e API de leitura (desligada por padrão).
 
@@ -74,6 +86,7 @@ do Nexus Analytics, e o motor de leitura de extrato veio de lá.
 - **A IA propõe, a pessoa confirma.** Nenhuma alteração acontece sem um "sim".
 - **Mês fechado não muda.** Nem tela, nem IA, nem importação mexem nele, e o pacote do contador
   fica como foi entregue.
+- **Imposto é informado, não calculado.** Sem premissa digitada, o cenário de split nem existe.
 - **Virou produto.** Nome, cor e logo saíram do código, e cada instalação troca a marca sozinha.
 
 ## Mockup
@@ -81,7 +94,7 @@ do Nexus Analytics, e o motor de leitura de extrato veio de lá.
 O mockup lá em cima são as telas do próprio app, exportadas com dados fictícios. Dá para navegar
 pelo menu e pelas abas; só não grava nada.
 
-[Abrir o mockup em tela cheia →](/mockups/nexus-pj/index.html?v=2.5.1)
+[Abrir o mockup em tela cheia →](/mockups/nexus-pj/index.html?v=2.6.0)
 
 ## Próximos passos
 

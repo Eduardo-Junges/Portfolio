@@ -28,6 +28,7 @@ const TELAS = {
   '/realizado': 'realizado',
   '/planejado': 'planejado',
   '/transferencias': 'transferencias',
+  '/sistema/marcos-tributarios': 'marcos-tributarios',
   '/importar': 'importar',
   '/dashboard/dre': 'dre',
   '/dashboard/balancete': 'balancete',

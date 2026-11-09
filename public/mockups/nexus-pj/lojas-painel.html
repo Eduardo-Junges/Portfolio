@@ -5,19 +5,13 @@
 <meta name="robots" content="noindex">
 <script>
 /* Mockup estático do Nexus & PJ (dados fictícios). Antes do primeiro paint:
-   ?embed = dentro do site (iframe), o tema acompanha o site; fora dele vale o
-   tema escolhido no próprio mockup. */
+   ?embed = dentro do site (iframe). O tema é sempre o escuro. */
 (function () {
   var d = document.documentElement, t = 'dark';
   var embed = /[?&]embed\b/.test(location.search);
   try { embed = embed || sessionStorage.getItem('mk-embed') === '1'; if (embed) sessionStorage.setItem('mk-embed', '1'); } catch (e) {}
-  if (embed) {
-    d.classList.add('mk-embed');
-    try { if (parent.document.documentElement.dataset.theme === 'light') t = 'light'; } catch (e) {}
-  } else {
-    try { if (localStorage.getItem('mk-tema') === 'light') t = 'light'; } catch (e) {}
-  }
-  d.setAttribute('data-theme', t);
+  if (embed) d.classList.add('mk-embed');
+  d.setAttribute('data-theme', t);   // o site só tem tema escuro
   // dentro do site o Dashboard aparece direto, sem a janela de boas-vindas por cima
   if (embed) {
     var abrir = HTMLDialogElement.prototype.showModal;
@@ -43,6 +37,9 @@
   .mk-selo{position:fixed;right:14px;bottom:14px;z-index:9999;padding:6px 10px;border-radius:999px;font:600 11px/1 system-ui,sans-serif;
     letter-spacing:.04em;background:rgba(17,24,39,.85);color:#e5e7eb;border:1px solid rgba(255,255,255,.14)}
   .mk-embed .mk-selo{display:none}
+  /* no card do site a janela é estreita: a busca encolhe para o nome do usuário caber */
+  .mk-embed .busca-wrap{min-width:0;flex:1 1 8rem;max-width:16rem}
+  .mk-embed .busca-wrap input{min-width:0;width:100%;text-overflow:ellipsis}
 </style>
 
     <title>Nexus &amp; PJ — mockup (/dashboard/lojas)</title>
@@ -77,7 +74,7 @@
 .subabas{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .subaba{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;font-size:12.5px;font-weight:600;
   color:var(--text-200);background:var(--surface-1);border:1px solid var(--border-1);text-decoration:none;white-space:nowrap;
-  transition:background var(--dur-fast) ease,color var(--dur-fast) ease,border-color var(--dur-fast) ease}
+  transition:background 150ms ease,color 150ms ease,border-color 150ms ease,transform 150ms ease,box-shadow 150ms ease}
 .subaba .sa-ic{font-size:13px;line-height:1;color:var(--tom-tx,var(--text-200))}
 .subaba:hover{color:var(--text-100);border-color:var(--line-strong)}
 .subaba:focus-visible{outline:2px solid var(--text-200);outline-offset:2px}
@@ -93,7 +90,7 @@
   </head>
   <body>
     <div id="appShell" class="shell">
-      
+<script>(function(){var s=document.currentScript&&document.currentScript.parentNode;try{if(s&&localStorage.getItem('nx-menu-1')==='1')s.classList.add('sidebar-collapsed');}catch(e){}})();</script>      
       <div id="appSidebar" class="sidebar">
         <div class="brand">
 <a href="index.html" class="brand-btn" title="Ir para o Dashboard"><img src="static/branding/icone-dark.png" alt="" class="brand-icon"><span class="brand-name">Nexus &amp; PJ</span></a>        </div>
@@ -112,7 +109,7 @@
             <div class="title">Lojas</div>
 <a href="index.html" class="voltar-cfg">← Dashboard</a>          </div>
           <div class="actions">
-<span class="mod-periodo">📅 <span>01/11/2026 a 03/11/2026</span></span>            <div class="busca-wrap">
+<span class="mod-periodo">📅 <span>01/11/2026 a 09/11/2026</span></span>            <div class="busca-wrap">
 <label class="topbar-ia"><span class="ia-emoji">🔎</span>                <input type="text" name="q" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="buscaPainel" aria-autocomplete="list" data-ia="1" placeholder="Pesquise um valor, nome ou data… ex.: 1200, pix fabricio — ou pergunte à IA" aria-label="Pesquisar no painel ou perguntar à IA" id="buscaInput">
 <kbd>/</kbd></label>              <div role="listbox" aria-label="Resultados da busca" hidden id="buscaPainel" class="busca-painel"></div>
             </div>
@@ -139,15 +136,21 @@
         </div>
         <div class="body">
           <div>
-            <div class="painel-topo" style="">
-              <div role="navigation" aria-label="Painéis do Dashboard" class="subabas">
-<a href="fluxo-caixa.html" class="subaba"><span aria-hidden="true" class="sa-ic">◧</span>Fluxo de caixa</a><a href="vendas.html" class="subaba"><span aria-hidden="true" class="sa-ic">▲</span>Vendas</a><a href="despesas.html" class="subaba"><span aria-hidden="true" class="sa-ic">▼</span>Despesas</a><a href="lojas-painel.html" aria-current="page" class="subaba on"><span aria-hidden="true" class="sa-ic">▦</span>Lojas</a><a href="resultado.html" class="subaba"><span aria-hidden="true" class="sa-ic">∑</span>Resultado (DRE)</a><a href="projecao.html" class="subaba"><span aria-hidden="true" class="sa-ic">◐</span>Projeções</a>              </div>
-<form enctype="multipart/form-data" method="get" action="#" data-mk-form class="painel-filtros">                <input type="date" name="data_de" value="2026-11-01" aria-label="De" class="input painel-filtro" title="De">
-                <input type="date" name="data_ate" value="2026-11-03" aria-label="Até" class="input painel-filtro" title="Até">
-<button type="submit" class="btn btn--secondary btn--sm">Filtrar</button><select aria-label="Período rápido" onchange="if(this.value){window.location.href=this.value}" class="input painel-filtro"><option value="" selected disabled>Período</option><option value="/dashboard/lojas?data_de=2026-11-01&amp;data_ate=2026-11-03">Mês atual</option><option value="/dashboard/lojas?data_de=2026-10-01&amp;data_ate=2026-10-31">Mês passado</option><option value="/dashboard/lojas?data_de=2026-08-01&amp;data_ate=2026-11-03">Últimos 3 meses</option><option value="/dashboard/lojas?data_de=2026-01-01&amp;data_ate=2026-11-03">Ano</option></select></form>            </div>
-            <div class="card bloco" style="">
+            <div class="barra">
+              <div class="barra-esq">
+                <div role="navigation" aria-label="Painéis do Dashboard" class="subabas">
+<a href="fluxo-caixa.html" class="subaba"><span aria-hidden="true" class="sa-ic">◧</span>Fluxo de caixa</a><a href="vendas.html" class="subaba"><span aria-hidden="true" class="sa-ic">▲</span>Vendas</a><a href="despesas.html" class="subaba"><span aria-hidden="true" class="sa-ic">▼</span>Despesas</a><a href="lojas-painel.html" aria-current="page" class="subaba on"><span aria-hidden="true" class="sa-ic">▦</span>Lojas</a><a href="resultado.html" class="subaba"><span aria-hidden="true" class="sa-ic">∑</span>Resultado (DRE)</a><a href="projecao.html" class="subaba"><span aria-hidden="true" class="sa-ic">◐</span>Projeções</a>                </div>
+              </div>
+              <div class="barra-dir">
+<form enctype="multipart/form-data" method="get" action="#" data-mk-form class="painel-filtros">                  <input type="date" name="data_de" value="2026-11-01" aria-label="De" class="input painel-filtro" title="De">
+                  <input type="date" name="data_ate" value="2026-11-09" aria-label="Até" class="input painel-filtro" title="Até">
+<select aria-label="Período rápido" onchange="if(this.value){window.location.href=this.value}" class="input painel-filtro"><option value="" selected disabled>Período</option><option value="/dashboard/lojas?data_de=2026-11-01&amp;data_ate=2026-11-09">Mês atual</option><option value="/dashboard/lojas?data_de=2026-10-01&amp;data_ate=2026-10-31">Mês passado</option><option value="/dashboard/lojas?data_de=2026-08-01&amp;data_ate=2026-11-09">Últimos 3 meses</option><option value="/dashboard/lojas?data_de=2026-01-01&amp;data_ate=2026-11-09">Ano</option></select>                  <div class="filtros-botoes">
+<button type="submit" class="btn btn--secondary btn--sm">Filtrar</button><a href="lojas-painel.html" role="button" class="btn btn--secondary btn--sm">Limpar</a>                  </div>
+</form>              </div>
+            </div>
+            <div class="card bloco contorno tom-ardosia" style="">
               <div class="faixa tom-ardosia">
-<span aria-hidden="true" class="faixa-ic">▦</span><span class="faixa-titulo">Ranking das lojas</span><span class="faixa-nota">rateio já aplicado · ordenado por resultado</span>              </div>
+<span aria-hidden="true" class="faixa-ic">▦</span><span class="faixa-titulo">Ranking das lojas</span><span class="faixa-nota">RATEIO JÁ APLICADO · ORDENADO POR RESULTADO</span>              </div>
               <div class="bloco-corpo">
                 <div class="tbl-wrap">
                   <table class="tbl">
@@ -167,41 +170,41 @@
                         <td>1</td>
                         <td>
 <b>Loja Centro (fictícia)</b>                        </td>
-                        <td class="num">R$ 8.536,65</td>
-                        <td class="num">R$ 423,41</td>
-                        <td class="num pos">+ R$ 8.113,24</td>
-                        <td class="num">95,0%</td>
-                        <td class="num">44,9%</td>
+                        <td class="num">R$ 31.869,43</td>
+                        <td class="num">R$ 17.457,31</td>
+                        <td class="num pos">+ R$ 14.412,12</td>
+                        <td class="num">45,2%</td>
+                        <td class="num">42,0%</td>
                       </tr>
                       <tr>
                         <td>2</td>
                         <td>
 <b>Loja Norte (fictícia)</b>                        </td>
-                        <td class="num">R$ 5.967,72</td>
-                        <td class="num">R$ 72,46</td>
-                        <td class="num pos">+ R$ 5.895,26</td>
-                        <td class="num">98,8%</td>
-                        <td class="num">31,4%</td>
+                        <td class="num">R$ 24.768,13</td>
+                        <td class="num">R$ 12.765,63</td>
+                        <td class="num pos">+ R$ 12.002,50</td>
+                        <td class="num">48,5%</td>
+                        <td class="num">32,7%</td>
                       </tr>
                       <tr>
                         <td>3</td>
                         <td>
 <b>Loja Sul (fictícia)</b>                        </td>
-                        <td class="num">R$ 4.329,46</td>
-                        <td class="num">R$ 54,90</td>
-                        <td class="num pos">+ R$ 4.274,56</td>
-                        <td class="num">98,7%</td>
-                        <td class="num">22,8%</td>
+                        <td class="num">R$ 18.794,71</td>
+                        <td class="num">R$ 9.878,48</td>
+                        <td class="num pos">+ R$ 8.916,23</td>
+                        <td class="num">47,4%</td>
+                        <td class="num">24,8%</td>
                       </tr>
                       <tr>
                         <td>4</td>
                         <td>
 <b>Sem loja</b>                        </td>
-                        <td class="num">R$ 168,29</td>
-                        <td class="num">R$ 6.600,00</td>
-                        <td class="num neg">− R$ 6.431,71</td>
-                        <td class="num">-3821,8%</td>
-                        <td class="num">0,9%</td>
+                        <td class="num">R$ 394,81</td>
+                        <td class="num">R$ 9.410,84</td>
+                        <td class="num neg">− R$ 9.016,03</td>
+                        <td class="num">-2283,6%</td>
+                        <td class="num">0,5%</td>
                       </tr>
                     </tbody>
                   </table>
@@ -234,7 +237,7 @@
 <canvas id="chart-evolucao-loja"></canvas>                </div>
               </div>
             </div>
-<script src="static/js/chart.umd.min.js"></script><script>window.NXDASH = {"resultado_por_loja": {"labels": ["Loja Centro (fictícia)", "Loja Norte (fictícia)", "Loja Sul (fictícia)", "Sem loja"], "receita": [8536.65, 5967.72, 4329.46, 168.29], "despesa": [423.41, 72.46, 54.9, 6600.0]}, "participacao_loja": {"labels": ["Loja Centro (fictícia)", "Loja Norte (fictícia)", "Loja Sul (fictícia)", "Sem loja"], "valores": [8536.65, 5967.72, 4329.46, 168.29]}, "evolucao_loja": {"labels": ["jun/26", "jul/26", "ago/26", "set/26", "out/26", "nov/26"], "series": [{"nome": "Loja Centro (fictícia)", "valores": [25209.9, 24273.99, 33389.82, 31795.89, 30572.83, 8113.24]}, {"nome": "Loja Norte (fictícia)", "valores": [20754.5, 16245.17, 28432.72, 23551.6, 23913.61, 5895.26]}, {"nome": "Loja Sul (fictícia)", "valores": [14121.58, 14136.25, 21579.62, 20341.34, 18922.28, 4274.56]}, {"nome": "Sem loja", "valores": [-38684.72, -45396.43, -31970.65, -34573.58, -43059.12, -6431.71]}]}};</script><script src="static/js/dashboard.js"></script>          </div>
+<script src="static/js/chart.umd.min.js"></script><script>window.NXDASH = {"resultado_por_loja": {"labels": ["Loja Centro (fictícia)", "Loja Norte (fictícia)", "Loja Sul (fictícia)", "Sem loja"], "receita": [31869.43, 24768.13, 18794.71, 394.81], "despesa": [17457.31, 12765.63, 9878.48, 9410.84]}, "participacao_loja": {"labels": ["Loja Centro (fictícia)", "Loja Norte (fictícia)", "Loja Sul (fictícia)", "Sem loja"], "valores": [31869.43, 24768.13, 18794.71, 394.81]}, "evolucao_loja": {"labels": ["jun/26", "jul/26", "ago/26", "set/26", "out/26", "nov/26"], "series": [{"nome": "Loja Centro (fictícia)", "valores": [25787.38, 19310.21, 31676.13, 34478.05, 32951.25, 14412.12]}, {"nome": "Loja Norte (fictícia)", "valores": [19254.52, 18028.09, 26843.66, 25365.51, 24815.75, 12002.5]}, {"nome": "Loja Sul (fictícia)", "valores": [16140.78, 14606.82, 22573.18, 20210.9, 21056.06, 8916.23]}, {"nome": "Sem loja", "valores": [-36508.57, -46397.02, -33572.11, -37592.25, -41475.97, -9016.03]}]}};</script><script src="static/js/dashboard.js"></script>          </div>
         </div>
       </div>
       <div id="navTooltip"></div>
@@ -249,30 +252,16 @@
     caixa.textContent = t; caixa.classList.add('on');
     clearTimeout(relogio); relogio = setTimeout(function () { caixa.classList.remove('on'); }, 2600);
   }
-  function tema(t) {
-    d.setAttribute('data-theme', t);
-    try { if (!d.classList.contains('mk-embed')) localStorage.setItem('mk-tema', t); } catch (e) {}
-    document.querySelectorAll('.theme-switch button[name=tema]').forEach(function (b) {
-      b.classList.toggle('on', (b.value === 'claro') === (t === 'light'));
-    });
-  }
-  tema(d.getAttribute('data-theme'));
-  // dentro do site, o tema acompanha o alternador do site
-  if (d.classList.contains('mk-embed')) try {
-    new MutationObserver(function () { tema(parent.document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'); })
-      .observe(parent.document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-  } catch (e) {}
+  // sem tema claro: a linha "Tema" do menu do usuário não tem o que escolher
+  document.querySelectorAll('.theme-switch').forEach(function (f) { if (f.parentElement) f.parentElement.remove(); });
   document.addEventListener('click', function (e) {
     var a = e.target.closest('a[data-mk-fora]');
     if (a) { e.preventDefault(); avisar('Esta tela fica só no app. O mockup mostra as principais.'); return; }
-    var b = e.target.closest('.theme-switch button[name=tema]');
-    if (b) { e.preventDefault(); tema(b.value === 'claro' ? 'light' : 'dark'); }
   }, true);
   document.addEventListener('submit', function (e) {
     var f = e.target.closest('form[data-mk-form]');
     if (!f) return;
     e.preventDefault();
-    if (f.querySelector('button[name=tema]')) return;
     if (f.querySelector('input[name=senha]')) { location.href = 'index.html'; return; }
     avisar(f.method === 'get' ? 'No mockup os filtros não mudam os dados. No app, a tela recalcula na hora.' : 'Mockup: nada é gravado. No app, isto salva e fica na auditoria.');
   }, true);

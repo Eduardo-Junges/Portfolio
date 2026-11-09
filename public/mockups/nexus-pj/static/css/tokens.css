@@ -153,26 +153,39 @@ body, .card, .btn, .input, .navlink { transition: background var(--dur-base) eas
    ========================================================================== */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
-  height: 2.5rem; padding: 0 1.5rem; border: 0; border-radius: var(--radius-btn);
+  height: 2.5rem; padding: 0 1.5rem; border: 1px solid var(--line-strong); border-radius: var(--radius-btn);
   font: 600 var(--text-sm) var(--font-sans); cursor: pointer; white-space: nowrap;
-  text-decoration: none; transition: all var(--dur-base) var(--ease-pop);
+  text-decoration: none;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease, transform 150ms ease, box-shadow 150ms ease, filter 150ms ease;
 }
 .btn:focus-visible { outline: none; box-shadow: var(--ring); }
 .btn--sm { height: 2rem; padding: 0 1rem; font-size: 13px; }
 
+/* Padrão de botão (28/10/2026): contorno visível em TODAS as variantes; no hover sobe 1px com sombra suave; no clique volta ao
+   lugar. A sombra do tema claro é mais leve. Sem animação de movimento para quem pede menos movimento. */
+.btn:hover, .subaba:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0, 0, 0, .25); }
+:root[data-theme="light"] .btn:hover, :root[data-theme="light"] .subaba:hover { box-shadow: 0 4px 12px rgba(30, 31, 32, .16); }
+.btn:active, .subaba:active { transform: none; box-shadow: none; }
+.btn:focus-visible:hover { box-shadow: var(--ring), 0 4px 12px rgba(0, 0, 0, .25); }
+@media (prefers-reduced-motion: reduce) { .btn, .subaba { transition: none; } .btn:hover, .subaba:hover { transform: none; } }
+
 /* primário = --ink (preto no claro / quase-branco no escuro) — o mesmo
    padrão do botão "COMPRAR" do cliente-piloto, adaptado pros dois temas */
-.btn--primary { color: var(--ink-contrast); background: var(--ink); }
-.btn--primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.btn--primary { color: var(--ink-contrast); background: var(--ink); border-color: var(--line-strong); }
+.btn--primary:hover { filter: brightness(1.1); }
 
-.btn--secondary { color: var(--text-100); background: var(--overlay-2); border: 1px solid var(--line-soft); }
+.btn--secondary { color: var(--text-100); background: var(--overlay-2); border-color: var(--line-soft); }
 .btn--secondary:hover { background: var(--overlay-3); }
 
-.btn--soft { color: var(--text-100); background: var(--overlay-1); border: 1px solid var(--border-1); height: 2rem; padding: 0 1rem; font-size: 13px; }
+.btn--soft { color: var(--text-100); background: var(--overlay-1); border-color: var(--border-1); height: 2rem; padding: 0 1rem; font-size: 13px; }
 .btn--soft:hover { background: var(--overlay-2); }
 
-.btn--ghost { color: var(--text-200); background: transparent; }
+.btn--ghost { color: var(--text-200); background: transparent; border-color: var(--border-1); }
 .btn--ghost:hover { background: var(--overlay-1); color: var(--text-100); }
+
+/* Botão-ícone das colunas finas da tabela (o "+" 22×22 e o lápis 26×26). */
+.btn-icone { width: 22px; height: 22px; min-width: 0; padding: 0; gap: 0; font-size: 14px; line-height: 1; border-radius: 6px; }
+.btn-icone--lapis { width: 26px; height: 26px; font-size: 14px; }
 
 
 /* ==========================================================================
@@ -306,15 +319,23 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); curso
    Tabela de lançamentos
    ========================================================================== */
 .tbl { width: 100%; border-collapse: separate; border-spacing: 0; font-size: var(--text-sm); }
-.tbl th { text-align: left; color: var(--text-mute); font-weight: 600; font-size: var(--text-xs); text-transform: uppercase; letter-spacing: .04em; padding: 10px 14px; border-bottom: 1px solid var(--border-1); }
-.tbl td { padding: 12px 14px; border-bottom: 1px solid var(--overlay-1); color: var(--text-100); }
+.tbl th { text-align: left; color: var(--text-mute); font-weight: 600; font-size: var(--text-xs); text-transform: uppercase; letter-spacing: .04em; padding: 8px 10px; border-bottom: 1px solid var(--border-1); }
+.tbl td { padding: 7px 10px; border-bottom: 1px solid var(--overlay-1); color: var(--text-100); }
 .tbl tr:hover td { background: var(--overlay-1); }
 .tbl .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
 /* Títulos compridos quebram em 2+ linhas (22/10/2026): só as células de número ficam sem quebra; a 1ª coluna
    (rótulo) ganha largura mínima para não virar uma palavra por linha. */
 .tbl th.num { white-space: normal; }
 .tbl th, .tbl td:first-child { overflow-wrap: break-word; }
-.tbl td:first-child, .tbl th:first-child { min-width: 14ch; }
+.tbl td:first-child:not(.col-acao):not(.col-editar), .tbl th:first-child:not(.col-acao):not(.col-editar) { min-width: 14ch; }
+/* Colunas finas (28/10/2026): o "+" de expandir (28px) e o lápis (36px) NÃO herdam o min-width da 1ª coluna. */
+.tbl .col-acao { width: 28px; min-width: 0; max-width: 28px; padding-left: 3px; padding-right: 3px; text-align: center; }
+.tbl .col-editar { width: 36px; min-width: 0; max-width: 36px; padding-left: 5px; padding-right: 5px; text-align: center; }
+.tbl td { line-height: 1.3; }
+/* Colunas curtas (Banco, Loja, Tipo) não quebram: linha baixa. */
+.tbl .cel-nw { white-space: nowrap; }
+/* Texto longo quebra em no máximo 2 linhas. */
+.tbl .cel-txt { display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
 .tbl .pos { color: var(--green-text); font-weight: 600; }
 .tbl .neg { color: var(--red-text); font-weight: 600; }
 
@@ -337,7 +358,10 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); curso
 .auth-glass { width: 100%; max-width: 400px; padding: 32px; border-radius: var(--radius-xl); background: var(--glass); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid var(--line-soft); box-shadow: var(--shadow-card-hover); }
 .auth-glass h1 { font-size: 20px; margin: 18px 0 4px; }
 .auth-glass .sub { color: var(--text-mute); font-size: 13.5px; margin: 0 0 22px; line-height: 1.5; }
+.auth-glass .sub a { color: var(--text-200); text-decoration: underline; text-underline-offset: 3px; }
+.auth-glass .sub a:hover, .auth-glass .sub a:focus-visible { color: var(--text-100); }
 .auth-glass form { display: flex; flex-direction: column; gap: 14px; }
+.auth-glass form + form { margin-top: 14px; }
 .auth-glass .btn { width: 100%; }
 .auth-note { font-size: 12px; color: var(--text-mute); text-align: center; margin-top: 18px; }
 .otp { letter-spacing: .6em; text-align: center; font-size: 22px !important; font-weight: 700; }
@@ -514,15 +538,20 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); curso
    .filters-row — só a Descrição (--lg) cresce se sobrar espaço. */
 .filters-bar { display: flex; align-items: flex-end; gap: 16px; margin-bottom: 18px; flex-wrap: wrap; }
 .filters-bar .theme-switch--text { flex-shrink: 0; }
-/* Planejado (22/10/2026): 8 filtros + botões na MESMA linha das abas; os campos encolhem para caber e só quebram em tela estreita. */
-.filters-bar--linha { flex-wrap: nowrap; gap: 10px; }
-.filters-bar--linha .subabas { flex-wrap: nowrap; flex-shrink: 0; }
-.filters-bar--linha .filters-row--compact { flex-wrap: nowrap; min-width: 0; gap: 6px; }
-.filters-bar--linha .filters-row--compact .field { flex: 1 1 0; width: auto; min-width: 96px; }
-.filters-bar--linha .filters-row--compact .field--md { min-width: 100px; }
-.filters-bar--linha .filters-row--compact .input { padding: 7px 5px; font-size: 12px; text-overflow: ellipsis; }
-.filters-bar--linha .filters-row--compact label { font-size: 11.5px; white-space: nowrap; }
-@media (max-width: 1100px) { .filters-bar--linha, .filters-bar--linha .filters-row--compact { flex-wrap: wrap; } }
+/* Padrão de barra acima da tabela (28/10/2026): à esquerda abas/botões, à direita os filtros terminando em Filtrar e Limpar.
+   No celular (≤ 600px) quebra em duas linhas: botões em cima, filtros embaixo, sem rolagem horizontal. */
+.barra { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px 16px; margin-bottom: 18px; flex-wrap: wrap; }
+.barra-esq { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.barra-dir { display: flex; justify-content: flex-end; margin-left: auto; min-width: 0; flex: 1 1 auto; }
+.barra-dir .filters-row { margin-bottom: 0; justify-content: flex-end; flex: 0 1 auto; }
+.filtros-botoes { display: flex; gap: 8px; align-self: flex-end; flex-shrink: 0; }
+@media (max-width: 600px) {
+  .barra { flex-direction: column; align-items: stretch; }
+  .barra-dir { margin-left: 0; width: 100%; justify-content: flex-start; }
+  .barra-dir .filters-row { justify-content: flex-start; width: 100%; }
+  .barra-dir .filters-row .field { flex: 1 1 120px; width: auto; }
+  .filtros-botoes { width: 100%; }
+}
 .filters-row--compact { margin-bottom: 0; gap: 8px; flex: 1 1 auto; }
 .filters-row--compact .field { min-width: 0; flex-shrink: 0; }
 .filters-row--compact .field--sm { width: 92px; }
@@ -631,13 +660,26 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); curso
 /* Dashboard hub (Fase 6.6) — portado do mockup. */
 .hub-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
 .hub-card { padding: 0; overflow: hidden; cursor: pointer; text-decoration: none; color: inherit; display: block; }
-.hub-prev { height: 150px; padding: 18px; background: linear-gradient(160deg, var(--overlay-2), transparent); border-bottom: 1px solid var(--border-1); display: flex; flex-direction: column; justify-content: flex-end; gap: 9px; }
+/* Prévia do card (28/10/2026): altura fixa, começa de cima e corta por DENTRO — nada vaza para fora do card. */
+.hub-prev { height: 170px; padding: 12px 16px; background: linear-gradient(160deg, var(--overlay-2), transparent); border-bottom: 1px solid var(--border-1); display: flex; flex-direction: column; justify-content: flex-start; gap: 4px; overflow: hidden; }
+.hub-num-r { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--text-mute); }
+.hub-num-v { font-size: 20px; font-weight: 700; line-height: 1.15; font-variant-numeric: tabular-nums; color: var(--text-100); }
+.hub-num-v.neg { color: var(--red-text); }
+.hub-barras { display: flex; flex-direction: column; gap: 5px; min-height: 0; overflow: hidden; margin-top: 4px; }
+.hub-mais { font-size: 11px; line-height: 1; color: var(--text-mute); }
 .hub-info { padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
 .hub-info .nav-badge { width: 36px; height: 36px; font-size: 16px; }
 .hub-info b { display: block; font-size: 14.5px; }
 .hub-info span { font-size: 12.5px; color: var(--text-mute); }
-.mini-bar { display: grid; grid-template-columns: 110px 1fr; align-items: center; gap: 10px; font-size: 11.5px; color: var(--text-mute); }
-.mini-bar i { display: block; height: 10px; border-radius: var(--radius-pill); background: linear-gradient(90deg, var(--ink), rgba(var(--green-rgb), .7)); }
+.mini-bar { display: grid; grid-template-columns: 92px minmax(0, 1fr) 66px; align-items: center; gap: 8px; font-size: 11.5px; color: var(--text-mute); }
+.mini-bar span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mini-bar b { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text-200); white-space: nowrap; }
+.mini-bar b.neg { color: var(--red-text); }
+.mini-trilho { min-width: 0; }
+.mini-bar i { display: block; height: 8px; border-radius: var(--radius-pill); background: linear-gradient(90deg, var(--ink), rgba(var(--green-rgb), .7));
+  transform-origin: left center; animation: hubBarra 600ms var(--ease-standard) both; animation-delay: calc(var(--n, 0) * 70ms); }
+@keyframes hubBarra { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) { .mini-bar i { animation: none; } }
 .hub-card--breve { border-style: dashed; cursor: default; opacity: .75; }
 .hub-card--breve .hub-prev { align-items: center; justify-content: center; font-size: 34px; color: var(--text-mute); }
 
@@ -817,6 +859,23 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); curso
 .orc-barra { height: 9px; border-radius: 999px; background: var(--overlay-2); overflow: hidden; display: inline-block; width: 140px; vertical-align: middle; }
 .orc-fill { height: 100%; border-radius: 999px; max-width: 100%; }
 .orc-pct { margin-left: 8px; font-weight: 700; font-variant-numeric: tabular-nums; font-size: 12.5px; }
+/* Ritmo do mês: realizado, traço do orçado, traço de onde deveria estar hoje e ponta tracejada da projeção */
+.orc-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 18px; }
+.orc-kpi { padding: 10px 14px; border-radius: 10px; background: var(--overlay-2); }
+.orc-kpi-val { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: 2px; }
+.orc-kpi.orc-kpi--alerta { box-shadow: inset 3px 0 0 var(--amber); }
+.orc-b { padding: 10px 0; border-top: 1px solid var(--overlay-2); }
+.orc-b-topo { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; }
+.orc-b-val { font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.orc-bullet { position: relative; height: 14px; border-radius: 999px; background: var(--overlay-2); margin: 5px 0; }
+.orc-b-fill { position: absolute; left: 0; top: 0; height: 100%; border-radius: 999px; transform-origin: left center; }
+.orc-b-proj { position: absolute; top: 0; height: 100%; border-radius: 0 999px 999px 0; background: repeating-linear-gradient(135deg, var(--overlay-2) 0 4px, transparent 4px 8px); opacity: .9; }
+.orc-b-proj--alerta { background: repeating-linear-gradient(135deg, var(--amber) 0 4px, transparent 4px 8px); }
+.orc-b-meta, .orc-b-hoje { position: absolute; top: -4px; width: 3px; height: 22px; margin-left: -2px; border-radius: 2px; }
+.orc-b-meta { background: var(--text-100); opacity: .85; }
+.orc-b-hoje { background: var(--text-100); opacity: .4; width: 2px; }
+.orc-b-nota { font-size: 12px; margin-top: 4px; color: var(--text-mute); font-variant-numeric: tabular-nums; }
+.orc-b-nota--alerta { color: var(--text-100); font-weight: 600; box-shadow: inset 3px 0 0 var(--amber); padding-left: 8px; }
 .cmp-tbl td.cmp-var, .cmp-tbl th.cmp-var { min-width: 120px; }
 .cmp-tbl td:first-child, .cmp-tbl th:first-child { min-width: 180px; }
 .cmp-tbl th.num { min-width: 130px; }
@@ -887,6 +946,19 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); curso
 .contorno { border: 2px solid var(--contorno, var(--border-1)); }
 .contorno--ambar { --contorno: rgb(var(--tom-ambar)); }
 .contorno--azul { --contorno: rgb(var(--tom-azul)); }
+/* Contorno do bloco de tabela (28/10/2026): a cor vem do tom do assunto (`tom-<nome>`), ressaltada com um halo fino. */
+/* Balanço em dois quadros (28/10/2026): ATIVO (azul) à esquerda, PASSIVO + PL (vermelho/âmbar) à direita; empilha até 900px. */
+.balanco-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; }
+@media (max-width: 900px) { .balanco-grid { grid-template-columns: minmax(0, 1fr); } }
+.bal td.bal-titulo { font-size: 11.5px; font-weight: 700; letter-spacing: .06em; padding-top: 12px; }
+.bal td.bal-ativo { color: var(--blue-text); }
+.bal td.bal-passivo { color: var(--red-text); }
+.bal td.bal-pl { color: var(--amber-text); }
+.bal tr.bal-total td { font-weight: 700; background: var(--overlay-1); }
+.bal .bal-confere { color: var(--green-text); font-weight: 700; }
+.tom-bal-passivo { --tom: var(--red-rgb); --tom-tx: var(--red-text); }
+.tom-bal-pl { --tom: var(--amber-rgb); --tom-tx: var(--amber-text); }
+.contorno.bloco { --contorno: rgb(var(--tom)); box-shadow: 0 0 0 1px rgba(var(--tom), .22), var(--shadow-card); }
 .contorno--ambar .tbl tbody tr { border-bottom: 1px dashed var(--border-1); }
 .plan-it { font-style: italic; }
 .plan-valor { font-style: italic; }
@@ -936,3 +1008,23 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); curso
 /* QR code do 2FA: quadrado branco com margem, para ler bem em qualquer tema. */
 .qr-caixa { background: #fff; padding: 16px; border-radius: 12px; width: fit-content; max-width: 260px; margin: 0 auto 16px; line-height: 0; }
 .qr-caixa svg { width: 100%; height: auto; display: block; }
+
+/* Calendário de movimento: um quadrado por dia; a cor (opacidade) cresce com o valor. Sem JS: botões de rádio escolhem a visão */
+.cal { position: relative; }
+.cal-radio { position: absolute; opacity: 0; pointer-events: none; }
+.cal-aba { display: inline-block; padding: 6px 14px; margin: 0 6px 12px 0; border-radius: 999px; border: 1px solid var(--border-1); color: var(--text-200); cursor: pointer; font-size: 13px; min-height: 32px; box-sizing: border-box; }
+.cal-radio:checked + .cal-aba { background: var(--overlay-2); color: var(--text-100); border-color: var(--text-200); font-weight: 600; }
+.cal-radio:focus-visible + .cal-aba { outline: 2px solid var(--text-100); outline-offset: 2px; }
+.cal-grade { display: none; max-width: 460px; }
+#cal-v-saidas:checked ~ .cal-grade--saidas, #cal-v-entradas:checked ~ .cal-grade--entradas, #cal-v-resultado:checked ~ .cal-grade--resultado { display: block; }
+.cal-semana { display: grid; grid-template-columns: 52px repeat(7, minmax(0, 1fr)); gap: 4px; margin-bottom: 4px; }
+.cal-mes { font-size: 11.5px; color: var(--text-mute); align-self: center; }
+.cal-dsem { text-align: center; font-size: 11.5px; color: var(--text-mute); }
+.cal-c { position: relative; aspect-ratio: 1; min-height: 30px; border-radius: 6px; display: flex; align-items: flex-start; justify-content: flex-start; padding: 3px 5px; font-size: 11px; font-variant-numeric: tabular-nums; color: var(--text-100); background: var(--overlay-2); overflow: hidden; box-sizing: border-box; isolation: isolate; }
+.cal-c::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--c); opacity: var(--i, 0); }
+.cal-c--pos { --c: var(--green); }
+.cal-c--neg { --c: var(--red); }
+.cal-c--fora { background: transparent; }
+.cal-c--vazio { opacity: .55; }
+.cal-nota { font-size: 12px; color: var(--text-mute); margin-top: 8px; }
+html[data-efeitos="completo"] .cal-grade .cal-c:not(.cal-c--fora) { animation: nx-sobe .5s cubic-bezier(.2, .7, .2, 1) both; animation-delay: calc(var(--col, 0) * 40ms); }

@@ -38,7 +38,7 @@ const TEXTOS = ['ink', 'ink-dim', 'ink-mute', 'ink-faint', 'accent', 'signal'];
 const CATS = ['automacao', 'ia', 'dados', 'financas', 'processos', 'sistemas', 'desenvolvimento', 'produto'];
 
 let falhas = 0;
-for (const [nome, sel] of [['escuro', ':root'], ['claro', "[data-theme='light']"]]) {
+for (const [nome, sel] of [['escuro', ':root']]) {
   const base = bloco(':root');
   const t = { ...base, ...(sel === ':root' ? {} : bloco(sel)) };
   const bg = t.bg.rgb;

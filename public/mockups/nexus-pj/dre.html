@@ -5,19 +5,13 @@
 <meta name="robots" content="noindex">
 <script>
 /* Mockup estático do Nexus & PJ (dados fictícios). Antes do primeiro paint:
-   ?embed = dentro do site (iframe), o tema acompanha o site; fora dele vale o
-   tema escolhido no próprio mockup. */
+   ?embed = dentro do site (iframe). O tema é sempre o escuro. */
 (function () {
   var d = document.documentElement, t = 'dark';
   var embed = /[?&]embed\b/.test(location.search);
   try { embed = embed || sessionStorage.getItem('mk-embed') === '1'; if (embed) sessionStorage.setItem('mk-embed', '1'); } catch (e) {}
-  if (embed) {
-    d.classList.add('mk-embed');
-    try { if (parent.document.documentElement.dataset.theme === 'light') t = 'light'; } catch (e) {}
-  } else {
-    try { if (localStorage.getItem('mk-tema') === 'light') t = 'light'; } catch (e) {}
-  }
-  d.setAttribute('data-theme', t);
+  if (embed) d.classList.add('mk-embed');
+  d.setAttribute('data-theme', t);   // o site só tem tema escuro
   // dentro do site o Dashboard aparece direto, sem a janela de boas-vindas por cima
   if (embed) {
     var abrir = HTMLDialogElement.prototype.showModal;
@@ -43,6 +37,9 @@
   .mk-selo{position:fixed;right:14px;bottom:14px;z-index:9999;padding:6px 10px;border-radius:999px;font:600 11px/1 system-ui,sans-serif;
     letter-spacing:.04em;background:rgba(17,24,39,.85);color:#e5e7eb;border:1px solid rgba(255,255,255,.14)}
   .mk-embed .mk-selo{display:none}
+  /* no card do site a janela é estreita: a busca encolhe para o nome do usuário caber */
+  .mk-embed .busca-wrap{min-width:0;flex:1 1 8rem;max-width:16rem}
+  .mk-embed .busca-wrap input{min-width:0;width:100%;text-overflow:ellipsis}
 </style>
 
     <title>Nexus &amp; PJ — mockup (/dashboard/dre)</title>
@@ -77,7 +74,7 @@
 .subabas{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .subaba{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;font-size:12.5px;font-weight:600;
   color:var(--text-200);background:var(--surface-1);border:1px solid var(--border-1);text-decoration:none;white-space:nowrap;
-  transition:background var(--dur-fast) ease,color var(--dur-fast) ease,border-color var(--dur-fast) ease}
+  transition:background 150ms ease,color 150ms ease,border-color 150ms ease,transform 150ms ease,box-shadow 150ms ease}
 .subaba .sa-ic{font-size:13px;line-height:1;color:var(--tom-tx,var(--text-200))}
 .subaba:hover{color:var(--text-100);border-color:var(--line-strong)}
 .subaba:focus-visible{outline:2px solid var(--text-200);outline-offset:2px}
@@ -93,7 +90,7 @@
   </head>
   <body>
     <div id="appShell" class="shell">
-      
+<script>(function(){var s=document.currentScript&&document.currentScript.parentNode;try{if(s&&localStorage.getItem('nx-menu-1')==='1')s.classList.add('sidebar-collapsed');}catch(e){}})();</script>      
       <div id="appSidebar" class="sidebar">
         <div class="brand">
 <a href="index.html" class="brand-btn" title="Ir para o Dashboard"><img src="static/branding/icone-dark.png" alt="" class="brand-icon"><span class="brand-name">Nexus &amp; PJ</span></a>        </div>
@@ -112,7 +109,7 @@
             <div class="title">Contábil</div>
           </div>
           <div class="actions">
-<span class="mod-periodo">📅 <span>01/01/2026 a 03/11/2026</span></span>            <div class="busca-wrap">
+<span class="mod-periodo">📅 <span>01/01/2026 a 09/11/2026</span></span>            <div class="busca-wrap">
 <label class="topbar-ia"><span class="ia-emoji">🔎</span>                <input type="text" name="q" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="buscaPainel" aria-autocomplete="list" data-ia="1" placeholder="Pesquise um valor, nome ou data… ex.: 1200, pix fabricio — ou pergunte à IA" aria-label="Pesquisar no painel ou perguntar à IA" id="buscaInput">
 <kbd>/</kbd></label>              <div role="listbox" aria-label="Resultados da busca" hidden id="buscaPainel" class="busca-painel"></div>
             </div>
@@ -142,22 +139,28 @@
             <div role="navigation" aria-label="Área contábil" class="subabas">
 <a href="dre.html" aria-current="page" class="subaba on"><span aria-hidden="true" class="sa-ic">∑</span>DRE</a><a href="balancete.html" class="subaba"><span aria-hidden="true" class="sa-ic">⚖</span>Balancete</a><a href="balanco.html" class="subaba"><span aria-hidden="true" class="sa-ic">▦</span>Balanço patrimonial</a>            </div>
             <div>
-              <div class="painel-topo" style="">
-                <div role="navigation" aria-label="Tipo de DRE" class="subabas">
-<a href="dre.html" class="subaba"><span aria-hidden="true" class="sa-ic">◔</span>Competência</a><a href="dre.html" aria-current="page" class="subaba on"><span aria-hidden="true" class="sa-ic">◧</span>Caixa</a>                </div>
-<form enctype="multipart/form-data" method="get" action="#" data-mk-form class="painel-filtros">                  <input type="hidden" name="tipo" value="caixa">
-                  <input type="date" name="data_de" value="2026-01-01" aria-label="De" class="input painel-filtro" title="De">
-                  <input type="date" name="data_ate" value="2026-11-03" aria-label="Até" class="input painel-filtro" title="Até">
-<select name="loja" aria-label="Loja" class="input painel-filtro"><option value="">Todas as lojas</option><option value="1">Loja Centro (fictícia)</option><option value="2">Loja Norte (fictícia)</option><option value="3">Loja Sul (fictícia)</option><option value="sem">Sem loja</option></select><button type="submit" class="btn btn--secondary btn--sm">Filtrar</button><select aria-label="Período rápido" onchange="if(this.value){window.location.href=this.value}" class="input painel-filtro"><option value="" selected disabled>Período</option><option value="/dashboard/dre?data_de=2026-11-01&amp;data_ate=2026-11-03&amp;tipo=caixa">Mês atual</option><option value="/dashboard/dre?data_de=2026-10-01&amp;data_ate=2026-10-31&amp;tipo=caixa">Mês passado</option><option value="/dashboard/dre?data_de=2026-08-01&amp;data_ate=2026-11-03&amp;tipo=caixa">Últimos 3 meses</option><option value="/dashboard/dre?data_de=2026-01-01&amp;data_ate=2026-11-03&amp;tipo=caixa">Ano</option></select></form>              </div>
-              <div class="card bloco" style="margin-top:14px;">
+              <div class="barra">
+                <div class="barra-esq">
+                  <div role="navigation" aria-label="Tipo de DRE" class="subabas">
+<a href="dre.html" class="subaba"><span aria-hidden="true" class="sa-ic">◔</span>Competência</a><a href="dre.html" aria-current="page" class="subaba on"><span aria-hidden="true" class="sa-ic">◧</span>Caixa</a>                  </div>
+<button type="button" id="dre-expandir" class="btn btn--secondary btn--sm" name="dre-expandir">Expandir tudo</button><button type="button" id="dre-recolher" class="btn btn--secondary btn--sm" name="dre-recolher">Recolher tudo</button>                </div>
+                <div class="barra-dir">
+<form enctype="multipart/form-data" method="get" action="#" data-mk-form class="painel-filtros">                    <input type="hidden" name="tipo" value="caixa">
+                    <input type="date" name="data_de" value="2026-01-01" aria-label="De" class="input painel-filtro" title="De">
+                    <input type="date" name="data_ate" value="2026-11-09" aria-label="Até" class="input painel-filtro" title="Até">
+<select name="loja" aria-label="Loja" class="input painel-filtro"><option value="">Todas as lojas</option><option value="1">Loja Centro (fictícia)</option><option value="2">Loja Norte (fictícia)</option><option value="3">Loja Sul (fictícia)</option><option value="sem">Sem loja</option></select><select aria-label="Período rápido" onchange="if(this.value){window.location.href=this.value}" class="input painel-filtro"><option value="" selected disabled>Período</option><option value="/dashboard/dre?data_de=2026-11-01&amp;data_ate=2026-11-09&amp;tipo=caixa">Mês atual</option><option value="/dashboard/dre?data_de=2026-10-01&amp;data_ate=2026-10-31&amp;tipo=caixa">Mês passado</option><option value="/dashboard/dre?data_de=2026-08-01&amp;data_ate=2026-11-09&amp;tipo=caixa">Últimos 3 meses</option><option value="/dashboard/dre?data_de=2026-01-01&amp;data_ate=2026-11-09&amp;tipo=caixa">Ano</option></select>                    <div class="filtros-botoes">
+<button type="submit" class="btn btn--secondary btn--sm">Filtrar</button><a href="dre.html" role="button" class="btn btn--secondary btn--sm">Limpar</a>                    </div>
+</form>                </div>
+              </div>
+              <div class="dre-ferramentas">
+<span class="text-mute" style="font-size:12.5px;">Clique no ▸ (ou use Tab e Enter) para abrir cada camada, até os lançamentos.</span>              </div>
+              <div class="card bloco contorno tom-ciano" style="margin-top:8px;">
                 <div class="faixa tom-ciano">
-<span aria-hidden="true" class="faixa-ic">◈</span><span class="faixa-titulo">DRE por caixa</span><span class="faixa-nota">meses em colunas · totais em negrito</span>                </div>
+<span aria-hidden="true" class="faixa-ic">◈</span><span class="faixa-titulo">DRE por caixa</span><span class="faixa-nota">MESES EM COLUNAS · TOTAIS EM NEGRITO</span>                </div>
                 <div class="bloco-corpo">
                   <div>
-                    <div class="dre-ferramentas">
-<button type="button" id="dre-expandir" class="btn btn--secondary btn--sm" name="dre-expandir">Expandir tudo</button><button type="button" id="dre-recolher" class="btn btn--ghost btn--sm" name="dre-recolher">Recolher tudo</button><span class="text-mute" style="font-size:12.5px;">Clique no ▸ (ou use Tab e Enter) para abrir cada camada, até os lançamentos.</span>                    </div>
                     <div class="tbl-wrap dre-wrap">
-                      <table data-qs="data_de=2026-01-01&amp;data_ate=2026-11-03" id="dre-tabela" class="tbl dre">
+                      <table data-qs="data_de=2026-01-01&amp;data_ate=2026-11-09" id="dre-tabela" class="tbl dre">
                         <thead>
                           <tr>
                             <th rowspan="2" class="dre-nome">Linha da DRE</th>
@@ -182,120 +185,119 @@
                           <tr data-id="L:receita_bruta" data-nivel="0" class="dre-n0">
                             <td class="dre-nome" style="padding-left:8px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Receita bruta de vendas" class="dre-tg">▸</button><span class="dre-rotulo">Receita bruta de vendas</span>                            </td>
-                            <td class="num v-pos">R$ 204.491,69</td>
-                            <td class="num v-pos">R$ 182.532,61</td>
-                            <td class="num v-pos">R$ 221.620,97</td>
-                            <td class="num v-pos">R$ 236.476,34</td>
-                            <td class="num v-pos">R$ 269.109,75</td>
-                            <td class="num v-pos">R$ 221.640,70</td>
-                            <td class="num v-pos">R$ 230.054,75</td>
-                            <td class="num v-pos">R$ 248.355,46</td>
-                            <td class="num v-pos">R$ 235.233,92</td>
-                            <td class="num v-pos">R$ 270.143,93</td>
-                            <td class="num v-pos">R$ 18.833,83</td>
-                            <td class="num v-pos">R$ 2.338.493,95</td>
+                            <td class="num v-pos">R$ 204.473,96</td>
+                            <td class="num v-pos">R$ 177.018,42</td>
+                            <td class="num v-pos">R$ 221.473,89</td>
+                            <td class="num v-pos">R$ 225.604,43</td>
+                            <td class="num v-pos">R$ 265.260,09</td>
+                            <td class="num v-pos">R$ 218.981,31</td>
+                            <td class="num v-pos">R$ 224.787,95</td>
+                            <td class="num v-pos">R$ 245.422,58</td>
+                            <td class="num v-pos">R$ 239.021,07</td>
+                            <td class="num v-pos">R$ 275.048,96</td>
+                            <td class="num v-pos">R$ 75.432,27</td>
+                            <td class="num v-pos">R$ 2.372.524,93</td>
                           </tr>
                           <tr data-id="G:receita_bruta:6" data-pai="L:receita_bruta" hidden data-nivel="1" class="dre-n1">
                             <td class="dre-nome" style="padding-left:26px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Vendas" class="dre-tg">▸</button><span class="dre-rotulo">Vendas</span>                            </td>
-                            <td class="num v-pos">R$ 204.491,69</td>
-                            <td class="num v-pos">R$ 181.410,96</td>
-                            <td class="num v-pos">R$ 221.620,97</td>
-                            <td class="num v-pos">R$ 236.476,34</td>
-                            <td class="num v-pos">R$ 269.109,75</td>
-                            <td class="num v-pos">R$ 221.640,70</td>
-                            <td class="num v-pos">R$ 230.054,75</td>
-                            <td class="num v-pos">R$ 248.355,46</td>
-                            <td class="num v-pos">R$ 235.233,92</td>
-                            <td class="num v-pos">R$ 270.143,93</td>
-                            <td class="num v-pos">R$ 18.833,83</td>
-                            <td class="num v-pos">R$ 2.337.372,30</td>
+                            <td class="num v-pos">R$ 204.473,96</td>
+                            <td class="num v-pos">R$ 177.018,42</td>
+                            <td class="num v-pos">R$ 221.473,89</td>
+                            <td class="num v-pos">R$ 225.604,43</td>
+                            <td class="num v-pos">R$ 265.260,09</td>
+                            <td class="num v-pos">R$ 218.981,31</td>
+                            <td class="num v-pos">R$ 224.787,95</td>
+                            <td class="num v-pos">R$ 245.422,58</td>
+                            <td class="num v-pos">R$ 239.021,07</td>
+                            <td class="num v-pos">R$ 272.532,15</td>
+                            <td class="num v-pos">R$ 75.432,27</td>
+                            <td class="num v-pos">R$ 2.370.008,12</td>
                           </tr>
                           <tr data-id="S:receita_bruta:6:7" data-pai="G:receita_bruta:6" hidden data-cat="7" data-nivel="2" class="dre-n2">
                             <td class="dre-nome" style="padding-left:44px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Cartão de crédito" class="dre-tg">▸</button><span class="dre-rotulo">Cartão de crédito</span>                            </td>
-                            <td class="num v-pos">R$ 100.038,89</td>
-                            <td class="num v-pos">R$ 88.559,30</td>
-                            <td class="num v-pos">R$ 109.145,05</td>
-                            <td class="num v-pos">R$ 117.518,04</td>
-                            <td class="num v-pos">R$ 132.327,09</td>
-                            <td class="num v-pos">R$ 110.539,64</td>
-                            <td class="num v-pos">R$ 112.373,37</td>
-                            <td class="num v-pos">R$ 122.487,23</td>
-                            <td class="num v-pos">R$ 114.256,80</td>
-                            <td class="num v-pos">R$ 131.603,62</td>
-                            <td class="num v-pos">R$ 9.237,66</td>
-                            <td class="num v-pos">R$ 1.148.086,69</td>
+                            <td class="num v-pos">R$ 101.725,17</td>
+                            <td class="num v-pos">R$ 87.592,78</td>
+                            <td class="num v-pos">R$ 107.455,17</td>
+                            <td class="num v-pos">R$ 108.351,46</td>
+                            <td class="num v-pos">R$ 129.640,28</td>
+                            <td class="num v-pos">R$ 107.205,70</td>
+                            <td class="num v-pos">R$ 108.911,53</td>
+                            <td class="num v-pos">R$ 119.541,51</td>
+                            <td class="num v-pos">R$ 115.379,57</td>
+                            <td class="num v-pos">R$ 133.265,52</td>
+                            <td class="num v-pos">R$ 35.477,04</td>
+                            <td class="num v-pos">R$ 1.154.545,73</td>
                           </tr>
                           <tr data-id="S:receita_bruta:6:4" data-pai="G:receita_bruta:6" hidden data-cat="4" data-nivel="2" class="dre-n2">
                             <td class="dre-nome" style="padding-left:44px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Pix" class="dre-tg">▸</button><span class="dre-rotulo">Pix</span>                            </td>
-                            <td class="num v-pos">R$ 67.935,37</td>
-                            <td class="num v-pos">R$ 59.882,38</td>
-                            <td class="num v-pos">R$ 73.862,86</td>
-                            <td class="num v-pos">R$ 76.224,43</td>
-                            <td class="num v-pos">R$ 90.703,48</td>
-                            <td class="num v-pos">R$ 73.097,34</td>
-                            <td class="num v-pos">R$ 76.706,51</td>
-                            <td class="num v-pos">R$ 82.829,21</td>
-                            <td class="num v-pos">R$ 79.081,53</td>
-                            <td class="num v-pos">R$ 90.070,67</td>
-                            <td class="num v-pos">R$ 6.285,35</td>
-                            <td class="num v-pos">R$ 776.679,13</td>
+                            <td class="num v-pos">R$ 66.797,18</td>
+                            <td class="num v-pos">R$ 57.958,27</td>
+                            <td class="num v-pos">R$ 74.041,48</td>
+                            <td class="num v-pos">R$ 76.857,72</td>
+                            <td class="num v-pos">R$ 88.637,74</td>
+                            <td class="num v-pos">R$ 74.058,86</td>
+                            <td class="num v-pos">R$ 75.450,13</td>
+                            <td class="num v-pos">R$ 82.687,78</td>
+                            <td class="num v-pos">R$ 80.204,40</td>
+                            <td class="num v-pos">R$ 89.553,51</td>
+                            <td class="num v-pos">R$ 26.530,02</td>
+                            <td class="num v-pos">R$ 792.777,09</td>
                           </tr>
                           <tr data-id="S:receita_bruta:6:8" data-pai="G:receita_bruta:6" hidden data-cat="8" data-nivel="2" class="dre-n2">
                             <td class="dre-nome" style="padding-left:44px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Cartão de débito" class="dre-tg">▸</button><span class="dre-rotulo">Cartão de débito</span>                            </td>
-                            <td class="num v-pos">R$ 31.885,94</td>
-                            <td class="num v-pos">R$ 28.074,96</td>
-                            <td class="num v-pos">R$ 34.102,04</td>
-                            <td class="num v-pos">R$ 37.714,49</td>
-                            <td class="num v-pos">R$ 40.908,87</td>
-                            <td class="num v-pos">R$ 34.719,88</td>
-                            <td class="num v-pos">R$ 35.567,40</td>
-                            <td class="num v-pos">R$ 38.349,96</td>
-                            <td class="num v-pos">R$ 36.229,29</td>
-                            <td class="num v-pos">R$ 42.841,22</td>
-                            <td class="num v-pos">R$ 3.310,82</td>
-                            <td class="num v-pos">R$ 363.704,87</td>
+                            <td class="num v-pos">R$ 32.248,49</td>
+                            <td class="num v-pos">R$ 26.726,64</td>
+                            <td class="num v-pos">R$ 34.958,86</td>
+                            <td class="num v-pos">R$ 35.065,22</td>
+                            <td class="num v-pos">R$ 41.395,37</td>
+                            <td class="num v-pos">R$ 34.992,18</td>
+                            <td class="num v-pos">R$ 34.818,15</td>
+                            <td class="num v-pos">R$ 38.315,72</td>
+                            <td class="num v-pos">R$ 38.007,34</td>
+                            <td class="num v-pos">R$ 43.532,00</td>
+                            <td class="num v-pos">R$ 11.406,34</td>
+                            <td class="num v-pos">R$ 371.466,31</td>
                           </tr>
                           <tr data-id="S:receita_bruta:6:9" data-pai="G:receita_bruta:6" hidden data-cat="9" data-nivel="2" class="dre-n2">
                             <td class="dre-nome" style="padding-left:44px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Boleto" class="dre-tg">▸</button><span class="dre-rotulo">Boleto</span>                            </td>
-                            <td class="num v-pos">R$ 3.348,49</td>
-                            <td class="num v-pos">R$ 2.949,08</td>
-                            <td class="num v-pos">R$ 2.976,04</td>
-                            <td class="num v-pos">R$ 3.569,98</td>
-                            <td class="num v-pos">R$ 3.623,85</td>
-                            <td class="num v-pos">R$ 3.283,84</td>
-                            <td class="num v-pos">R$ 4.109,70</td>
-                            <td class="num v-pos">R$ 3.426,30</td>
-                            <td class="num v-pos">R$ 4.116,88</td>
-                            <td class="num v-pos">R$ 3.992,14</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num v-pos">R$ 35.396,30</td>
+                            <td class="num v-pos">R$ 2.609,25</td>
+                            <td class="num v-pos">R$ 3.194,64</td>
+                            <td class="num v-pos">R$ 3.408,52</td>
+                            <td class="num v-pos">R$ 4.053,32</td>
+                            <td class="num v-pos">R$ 4.002,58</td>
+                            <td class="num v-pos">R$ 2.724,57</td>
+                            <td class="num v-pos">R$ 4.542,51</td>
+                            <td class="num v-pos">R$ 3.711,75</td>
+                            <td class="num v-pos">R$ 4.120,23</td>
+                            <td class="num v-pos">R$ 4.600,97</td>
+                            <td class="num v-pos">R$ 1.088,65</td>
+                            <td class="num v-pos">R$ 38.056,99</td>
                           </tr>
                           <tr data-id="S:receita_bruta:6:10" data-pai="G:receita_bruta:6" hidden data-cat="10" data-nivel="2" class="dre-n2">
                             <td class="dre-nome" style="padding-left:44px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Crediário" class="dre-tg">▸</button><span class="dre-rotulo">Crediário</span>                            </td>
-                            <td class="num v-pos">R$ 1.283,00</td>
-                            <td class="num v-pos">R$ 1.945,24</td>
-                            <td class="num v-pos">R$ 1.534,98</td>
-                            <td class="num v-pos">R$ 1.449,40</td>
-                            <td class="num v-pos">R$ 1.546,46</td>
+                            <td class="num v-pos">R$ 1.093,87</td>
+                            <td class="num v-pos">R$ 1.546,09</td>
+                            <td class="num v-pos">R$ 1.609,86</td>
+                            <td class="num v-pos">R$ 1.276,71</td>
+                            <td class="num v-pos">R$ 1.584,12</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-pos">R$ 1.297,77</td>
-                            <td class="num v-pos">R$ 1.262,76</td>
-                            <td class="num v-pos">R$ 1.549,42</td>
-                            <td class="num v-pos">R$ 1.636,28</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num v-pos">R$ 13.505,31</td>
+                            <td class="num v-pos">R$ 1.065,63</td>
+                            <td class="num v-pos">R$ 1.165,82</td>
+                            <td class="num v-pos">R$ 1.309,53</td>
+                            <td class="num v-pos">R$ 1.580,15</td>
+                            <td class="num v-pos">R$ 930,22</td>
+                            <td class="num v-pos">R$ 13.162,00</td>
                           </tr>
                           <tr data-id="G:receita_bruta:11" data-pai="L:receita_bruta" hidden data-nivel="1" class="dre-n1">
                             <td class="dre-nome" style="padding-left:26px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Depósitos" class="dre-tg">▸</button><span class="dre-rotulo">Depósitos</span>                            </td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-pos">R$ 1.121,65</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
@@ -304,14 +306,14 @@
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
+                            <td class="num v-pos">R$ 2.516,81</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-pos">R$ 1.121,65</td>
+                            <td class="num v-pos">R$ 2.516,81</td>
                           </tr>
                           <tr data-id="S:receita_bruta:11:12" data-pai="G:receita_bruta:11" hidden data-cat="12" data-nivel="2" class="dre-n2">
                             <td class="dre-nome" style="padding-left:44px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Venda" class="dre-tg">▸</button><span class="dre-rotulo">Venda</span>                            </td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-pos">R$ 1.121,65</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
@@ -320,248 +322,249 @@
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
+                            <td class="num v-pos">R$ 2.516,81</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-pos">R$ 1.121,65</td>
+                            <td class="num v-pos">R$ 2.516,81</td>
                           </tr>
                           <tr data-id="L:impostos_vendas" data-nivel="0" class="dre-n0">
                             <td class="dre-nome" style="padding-left:8px;">
 <button type="button" aria-expanded="false" aria-label="Abrir (−) Impostos sobre vendas" class="dre-tg">▸</button><span class="dre-rotulo">(−) Impostos sobre vendas</span>                            </td>
-                            <td class="num v-neg">− R$ 21.026,15</td>
-                            <td class="num v-neg">− R$ 14.314,42</td>
-                            <td class="num v-neg">− R$ 12.698,77</td>
-                            <td class="num v-neg">− R$ 15.513,47</td>
-                            <td class="num v-neg">− R$ 16.553,34</td>
-                            <td class="num v-neg">− R$ 18.837,68</td>
-                            <td class="num v-neg">− R$ 15.514,85</td>
-                            <td class="num v-neg">− R$ 16.103,83</td>
-                            <td class="num v-neg">− R$ 17.384,88</td>
-                            <td class="num v-neg">− R$ 16.466,37</td>
+                            <td class="num v-neg">− R$ 20.324,98</td>
+                            <td class="num v-neg">− R$ 14.313,18</td>
+                            <td class="num v-neg">− R$ 12.391,29</td>
+                            <td class="num v-neg">− R$ 15.503,17</td>
+                            <td class="num v-neg">− R$ 15.792,31</td>
+                            <td class="num v-neg">− R$ 18.568,21</td>
+                            <td class="num v-neg">− R$ 15.328,69</td>
+                            <td class="num v-neg">− R$ 15.735,16</td>
+                            <td class="num v-neg">− R$ 17.179,58</td>
+                            <td class="num v-neg">− R$ 16.731,47</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 164.413,76</td>
+                            <td class="num v-neg">− R$ 161.868,04</td>
                           </tr>
                           <tr data-id="G:impostos_vendas:33" data-pai="L:impostos_vendas" hidden data-nivel="1" class="dre-n1">
                             <td class="dre-nome" style="padding-left:26px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Impostos" class="dre-tg">▸</button><span class="dre-rotulo">Impostos</span>                            </td>
-                            <td class="num v-neg">− R$ 21.026,15</td>
-                            <td class="num v-neg">− R$ 14.314,42</td>
-                            <td class="num v-neg">− R$ 12.698,77</td>
-                            <td class="num v-neg">− R$ 15.513,47</td>
-                            <td class="num v-neg">− R$ 16.553,34</td>
-                            <td class="num v-neg">− R$ 18.837,68</td>
-                            <td class="num v-neg">− R$ 15.514,85</td>
-                            <td class="num v-neg">− R$ 16.103,83</td>
-                            <td class="num v-neg">− R$ 17.384,88</td>
-                            <td class="num v-neg">− R$ 16.466,37</td>
+                            <td class="num v-neg">− R$ 20.324,98</td>
+                            <td class="num v-neg">− R$ 14.313,18</td>
+                            <td class="num v-neg">− R$ 12.391,29</td>
+                            <td class="num v-neg">− R$ 15.503,17</td>
+                            <td class="num v-neg">− R$ 15.792,31</td>
+                            <td class="num v-neg">− R$ 18.568,21</td>
+                            <td class="num v-neg">− R$ 15.328,69</td>
+                            <td class="num v-neg">− R$ 15.735,16</td>
+                            <td class="num v-neg">− R$ 17.179,58</td>
+                            <td class="num v-neg">− R$ 16.731,47</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 164.413,76</td>
+                            <td class="num v-neg">− R$ 161.868,04</td>
                           </tr>
                           <tr data-id="S:impostos_vendas:33:34" data-pai="G:impostos_vendas:33" hidden data-cat="34" data-nivel="2" class="dre-n2">
                             <td class="dre-nome" style="padding-left:44px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Simples/DAS" class="dre-tg">▸</button><span class="dre-rotulo">Simples/DAS</span>                            </td>
-                            <td class="num v-neg">− R$ 21.026,15</td>
-                            <td class="num v-neg">− R$ 14.314,42</td>
-                            <td class="num v-neg">− R$ 12.698,77</td>
-                            <td class="num v-neg">− R$ 15.513,47</td>
-                            <td class="num v-neg">− R$ 16.553,34</td>
-                            <td class="num v-neg">− R$ 18.837,68</td>
-                            <td class="num v-neg">− R$ 15.514,85</td>
-                            <td class="num v-neg">− R$ 16.103,83</td>
-                            <td class="num v-neg">− R$ 17.384,88</td>
-                            <td class="num v-neg">− R$ 16.466,37</td>
+                            <td class="num v-neg">− R$ 20.324,98</td>
+                            <td class="num v-neg">− R$ 14.313,18</td>
+                            <td class="num v-neg">− R$ 12.391,29</td>
+                            <td class="num v-neg">− R$ 15.503,17</td>
+                            <td class="num v-neg">− R$ 15.792,31</td>
+                            <td class="num v-neg">− R$ 18.568,21</td>
+                            <td class="num v-neg">− R$ 15.328,69</td>
+                            <td class="num v-neg">− R$ 15.735,16</td>
+                            <td class="num v-neg">− R$ 17.179,58</td>
+                            <td class="num v-neg">− R$ 16.731,47</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 164.413,76</td>
+                            <td class="num v-neg">− R$ 161.868,04</td>
                           </tr>
                           <tr data-id="T:receita_liquida" data-nivel="0" class="dre-n0 dre-total">
                             <td class="dre-nome" style="padding-left:8px;">
 <span class="dre-tg dre-tg--vazio"></span><span class="dre-rotulo">= Receita líquida</span>                            </td>
-                            <td class="num v-pos">R$ 183.465,54</td>
-                            <td class="num v-pos">R$ 168.218,19</td>
-                            <td class="num v-pos">R$ 208.922,20</td>
-                            <td class="num v-pos">R$ 220.962,87</td>
-                            <td class="num v-pos">R$ 252.556,41</td>
-                            <td class="num v-pos">R$ 202.803,02</td>
-                            <td class="num v-pos">R$ 214.539,90</td>
-                            <td class="num v-pos">R$ 232.251,63</td>
-                            <td class="num v-pos">R$ 217.849,04</td>
-                            <td class="num v-pos">R$ 253.677,56</td>
-                            <td class="num v-pos">R$ 18.833,83</td>
-                            <td class="num v-pos">R$ 2.174.080,19</td>
+                            <td class="num v-pos">R$ 184.148,98</td>
+                            <td class="num v-pos">R$ 162.705,24</td>
+                            <td class="num v-pos">R$ 209.082,60</td>
+                            <td class="num v-pos">R$ 210.101,26</td>
+                            <td class="num v-pos">R$ 249.467,78</td>
+                            <td class="num v-pos">R$ 200.413,10</td>
+                            <td class="num v-pos">R$ 209.459,26</td>
+                            <td class="num v-pos">R$ 229.687,42</td>
+                            <td class="num v-pos">R$ 221.841,49</td>
+                            <td class="num v-pos">R$ 258.317,49</td>
+                            <td class="num v-pos">R$ 75.432,27</td>
+                            <td class="num v-pos">R$ 2.210.656,89</td>
                           </tr>
                           <tr data-id="L:compras" data-nivel="0" class="dre-n0">
                             <td class="dre-nome" style="padding-left:8px;">
 <button type="button" aria-expanded="false" aria-label="Abrir (−) Compras de mercadorias pagas" class="dre-tg">▸</button><span class="dre-rotulo">(−) Compras de mercadorias pagas</span>                            </td>
-                            <td class="num v-neg">− R$ 97.184,19</td>
-                            <td class="num v-neg">− R$ 79.197,57</td>
-                            <td class="num v-neg">− R$ 87.182,89</td>
-                            <td class="num v-neg">− R$ 92.543,26</td>
-                            <td class="num v-neg">− R$ 125.336,38</td>
-                            <td class="num v-neg">− R$ 90.759,15</td>
-                            <td class="num v-neg">− R$ 103.557,84</td>
-                            <td class="num v-neg">− R$ 94.099,09</td>
-                            <td class="num v-neg">− R$ 89.080,11</td>
-                            <td class="num v-neg">− R$ 124.918,34</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 983.858,82</td>
+                            <td class="num v-neg">− R$ 96.319,49</td>
+                            <td class="num v-neg">− R$ 79.583,24</td>
+                            <td class="num v-neg">− R$ 84.067,24</td>
+                            <td class="num v-neg">− R$ 88.493,08</td>
+                            <td class="num v-neg">− R$ 124.024,28</td>
+                            <td class="num v-neg">− R$ 86.310,95</td>
+                            <td class="num v-neg">− R$ 102.035,00</td>
+                            <td class="num v-neg">− R$ 92.937,05</td>
+                            <td class="num v-neg">− R$ 89.173,47</td>
+                            <td class="num v-neg">− R$ 123.102,83</td>
+                            <td class="num v-neg">− R$ 22.488,25</td>
+                            <td class="num v-neg">− R$ 988.534,88</td>
                           </tr>
                           <tr data-id="G:compras:20" data-pai="L:compras" hidden data-nivel="1" class="dre-n1">
                             <td class="dre-nome" style="padding-left:26px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Fornecedores" class="dre-tg">▸</button><span class="dre-rotulo">Fornecedores</span>                            </td>
-                            <td class="num v-neg">− R$ 97.184,19</td>
-                            <td class="num v-neg">− R$ 79.197,57</td>
-                            <td class="num v-neg">− R$ 87.182,89</td>
-                            <td class="num v-neg">− R$ 92.543,26</td>
-                            <td class="num v-neg">− R$ 125.336,38</td>
-                            <td class="num v-neg">− R$ 90.759,15</td>
-                            <td class="num v-neg">− R$ 103.557,84</td>
-                            <td class="num v-neg">− R$ 94.099,09</td>
-                            <td class="num v-neg">− R$ 89.080,11</td>
-                            <td class="num v-neg">− R$ 124.918,34</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 983.858,82</td>
+                            <td class="num v-neg">− R$ 96.319,49</td>
+                            <td class="num v-neg">− R$ 79.583,24</td>
+                            <td class="num v-neg">− R$ 84.067,24</td>
+                            <td class="num v-neg">− R$ 88.493,08</td>
+                            <td class="num v-neg">− R$ 124.024,28</td>
+                            <td class="num v-neg">− R$ 86.310,95</td>
+                            <td class="num v-neg">− R$ 102.035,00</td>
+                            <td class="num v-neg">− R$ 92.937,05</td>
+                            <td class="num v-neg">− R$ 89.173,47</td>
+                            <td class="num v-neg">− R$ 123.102,83</td>
+                            <td class="num v-neg">− R$ 22.488,25</td>
+                            <td class="num v-neg">− R$ 988.534,88</td>
                           </tr>
                           <tr data-id="S:compras:20:21" data-pai="G:compras:20" hidden data-cat="21" data-nivel="2" class="dre-n2">
                             <td class="dre-nome" style="padding-left:44px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Mercadoria p/ revenda" class="dre-tg">▸</button><span class="dre-rotulo">Mercadoria p/ revenda</span>                            </td>
-                            <td class="num v-neg">− R$ 89.961,41</td>
-                            <td class="num v-neg">− R$ 68.141,57</td>
-                            <td class="num v-neg">− R$ 80.074,53</td>
-                            <td class="num v-neg">− R$ 82.624,05</td>
-                            <td class="num v-neg">− R$ 117.965,47</td>
-                            <td class="num v-neg">− R$ 78.849,28</td>
-                            <td class="num v-neg">− R$ 97.898,17</td>
-                            <td class="num v-neg">− R$ 84.811,40</td>
-                            <td class="num v-neg">− R$ 82.767,54</td>
-                            <td class="num v-neg">− R$ 113.730,44</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 896.823,86</td>
+                            <td class="num v-neg">− R$ 90.078,92</td>
+                            <td class="num v-neg">− R$ 66.762,68</td>
+                            <td class="num v-neg">− R$ 77.193,58</td>
+                            <td class="num v-neg">− R$ 80.294,55</td>
+                            <td class="num v-neg">− R$ 115.728,47</td>
+                            <td class="num v-neg">− R$ 76.457,80</td>
+                            <td class="num v-neg">− R$ 96.493,71</td>
+                            <td class="num v-neg">− R$ 82.253,99</td>
+                            <td class="num v-neg">− R$ 82.606,55</td>
+                            <td class="num v-neg">− R$ 112.343,76</td>
+                            <td class="num v-neg">− R$ 22.488,25</td>
+                            <td class="num v-neg">− R$ 902.702,26</td>
                           </tr>
                           <tr data-id="S:compras:20:23" data-pai="G:compras:20" hidden data-cat="23" data-nivel="2" class="dre-n2">
                             <td class="dre-nome" style="padding-left:44px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Embalagens" class="dre-tg">▸</button><span class="dre-rotulo">Embalagens</span>                            </td>
-                            <td class="num v-neg">− R$ 5.028,90</td>
-                            <td class="num v-neg">− R$ 5.875,46</td>
-                            <td class="num v-neg">− R$ 5.554,14</td>
-                            <td class="num v-neg">− R$ 4.600,35</td>
-                            <td class="num v-neg">− R$ 5.685,58</td>
-                            <td class="num v-neg">− R$ 4.764,29</td>
-                            <td class="num v-neg">− R$ 4.202,22</td>
-                            <td class="num v-neg">− R$ 5.167,32</td>
-                            <td class="num v-neg">− R$ 4.727,32</td>
-                            <td class="num v-neg">− R$ 5.686,63</td>
+                            <td class="num v-neg">− R$ 4.386,50</td>
+                            <td class="num v-neg">− R$ 6.672,34</td>
+                            <td class="num v-neg">− R$ 4.996,31</td>
+                            <td class="num v-neg">− R$ 4.051,20</td>
+                            <td class="num v-neg">− R$ 6.147,53</td>
+                            <td class="num v-neg">− R$ 4.372,43</td>
+                            <td class="num v-neg">− R$ 4.207,76</td>
+                            <td class="num v-neg">− R$ 4.041,86</td>
+                            <td class="num v-neg">− R$ 4.801,93</td>
+                            <td class="num v-neg">− R$ 5.181,16</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 51.292,21</td>
+                            <td class="num v-neg">− R$ 48.859,02</td>
                           </tr>
                           <tr data-id="S:compras:20:24" data-pai="G:compras:20" hidden data-cat="24" data-nivel="2" class="dre-n2">
                             <td class="dre-nome" style="padding-left:44px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Fretes" class="dre-tg">▸</button><span class="dre-rotulo">Fretes</span>                            </td>
-                            <td class="num v-neg">− R$ 2.193,88</td>
-                            <td class="num v-neg">− R$ 1.898,91</td>
-                            <td class="num v-neg">− R$ 1.554,22</td>
-                            <td class="num v-neg">− R$ 1.837,11</td>
-                            <td class="num v-neg">− R$ 1.685,33</td>
-                            <td class="num v-neg">− R$ 1.889,12</td>
-                            <td class="num v-neg">− R$ 1.457,45</td>
-                            <td class="num v-neg">− R$ 1.531,69</td>
-                            <td class="num v-neg">− R$ 1.585,25</td>
-                            <td class="num v-neg">− R$ 2.514,59</td>
+                            <td class="num v-neg">− R$ 1.854,07</td>
+                            <td class="num v-neg">− R$ 1.939,28</td>
+                            <td class="num v-neg">− R$ 1.877,35</td>
+                            <td class="num v-neg">− R$ 1.528,55</td>
+                            <td class="num v-neg">− R$ 2.148,28</td>
+                            <td class="num v-neg">− R$ 1.887,28</td>
+                            <td class="num v-neg">− R$ 1.333,53</td>
+                            <td class="num v-neg">− R$ 2.124,46</td>
+                            <td class="num v-neg">− R$ 1.764,99</td>
+                            <td class="num v-neg">− R$ 2.158,84</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 18.147,55</td>
+                            <td class="num v-neg">− R$ 18.616,63</td>
                           </tr>
                           <tr data-id="S:compras:20:22" data-pai="G:compras:20" hidden data-cat="22" data-nivel="2" class="dre-n2">
                             <td class="dre-nome" style="padding-left:44px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Insumos" class="dre-tg">▸</button><span class="dre-rotulo">Insumos</span>                            </td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 3.281,63</td>
+                            <td class="num v-neg">− R$ 3.380,24</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 3.481,75</td>
+                            <td class="num v-neg">− R$ 2.618,78</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 3.792,33</td>
+                            <td class="num v-neg">− R$ 3.593,44</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 2.588,68</td>
+                            <td class="num v-neg">− R$ 3.710,39</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 2.986,68</td>
+                            <td class="num v-neg">− R$ 3.419,07</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 16.131,07</td>
+                            <td class="num v-neg">− R$ 16.721,92</td>
                           </tr>
                           <tr data-id="S:compras:20:25" data-pai="G:compras:20" hidden data-cat="25" data-nivel="2" class="dre-n2">
                             <td class="dre-nome" style="padding-left:44px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Serviços de terceiros" class="dre-tg">▸</button><span class="dre-rotulo">Serviços de terceiros</span>                            </td>
                             <td class="num dre-zero">—</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 1.464,13</td>
+                            <td class="num v-neg">− R$ 828,70</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 1.464,13</td>
+                            <td class="num v-neg">− R$ 806,35</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num v-neg">− R$ 1.635,05</td>
                           </tr>
                           <tr data-id="T:lucro_bruto" data-nivel="0" class="dre-n0 dre-total">
                             <td class="dre-nome" style="padding-left:8px;">
 <span class="dre-tg dre-tg--vazio"></span><span class="dre-rotulo">= Lucro bruto</span>                            </td>
-                            <td class="num v-pos">R$ 86.281,35</td>
-                            <td class="num v-pos">R$ 89.020,62</td>
-                            <td class="num v-pos">R$ 121.739,31</td>
-                            <td class="num v-pos">R$ 128.419,61</td>
-                            <td class="num v-pos">R$ 127.220,03</td>
-                            <td class="num v-pos">R$ 112.043,87</td>
-                            <td class="num v-pos">R$ 110.982,06</td>
-                            <td class="num v-pos">R$ 138.152,54</td>
-                            <td class="num v-pos">R$ 128.768,93</td>
-                            <td class="num v-pos">R$ 128.759,22</td>
-                            <td class="num v-pos">R$ 18.833,83</td>
-                            <td class="num v-pos">R$ 1.190.221,37</td>
+                            <td class="num v-pos">R$ 87.829,49</td>
+                            <td class="num v-pos">R$ 83.122,00</td>
+                            <td class="num v-pos">R$ 125.015,36</td>
+                            <td class="num v-pos">R$ 121.608,18</td>
+                            <td class="num v-pos">R$ 125.443,50</td>
+                            <td class="num v-pos">R$ 114.102,15</td>
+                            <td class="num v-pos">R$ 107.424,26</td>
+                            <td class="num v-pos">R$ 136.750,37</td>
+                            <td class="num v-pos">R$ 132.668,02</td>
+                            <td class="num v-pos">R$ 135.214,66</td>
+                            <td class="num v-pos">R$ 52.944,02</td>
+                            <td class="num v-pos">R$ 1.222.122,01</td>
                           </tr>
                           <tr data-id="T:despesas_operacionais" data-nivel="0" class="dre-n0 dre-total">
                             <td class="dre-nome" style="padding-left:8px;">
 <button type="button" aria-expanded="false" aria-label="Abrir (−) Despesas operacionais" class="dre-tg">▸</button><span class="dre-rotulo">(−) Despesas operacionais</span>                            </td>
-                            <td class="num v-neg">− R$ 82.234,26</td>
-                            <td class="num v-neg">− R$ 81.772,15</td>
-                            <td class="num v-neg">− R$ 84.520,18</td>
-                            <td class="num v-neg">− R$ 83.127,16</td>
-                            <td class="num v-neg">− R$ 81.430,59</td>
-                            <td class="num v-neg">− R$ 85.332,53</td>
-                            <td class="num v-neg">− R$ 87.235,97</td>
-                            <td class="num v-neg">− R$ 81.906,53</td>
-                            <td class="num v-neg">− R$ 82.841,85</td>
-                            <td class="num v-neg">− R$ 84.289,76</td>
-                            <td class="num v-neg">− R$ 7.150,77</td>
-                            <td class="num v-neg">− R$ 841.841,75</td>
+                            <td class="num v-neg">− R$ 85.720,64</td>
+                            <td class="num v-neg">− R$ 81.153,23</td>
+                            <td class="num v-neg">− R$ 84.320,85</td>
+                            <td class="num v-neg">− R$ 82.222,20</td>
+                            <td class="num v-neg">− R$ 82.139,98</td>
+                            <td class="num v-neg">− R$ 84.267,98</td>
+                            <td class="num v-neg">− R$ 87.861,44</td>
+                            <td class="num v-neg">− R$ 84.232,21</td>
+                            <td class="num v-neg">− R$ 85.311,40</td>
+                            <td class="num v-neg">− R$ 83.326,52</td>
+                            <td class="num v-neg">− R$ 23.913,17</td>
+                            <td class="num v-neg">− R$ 864.469,62</td>
                           </tr>
                           <tr data-id="L:pessoal" data-pai="T:despesas_operacionais" hidden data-nivel="1" class="dre-n1">
                             <td class="dre-nome" style="padding-left:26px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Pessoal" class="dre-tg">▸</button><span class="dre-rotulo">Pessoal</span>                            </td>
-                            <td class="num v-neg">− R$ 55.015,28</td>
-                            <td class="num v-neg">− R$ 54.972,31</td>
-                            <td class="num v-neg">− R$ 54.899,09</td>
-                            <td class="num v-neg">− R$ 54.937,64</td>
-                            <td class="num v-neg">− R$ 54.610,08</td>
-                            <td class="num v-neg">− R$ 55.182,61</td>
-                            <td class="num v-neg">− R$ 59.464,30</td>
-                            <td class="num v-neg">− R$ 55.027,10</td>
-                            <td class="num v-neg">− R$ 55.039,76</td>
-                            <td class="num v-neg">− R$ 54.841,66</td>
-                            <td class="num v-neg">− R$ 6.600,00</td>
-                            <td class="num v-neg">− R$ 560.589,83</td>
+                            <td class="num v-neg">− R$ 55.064,72</td>
+                            <td class="num v-neg">− R$ 54.557,40</td>
+                            <td class="num v-neg">− R$ 55.197,22</td>
+                            <td class="num v-neg">− R$ 54.574,66</td>
+                            <td class="num v-neg">− R$ 54.793,80</td>
+                            <td class="num v-neg">− R$ 54.559,21</td>
+                            <td class="num v-neg">− R$ 59.759,93</td>
+                            <td class="num v-neg">− R$ 54.987,77</td>
+                            <td class="num v-neg">− R$ 54.339,04</td>
+                            <td class="num v-neg">− R$ 54.508,53</td>
+                            <td class="num v-neg">− R$ 6.300,00</td>
+                            <td class="num v-neg">− R$ 558.642,28</td>
                           </tr>
                           <tr data-id="G:pessoal:26" data-pai="L:pessoal" hidden data-nivel="2" class="dre-n2">
                             <td class="dre-nome" style="padding-left:44px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Pessoal" class="dre-tg">▸</button><span class="dre-rotulo">Pessoal</span>                            </td>
-                            <td class="num v-neg">− R$ 55.015,28</td>
-                            <td class="num v-neg">− R$ 54.972,31</td>
-                            <td class="num v-neg">− R$ 54.899,09</td>
-                            <td class="num v-neg">− R$ 54.937,64</td>
-                            <td class="num v-neg">− R$ 54.610,08</td>
-                            <td class="num v-neg">− R$ 55.182,61</td>
-                            <td class="num v-neg">− R$ 59.464,30</td>
-                            <td class="num v-neg">− R$ 55.027,10</td>
-                            <td class="num v-neg">− R$ 55.039,76</td>
-                            <td class="num v-neg">− R$ 54.841,66</td>
-                            <td class="num v-neg">− R$ 6.600,00</td>
-                            <td class="num v-neg">− R$ 560.589,83</td>
+                            <td class="num v-neg">− R$ 55.064,72</td>
+                            <td class="num v-neg">− R$ 54.557,40</td>
+                            <td class="num v-neg">− R$ 55.197,22</td>
+                            <td class="num v-neg">− R$ 54.574,66</td>
+                            <td class="num v-neg">− R$ 54.793,80</td>
+                            <td class="num v-neg">− R$ 54.559,21</td>
+                            <td class="num v-neg">− R$ 59.759,93</td>
+                            <td class="num v-neg">− R$ 54.987,77</td>
+                            <td class="num v-neg">− R$ 54.339,04</td>
+                            <td class="num v-neg">− R$ 54.508,53</td>
+                            <td class="num v-neg">− R$ 6.300,00</td>
+                            <td class="num v-neg">− R$ 558.642,28</td>
                           </tr>
                           <tr data-id="S:pessoal:26:27" data-pai="G:pessoal:26" hidden data-cat="27" data-nivel="3" class="dre-n3">
                             <td class="dre-nome" style="padding-left:62px;">
@@ -608,24 +611,24 @@
                             <td class="num v-neg">− R$ 6.300,00</td>
                             <td class="num v-neg">− R$ 6.300,00</td>
                             <td class="num v-neg">− R$ 6.300,00</td>
-                            <td class="num v-neg">− R$ 6.600,00</td>
-                            <td class="num v-neg">− R$ 69.600,00</td>
+                            <td class="num v-neg">− R$ 6.300,00</td>
+                            <td class="num v-neg">− R$ 69.300,00</td>
                           </tr>
                           <tr data-id="S:pessoal:26:31" data-pai="G:pessoal:26" hidden data-cat="31" data-nivel="3" class="dre-n3">
                             <td class="dre-nome" style="padding-left:62px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Benefícios" class="dre-tg">▸</button><span class="dre-rotulo">Benefícios</span>                            </td>
-                            <td class="num v-neg">− R$ 3.355,28</td>
-                            <td class="num v-neg">− R$ 3.312,31</td>
-                            <td class="num v-neg">− R$ 3.239,09</td>
-                            <td class="num v-neg">− R$ 3.277,64</td>
-                            <td class="num v-neg">− R$ 2.950,08</td>
-                            <td class="num v-neg">− R$ 3.522,61</td>
-                            <td class="num v-neg">− R$ 3.304,30</td>
-                            <td class="num v-neg">− R$ 3.367,10</td>
-                            <td class="num v-neg">− R$ 3.379,76</td>
-                            <td class="num v-neg">− R$ 3.181,66</td>
+                            <td class="num v-neg">− R$ 3.404,72</td>
+                            <td class="num v-neg">− R$ 2.897,40</td>
+                            <td class="num v-neg">− R$ 3.537,22</td>
+                            <td class="num v-neg">− R$ 2.914,66</td>
+                            <td class="num v-neg">− R$ 3.133,80</td>
+                            <td class="num v-neg">− R$ 2.899,21</td>
+                            <td class="num v-neg">− R$ 3.599,93</td>
+                            <td class="num v-neg">− R$ 3.327,77</td>
+                            <td class="num v-neg">− R$ 2.679,04</td>
+                            <td class="num v-neg">− R$ 2.848,53</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 32.889,83</td>
+                            <td class="num v-neg">− R$ 31.242,28</td>
                           </tr>
                           <tr data-id="S:pessoal:26:29" data-pai="G:pessoal:26" hidden data-cat="29" data-nivel="3" class="dre-n3">
                             <td class="dre-nome" style="padding-left:62px;">
@@ -646,34 +649,34 @@
                           <tr data-id="L:ocupacao" data-pai="T:despesas_operacionais" hidden data-nivel="1" class="dre-n1">
                             <td class="dre-nome" style="padding-left:26px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Ocupação" class="dre-tg">▸</button><span class="dre-rotulo">Ocupação</span>                            </td>
+                            <td class="num v-neg">− R$ 13.928,84</td>
+                            <td class="num v-neg">− R$ 13.912,00</td>
+                            <td class="num v-neg">− R$ 13.912,00</td>
+                            <td class="num v-neg">− R$ 13.912,00</td>
+                            <td class="num v-neg">− R$ 13.912,00</td>
+                            <td class="num v-neg">− R$ 13.912,00</td>
+                            <td class="num v-neg">− R$ 14.903,86</td>
+                            <td class="num v-neg">− R$ 15.346,33</td>
+                            <td class="num v-neg">− R$ 15.431,11</td>
+                            <td class="num v-neg">− R$ 13.912,00</td>
                             <td class="num v-neg">− R$ 13.502,00</td>
-                            <td class="num v-neg">− R$ 14.575,93</td>
-                            <td class="num v-neg">− R$ 13.912,00</td>
-                            <td class="num v-neg">− R$ 14.317,23</td>
-                            <td class="num v-neg">− R$ 13.912,00</td>
-                            <td class="num v-neg">− R$ 13.912,00</td>
-                            <td class="num v-neg">− R$ 13.912,00</td>
-                            <td class="num v-neg">− R$ 13.912,00</td>
-                            <td class="num v-neg">− R$ 13.912,00</td>
-                            <td class="num v-neg">− R$ 15.397,82</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 141.264,98</td>
+                            <td class="num v-neg">− R$ 156.584,14</td>
                           </tr>
                           <tr data-id="G:ocupacao:39" data-pai="L:ocupacao" hidden data-nivel="2" class="dre-n2">
                             <td class="dre-nome" style="padding-left:44px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Ocupação" class="dre-tg">▸</button><span class="dre-rotulo">Ocupação</span>                            </td>
+                            <td class="num v-neg">− R$ 13.928,84</td>
+                            <td class="num v-neg">− R$ 13.912,00</td>
+                            <td class="num v-neg">− R$ 13.912,00</td>
+                            <td class="num v-neg">− R$ 13.912,00</td>
+                            <td class="num v-neg">− R$ 13.912,00</td>
+                            <td class="num v-neg">− R$ 13.912,00</td>
+                            <td class="num v-neg">− R$ 14.903,86</td>
+                            <td class="num v-neg">− R$ 15.346,33</td>
+                            <td class="num v-neg">− R$ 15.431,11</td>
+                            <td class="num v-neg">− R$ 13.912,00</td>
                             <td class="num v-neg">− R$ 13.502,00</td>
-                            <td class="num v-neg">− R$ 14.575,93</td>
-                            <td class="num v-neg">− R$ 13.912,00</td>
-                            <td class="num v-neg">− R$ 14.317,23</td>
-                            <td class="num v-neg">− R$ 13.912,00</td>
-                            <td class="num v-neg">− R$ 13.912,00</td>
-                            <td class="num v-neg">− R$ 13.912,00</td>
-                            <td class="num v-neg">− R$ 13.912,00</td>
-                            <td class="num v-neg">− R$ 13.912,00</td>
-                            <td class="num v-neg">− R$ 15.397,82</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 141.264,98</td>
+                            <td class="num v-neg">− R$ 156.584,14</td>
                           </tr>
                           <tr data-id="S:ocupacao:39:40" data-pai="G:ocupacao:39" hidden data-cat="40" data-nivel="3" class="dre-n3">
                             <td class="dre-nome" style="padding-left:62px;">
@@ -688,8 +691,8 @@
                             <td class="num v-neg">− R$ 12.852,00</td>
                             <td class="num v-neg">− R$ 12.852,00</td>
                             <td class="num v-neg">− R$ 12.852,00</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 128.520,00</td>
+                            <td class="num v-neg">− R$ 12.852,00</td>
+                            <td class="num v-neg">− R$ 141.372,00</td>
                           </tr>
                           <tr data-id="S:ocupacao:39:41" data-pai="G:ocupacao:39" hidden data-cat="41" data-nivel="3" class="dre-n3">
                             <td class="dre-nome" style="padding-left:62px;">
@@ -704,8 +707,24 @@
                             <td class="num v-neg">− R$ 650,00</td>
                             <td class="num v-neg">− R$ 650,00</td>
                             <td class="num v-neg">− R$ 650,00</td>
+                            <td class="num v-neg">− R$ 650,00</td>
+                            <td class="num v-neg">− R$ 7.150,00</td>
+                          </tr>
+                          <tr data-id="S:ocupacao:39:43" data-pai="G:ocupacao:39" hidden data-cat="43" data-nivel="3" class="dre-n3">
+                            <td class="dre-nome" style="padding-left:62px;">
+<button type="button" aria-expanded="false" aria-label="Abrir Manutenção" class="dre-tg">▸</button><span class="dre-rotulo">Manutenção</span>                            </td>
+                            <td class="num v-neg">− R$ 426,84</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 6.500,00</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num v-neg">− R$ 991,86</td>
+                            <td class="num v-neg">− R$ 1.434,33</td>
+                            <td class="num v-neg">− R$ 1.519,11</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num v-neg">− R$ 4.372,14</td>
                           </tr>
                           <tr data-id="S:ocupacao:39:42" data-pai="G:ocupacao:39" hidden data-cat="42" data-nivel="3" class="dre-n3">
                             <td class="dre-nome" style="padding-left:62px;">
@@ -723,133 +742,117 @@
                             <td class="num dre-zero">—</td>
                             <td class="num v-neg">− R$ 3.690,00</td>
                           </tr>
-                          <tr data-id="S:ocupacao:39:43" data-pai="G:ocupacao:39" hidden data-cat="43" data-nivel="3" class="dre-n3">
-                            <td class="dre-nome" style="padding-left:62px;">
-<button type="button" aria-expanded="false" aria-label="Abrir Manutenção" class="dre-tg">▸</button><span class="dre-rotulo">Manutenção</span>                            </td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 663,93</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 405,23</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 1.485,82</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 2.554,98</td>
-                          </tr>
                           <tr data-id="L:utilidades" data-pai="T:despesas_operacionais" hidden data-nivel="1" class="dre-n1">
                             <td class="dre-nome" style="padding-left:26px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Utilidades" class="dre-tg">▸</button><span class="dre-rotulo">Utilidades</span>                            </td>
-                            <td class="num v-neg">− R$ 4.411,83</td>
-                            <td class="num v-neg">− R$ 4.441,99</td>
-                            <td class="num v-neg">− R$ 3.864,49</td>
-                            <td class="num v-neg">− R$ 3.854,82</td>
-                            <td class="num v-neg">− R$ 3.961,83</td>
-                            <td class="num v-neg">− R$ 3.897,92</td>
-                            <td class="num v-neg">− R$ 4.038,62</td>
-                            <td class="num v-neg">− R$ 3.831,31</td>
-                            <td class="num v-neg">− R$ 3.919,21</td>
-                            <td class="num v-neg">− R$ 3.918,38</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 40.140,40</td>
+                            <td class="num v-neg">− R$ 4.629,31</td>
+                            <td class="num v-neg">− R$ 4.523,13</td>
+                            <td class="num v-neg">− R$ 4.116,41</td>
+                            <td class="num v-neg">− R$ 3.860,25</td>
+                            <td class="num v-neg">− R$ 3.979,20</td>
+                            <td class="num v-neg">− R$ 4.076,36</td>
+                            <td class="num v-neg">− R$ 4.018,19</td>
+                            <td class="num v-neg">− R$ 3.989,66</td>
+                            <td class="num v-neg">− R$ 3.830,07</td>
+                            <td class="num v-neg">− R$ 3.902,49</td>
+                            <td class="num v-neg">− R$ 2.649,68</td>
+                            <td class="num v-neg">− R$ 43.574,75</td>
                           </tr>
                           <tr data-id="G:utilidades:44" data-pai="L:utilidades" hidden data-nivel="2" class="dre-n2">
                             <td class="dre-nome" style="padding-left:44px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Utilidades" class="dre-tg">▸</button><span class="dre-rotulo">Utilidades</span>                            </td>
-                            <td class="num v-neg">− R$ 4.411,83</td>
-                            <td class="num v-neg">− R$ 4.441,99</td>
-                            <td class="num v-neg">− R$ 3.864,49</td>
-                            <td class="num v-neg">− R$ 3.854,82</td>
-                            <td class="num v-neg">− R$ 3.961,83</td>
-                            <td class="num v-neg">− R$ 3.897,92</td>
-                            <td class="num v-neg">− R$ 4.038,62</td>
-                            <td class="num v-neg">− R$ 3.831,31</td>
-                            <td class="num v-neg">− R$ 3.919,21</td>
-                            <td class="num v-neg">− R$ 3.918,38</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 40.140,40</td>
+                            <td class="num v-neg">− R$ 4.629,31</td>
+                            <td class="num v-neg">− R$ 4.523,13</td>
+                            <td class="num v-neg">− R$ 4.116,41</td>
+                            <td class="num v-neg">− R$ 3.860,25</td>
+                            <td class="num v-neg">− R$ 3.979,20</td>
+                            <td class="num v-neg">− R$ 4.076,36</td>
+                            <td class="num v-neg">− R$ 4.018,19</td>
+                            <td class="num v-neg">− R$ 3.989,66</td>
+                            <td class="num v-neg">− R$ 3.830,07</td>
+                            <td class="num v-neg">− R$ 3.902,49</td>
+                            <td class="num v-neg">− R$ 2.649,68</td>
+                            <td class="num v-neg">− R$ 43.574,75</td>
                           </tr>
                           <tr data-id="S:utilidades:44:45" data-pai="G:utilidades:44" hidden data-cat="45" data-nivel="3" class="dre-n3">
                             <td class="dre-nome" style="padding-left:62px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Energia" class="dre-tg">▸</button><span class="dre-rotulo">Energia</span>                            </td>
-                            <td class="num v-neg">− R$ 2.544,52</td>
-                            <td class="num v-neg">− R$ 2.485,22</td>
-                            <td class="num v-neg">− R$ 1.963,19</td>
-                            <td class="num v-neg">− R$ 2.012,19</td>
-                            <td class="num v-neg">− R$ 2.047,82</td>
-                            <td class="num v-neg">− R$ 1.964,73</td>
-                            <td class="num v-neg">− R$ 2.153,46</td>
-                            <td class="num v-neg">− R$ 1.909,70</td>
-                            <td class="num v-neg">− R$ 2.020,84</td>
-                            <td class="num v-neg">− R$ 2.032,84</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 21.134,51</td>
+                            <td class="num v-neg">− R$ 2.640,04</td>
+                            <td class="num v-neg">− R$ 2.604,38</td>
+                            <td class="num v-neg">− R$ 2.131,70</td>
+                            <td class="num v-neg">− R$ 2.049,31</td>
+                            <td class="num v-neg">− R$ 1.997,89</td>
+                            <td class="num v-neg">− R$ 2.114,07</td>
+                            <td class="num v-neg">− R$ 2.094,40</td>
+                            <td class="num v-neg">− R$ 2.048,74</td>
+                            <td class="num v-neg">− R$ 1.959,12</td>
+                            <td class="num v-neg">− R$ 2.024,58</td>
+                            <td class="num v-neg">− R$ 2.008,16</td>
+                            <td class="num v-neg">− R$ 23.672,39</td>
                           </tr>
                           <tr data-id="S:utilidades:44:47" data-pai="G:utilidades:44" hidden data-cat="47" data-nivel="3" class="dre-n3">
                             <td class="dre-nome" style="padding-left:62px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Telefone/internet" class="dre-tg">▸</button><span class="dre-rotulo">Telefone/internet</span>                            </td>
-                            <td class="num v-neg">− R$ 1.254,27</td>
-                            <td class="num v-neg">− R$ 1.288,81</td>
-                            <td class="num v-neg">− R$ 1.263,80</td>
-                            <td class="num v-neg">− R$ 1.234,55</td>
-                            <td class="num v-neg">− R$ 1.276,35</td>
-                            <td class="num v-neg">− R$ 1.247,73</td>
-                            <td class="num v-neg">− R$ 1.218,21</td>
-                            <td class="num v-neg">− R$ 1.322,26</td>
-                            <td class="num v-neg">− R$ 1.232,80</td>
-                            <td class="num v-neg">− R$ 1.301,70</td>
+                            <td class="num v-neg">− R$ 1.310,02</td>
+                            <td class="num v-neg">− R$ 1.293,47</td>
+                            <td class="num v-neg">− R$ 1.266,20</td>
+                            <td class="num v-neg">− R$ 1.218,07</td>
+                            <td class="num v-neg">− R$ 1.293,98</td>
+                            <td class="num v-neg">− R$ 1.278,33</td>
+                            <td class="num v-neg">− R$ 1.281,23</td>
+                            <td class="num v-neg">− R$ 1.317,97</td>
+                            <td class="num v-neg">− R$ 1.202,15</td>
+                            <td class="num v-neg">− R$ 1.253,68</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 12.640,48</td>
+                            <td class="num v-neg">− R$ 12.715,10</td>
                           </tr>
                           <tr data-id="S:utilidades:44:46" data-pai="G:utilidades:44" hidden data-cat="46" data-nivel="3" class="dre-n3">
                             <td class="dre-nome" style="padding-left:62px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Água/saneamento" class="dre-tg">▸</button><span class="dre-rotulo">Água/saneamento</span>                            </td>
-                            <td class="num v-neg">− R$ 613,04</td>
-                            <td class="num v-neg">− R$ 667,96</td>
-                            <td class="num v-neg">− R$ 637,50</td>
-                            <td class="num v-neg">− R$ 608,08</td>
-                            <td class="num v-neg">− R$ 637,66</td>
-                            <td class="num v-neg">− R$ 685,46</td>
-                            <td class="num v-neg">− R$ 666,95</td>
-                            <td class="num v-neg">− R$ 599,35</td>
-                            <td class="num v-neg">− R$ 665,57</td>
-                            <td class="num v-neg">− R$ 583,84</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 6.365,41</td>
+                            <td class="num v-neg">− R$ 679,25</td>
+                            <td class="num v-neg">− R$ 625,28</td>
+                            <td class="num v-neg">− R$ 718,51</td>
+                            <td class="num v-neg">− R$ 592,87</td>
+                            <td class="num v-neg">− R$ 687,33</td>
+                            <td class="num v-neg">− R$ 683,96</td>
+                            <td class="num v-neg">− R$ 642,56</td>
+                            <td class="num v-neg">− R$ 622,95</td>
+                            <td class="num v-neg">− R$ 668,80</td>
+                            <td class="num v-neg">− R$ 624,23</td>
+                            <td class="num v-neg">− R$ 641,52</td>
+                            <td class="num v-neg">− R$ 7.187,26</td>
                           </tr>
                           <tr data-id="L:administrativas" data-pai="T:despesas_operacionais" hidden data-nivel="1" class="dre-n1">
                             <td class="dre-nome" style="padding-left:26px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Administrativas" class="dre-tg">▸</button><span class="dre-rotulo">Administrativas</span>                            </td>
-                            <td class="num v-neg">− R$ 3.653,03</td>
-                            <td class="num v-neg">− R$ 2.473,42</td>
-                            <td class="num v-neg">− R$ 3.435,75</td>
-                            <td class="num v-neg">− R$ 2.331,39</td>
-                            <td class="num v-neg">− R$ 2.503,53</td>
-                            <td class="num v-neg">− R$ 3.634,21</td>
-                            <td class="num v-neg">− R$ 2.439,76</td>
-                            <td class="num v-neg">− R$ 2.394,83</td>
-                            <td class="num v-neg">− R$ 3.535,80</td>
-                            <td class="num v-neg">− R$ 2.534,19</td>
+                            <td class="num v-neg">− R$ 5.080,98</td>
+                            <td class="num v-neg">− R$ 2.535,73</td>
+                            <td class="num v-neg">− R$ 5.087,94</td>
+                            <td class="num v-neg">− R$ 2.536,18</td>
+                            <td class="num v-neg">− R$ 2.453,53</td>
+                            <td class="num v-neg">− R$ 3.564,63</td>
+                            <td class="num v-neg">− R$ 2.317,56</td>
+                            <td class="num v-neg">− R$ 2.326,61</td>
+                            <td class="num v-neg">− R$ 4.380,72</td>
+                            <td class="num v-neg">− R$ 3.332,80</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 28.935,91</td>
+                            <td class="num v-neg">− R$ 33.616,68</td>
                           </tr>
                           <tr data-id="G:administrativas:48" data-pai="L:administrativas" hidden data-nivel="2" class="dre-n2">
                             <td class="dre-nome" style="padding-left:44px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Administrativas" class="dre-tg">▸</button><span class="dre-rotulo">Administrativas</span>                            </td>
-                            <td class="num v-neg">− R$ 2.553,03</td>
-                            <td class="num v-neg">− R$ 2.473,42</td>
-                            <td class="num v-neg">− R$ 3.435,75</td>
-                            <td class="num v-neg">− R$ 2.331,39</td>
-                            <td class="num v-neg">− R$ 2.503,53</td>
-                            <td class="num v-neg">− R$ 3.634,21</td>
-                            <td class="num v-neg">− R$ 2.439,76</td>
-                            <td class="num v-neg">− R$ 2.394,83</td>
-                            <td class="num v-neg">− R$ 3.535,80</td>
-                            <td class="num v-neg">− R$ 2.534,19</td>
+                            <td class="num v-neg">− R$ 3.980,98</td>
+                            <td class="num v-neg">− R$ 2.535,73</td>
+                            <td class="num v-neg">− R$ 5.087,94</td>
+                            <td class="num v-neg">− R$ 2.536,18</td>
+                            <td class="num v-neg">− R$ 2.453,53</td>
+                            <td class="num v-neg">− R$ 3.564,63</td>
+                            <td class="num v-neg">− R$ 2.317,56</td>
+                            <td class="num v-neg">− R$ 2.326,61</td>
+                            <td class="num v-neg">− R$ 4.380,72</td>
+                            <td class="num v-neg">− R$ 3.332,80</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 27.835,91</td>
+                            <td class="num v-neg">− R$ 32.516,68</td>
                           </tr>
                           <tr data-id="S:administrativas:48:49" data-pai="G:administrativas:48" hidden data-cat="49" data-nivel="3" class="dre-n3">
                             <td class="dre-nome" style="padding-left:62px;">
@@ -870,18 +873,34 @@
                           <tr data-id="S:administrativas:48:50" data-pai="G:administrativas:48" hidden data-cat="50" data-nivel="3" class="dre-n3">
                             <td class="dre-nome" style="padding-left:62px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Sistemas" class="dre-tg">▸</button><span class="dre-rotulo">Sistemas</span>                            </td>
-                            <td class="num v-neg">− R$ 977,95</td>
-                            <td class="num v-neg">− R$ 936,54</td>
-                            <td class="num v-neg">− R$ 856,47</td>
-                            <td class="num v-neg">− R$ 872,95</td>
-                            <td class="num v-neg">− R$ 955,18</td>
-                            <td class="num v-neg">− R$ 975,95</td>
-                            <td class="num v-neg">− R$ 863,07</td>
-                            <td class="num v-neg">− R$ 948,88</td>
-                            <td class="num v-neg">− R$ 919,92</td>
-                            <td class="num v-neg">− R$ 914,59</td>
+                            <td class="num v-neg">− R$ 908,25</td>
+                            <td class="num v-neg">− R$ 960,50</td>
+                            <td class="num v-neg">− R$ 905,93</td>
+                            <td class="num v-neg">− R$ 952,50</td>
+                            <td class="num v-neg">− R$ 933,82</td>
+                            <td class="num v-neg">− R$ 977,68</td>
+                            <td class="num v-neg">− R$ 860,28</td>
+                            <td class="num v-neg">− R$ 856,50</td>
+                            <td class="num v-neg">− R$ 978,64</td>
+                            <td class="num v-neg">− R$ 956,48</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 9.221,50</td>
+                            <td class="num v-neg">− R$ 9.290,58</td>
+                          </tr>
+                          <tr data-id="S:administrativas:48:53" data-pai="G:administrativas:48" hidden data-cat="53" data-nivel="3" class="dre-n3">
+                            <td class="dre-nome" style="padding-left:62px;">
+<button type="button" aria-expanded="false" aria-label="Abrir Jurídico" class="dre-tg">▸</button><span class="dre-rotulo">Jurídico</span>                            </td>
+                            <td class="num v-neg">− R$ 1.543,73</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num v-neg">− R$ 1.560,16</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num v-neg">− R$ 749,76</td>
+                            <td class="num v-neg">− R$ 763,96</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num v-neg">− R$ 4.617,61</td>
                           </tr>
                           <tr data-id="S:administrativas:48:52" data-pai="G:administrativas:48" hidden data-cat="52" data-nivel="3" class="dre-n3">
                             <td class="dre-nome" style="padding-left:62px;">
@@ -902,18 +921,18 @@
                           <tr data-id="S:administrativas:48:51" data-pai="G:administrativas:48" hidden data-cat="51" data-nivel="3" class="dre-n3">
                             <td class="dre-nome" style="padding-left:62px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Material de escritório" class="dre-tg">▸</button><span class="dre-rotulo">Material de escritório</span>                            </td>
-                            <td class="num v-neg">− R$ 315,08</td>
-                            <td class="num v-neg">− R$ 276,88</td>
-                            <td class="num v-neg">− R$ 219,28</td>
-                            <td class="num v-neg">− R$ 198,44</td>
-                            <td class="num v-neg">− R$ 288,35</td>
-                            <td class="num v-neg">− R$ 298,26</td>
-                            <td class="num v-neg">− R$ 316,69</td>
-                            <td class="num v-neg">− R$ 185,95</td>
-                            <td class="num v-neg">− R$ 255,88</td>
-                            <td class="num v-neg">− R$ 359,60</td>
+                            <td class="num v-neg">− R$ 269,00</td>
+                            <td class="num v-neg">− R$ 315,23</td>
+                            <td class="num v-neg">− R$ 261,85</td>
+                            <td class="num v-neg">− R$ 323,68</td>
+                            <td class="num v-neg">− R$ 259,71</td>
+                            <td class="num v-neg">− R$ 226,95</td>
+                            <td class="num v-neg">− R$ 197,28</td>
+                            <td class="num v-neg">− R$ 210,11</td>
+                            <td class="num v-neg">− R$ 292,32</td>
+                            <td class="num v-neg">− R$ 352,36</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 2.714,41</td>
+                            <td class="num v-neg">− R$ 2.708,49</td>
                           </tr>
                           <tr data-id="G:administrativas:33" data-pai="L:administrativas" hidden data-nivel="2" class="dre-n2">
                             <td class="dre-nome" style="padding-left:44px;">
@@ -950,146 +969,146 @@
                           <tr data-id="L:comerciais" data-pai="T:despesas_operacionais" hidden data-nivel="1" class="dre-n1">
                             <td class="dre-nome" style="padding-left:26px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Comerciais" class="dre-tg">▸</button><span class="dre-rotulo">Comerciais</span>                            </td>
-                            <td class="num v-neg">− R$ 4.561,88</td>
-                            <td class="num v-neg">− R$ 4.160,84</td>
-                            <td class="num v-neg">− R$ 6.194,74</td>
-                            <td class="num v-neg">− R$ 5.637,01</td>
-                            <td class="num v-neg">− R$ 5.235,14</td>
-                            <td class="num v-neg">− R$ 5.981,94</td>
-                            <td class="num v-neg">− R$ 5.071,17</td>
-                            <td class="num v-neg">− R$ 5.332,44</td>
-                            <td class="num v-neg">− R$ 5.382,42</td>
-                            <td class="num v-neg">− R$ 5.478,30</td>
-                            <td class="num v-neg">− R$ 268,35</td>
-                            <td class="num v-neg">− R$ 53.304,23</td>
+                            <td class="num v-neg">− R$ 5.800,55</td>
+                            <td class="num v-neg">− R$ 4.441,84</td>
+                            <td class="num v-neg">− R$ 4.553,31</td>
+                            <td class="num v-neg">− R$ 6.196,20</td>
+                            <td class="num v-neg">− R$ 5.796,05</td>
+                            <td class="num v-neg">− R$ 5.591,94</td>
+                            <td class="num v-neg">− R$ 5.648,68</td>
+                            <td class="num v-neg">− R$ 4.869,81</td>
+                            <td class="num v-neg">− R$ 6.212,45</td>
+                            <td class="num v-neg">− R$ 6.422,16</td>
+                            <td class="num v-neg">− R$ 962,72</td>
+                            <td class="num v-neg">− R$ 56.495,71</td>
                           </tr>
                           <tr data-id="G:comerciais:54" data-pai="L:comerciais" hidden data-nivel="2" class="dre-n2">
                             <td class="dre-nome" style="padding-left:44px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Comerciais" class="dre-tg">▸</button><span class="dre-rotulo">Comerciais</span>                            </td>
-                            <td class="num v-neg">− R$ 4.561,88</td>
-                            <td class="num v-neg">− R$ 4.160,84</td>
-                            <td class="num v-neg">− R$ 6.194,74</td>
-                            <td class="num v-neg">− R$ 5.637,01</td>
-                            <td class="num v-neg">− R$ 5.235,14</td>
-                            <td class="num v-neg">− R$ 5.981,94</td>
-                            <td class="num v-neg">− R$ 5.071,17</td>
-                            <td class="num v-neg">− R$ 5.332,44</td>
-                            <td class="num v-neg">− R$ 5.382,42</td>
-                            <td class="num v-neg">− R$ 5.478,30</td>
-                            <td class="num v-neg">− R$ 268,35</td>
-                            <td class="num v-neg">− R$ 53.304,23</td>
+                            <td class="num v-neg">− R$ 5.800,55</td>
+                            <td class="num v-neg">− R$ 4.441,84</td>
+                            <td class="num v-neg">− R$ 4.553,31</td>
+                            <td class="num v-neg">− R$ 6.196,20</td>
+                            <td class="num v-neg">− R$ 5.796,05</td>
+                            <td class="num v-neg">− R$ 5.591,94</td>
+                            <td class="num v-neg">− R$ 5.648,68</td>
+                            <td class="num v-neg">− R$ 4.869,81</td>
+                            <td class="num v-neg">− R$ 6.212,45</td>
+                            <td class="num v-neg">− R$ 6.422,16</td>
+                            <td class="num v-neg">− R$ 962,72</td>
+                            <td class="num v-neg">− R$ 56.495,71</td>
                           </tr>
                           <tr data-id="S:comerciais:54:55" data-pai="G:comerciais:54" hidden data-cat="55" data-nivel="3" class="dre-n3">
                             <td class="dre-nome" style="padding-left:62px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Marketing" class="dre-tg">▸</button><span class="dre-rotulo">Marketing</span>                            </td>
-                            <td class="num v-neg">− R$ 2.091,22</td>
-                            <td class="num v-neg">− R$ 1.989,43</td>
-                            <td class="num v-neg">− R$ 3.485,63</td>
-                            <td class="num v-neg">− R$ 2.719,84</td>
-                            <td class="num v-neg">− R$ 1.994,96</td>
-                            <td class="num v-neg">− R$ 3.138,62</td>
-                            <td class="num v-neg">− R$ 2.154,71</td>
-                            <td class="num v-neg">− R$ 2.357,49</td>
-                            <td class="num v-neg">− R$ 2.541,07</td>
-                            <td class="num v-neg">− R$ 2.152,88</td>
+                            <td class="num v-neg">− R$ 3.269,97</td>
+                            <td class="num v-neg">− R$ 2.245,71</td>
+                            <td class="num v-neg">− R$ 1.933,91</td>
+                            <td class="num v-neg">− R$ 3.367,57</td>
+                            <td class="num v-neg">− R$ 2.642,50</td>
+                            <td class="num v-neg">− R$ 2.915,67</td>
+                            <td class="num v-neg">− R$ 2.944,19</td>
+                            <td class="num v-neg">− R$ 1.972,36</td>
+                            <td class="num v-neg">− R$ 3.318,43</td>
+                            <td class="num v-neg">− R$ 3.087,46</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 24.625,85</td>
+                            <td class="num v-neg">− R$ 27.697,77</td>
                           </tr>
                           <tr data-id="S:comerciais:54:57" data-pai="G:comerciais:54" hidden data-cat="57" data-nivel="3" class="dre-n3">
                             <td class="dre-nome" style="padding-left:62px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Taxa de maquininha" class="dre-tg">▸</button><span class="dre-rotulo">Taxa de maquininha</span>                            </td>
-                            <td class="num v-neg">− R$ 1.798,17</td>
-                            <td class="num v-neg">− R$ 1.586,79</td>
-                            <td class="num v-neg">− R$ 1.961,93</td>
-                            <td class="num v-neg">− R$ 2.097,73</td>
-                            <td class="num v-neg">− R$ 2.364,65</td>
-                            <td class="num v-neg">− R$ 1.978,60</td>
-                            <td class="num v-neg">− R$ 2.034,51</td>
-                            <td class="num v-neg">− R$ 2.189,06</td>
-                            <td class="num v-neg">− R$ 2.117,73</td>
-                            <td class="num v-neg">− R$ 2.402,92</td>
-                            <td class="num v-neg">− R$ 179,70</td>
-                            <td class="num v-neg">− R$ 20.711,79</td>
+                            <td class="num v-neg">− R$ 1.815,42</td>
+                            <td class="num v-neg">− R$ 1.549,42</td>
+                            <td class="num v-neg">− R$ 1.919,78</td>
+                            <td class="num v-neg">− R$ 2.015,78</td>
+                            <td class="num v-neg">− R$ 2.335,40</td>
+                            <td class="num v-neg">− R$ 1.976,21</td>
+                            <td class="num v-neg">− R$ 2.000,90</td>
+                            <td class="num v-neg">− R$ 2.163,47</td>
+                            <td class="num v-neg">− R$ 2.127,80</td>
+                            <td class="num v-neg">− R$ 2.399,69</td>
+                            <td class="num v-neg">− R$ 648,75</td>
+                            <td class="num v-neg">− R$ 20.952,62</td>
                           </tr>
                           <tr data-id="S:comerciais:54:56" data-pai="G:comerciais:54" hidden data-cat="56" data-nivel="3" class="dre-n3">
                             <td class="dre-nome" style="padding-left:62px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Comissões" class="dre-tg">▸</button><span class="dre-rotulo">Comissões</span>                            </td>
-                            <td class="num v-neg">− R$ 672,49</td>
-                            <td class="num v-neg">− R$ 584,62</td>
-                            <td class="num v-neg">− R$ 747,18</td>
-                            <td class="num v-neg">− R$ 819,44</td>
-                            <td class="num v-neg">− R$ 875,53</td>
-                            <td class="num v-neg">− R$ 864,72</td>
-                            <td class="num v-neg">− R$ 881,95</td>
-                            <td class="num v-neg">− R$ 785,89</td>
-                            <td class="num v-neg">− R$ 723,62</td>
-                            <td class="num v-neg">− R$ 922,50</td>
-                            <td class="num v-neg">− R$ 88,65</td>
-                            <td class="num v-neg">− R$ 7.966,59</td>
+                            <td class="num v-neg">− R$ 715,16</td>
+                            <td class="num v-neg">− R$ 646,71</td>
+                            <td class="num v-neg">− R$ 699,62</td>
+                            <td class="num v-neg">− R$ 812,85</td>
+                            <td class="num v-neg">− R$ 818,15</td>
+                            <td class="num v-neg">− R$ 700,06</td>
+                            <td class="num v-neg">− R$ 703,59</td>
+                            <td class="num v-neg">− R$ 733,98</td>
+                            <td class="num v-neg">− R$ 766,22</td>
+                            <td class="num v-neg">− R$ 935,01</td>
+                            <td class="num v-neg">− R$ 313,97</td>
+                            <td class="num v-neg">− R$ 7.845,32</td>
                           </tr>
                           <tr data-id="L:veiculos" data-pai="T:despesas_operacionais" hidden data-nivel="1" class="dre-n1">
                             <td class="dre-nome" style="padding-left:26px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Veículos" class="dre-tg">▸</button><span class="dre-rotulo">Veículos</span>                            </td>
-                            <td class="num v-neg">− R$ 1.090,24</td>
-                            <td class="num v-neg">− R$ 1.147,66</td>
-                            <td class="num v-neg">− R$ 2.214,11</td>
-                            <td class="num v-neg">− R$ 2.049,07</td>
-                            <td class="num v-neg">− R$ 1.208,01</td>
-                            <td class="num v-neg">− R$ 2.723,85</td>
-                            <td class="num v-neg">− R$ 2.310,12</td>
-                            <td class="num v-neg">− R$ 1.408,85</td>
-                            <td class="num v-neg">− R$ 1.052,66</td>
-                            <td class="num v-neg">− R$ 2.119,41</td>
-                            <td class="num v-neg">− R$ 282,42</td>
-                            <td class="num v-neg">− R$ 17.606,40</td>
+                            <td class="num v-neg">− R$ 1.216,24</td>
+                            <td class="num v-neg">− R$ 1.183,13</td>
+                            <td class="num v-neg">− R$ 1.453,97</td>
+                            <td class="num v-neg">− R$ 1.142,91</td>
+                            <td class="num v-neg">− R$ 1.205,40</td>
+                            <td class="num v-neg">− R$ 2.563,84</td>
+                            <td class="num v-neg">− R$ 1.213,22</td>
+                            <td class="num v-neg">− R$ 2.712,03</td>
+                            <td class="num v-neg">− R$ 1.118,01</td>
+                            <td class="num v-neg">− R$ 1.248,54</td>
+                            <td class="num v-neg">− R$ 498,77</td>
+                            <td class="num v-neg">− R$ 15.556,06</td>
                           </tr>
                           <tr data-id="G:veiculos:63" data-pai="L:veiculos" hidden data-nivel="2" class="dre-n2">
                             <td class="dre-nome" style="padding-left:44px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Veículos" class="dre-tg">▸</button><span class="dre-rotulo">Veículos</span>                            </td>
-                            <td class="num v-neg">− R$ 1.090,24</td>
-                            <td class="num v-neg">− R$ 1.147,66</td>
-                            <td class="num v-neg">− R$ 2.214,11</td>
-                            <td class="num v-neg">− R$ 2.049,07</td>
-                            <td class="num v-neg">− R$ 1.208,01</td>
-                            <td class="num v-neg">− R$ 2.723,85</td>
-                            <td class="num v-neg">− R$ 2.310,12</td>
-                            <td class="num v-neg">− R$ 1.408,85</td>
-                            <td class="num v-neg">− R$ 1.052,66</td>
-                            <td class="num v-neg">− R$ 2.119,41</td>
-                            <td class="num v-neg">− R$ 282,42</td>
-                            <td class="num v-neg">− R$ 17.606,40</td>
+                            <td class="num v-neg">− R$ 1.216,24</td>
+                            <td class="num v-neg">− R$ 1.183,13</td>
+                            <td class="num v-neg">− R$ 1.453,97</td>
+                            <td class="num v-neg">− R$ 1.142,91</td>
+                            <td class="num v-neg">− R$ 1.205,40</td>
+                            <td class="num v-neg">− R$ 2.563,84</td>
+                            <td class="num v-neg">− R$ 1.213,22</td>
+                            <td class="num v-neg">− R$ 2.712,03</td>
+                            <td class="num v-neg">− R$ 1.118,01</td>
+                            <td class="num v-neg">− R$ 1.248,54</td>
+                            <td class="num v-neg">− R$ 498,77</td>
+                            <td class="num v-neg">− R$ 15.556,06</td>
                           </tr>
                           <tr data-id="S:veiculos:63:64" data-pai="G:veiculos:63" hidden data-cat="64" data-nivel="3" class="dre-n3">
                             <td class="dre-nome" style="padding-left:62px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Combustível" class="dre-tg">▸</button><span class="dre-rotulo">Combustível</span>                            </td>
-                            <td class="num v-neg">− R$ 1.090,24</td>
-                            <td class="num v-neg">− R$ 1.147,66</td>
-                            <td class="num v-neg">− R$ 1.575,55</td>
-                            <td class="num v-neg">− R$ 1.108,30</td>
-                            <td class="num v-neg">− R$ 1.208,01</td>
-                            <td class="num v-neg">− R$ 1.306,13</td>
-                            <td class="num v-neg">− R$ 1.135,57</td>
-                            <td class="num v-neg">− R$ 1.408,85</td>
-                            <td class="num v-neg">− R$ 1.052,66</td>
-                            <td class="num v-neg">− R$ 1.197,21</td>
-                            <td class="num v-neg">− R$ 282,42</td>
-                            <td class="num v-neg">− R$ 12.512,60</td>
+                            <td class="num v-neg">− R$ 1.216,24</td>
+                            <td class="num v-neg">− R$ 1.183,13</td>
+                            <td class="num v-neg">− R$ 1.453,97</td>
+                            <td class="num v-neg">− R$ 1.142,91</td>
+                            <td class="num v-neg">− R$ 1.205,40</td>
+                            <td class="num v-neg">− R$ 1.481,87</td>
+                            <td class="num v-neg">− R$ 1.213,22</td>
+                            <td class="num v-neg">− R$ 1.353,99</td>
+                            <td class="num v-neg">− R$ 1.118,01</td>
+                            <td class="num v-neg">− R$ 1.248,54</td>
+                            <td class="num v-neg">− R$ 498,77</td>
+                            <td class="num v-neg">− R$ 13.116,05</td>
                           </tr>
                           <tr data-id="S:veiculos:63:65" data-pai="G:veiculos:63" hidden data-cat="65" data-nivel="3" class="dre-n3">
                             <td class="dre-nome" style="padding-left:62px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Manutenção" class="dre-tg">▸</button><span class="dre-rotulo">Manutenção</span>                            </td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 638,56</td>
-                            <td class="num v-neg">− R$ 940,77</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 1.417,72</td>
-                            <td class="num v-neg">− R$ 1.174,55</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 922,20</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 5.093,80</td>
+                            <td class="num v-neg">− R$ 1.081,97</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num v-neg">− R$ 1.358,04</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num v-neg">− R$ 2.440,01</td>
                           </tr>
                           <tr data-id="L:outras_despesas" data-pai="T:despesas_operacionais" hidden data-nivel="1" class="dre-n1">
                             <td class="dre-nome" style="padding-left:26px;">
@@ -1110,182 +1129,184 @@
                           <tr data-id="T:resultado_operacional" data-nivel="0" class="dre-n0 dre-total">
                             <td class="dre-nome" style="padding-left:8px;">
 <span class="dre-tg dre-tg--vazio"></span><span class="dre-rotulo">= Resultado operacional (EBITDA de caixa)</span>                            </td>
-                            <td class="num v-pos">R$ 4.047,09</td>
-                            <td class="num v-pos">R$ 7.248,47</td>
-                            <td class="num v-pos">R$ 37.219,13</td>
-                            <td class="num v-pos">R$ 45.292,45</td>
-                            <td class="num v-pos">R$ 45.789,44</td>
-                            <td class="num v-pos">R$ 26.711,34</td>
-                            <td class="num v-pos">R$ 23.746,09</td>
-                            <td class="num v-pos">R$ 56.246,01</td>
-                            <td class="num v-pos">R$ 45.927,08</td>
-                            <td class="num v-pos">R$ 44.469,46</td>
-                            <td class="num v-pos">R$ 11.683,06</td>
-                            <td class="num v-pos">R$ 348.379,62</td>
+                            <td class="num v-pos">R$ 2.108,85</td>
+                            <td class="num v-pos">R$ 1.968,77</td>
+                            <td class="num v-pos">R$ 40.694,51</td>
+                            <td class="num v-pos">R$ 39.385,98</td>
+                            <td class="num v-pos">R$ 43.303,52</td>
+                            <td class="num v-pos">R$ 29.834,17</td>
+                            <td class="num v-pos">R$ 19.562,82</td>
+                            <td class="num v-pos">R$ 52.518,16</td>
+                            <td class="num v-pos">R$ 47.356,62</td>
+                            <td class="num v-pos">R$ 51.888,14</td>
+                            <td class="num v-pos">R$ 29.030,85</td>
+                            <td class="num v-pos">R$ 357.652,39</td>
                           </tr>
                           <tr data-id="L:outras_receitas" data-nivel="0" class="dre-n0">
                             <td class="dre-nome" style="padding-left:8px;">
 <button type="button" aria-expanded="false" aria-label="Abrir (+) Outras receitas e estornos" class="dre-tg">▸</button><span class="dre-rotulo">(+) Outras receitas e estornos</span>                            </td>
-                            <td class="num v-pos">R$ 877,27</td>
-                            <td class="num v-pos">R$ 723,95</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-pos">R$ 781,63</td>
-                            <td class="num v-pos">R$ 1.175,08</td>
+                            <td class="num v-pos">R$ 159,41</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-pos">R$ 580,27</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-pos">R$ 4.138,20</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num v-pos">R$ 159,41</td>
                           </tr>
                           <tr data-id="G:outras_receitas:17" data-pai="L:outras_receitas" hidden data-nivel="1" class="dre-n1">
                             <td class="dre-nome" style="padding-left:26px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Outras receitas" class="dre-tg">▸</button><span class="dre-rotulo">Outras receitas</span>                            </td>
-                            <td class="num v-pos">R$ 877,27</td>
-                            <td class="num v-pos">R$ 723,95</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-pos">R$ 781,63</td>
-                            <td class="num v-pos">R$ 1.175,08</td>
+                            <td class="num v-pos">R$ 159,41</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-pos">R$ 580,27</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-pos">R$ 4.138,20</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num v-pos">R$ 159,41</td>
                           </tr>
                           <tr data-id="S:outras_receitas:17:18" data-pai="G:outras_receitas:17" hidden data-cat="18" data-nivel="2" class="dre-n2">
                             <td class="dre-nome" style="padding-left:44px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Reembolsos" class="dre-tg">▸</button><span class="dre-rotulo">Reembolsos</span>                            </td>
-                            <td class="num v-pos">R$ 877,27</td>
-                            <td class="num v-pos">R$ 723,95</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-pos">R$ 781,63</td>
-                            <td class="num v-pos">R$ 828,61</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num v-pos">R$ 580,27</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num v-pos">R$ 3.791,73</td>
-                          </tr>
-                          <tr data-id="S:outras_receitas:17:19" data-pai="G:outras_receitas:17" hidden data-cat="19" data-nivel="2" class="dre-n2">
-                            <td class="dre-nome" style="padding-left:44px;">
-<button type="button" aria-expanded="false" aria-label="Abrir Estornos recebidos" class="dre-tg">▸</button><span class="dre-rotulo">Estornos recebidos</span>                            </td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num v-pos">R$ 346,47</td>
+                            <td class="num v-pos">R$ 159,41</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-pos">R$ 346,47</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num v-pos">R$ 159,41</td>
                           </tr>
                           <tr data-id="L:receitas_financeiras" data-nivel="0" class="dre-n0">
                             <td class="dre-nome" style="padding-left:8px;">
 <button type="button" aria-expanded="false" aria-label="Abrir (+) Receitas financeiras" class="dre-tg">▸</button><span class="dre-rotulo">(+) Receitas financeiras</span>                            </td>
-                            <td class="num v-pos">R$ 385,29</td>
-                            <td class="num v-pos">R$ 344,57</td>
-                            <td class="num v-pos">R$ 222,53</td>
-                            <td class="num v-pos">R$ 209,40</td>
-                            <td class="num v-pos">R$ 182,03</td>
-                            <td class="num v-pos">R$ 383,68</td>
-                            <td class="num v-pos">R$ 180,99</td>
-                            <td class="num v-pos">R$ 296,04</td>
-                            <td class="num v-pos">R$ 344,91</td>
-                            <td class="num v-pos">R$ 303,25</td>
-                            <td class="num v-pos">R$ 168,29</td>
-                            <td class="num v-pos">R$ 3.020,98</td>
+                            <td class="num v-pos">R$ 375,73</td>
+                            <td class="num v-pos">R$ 283,43</td>
+                            <td class="num v-pos">R$ 303,08</td>
+                            <td class="num v-pos">R$ 196,25</td>
+                            <td class="num v-pos">R$ 308,11</td>
+                            <td class="num v-pos">R$ 219,88</td>
+                            <td class="num v-pos">R$ 215,56</td>
+                            <td class="num v-pos">R$ 391,90</td>
+                            <td class="num v-pos">R$ 401,17</td>
+                            <td class="num v-pos">R$ 125,20</td>
+                            <td class="num v-pos">R$ 394,81</td>
+                            <td class="num v-pos">R$ 3.215,12</td>
                           </tr>
                           <tr data-id="G:receitas_financeiras:15" data-pai="L:receitas_financeiras" hidden data-nivel="1" class="dre-n1">
                             <td class="dre-nome" style="padding-left:26px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Receitas financeiras" class="dre-tg">▸</button><span class="dre-rotulo">Receitas financeiras</span>                            </td>
-                            <td class="num v-pos">R$ 385,29</td>
-                            <td class="num v-pos">R$ 344,57</td>
-                            <td class="num v-pos">R$ 222,53</td>
-                            <td class="num v-pos">R$ 209,40</td>
-                            <td class="num v-pos">R$ 182,03</td>
-                            <td class="num v-pos">R$ 383,68</td>
-                            <td class="num v-pos">R$ 180,99</td>
-                            <td class="num v-pos">R$ 296,04</td>
-                            <td class="num v-pos">R$ 344,91</td>
-                            <td class="num v-pos">R$ 303,25</td>
-                            <td class="num v-pos">R$ 168,29</td>
-                            <td class="num v-pos">R$ 3.020,98</td>
+                            <td class="num v-pos">R$ 375,73</td>
+                            <td class="num v-pos">R$ 283,43</td>
+                            <td class="num v-pos">R$ 303,08</td>
+                            <td class="num v-pos">R$ 196,25</td>
+                            <td class="num v-pos">R$ 308,11</td>
+                            <td class="num v-pos">R$ 219,88</td>
+                            <td class="num v-pos">R$ 215,56</td>
+                            <td class="num v-pos">R$ 391,90</td>
+                            <td class="num v-pos">R$ 401,17</td>
+                            <td class="num v-pos">R$ 125,20</td>
+                            <td class="num v-pos">R$ 394,81</td>
+                            <td class="num v-pos">R$ 3.215,12</td>
                           </tr>
                           <tr data-id="S:receitas_financeiras:15:3" data-pai="G:receitas_financeiras:15" hidden data-cat="3" data-nivel="2" class="dre-n2">
                             <td class="dre-nome" style="padding-left:44px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Rendimentos" class="dre-tg">▸</button><span class="dre-rotulo">Rendimentos</span>                            </td>
-                            <td class="num v-pos">R$ 385,29</td>
-                            <td class="num v-pos">R$ 344,57</td>
-                            <td class="num v-pos">R$ 222,53</td>
-                            <td class="num v-pos">R$ 209,40</td>
-                            <td class="num v-pos">R$ 182,03</td>
-                            <td class="num v-pos">R$ 383,68</td>
-                            <td class="num v-pos">R$ 180,99</td>
-                            <td class="num v-pos">R$ 296,04</td>
-                            <td class="num v-pos">R$ 344,91</td>
-                            <td class="num v-pos">R$ 303,25</td>
-                            <td class="num v-pos">R$ 168,29</td>
-                            <td class="num v-pos">R$ 3.020,98</td>
+                            <td class="num v-pos">R$ 375,73</td>
+                            <td class="num v-pos">R$ 283,43</td>
+                            <td class="num v-pos">R$ 303,08</td>
+                            <td class="num v-pos">R$ 196,25</td>
+                            <td class="num v-pos">R$ 308,11</td>
+                            <td class="num v-pos">R$ 219,88</td>
+                            <td class="num v-pos">R$ 215,56</td>
+                            <td class="num v-pos">R$ 243,27</td>
+                            <td class="num v-pos">R$ 401,17</td>
+                            <td class="num v-pos">R$ 125,20</td>
+                            <td class="num v-pos">R$ 394,81</td>
+                            <td class="num v-pos">R$ 3.066,49</td>
+                          </tr>
+                          <tr data-id="S:receitas_financeiras:15:16" data-pai="G:receitas_financeiras:15" hidden data-cat="16" data-nivel="2" class="dre-n2">
+                            <td class="dre-nome" style="padding-left:44px;">
+<button type="button" aria-expanded="false" aria-label="Abrir Juros recebidos" class="dre-tg">▸</button><span class="dre-rotulo">Juros recebidos</span>                            </td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num v-pos">R$ 148,63</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num dre-zero">—</td>
+                            <td class="num v-pos">R$ 148,63</td>
                           </tr>
                           <tr data-id="L:despesas_financeiras" data-nivel="0" class="dre-n0">
                             <td class="dre-nome" style="padding-left:8px;">
 <button type="button" aria-expanded="false" aria-label="Abrir (−) Despesas financeiras" class="dre-tg">▸</button><span class="dre-rotulo">(−) Despesas financeiras</span>                            </td>
-                            <td class="num v-neg">− R$ 116,70</td>
-                            <td class="num v-neg">− R$ 131,88</td>
-                            <td class="num v-neg">− R$ 216,32</td>
-                            <td class="num v-neg">− R$ 148,79</td>
-                            <td class="num v-neg">− R$ 99,90</td>
-                            <td class="num v-neg">− R$ 142,19</td>
-                            <td class="num v-neg">− R$ 113,32</td>
-                            <td class="num v-neg">− R$ 243,91</td>
-                            <td class="num v-neg">− R$ 336,26</td>
-                            <td class="num v-neg">− R$ 158,03</td>
+                            <td class="num v-neg">− R$ 293,04</td>
+                            <td class="num v-neg">− R$ 222,81</td>
+                            <td class="num v-neg">− R$ 243,20</td>
+                            <td class="num v-neg">− R$ 115,19</td>
+                            <td class="num v-neg">− R$ 105,87</td>
+                            <td class="num v-neg">− R$ 235,64</td>
+                            <td class="num v-neg">− R$ 121,74</td>
+                            <td class="num v-neg">− R$ 103,50</td>
+                            <td class="num v-neg">− R$ 185,50</td>
+                            <td class="num v-neg">− R$ 111,68</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 1.707,30</td>
+                            <td class="num v-neg">− R$ 1.738,17</td>
                           </tr>
                           <tr data-id="G:despesas_financeiras:58" data-pai="L:despesas_financeiras" hidden data-nivel="1" class="dre-n1">
                             <td class="dre-nome" style="padding-left:26px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Financeiras" class="dre-tg">▸</button><span class="dre-rotulo">Financeiras</span>                            </td>
-                            <td class="num v-neg">− R$ 116,70</td>
-                            <td class="num v-neg">− R$ 131,88</td>
-                            <td class="num v-neg">− R$ 216,32</td>
-                            <td class="num v-neg">− R$ 148,79</td>
-                            <td class="num v-neg">− R$ 99,90</td>
-                            <td class="num v-neg">− R$ 142,19</td>
-                            <td class="num v-neg">− R$ 113,32</td>
-                            <td class="num v-neg">− R$ 243,91</td>
-                            <td class="num v-neg">− R$ 336,26</td>
-                            <td class="num v-neg">− R$ 158,03</td>
+                            <td class="num v-neg">− R$ 293,04</td>
+                            <td class="num v-neg">− R$ 222,81</td>
+                            <td class="num v-neg">− R$ 243,20</td>
+                            <td class="num v-neg">− R$ 115,19</td>
+                            <td class="num v-neg">− R$ 105,87</td>
+                            <td class="num v-neg">− R$ 235,64</td>
+                            <td class="num v-neg">− R$ 121,74</td>
+                            <td class="num v-neg">− R$ 103,50</td>
+                            <td class="num v-neg">− R$ 185,50</td>
+                            <td class="num v-neg">− R$ 111,68</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 1.707,30</td>
+                            <td class="num v-neg">− R$ 1.738,17</td>
                           </tr>
                           <tr data-id="S:despesas_financeiras:58:59" data-pai="G:despesas_financeiras:58" hidden data-cat="59" data-nivel="2" class="dre-n2">
                             <td class="dre-nome" style="padding-left:44px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Tarifas bancárias" class="dre-tg">▸</button><span class="dre-rotulo">Tarifas bancárias</span>                            </td>
-                            <td class="num v-neg">− R$ 116,70</td>
-                            <td class="num v-neg">− R$ 131,88</td>
-                            <td class="num v-neg">− R$ 113,76</td>
-                            <td class="num v-neg">− R$ 148,79</td>
-                            <td class="num v-neg">− R$ 99,90</td>
-                            <td class="num v-neg">− R$ 95,93</td>
-                            <td class="num v-neg">− R$ 113,32</td>
-                            <td class="num v-neg">− R$ 118,26</td>
-                            <td class="num v-neg">− R$ 113,93</td>
-                            <td class="num v-neg">− R$ 158,03</td>
+                            <td class="num v-neg">− R$ 130,10</td>
+                            <td class="num v-neg">− R$ 93,35</td>
+                            <td class="num v-neg">− R$ 149,78</td>
+                            <td class="num v-neg">− R$ 115,19</td>
+                            <td class="num v-neg">− R$ 105,87</td>
+                            <td class="num v-neg">− R$ 138,16</td>
+                            <td class="num v-neg">− R$ 121,74</td>
+                            <td class="num v-neg">− R$ 103,50</td>
+                            <td class="num v-neg">− R$ 144,83</td>
+                            <td class="num v-neg">− R$ 111,68</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 1.210,50</td>
+                            <td class="num v-neg">− R$ 1.214,20</td>
                           </tr>
                           <tr data-id="S:despesas_financeiras:58:61" data-pai="G:despesas_financeiras:58" hidden data-cat="61" data-nivel="2" class="dre-n2">
                             <td class="dre-nome" style="padding-left:44px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Juros/multas" class="dre-tg">▸</button><span class="dre-rotulo">Juros/multas</span>                            </td>
+                            <td class="num v-neg">− R$ 162,94</td>
+                            <td class="num v-neg">− R$ 129,46</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
@@ -1293,43 +1314,41 @@
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 125,65</td>
-                            <td class="num v-neg">− R$ 158,42</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 284,07</td>
+                            <td class="num v-neg">− R$ 292,40</td>
                           </tr>
                           <tr data-id="S:despesas_financeiras:58:60" data-pai="G:despesas_financeiras:58" hidden data-cat="60" data-nivel="2" class="dre-n2">
                             <td class="dre-nome" style="padding-left:44px;">
 <button type="button" aria-expanded="false" aria-label="Abrir IOF" class="dre-tg">▸</button><span class="dre-rotulo">IOF</span>                            </td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 102,56</td>
+                            <td class="num v-neg">− R$ 93,42</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 46,26</td>
+                            <td class="num v-neg">− R$ 97,48</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 63,91</td>
+                            <td class="num v-neg">− R$ 40,67</td>
                             <td class="num dre-zero">—</td>
                             <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 212,73</td>
+                            <td class="num v-neg">− R$ 231,57</td>
                           </tr>
                           <tr data-id="T:resultado" data-nivel="0" class="dre-n0 dre-total">
                             <td class="dre-nome" style="padding-left:8px;">
 <span class="dre-tg dre-tg--vazio"></span><span class="dre-rotulo">= RESULTADO DO PERÍODO (caixa)</span>                            </td>
-                            <td class="num v-pos">R$ 5.192,95</td>
-                            <td class="num v-pos">R$ 8.185,11</td>
-                            <td class="num v-pos">R$ 37.225,34</td>
-                            <td class="num v-pos">R$ 46.134,69</td>
-                            <td class="num v-pos">R$ 47.046,65</td>
-                            <td class="num v-pos">R$ 26.952,83</td>
-                            <td class="num v-pos">R$ 23.813,76</td>
-                            <td class="num v-pos">R$ 56.298,14</td>
-                            <td class="num v-pos">R$ 46.516,00</td>
-                            <td class="num v-pos">R$ 44.614,68</td>
-                            <td class="num v-pos">R$ 11.851,35</td>
-                            <td class="num v-pos">R$ 353.831,50</td>
+                            <td class="num v-pos">R$ 2.191,54</td>
+                            <td class="num v-pos">R$ 2.188,80</td>
+                            <td class="num v-pos">R$ 40.754,39</td>
+                            <td class="num v-pos">R$ 39.467,04</td>
+                            <td class="num v-pos">R$ 43.505,76</td>
+                            <td class="num v-pos">R$ 29.818,41</td>
+                            <td class="num v-pos">R$ 19.656,64</td>
+                            <td class="num v-pos">R$ 52.806,56</td>
+                            <td class="num v-pos">R$ 47.572,29</td>
+                            <td class="num v-pos">R$ 51.901,66</td>
+                            <td class="num v-pos">R$ 29.425,66</td>
+                            <td class="num v-pos">R$ 359.288,75</td>
                           </tr>
                           <tr data-id="T:fora" data-nivel="0" class="dre-n0 dre-titulo">
                             <td colspan="99" class="dre-nome dre-secao">Fora do resultado</td>
@@ -1337,34 +1356,34 @@
                           <tr data-id="L:retiradas" data-nivel="0" class="dre-n0">
                             <td class="dre-nome" style="padding-left:8px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Retiradas dos sócios" class="dre-tg">▸</button><span class="dre-rotulo">Retiradas dos sócios</span>                            </td>
-                            <td class="num v-neg">− R$ 12.644,51</td>
-                            <td class="num v-neg">− R$ 3.081,99</td>
-                            <td class="num v-neg">− R$ 3.368,10</td>
-                            <td class="num v-neg">− R$ 12.614,60</td>
-                            <td class="num v-neg">− R$ 3.042,60</td>
-                            <td class="num v-neg">− R$ 3.451,57</td>
-                            <td class="num v-neg">− R$ 12.454,78</td>
-                            <td class="num v-neg">− R$ 2.766,63</td>
-                            <td class="num v-neg">− R$ 3.300,75</td>
-                            <td class="num v-neg">− R$ 12.165,08</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 68.890,61</td>
+                            <td class="num v-neg">− R$ 12.006,99</td>
+                            <td class="num v-neg">− R$ 2.773,53</td>
+                            <td class="num v-neg">− R$ 3.056,18</td>
+                            <td class="num v-neg">− R$ 12.779,19</td>
+                            <td class="num v-neg">− R$ 3.205,73</td>
+                            <td class="num v-neg">− R$ 3.044,30</td>
+                            <td class="num v-neg">− R$ 12.008,54</td>
+                            <td class="num v-neg">− R$ 3.185,70</td>
+                            <td class="num v-neg">− R$ 3.010,08</td>
+                            <td class="num v-neg">− R$ 12.454,57</td>
+                            <td class="num v-neg">− R$ 3.110,84</td>
+                            <td class="num v-neg">− R$ 70.635,65</td>
                           </tr>
                           <tr data-id="G:retiradas:66" data-pai="L:retiradas" hidden data-nivel="1" class="dre-n1">
                             <td class="dre-nome" style="padding-left:26px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Retiradas" class="dre-tg">▸</button><span class="dre-rotulo">Retiradas</span>                            </td>
-                            <td class="num v-neg">− R$ 12.644,51</td>
-                            <td class="num v-neg">− R$ 3.081,99</td>
-                            <td class="num v-neg">− R$ 3.368,10</td>
-                            <td class="num v-neg">− R$ 12.614,60</td>
-                            <td class="num v-neg">− R$ 3.042,60</td>
-                            <td class="num v-neg">− R$ 3.451,57</td>
-                            <td class="num v-neg">− R$ 12.454,78</td>
-                            <td class="num v-neg">− R$ 2.766,63</td>
-                            <td class="num v-neg">− R$ 3.300,75</td>
-                            <td class="num v-neg">− R$ 12.165,08</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 68.890,61</td>
+                            <td class="num v-neg">− R$ 12.006,99</td>
+                            <td class="num v-neg">− R$ 2.773,53</td>
+                            <td class="num v-neg">− R$ 3.056,18</td>
+                            <td class="num v-neg">− R$ 12.779,19</td>
+                            <td class="num v-neg">− R$ 3.205,73</td>
+                            <td class="num v-neg">− R$ 3.044,30</td>
+                            <td class="num v-neg">− R$ 12.008,54</td>
+                            <td class="num v-neg">− R$ 3.185,70</td>
+                            <td class="num v-neg">− R$ 3.010,08</td>
+                            <td class="num v-neg">− R$ 12.454,57</td>
+                            <td class="num v-neg">− R$ 3.110,84</td>
+                            <td class="num v-neg">− R$ 70.635,65</td>
                           </tr>
                           <tr data-id="S:retiradas:66:67" data-pai="G:retiradas:66" hidden data-cat="67" data-nivel="2" class="dre-n2">
                             <td class="dre-nome" style="padding-left:44px;">
@@ -1385,18 +1404,18 @@
                           <tr data-id="S:retiradas:66:68" data-pai="G:retiradas:66" hidden data-cat="68" data-nivel="2" class="dre-n2">
                             <td class="dre-nome" style="padding-left:44px;">
 <button type="button" aria-expanded="false" aria-label="Abrir Retirada pessoal" class="dre-tg">▸</button><span class="dre-rotulo">Retirada pessoal</span>                            </td>
-                            <td class="num v-neg">− R$ 3.194,51</td>
-                            <td class="num v-neg">− R$ 3.081,99</td>
-                            <td class="num v-neg">− R$ 3.368,10</td>
-                            <td class="num v-neg">− R$ 3.164,60</td>
-                            <td class="num v-neg">− R$ 3.042,60</td>
-                            <td class="num v-neg">− R$ 3.451,57</td>
-                            <td class="num v-neg">− R$ 3.004,78</td>
-                            <td class="num v-neg">− R$ 2.766,63</td>
-                            <td class="num v-neg">− R$ 3.300,75</td>
-                            <td class="num v-neg">− R$ 2.715,08</td>
-                            <td class="num dre-zero">—</td>
-                            <td class="num v-neg">− R$ 31.090,61</td>
+                            <td class="num v-neg">− R$ 2.556,99</td>
+                            <td class="num v-neg">− R$ 2.773,53</td>
+                            <td class="num v-neg">− R$ 3.056,18</td>
+                            <td class="num v-neg">− R$ 3.329,19</td>
+                            <td class="num v-neg">− R$ 3.205,73</td>
+                            <td class="num v-neg">− R$ 3.044,30</td>
+                            <td class="num v-neg">− R$ 2.558,54</td>
+                            <td class="num v-neg">− R$ 3.185,70</td>
+                            <td class="num v-neg">− R$ 3.010,08</td>
+                            <td class="num v-neg">− R$ 3.004,57</td>
+                            <td class="num v-neg">− R$ 3.110,84</td>
+                            <td class="num v-neg">− R$ 32.835,65</td>
                           </tr>
                           <tr data-id="L:parcela_emprestimo" data-nivel="0" class="dre-n0">
                             <td class="dre-nome" style="padding-left:8px;">
@@ -1465,18 +1484,18 @@
                           <tr data-id="T:apos_retiradas" data-nivel="0" class="dre-n0 dre-total">
                             <td class="dre-nome" style="padding-left:8px;">
 <span class="dre-tg dre-tg--vazio"></span><span class="dre-rotulo">= Resultado após retiradas e parcelas de empréstimo</span>                            </td>
-                            <td class="num v-neg">− R$ 9.551,56</td>
-                            <td class="num v-pos">R$ 3.003,12</td>
-                            <td class="num v-pos">R$ 31.757,24</td>
-                            <td class="num v-pos">R$ 31.420,09</td>
-                            <td class="num v-pos">R$ 41.904,05</td>
-                            <td class="num v-pos">R$ 21.401,26</td>
-                            <td class="num v-pos">R$ 9.258,98</td>
-                            <td class="num v-pos">R$ 51.431,51</td>
-                            <td class="num v-pos">R$ 41.115,25</td>
-                            <td class="num v-pos">R$ 30.349,60</td>
-                            <td class="num v-pos">R$ 11.851,35</td>
-                            <td class="num v-pos">R$ 263.940,89</td>
+                            <td class="num v-neg">− R$ 11.915,45</td>
+                            <td class="num v-neg">− R$ 2.684,73</td>
+                            <td class="num v-pos">R$ 35.598,21</td>
+                            <td class="num v-pos">R$ 24.587,85</td>
+                            <td class="num v-pos">R$ 38.200,03</td>
+                            <td class="num v-pos">R$ 24.674,11</td>
+                            <td class="num v-pos">R$ 5.548,10</td>
+                            <td class="num v-pos">R$ 47.520,86</td>
+                            <td class="num v-pos">R$ 42.462,21</td>
+                            <td class="num v-pos">R$ 37.347,09</td>
+                            <td class="num v-pos">R$ 26.314,82</td>
+                            <td class="num v-pos">R$ 267.653,10</td>
                           </tr>
                         </tbody>
                       </table>
@@ -1485,82 +1504,82 @@
                   </div>
                 </div>
               </div>
-              <div class="card bloco" style="margin-top:20px;">
+              <div class="card bloco contorno tom-ciano" style="margin-top:20px;">
                 <div class="faixa tom-ciano">
-<span aria-hidden="true" class="faixa-ic">◈</span><span class="faixa-titulo">Comparativo</span><span class="faixa-nota">atual × anterior × ano passado</span>                </div>
+<span aria-hidden="true" class="faixa-ic">◈</span><span class="faixa-titulo">Comparativo</span><span class="faixa-nota">ATUAL × ANTERIOR × ANO PASSADO</span>                </div>
                 <div class="bloco-corpo">
                   <div class="tbl-wrap">
                     <table class="tbl cmp-tbl">
                       <thead>
                         <tr>
                           <th>Linha</th>
-                          <th class="num">Período atual (01/01/2026 a 03/11/2026)</th>
-                          <th class="num">Período anterior (28/02/2025 a 31/12/2025)</th>
+                          <th class="num">Período atual (01/01/2026 a 09/11/2026)</th>
+                          <th class="num">Período anterior (22/02/2025 a 31/12/2025)</th>
                           <th class="cmp-var">Variação</th>
-                          <th class="num">Mesmo período de 2025 (01/01/2025 a 03/11/2025)</th>
+                          <th class="num">Mesmo período de 2025 (01/01/2025 a 09/11/2025)</th>
                           <th class="cmp-var">Variação</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr class="">
                           <td class="dre-nome">Receita bruta de vendas</td>
-                          <td class="num">R$ 2.338.493,95</td>
-                          <td class="num">R$ 2.341.697,21</td>
+                          <td class="num">R$ 2.372.524,93</td>
+                          <td class="num">R$ 2.364.277,95</td>
                           <td class="cmp-var">
-<span class="chip chip--ruim">↘ −0,1%</span>                          </td>
-                          <td class="num">R$ 2.155.286,39</td>
+<span class="chip chip--bom">↗ +0,3%</span>                          </td>
+                          <td class="num">R$ 2.200.191,04</td>
                           <td class="cmp-var">
-<span class="chip chip--bom">↗ +8,5%</span>                          </td>
+<span class="chip chip--bom">↗ +7,8%</span>                          </td>
                         </tr>
                         <tr class="cmp-total">
                           <td class="dre-nome">= Receita líquida</td>
-                          <td class="num">R$ 2.174.080,19</td>
-                          <td class="num">R$ 2.191.096,49</td>
+                          <td class="num">R$ 2.210.656,89</td>
+                          <td class="num">R$ 2.213.495,88</td>
                           <td class="cmp-var">
-<span class="chip chip--ruim">↘ −0,8%</span>                          </td>
-                          <td class="num">R$ 2.007.572,67</td>
+<span class="chip chip--ruim">↘ −0,1%</span>                          </td>
+                          <td class="num">R$ 2.053.023,77</td>
                           <td class="cmp-var">
-<span class="chip chip--bom">↗ +8,3%</span>                          </td>
+<span class="chip chip--bom">↗ +7,7%</span>                          </td>
                         </tr>
                         <tr class="cmp-total">
                           <td class="dre-nome">= Lucro bruto</td>
-                          <td class="num">R$ 1.190.221,37</td>
-                          <td class="num">R$ 1.238.478,66</td>
+                          <td class="num">R$ 1.222.122,01</td>
+                          <td class="num">R$ 1.265.898,56</td>
                           <td class="cmp-var">
-<span class="chip chip--ruim">↘ −3,9%</span>                          </td>
-                          <td class="num">R$ 1.116.023,37</td>
+<span class="chip chip--ruim">↘ −3,5%</span>                          </td>
+                          <td class="num">R$ 1.142.382,75</td>
                           <td class="cmp-var">
-<span class="chip chip--bom">↗ +6,6%</span>                          </td>
+<span class="chip chip--bom">↗ +7,0%</span>                          </td>
                         </tr>
                         <tr class="">
                           <td class="dre-nome">(−) Despesas operacionais</td>
-                          <td class="num">− R$ 841.841,75</td>
-                          <td class="num">− R$ 834.963,68</td>
+                          <td class="num">− R$ 864.469,62</td>
+                          <td class="num">− R$ 874.036,53</td>
                           <td class="cmp-var">
-<span class="chip chip--ruim">↘ −0,8%</span>                          </td>
-                          <td class="num">− R$ 814.127,18</td>
+<span class="chip chip--bom">↗ +1,1%</span>                          </td>
+                          <td class="num">− R$ 833.384,38</td>
                           <td class="cmp-var">
-<span class="chip chip--ruim">↘ −3,4%</span>                          </td>
+<span class="chip chip--ruim">↘ −3,7%</span>                          </td>
                         </tr>
                         <tr class="cmp-total">
                           <td class="dre-nome">= Resultado operacional (EBITDA de caixa)</td>
-                          <td class="num">R$ 348.379,62</td>
-                          <td class="num">R$ 403.514,98</td>
+                          <td class="num">R$ 357.652,39</td>
+                          <td class="num">R$ 391.862,03</td>
                           <td class="cmp-var">
-<span class="chip chip--ruim">↘ −13,7%</span>                          </td>
-                          <td class="num">R$ 301.896,19</td>
+<span class="chip chip--ruim">↘ −8,7%</span>                          </td>
+                          <td class="num">R$ 308.998,37</td>
                           <td class="cmp-var">
-<span class="chip chip--bom">↗ +15,4%</span>                          </td>
+<span class="chip chip--bom">↗ +15,7%</span>                          </td>
                         </tr>
                         <tr class="cmp-total">
                           <td class="dre-nome">= RESULTADO DO PERÍODO (caixa)</td>
-                          <td class="num">R$ 353.831,50</td>
-                          <td class="num">R$ 404.991,75</td>
+                          <td class="num">R$ 359.288,75</td>
+                          <td class="num">R$ 393.263,96</td>
                           <td class="cmp-var">
-<span class="chip chip--ruim">↘ −12,6%</span>                          </td>
-                          <td class="num">R$ 304.321,97</td>
+<span class="chip chip--ruim">↘ −8,6%</span>                          </td>
+                          <td class="num">R$ 311.533,87</td>
                           <td class="cmp-var">
-<span class="chip chip--bom">↗ +16,3%</span>                          </td>
+<span class="chip chip--bom">↗ +15,3%</span>                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -1583,30 +1602,16 @@
     caixa.textContent = t; caixa.classList.add('on');
     clearTimeout(relogio); relogio = setTimeout(function () { caixa.classList.remove('on'); }, 2600);
   }
-  function tema(t) {
-    d.setAttribute('data-theme', t);
-    try { if (!d.classList.contains('mk-embed')) localStorage.setItem('mk-tema', t); } catch (e) {}
-    document.querySelectorAll('.theme-switch button[name=tema]').forEach(function (b) {
-      b.classList.toggle('on', (b.value === 'claro') === (t === 'light'));
-    });
-  }
-  tema(d.getAttribute('data-theme'));
-  // dentro do site, o tema acompanha o alternador do site
-  if (d.classList.contains('mk-embed')) try {
-    new MutationObserver(function () { tema(parent.document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'); })
-      .observe(parent.document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-  } catch (e) {}
+  // sem tema claro: a linha "Tema" do menu do usuário não tem o que escolher
+  document.querySelectorAll('.theme-switch').forEach(function (f) { if (f.parentElement) f.parentElement.remove(); });
   document.addEventListener('click', function (e) {
     var a = e.target.closest('a[data-mk-fora]');
     if (a) { e.preventDefault(); avisar('Esta tela fica só no app. O mockup mostra as principais.'); return; }
-    var b = e.target.closest('.theme-switch button[name=tema]');
-    if (b) { e.preventDefault(); tema(b.value === 'claro' ? 'light' : 'dark'); }
   }, true);
   document.addEventListener('submit', function (e) {
     var f = e.target.closest('form[data-mk-form]');
     if (!f) return;
     e.preventDefault();
-    if (f.querySelector('button[name=tema]')) return;
     if (f.querySelector('input[name=senha]')) { location.href = 'index.html'; return; }
     avisar(f.method === 'get' ? 'No mockup os filtros não mudam os dados. No app, a tela recalcula na hora.' : 'Mockup: nada é gravado. No app, isto salva e fica na auditoria.');
   }, true);

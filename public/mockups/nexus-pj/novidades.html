@@ -5,19 +5,13 @@
 <meta name="robots" content="noindex">
 <script>
 /* Mockup estático do Nexus & PJ (dados fictícios). Antes do primeiro paint:
-   ?embed = dentro do site (iframe), o tema acompanha o site; fora dele vale o
-   tema escolhido no próprio mockup. */
+   ?embed = dentro do site (iframe). O tema é sempre o escuro. */
 (function () {
   var d = document.documentElement, t = 'dark';
   var embed = /[?&]embed\b/.test(location.search);
   try { embed = embed || sessionStorage.getItem('mk-embed') === '1'; if (embed) sessionStorage.setItem('mk-embed', '1'); } catch (e) {}
-  if (embed) {
-    d.classList.add('mk-embed');
-    try { if (parent.document.documentElement.dataset.theme === 'light') t = 'light'; } catch (e) {}
-  } else {
-    try { if (localStorage.getItem('mk-tema') === 'light') t = 'light'; } catch (e) {}
-  }
-  d.setAttribute('data-theme', t);
+  if (embed) d.classList.add('mk-embed');
+  d.setAttribute('data-theme', t);   // o site só tem tema escuro
   // dentro do site o Dashboard aparece direto, sem a janela de boas-vindas por cima
   if (embed) {
     var abrir = HTMLDialogElement.prototype.showModal;
@@ -43,6 +37,9 @@
   .mk-selo{position:fixed;right:14px;bottom:14px;z-index:9999;padding:6px 10px;border-radius:999px;font:600 11px/1 system-ui,sans-serif;
     letter-spacing:.04em;background:rgba(17,24,39,.85);color:#e5e7eb;border:1px solid rgba(255,255,255,.14)}
   .mk-embed .mk-selo{display:none}
+  /* no card do site a janela é estreita: a busca encolhe para o nome do usuário caber */
+  .mk-embed .busca-wrap{min-width:0;flex:1 1 8rem;max-width:16rem}
+  .mk-embed .busca-wrap input{min-width:0;width:100%;text-overflow:ellipsis}
 </style>
 
     <title>Nexus &amp; PJ — mockup (/novidades)</title>
@@ -77,7 +74,7 @@
 .subabas{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .subaba{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;font-size:12.5px;font-weight:600;
   color:var(--text-200);background:var(--surface-1);border:1px solid var(--border-1);text-decoration:none;white-space:nowrap;
-  transition:background var(--dur-fast) ease,color var(--dur-fast) ease,border-color var(--dur-fast) ease}
+  transition:background 150ms ease,color 150ms ease,border-color 150ms ease,transform 150ms ease,box-shadow 150ms ease}
 .subaba .sa-ic{font-size:13px;line-height:1;color:var(--tom-tx,var(--text-200))}
 .subaba:hover{color:var(--text-100);border-color:var(--line-strong)}
 .subaba:focus-visible{outline:2px solid var(--text-200);outline-offset:2px}
@@ -93,7 +90,7 @@
   </head>
   <body>
     <div id="appShell" class="shell">
-      
+<script>(function(){var s=document.currentScript&&document.currentScript.parentNode;try{if(s&&localStorage.getItem('nx-menu-1')==='1')s.classList.add('sidebar-collapsed');}catch(e){}})();</script>      
       <div id="appSidebar" class="sidebar">
         <div class="brand">
 <a href="index.html" class="brand-btn" title="Ir para o Dashboard"><img src="static/branding/icone-dark.png" alt="" class="brand-icon"><span class="brand-name">Nexus &amp; PJ</span></a>        </div>
@@ -140,11 +137,63 @@
         <div class="body">
           <div>
             <p style="color:var(--text-200);font-size:13.5px;">
-Você está na versão 2.5.1<span style="color:var(--text-mute);"> (código 1462b03)</span>            </p>
+Você está na versão 2.6.0<span style="color:var(--text-mute);"> (código 0fd8ba1)</span>            </p>
+            <div class="card" style="margin-top:20px;">
+              <div class="section-head">
+                <h2>Versão 2.6.0 · 04/11/2026</h2>
+<span class="badge badge--green">instalada</span>              </div>
+              <div>
+                <h3 style="font-size:14px;margin:14px 0 6px;">Novo</h3>
+                <ul style="margin:0 0 0 18px;">
+                  <li style="margin:4px 0;"><b>Assistente (IA) e a reforma tributária:</b> duas perguntas novas com número: “impostos pagos” separados em sistema antigo (DAS, ICMS, ISS, PIS/Cofins) × novo (CBS, IBS, Imposto Seletivo) mais o tributo retido no split pela adquirente (só o que foi pago e conciliado, nunca apuração), e “qual o regime tributário” (o informado). Quem pede opinião (“devo optar pelo híbrido?”, “vale a pena sair do Simples?”) recebe sempre o mesmo texto fixo: o assistente não dá parecer, a decisão é do contador; junto vêm os números que a plataforma tem (regime informado e impostos do ano), só para quem pode ver a DRE.</li>
+                  <li style="margin:4px 0;"><b>Cenário com split payment na projeção (Dashboard › Projeções):</b> opcional e desligado de fábrica. Quem define o colchão mínimo pode digitar as premissas (que parte das entradas passa por meio com split, o tributo estimado sobre elas, a partir de quando e se as guias de impostos sobre vendas deixam de sair). Aparece então uma segunda linha “Com split (estimativa)” no gráfico, na tabela e no relatório, ao lado da projeção de sempre, que não muda, com as premissas escritas. O sistema não guarda alíquota nenhuma: sem premissa, o cenário não existe. “Desligar” volta ao normal.</li>
+                  <li style="margin:4px 0;"><b>DRE com o tributo do split:</b> nos meses em que o crédito da adquirente foi conciliado com os recebíveis, a DRE por caixa mostra o que a adquirente descontou: a receita volta ao valor antes dos descontos (linha “Taxa e tributo descontados pela adquirente”), “Impostos sobre vendas” ganha “Tributo retido no split” e “Despesas financeiras” ganha “Taxa da adquirente”. As três se anulam: o resultado do mês é o mesmo de antes. Mês com parte dos recebíveis ou dos créditos ainda sem conciliar mostra o aviso “conciliação incompleta”. Vale para a tela, o relatório e o pacote do contador.</li>
+                  <li style="margin:4px 0;"><b>Recebíveis de cartão e Pix (Fluxo de caixa › Recebíveis):</b> importe o arquivo que a sua adquirente (maquininha) fornece, em CSV ou Excel. No primeiro arquivo de cada adquirente você diz qual coluna é qual (data prevista, data paga, meio/bandeira, bruto, taxa, tributo retido no split, líquido e identificador); o sistema sugere pelo nome e o layout fica salvo. Coluna que o arquivo não tem fica vazia (nada é calculado), linha ilegível é recusada com o motivo, e mandar o mesmo arquivo de novo não duplica (o previsto que reaparece pago ganha a data do pagamento). Bruto − taxa − tributo = líquido é conferido linha a linha: o que não fecha vira aviso, nunca ajuste. A tela mostra os totais por mês (bruto, taxa, tributo retido, líquido e quanto já está conciliado) e a conciliação do mês: os recebíveis pagos no mesmo dia formam um lote que é comparado com os créditos do extrato (um centavo de tolerância); com um crédito claro o sistema sugere e você confirma (uma a uma ou todas), com mais de um você escolhe, e aparecem à parte o “recebível sem crédito” e o “crédito sem recebível” (créditos com o texto da adquirente que nenhum recebível explica). Conciliar só liga o recebível ao crédito, não muda o lançamento, e respeita o mês fechado. Permissão própria “Recebíveis de cartão e Pix” (quem edita o Fluxo de caixa importa e concilia; quem só lê, só vê). Desfazer conciliação e cancelar importação pedem justificativa. O pacote do contador ganha <code>Recebiveis.csv</code> quando o mês tem recebível pago, e há o relatório “Recebíveis de cartão e Pix”.</li>
+                  <li style="margin:4px 0;"><b>Calendário da reforma tributária (Configurações › Calendário da reforma):</b> uma lista de datas que ficam no radar (fim do prazo de opção do Simples pelo regime regular de IBS/CBS, início da CBS, split payment, convivência de ICMS/ISS com o IBS até 2033), cada uma com a fonte, o dia em que foi conferida e se é só previsão ou está confirmada. Quem vê a DRE consulta; o administrador adiciona, edita e liga ou desliga o aviso (desligar pede justificativa). O Vigia avisa por mensagem quando faltam até 30, até 7 e até 1 dia, só para quem tem o regime informado a que o marco vale (ou para todos, quando o marco vale para todos), no máximo um aviso por etapa a cada mês. São lembretes, não parecer: confirme as datas na fonte e com o contador.</li>
+                  <li style="margin:4px 0;"><b>Regime tributário com vigência (Configurações › Empresa e logo):</b> o administrador informa o regime da empresa (MEI, Simples Nacional, Simples com IBS/CBS pelo regime regular, Lucro presumido ou Lucro real) e desde quando vale, e pode encerrar o período ou excluir (com justificativa). Loja com CNPJ cadastrado pode ter regime próprio; as demais usam o da empresa. Dois períodos do mesmo lugar não se sobrepõem. O regime aparece no rodapé da DRE e do balancete (telas e relatórios) e no pacote do contador (<code>regime.txt</code>), sempre como “informado pelo usuário/contador”: o sistema não apura nem confere regime.</li>
+                  <li style="margin:4px 0;"><b>Categorias da reforma tributária:</b> o grupo Impostos ganhou <b>CBS</b>, <b>IBS</b>, <b>Imposto Seletivo</b> e <b>PIS/Cofins</b>, e a DRE soma as quatro em “Impostos sobre vendas”. Quem já usa o sistema recebe só o que falta, sem mexer no que editou (nome, categoria desativada ou categoria própria). O sistema não calcula imposto nenhum: você categoriza o que pagou, como sempre. Atenção: se você já tinha uma subcategoria com um desses nomes dentro de Impostos, ela passa a somar em “Impostos sobre vendas” (antes ia para Administrativas), inclusive nos meses antigos.</li>
+                  <li style="margin:4px 0;"><b>Balanço patrimonial completo, em dois quadros:</b> à esquerda o <b>Ativo</b> (circulante: bancos uma linha por conta, aplicações financeiras, contas a receber até 12 meses, estoques e outros; não circulante: a receber em mais de 12 meses, investimentos, imobilizado, intangível) e à direita o <b>Passivo</b> (circulante e não circulante) com o <b>Patrimônio líquido</b> logo abaixo (capital social, reservas e resultados acumulados, calculado para o balanço fechar). A última linha mostra o total do passivo + PL, igual ao do ativo (✓). Cada quadro mantém as colunas Atual, fim do mês anterior e variação.</li>
+                  <li style="margin:4px 0;"><b>Dados do balanço</b> (Configurações → Gestão, só administrador): cadastro dos valores que o extrato não sabe (estoques, imobilizado, empréstimos, obrigações, capital, reservas...), cada um com nome, valor e a data em que passa a valer. O balanço usa o último valor que não passe da data consultada, então a coluna do mês anterior continua certa. Toda gravação e remoção fica na auditoria.</li>
+                  <li style="margin:4px 0;"><b>Conta de aplicação financeira:</b> a conta bancária ganhou a caixa “É conta de aplicação financeira”; o saldo dela aparece em “Aplicações financeiras” no balanço, separado dos bancos (contas antigas com “aplicação” no tipo foram marcadas sozinhas). Nos Dados do balanço há “Remover valor” (só a linha; o valor anterior volta) e “Remover item” (todas as linhas do item).</li>
+                  <li style="margin:4px 0;"><b>Coluna Loja</b> no Realizado, no Planejado e na Busca, logo depois do Banco. Com uma só loja ativa, tudo aparece nela (e o filtro acha); com duas ou mais, o lançamento mostra a loja, o selo <b>Rateio</b> (quando uma regra de rateio se aplica) ou <b>Sem loja</b> em âmbar. O filtro de loja ganhou &quot;Sem loja&quot; e &quot;Rateio&quot; para achar pendências. Ao editar um lançamento ou cadastrar um título com duas ou mais lojas é preciso escolher uma loja ou Rateio (Rateio só se houver regra ativa que se aplique). A importação continua sem bloquear nada e nada foi regravado nos lançamentos antigos.</li>
+                  <li style="margin:4px 0;"><b>Gráficos mais vivos:</b> barras e fatias entram em cascata, as barras e a rosca ganharam degradê, o ponto, a barra ou a fatia sob o mouse brilha, a linha tem um pulso na ponta e a rosca mostra o total no centro (contando até o valor exato). Os gráficos abaixo da dobra só nascem quando aparecem na tela. Tudo respeita o nível de efeitos (Completo, Reduzido, Desligado) e &quot;reduzir movimento&quot; do sistema; o valor final é sempre o do servidor, sem mola nem passar do valor.</li>
+                  <li style="margin:4px 0;"><b>Composição mês a mês (Dashboard › Vendas e Despesas):</b> gráficos de área de 100% mostram a fatia de cada origem da receita e de cada grupo de despesa em cada mês, com o valor em reais na dica. Meses sem dado nas pontas não entram.</li>
+                  <li style="margin:4px 0;"><b>Cascata da receita ao resultado (Dashboard › Resultado):</b> o gráfico da composição do DRE virou uma cascata (verde soma, vermelho subtrai, a última barra é o resultado).</li>
+                  <li style="margin:4px 0;"><b>Orçamento com ritmo do mês:</b> cada categoria ganhou uma barra com o realizado, o traço do orçado, o traço de onde deveria estar hoje e a ponta tracejada da projeção &quot;no ritmo atual&quot;. Cartões de resumo mostram o orçado, o realizado, a projeção e quantas categorias vão estourar. A projeção é linear (só um aviso) e só aparece a partir do 7º dia do mês; mês passado mostra o realizado e mês futuro não projeta. A tabela exata continua abaixo.</li>
+                  <li style="margin:4px 0;"><b>Calendário de movimento (Fluxo de caixa):</b> um quadrado por dia, abaixo do Fluxo diário, com três visões (saídas, entradas e resultado do dia). A cor cresce com o valor, com escala pelo percentil 95 para um dia enorme não apagar os outros; passar o mouse mostra entradas, saídas e resultado do dia.</li>
+                </ul>
+              </div>
+              <div>
+                <h3 style="font-size:14px;margin:14px 0 6px;">Alterado</h3>
+                <ul style="margin:0 0 0 18px;">
+                  <li style="margin:4px 0;"><b>Visual das tabelas, filtros e botões:</b> toda tabela de lista agora tem faixa colorida com o título em caixa alta e a contagem à direita, contorno na mesma cor, linhas mais baixas e colunas finas para o &quot;+&quot; e o lápis. A barra acima da tabela leva abas e botões à esquerda e os filtros à direita, terminando em <b>Filtrar</b> e <b>Limpar</b> iguais (no DRE, Expandir/Recolher subiram para a esquerda). Todos os botões têm contorno e, ao passar o mouse, sobem 1 px com sombra suave (sem movimento para quem pede menos animação).</li>
+                  <li style="margin:4px 0;"><b>Prévia dos cards do hub de Painéis:</b> cada card mostra um número-destaque e barras com o valor curto à direita (R$ 12,3 mil; negativo em vermelho), no máximo 4 linhas e &quot;+N&quot; quando há mais. Corrigido o vazamento que escondia as primeiras lojas. A DRE ganhou uma mini-cascata da receita bruta ao resultado.</li>
+                  <li style="margin:4px 0;"><b>E-mail do usuário mais rigoroso:</b> ao criar a conta do primeiro administrador e ao cadastrar ou trocar o e-mail de um usuário, o sistema agora recusa endereços malformados (espaço, aspas, parênteses, quebra de linha, dois &quot;@&quot;, pontos seguidos etc.) e domínios que não existem ou não recebem e-mail (consulta ao DNS do domínio, só o nome do domínio sai da máquina). Se a internet ou o DNS estiverem fora do ar na hora, o endereço é aceito. Nomes de domínio com acento são guardados na forma técnica (<code>xn--...</code>). Editar só o nome ou o perfil de quem já tem e-mail gravado não consulta o DNS. É o primeiro passo para o código de verificação por e-mail.</li>
+                  <li style="margin:4px 0;"><b>Envio de e-mail pronto (ainda desligado):</b> o sistema ganhou a camada que manda os códigos de segurança por e-mail, pelo serviço de e-mail que você contratar (SMTP com criptografia e certificado verificado). Fica desligada até você preencher o <code>.env</code>; há um modo de teste que só grava o e-mail num arquivo local. O envio sai pelo worker, com nova tentativa se o provedor falhar, e o conteúdo é apagado da fila assim que o e-mail sai (ou desiste). Só o endereço, um assunto fixo e o código saem da máquina. Nova tela <b>Configurações → E-mail</b> (só desenvolvedor) mostra o estado e envia um e-mail de teste para o seu próprio endereço, sem nunca exibir usuário nem senha do provedor.</li>
+                  <li style="margin:4px 0;"><b>Base dos códigos por e-mail (ainda sem tela):</b> o banco ganhou a tabela de códigos de segurança (guarda só uma assinatura do código, nunca o código nem o endereço escrito) e duas marcas no usuário: “e-mail verificado em” e “segundo fator” (e-mail ou autenticador; quem já usa o autenticador e o desenvolvedor continuam nele). O sistema já sabe sortear o código <code>XXXX-XXXX</code>, conferir com uso único, invalidar após 5 erros e aplicar os limites (3 por hora e 10 por dia por e-mail, 10 por hora por IP, 60 s entre reenvios). Nada muda para quem usa o sistema enquanto as telas dos próximos passos não chegam.</li>
+                  <li style="margin:4px 0;"><b>Esqueci minha senha (só com o e-mail ligado):</b> a tela de entrada ganhou o link “Esqueci minha senha”. A pessoa digita o e-mail e recebe um código de 8 caracteres (vale 15 minutos, uso único); com o código escolhe a senha nova. A resposta do pedido é sempre a mesma, exista a conta ou não, para ninguém descobrir quem tem cadastro. Ao redefinir, todas as sessões abertas são encerradas, a troca fica na auditoria (sem o código) e a pessoa recebe um aviso por e-mail. Não entra sozinha: o login normal continua valendo (aparelho novo ainda espera um administrador). Com o e-mail desligado, a tela só manda procurar um administrador.</li>
+                  <li style="margin:4px 0;"><b>Convite por e-mail (só com o e-mail ligado):</b> ao criar um usuário, o administrador não define mais a senha: a pessoa recebe um convite com um código (vale 72 horas) e escolhe a própria senha em “Tenho um convite”, na tela de entrada. Na lista de Usuários há “Enviar/Reenviar convite” (para quem ainda não verificou o e-mail) e “Enviar redefinição” (manda um código ao e-mail da pessoa para ela escolher uma senha nova), além das colunas “Verificação” e “2º fator”. O administrador nunca vê o código nem a senha. Com o e-mail desligado, tudo funciona como antes (o administrador define a senha inicial).</li>
+                  <li style="margin:4px 0;"><b>E-mail verificado (só com o e-mail ligado):</b> quem ainda não confirmou o e-mail da conta, ao entrar, só vê a tela “Confirme seu e-mail”: pede o código (enviado sempre ao e-mail cadastrado), digita e segue. Vale depois da troca de senha e antes da verificação em duas etapas. Quem recebeu convite ou redefiniu a senha por código já fica verificado. A conta do desenvolvedor não passa por esse portão. Com o e-mail desligado, nada muda.</li>
+                  <li style="margin:4px 0;"><b>Código por e-mail no login (2º fator, só com o e-mail ligado):</b> quem não usa o aplicativo autenticador passa a confirmar o login com um código de 8 caracteres enviado ao e-mail cadastrado (vale 15 minutos, uma vez só, 5 erros invalidam). Administradores usam os DOIS: primeiro o autenticador e depois o código do e-mail. Quem já tem o autenticador ativo continua só com ele, e a conta do desenvolvedor também. O código é pedido nos mesmos momentos em que o autenticador já era (todo login ou só aparelho novo, conforme a configuração); aparelho novo continua esperando um administrador aprovar. Ativar o autenticador em “Minha conta” passa a conta para esse método; desativar volta ao e-mail. Com o e-mail desligado, tudo volta a depender só do autenticador.</li>
+                  <li style="margin:4px 0;"><b>Trocar a senha pede a senha atual (e o 2º fator):</b> na tela de troca de senha a pessoa digita a senha atual e, conforme a conta, o código do aplicativo autenticador e/ou o código enviado ao e-mail (há um botão “Enviar código para o e-mail”; o código vai sempre ao e-mail cadastrado). Quem acabou de receber uma senha provisória de um administrador não precisa digitar a atual. A senha nova é conferida antes, então uma senha fraca não gasta o código. Ao trocar, as outras sessões caem e a pessoa recebe o aviso “sua senha foi alterada” por e-mail.</li>
+                  <li style="margin:4px 0;"><b>Telas de entrada:</b> os links “Esqueci minha senha” e “Tenho um convite” ganharam cor legível (antes saíam em azul escuro sobre o fundo escuro) e as telas com dois formulários ganharam espaçamento entre eles.</li>
+                </ul>
+              </div>
+              <div>
+                <h3 style="font-size:14px;margin:14px 0 6px;">Corrigido</h3>
+                <ul style="margin:0 0 0 18px;">
+                  <li style="margin:4px 0;"><b>Barra lateral não pisca mais:</b> ao abrir uma tela ou aba nova com o menu recolhido, a barra aparecia aberta e fechava de repente. Agora a preferência é aplicada antes de a barra ser desenhada.</li>
+                  <li style="margin:4px 0;"><b>Desativar a verificação em duas etapas ficou mais difícil de forçar:</b> a tela agora pede também a <b>senha atual</b>, além do código do aplicativo. Errar a senha ou o código mostra a mesma mensagem, vale no limite de 5 erros em 15 minutos (depois disso a tela responde &quot;Muitas tentativas&quot;, mesmo com tudo certo) e cada erro aparece no Vigia de acesso como falha de 2FA. Antes não havia limite: quem pegasse uma sessão aberta num computador compartilhado podia chutar o código até desativar o 2FA da conta.</li>
+                  <li style="margin:4px 0;"><b>Servidor Linux, instalação atrás do proxy:</b> o instalador passou a pedir <code>--dominio</code> (o endereço do site) e já grava <code>PROXIES_CONFIAVEIS</code>, <code>HOSTS_PERMITIDOS</code> e <code>ORIGENS_PERMITIDAS</code> no ambiente da instância nova. Antes, quem esquecesse de preencher isso à mão deixava qualquer visitante da internet travar o login de todos com 20 erros, e o cookie de sessão saía sem <code>Secure</code>. Instância que já existe não é reescrita: o instalador só avisa o que falta. Os exemplos de Caddy e nginx da documentação ganharam limite de tamanho do corpo (25 MB, no Caddy) e HSTS.</li>
+                  <li style="margin:4px 0;"><b>Segurança na leitura de PDF:</b> a biblioteca que abre os PDFs enviados (pypdf) foi atualizada da 6.15.0 para a 6.21.3, que corrige várias falhas conhecidas em que um PDF preparado de propósito podia travar o sistema ou consumir toda a memória. Nenhuma tela mudou.</li>
+                  <li style="margin:4px 0;"><b>Windows com mais de uma conta:</b> novo script <code>scripts/fechar_permissoes_pasta.ps1</code> (e a seção 15 do guia de emergência) para tirar &quot;Usuários autenticados&quot; e &quot;Usuários&quot; da pasta do sistema, onde o PC tem outra conta do Windows e ela poderia ler as chaves e o banco ou trocar o código. Só mostra o que mudaria até você rodar com <code>-Aplicar</code>; nada muda sozinho.</li>
+                </ul>
+              </div>
+            </div>
             <div class="card" style="margin-top:20px;">
               <div class="section-head">
                 <h2>Versão 2.5.1 · 28/10/2026</h2>
-<span class="badge badge--green">instalada</span>              </div>
+              </div>
               <div>
                 <h3 style="font-size:14px;margin:14px 0 6px;">Corrigido</h3>
                 <ul style="margin:0 0 0 18px;">
@@ -322,30 +371,16 @@ Você está na versão 2.5.1<span style="color:var(--text-mute);"> (código 1462
     caixa.textContent = t; caixa.classList.add('on');
     clearTimeout(relogio); relogio = setTimeout(function () { caixa.classList.remove('on'); }, 2600);
   }
-  function tema(t) {
-    d.setAttribute('data-theme', t);
-    try { if (!d.classList.contains('mk-embed')) localStorage.setItem('mk-tema', t); } catch (e) {}
-    document.querySelectorAll('.theme-switch button[name=tema]').forEach(function (b) {
-      b.classList.toggle('on', (b.value === 'claro') === (t === 'light'));
-    });
-  }
-  tema(d.getAttribute('data-theme'));
-  // dentro do site, o tema acompanha o alternador do site
-  if (d.classList.contains('mk-embed')) try {
-    new MutationObserver(function () { tema(parent.document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'); })
-      .observe(parent.document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-  } catch (e) {}
+  // sem tema claro: a linha "Tema" do menu do usuário não tem o que escolher
+  document.querySelectorAll('.theme-switch').forEach(function (f) { if (f.parentElement) f.parentElement.remove(); });
   document.addEventListener('click', function (e) {
     var a = e.target.closest('a[data-mk-fora]');
     if (a) { e.preventDefault(); avisar('Esta tela fica só no app. O mockup mostra as principais.'); return; }
-    var b = e.target.closest('.theme-switch button[name=tema]');
-    if (b) { e.preventDefault(); tema(b.value === 'claro' ? 'light' : 'dark'); }
   }, true);
   document.addEventListener('submit', function (e) {
     var f = e.target.closest('form[data-mk-form]');
     if (!f) return;
     e.preventDefault();
-    if (f.querySelector('button[name=tema]')) return;
     if (f.querySelector('input[name=senha]')) { location.href = 'index.html'; return; }
     avisar(f.method === 'get' ? 'No mockup os filtros não mudam os dados. No app, a tela recalcula na hora.' : 'Mockup: nada é gravado. No app, isto salva e fica na auditoria.');
   }, true);

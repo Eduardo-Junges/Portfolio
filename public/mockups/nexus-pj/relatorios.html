@@ -5,19 +5,13 @@
 <meta name="robots" content="noindex">
 <script>
 /* Mockup estático do Nexus & PJ (dados fictícios). Antes do primeiro paint:
-   ?embed = dentro do site (iframe), o tema acompanha o site; fora dele vale o
-   tema escolhido no próprio mockup. */
+   ?embed = dentro do site (iframe). O tema é sempre o escuro. */
 (function () {
   var d = document.documentElement, t = 'dark';
   var embed = /[?&]embed\b/.test(location.search);
   try { embed = embed || sessionStorage.getItem('mk-embed') === '1'; if (embed) sessionStorage.setItem('mk-embed', '1'); } catch (e) {}
-  if (embed) {
-    d.classList.add('mk-embed');
-    try { if (parent.document.documentElement.dataset.theme === 'light') t = 'light'; } catch (e) {}
-  } else {
-    try { if (localStorage.getItem('mk-tema') === 'light') t = 'light'; } catch (e) {}
-  }
-  d.setAttribute('data-theme', t);
+  if (embed) d.classList.add('mk-embed');
+  d.setAttribute('data-theme', t);   // o site só tem tema escuro
   // dentro do site o Dashboard aparece direto, sem a janela de boas-vindas por cima
   if (embed) {
     var abrir = HTMLDialogElement.prototype.showModal;
@@ -43,6 +37,9 @@
   .mk-selo{position:fixed;right:14px;bottom:14px;z-index:9999;padding:6px 10px;border-radius:999px;font:600 11px/1 system-ui,sans-serif;
     letter-spacing:.04em;background:rgba(17,24,39,.85);color:#e5e7eb;border:1px solid rgba(255,255,255,.14)}
   .mk-embed .mk-selo{display:none}
+  /* no card do site a janela é estreita: a busca encolhe para o nome do usuário caber */
+  .mk-embed .busca-wrap{min-width:0;flex:1 1 8rem;max-width:16rem}
+  .mk-embed .busca-wrap input{min-width:0;width:100%;text-overflow:ellipsis}
 </style>
 
     <title>Nexus &amp; PJ — mockup (/relatorios)</title>
@@ -77,7 +74,7 @@
 .subabas{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .subaba{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;font-size:12.5px;font-weight:600;
   color:var(--text-200);background:var(--surface-1);border:1px solid var(--border-1);text-decoration:none;white-space:nowrap;
-  transition:background var(--dur-fast) ease,color var(--dur-fast) ease,border-color var(--dur-fast) ease}
+  transition:background 150ms ease,color 150ms ease,border-color 150ms ease,transform 150ms ease,box-shadow 150ms ease}
 .subaba .sa-ic{font-size:13px;line-height:1;color:var(--tom-tx,var(--text-200))}
 .subaba:hover{color:var(--text-100);border-color:var(--line-strong)}
 .subaba:focus-visible{outline:2px solid var(--text-200);outline-offset:2px}
@@ -93,7 +90,7 @@
   </head>
   <body>
     <div id="appShell" class="shell">
-      
+<script>(function(){var s=document.currentScript&&document.currentScript.parentNode;try{if(s&&localStorage.getItem('nx-menu-1')==='1')s.classList.add('sidebar-collapsed');}catch(e){}})();</script>      
       <div id="appSidebar" class="sidebar">
         <div class="brand">
 <a href="index.html" class="brand-btn" title="Ir para o Dashboard"><img src="static/branding/icone-dark.png" alt="" class="brand-icon"><span class="brand-name">Nexus &amp; PJ</span></a>        </div>
@@ -148,20 +145,20 @@
 <form enctype="multipart/form-data" method="post" action="#" data-mk-form class="rel-form">                      
                       <div class="rel-grade">
                         <div class="field full">
-<label>Relatório</label><select name="relatorio" data-usa='{"dre_caixa": ["periodo", "loja"], "balancete": ["periodo", "loja"], "extrato": ["periodo", "loja", "conta", "categoria", "sinal", "a_revisar"], "fluxo_caixa_diario": ["periodo", "loja"], "entradas_por_origem": ["periodo", "loja"], "despesas_por_grupo": ["periodo", "loja"], "resultado_por_loja": ["periodo"], "conciliacao": ["periodo", "loja"], "projecao_13_semanas": []}' data-desc='{"dre_caixa": "Receitas, custos, despesas e resultado do per\u00edodo pelo que entrou e saiu das contas.", "balancete": "Por conta do plano: acumulado do ano, movimento do per\u00edodo e acumulado, com a confer\u00eancia com o saldo dos bancos.", "extrato": "Todos os lan\u00e7amentos do per\u00edodo, com categoria, loja e saldo.", "fluxo_caixa_diario": "Entradas, sa\u00eddas, resultado e saldo das contas, dia a dia.", "entradas_por_origem": "De onde veio o dinheiro: vendas por tipo e outras receitas.", "despesas_por_grupo": "Para onde foi o dinheiro, por grupo de categoria, e o que fugiu do padr\u00e3o.", "resultado_por_loja": "Receita, despesa e margem de cada loja, com o rateio aplicado.", "conciliacao": "Lan\u00e7amentos a revisar, quebras de saldo e \u00faltimo lan\u00e7amento de cada conta.", "projecao_13_semanas": "Saldo previsto semana a semana, com o colch\u00e3o m\u00ednimo."}' id="rel-escolha" class="input"><option value="dre_caixa" selected>DRE por caixa</option><option value="balancete">Balancete gerencial</option><option value="extrato">Extrato de lançamentos</option><option value="fluxo_caixa_diario">Fluxo de caixa diário</option><option value="entradas_por_origem">Entradas por origem</option><option value="despesas_por_grupo">Despesas por grupo</option><option value="resultado_por_loja">Resultado por loja</option><option value="conciliacao">Conciliação por conta</option><option value="projecao_13_semanas">Projeção das próximas 13 semanas</option></select>                          <p id="rel-desc" class="text-mute rel-desc">Receitas, custos, despesas e resultado do período pelo que entrou e saiu das contas.</p>
+<label>Relatório</label><select name="relatorio" data-usa='{"dre_caixa": ["periodo", "loja"], "balancete": ["periodo", "loja"], "extrato": ["periodo", "loja", "conta", "categoria", "sinal", "a_revisar"], "fluxo_caixa_diario": ["periodo", "loja"], "entradas_por_origem": ["periodo", "loja"], "despesas_por_grupo": ["periodo", "loja"], "resultado_por_loja": ["periodo"], "conciliacao": ["periodo", "loja"], "projecao_13_semanas": [], "recebiveis": ["periodo"]}' data-desc='{"dre_caixa": "Receitas, custos, despesas e resultado do per\u00edodo pelo que entrou e saiu das contas.", "balancete": "Por conta do plano: acumulado do ano, movimento do per\u00edodo e acumulado, com a confer\u00eancia com o saldo dos bancos.", "extrato": "Todos os lan\u00e7amentos do per\u00edodo, com categoria, loja e saldo.", "fluxo_caixa_diario": "Entradas, sa\u00eddas, resultado e saldo das contas, dia a dia.", "entradas_por_origem": "De onde veio o dinheiro: vendas por tipo e outras receitas.", "despesas_por_grupo": "Para onde foi o dinheiro, por grupo de categoria, e o que fugiu do padr\u00e3o.", "resultado_por_loja": "Receita, despesa e margem de cada loja, com o rateio aplicado.", "conciliacao": "Lan\u00e7amentos a revisar, quebras de saldo e \u00faltimo lan\u00e7amento de cada conta.", "projecao_13_semanas": "Saldo previsto semana a semana, com o colch\u00e3o m\u00ednimo.", "recebiveis": "Pagos no per\u00edodo pela adquirente: bruto, taxa, tributo retido, l\u00edquido e se o cr\u00e9dito j\u00e1 foi conciliado."}' id="rel-escolha" class="input"><option value="dre_caixa" selected>DRE por caixa</option><option value="balancete">Balancete gerencial</option><option value="extrato">Extrato de lançamentos</option><option value="fluxo_caixa_diario">Fluxo de caixa diário</option><option value="entradas_por_origem">Entradas por origem</option><option value="despesas_por_grupo">Despesas por grupo</option><option value="resultado_por_loja">Resultado por loja</option><option value="conciliacao">Conciliação por conta</option><option value="projecao_13_semanas">Projeção das próximas 13 semanas</option><option value="recebiveis">Recebíveis de cartão e Pix</option></select>                          <p id="rel-desc" class="text-mute rel-desc">Receitas, custos, despesas e resultado do período pelo que entrou e saiu das contas.</p>
                         </div>
                         <div data-filtro="periodo" class="field">
 <label>De</label>                          <input type="date" name="data_de" value="2026-11-01" class="input">
                         </div>
                         <div data-filtro="periodo" class="field">
-<label>Até</label>                          <input type="date" name="data_ate" value="2026-11-03" class="input">
+<label>Até</label>                          <input type="date" name="data_ate" value="2026-11-09" class="input">
                         </div>
                         <div data-filtro="loja" class="field">
 <label>Loja</label><select name="loja" class="input"><option value="">Todas as lojas</option><option value="1">Loja Centro (fictícia)</option><option value="2">Loja Norte (fictícia)</option><option value="3">Loja Sul (fictícia)</option><option value="sem">Sem loja</option></select>                        </div>
                         <div data-filtro="conta" class="field">
 <label>Conta</label><select name="conta" class="input"><option value="">Todas as contas</option><option value="1">Banco Alfa (fictício)</option><option value="2">Banco Beta (fictício)</option><option value="3">Banco Gama (fictício)</option></select>                        </div>
                         <div data-filtro="categoria" class="field">
-<label>Categoria</label><select name="categoria" class="input"><option value="">Todas</option><option value="48">Administrativas</option><option value="40">   Aluguel</option><option value="2">   Aplicação</option><option value="31">   Benefícios</option><option value="64">   Combustível</option><option value="54">Comerciais</option><option value="56">   Comissões</option><option value="41">   Condomínio</option><option value="49">   Contabilidade</option><option value="5">Devolução Pix</option><option value="67">   Distribuição de lucros</option><option value="23">   Embalagens</option><option value="30">   Encargos (INSS/FGTS)</option><option value="45">   Energia</option><option value="58">Financeiras</option><option value="20">Fornecedores</option><option value="24">   Fretes</option><option value="29">   Férias/13º</option><option value="35">   ICMS</option><option value="60">   IOF</option><option value="42">   IPTU</option><option value="36">   ISS</option><option value="33">Impostos</option><option value="22">   Insumos</option><option value="61">   Juros/multas</option><option value="53">   Jurídico</option><option value="43">   Manutenção</option><option value="65">   Manutenção</option><option value="55">   Marketing</option><option value="51">   Material de escritório</option><option value="21">   Mercadoria p/ revenda</option><option value="69">Movimentações internas</option><option value="39">Ocupação</option><option value="62">   Parcela de empréstimo</option><option value="38">   Parcelamentos</option><option value="26">Pessoal</option><option value="28">   Pró-labore</option><option value="32">   Rescisões</option><option value="70">   Resgate</option><option value="68">   Retirada pessoal</option><option value="66">Retiradas</option><option value="27">   Salários</option><option value="52">   Seguros</option><option value="25">   Serviços de terceiros</option><option value="34">   Simples/DAS</option><option value="50">   Sistemas</option><option value="59">   Tarifas bancárias</option><option value="57">   Taxa de maquininha</option><option value="37">   Taxas e licenças</option><option value="47">   Telefone/internet</option><option value="1">   Transferência entre contas</option><option value="44">Utilidades</option><option value="63">Veículos</option><option value="46">   Água/saneamento</option><option value="13">   Aporte de sócio</option><option value="9">   Boleto</option><option value="7">   Cartão de crédito</option><option value="8">   Cartão de débito</option><option value="10">   Crediário</option><option value="11">Depósitos</option><option value="19">   Estornos recebidos</option><option value="16">   Juros recebidos</option><option value="17">Outras receitas</option><option value="14">   Outros</option><option value="4">   Pix</option><option value="15">Receitas financeiras</option><option value="18">   Reembolsos</option><option value="3">   Rendimentos</option><option value="12">   Venda</option><option value="6">Vendas</option></select>                        </div>
+<label>Categoria</label><select name="categoria" class="input"><option value="">Todas</option><option value="48">Administrativas</option><option value="40">   Aluguel</option><option value="2">   Aplicação</option><option value="31">   Benefícios</option><option value="71">   CBS</option><option value="64">   Combustível</option><option value="54">Comerciais</option><option value="56">   Comissões</option><option value="41">   Condomínio</option><option value="49">   Contabilidade</option><option value="5">Devolução Pix</option><option value="67">   Distribuição de lucros</option><option value="23">   Embalagens</option><option value="30">   Encargos (INSS/FGTS)</option><option value="45">   Energia</option><option value="58">Financeiras</option><option value="20">Fornecedores</option><option value="24">   Fretes</option><option value="29">   Férias/13º</option><option value="72">   IBS</option><option value="35">   ICMS</option><option value="60">   IOF</option><option value="42">   IPTU</option><option value="36">   ISS</option><option value="73">   Imposto Seletivo</option><option value="33">Impostos</option><option value="22">   Insumos</option><option value="61">   Juros/multas</option><option value="53">   Jurídico</option><option value="43">   Manutenção</option><option value="65">   Manutenção</option><option value="55">   Marketing</option><option value="51">   Material de escritório</option><option value="21">   Mercadoria p/ revenda</option><option value="69">Movimentações internas</option><option value="39">Ocupação</option><option value="74">   PIS/Cofins</option><option value="62">   Parcela de empréstimo</option><option value="38">   Parcelamentos</option><option value="26">Pessoal</option><option value="28">   Pró-labore</option><option value="32">   Rescisões</option><option value="70">   Resgate</option><option value="68">   Retirada pessoal</option><option value="66">Retiradas</option><option value="27">   Salários</option><option value="52">   Seguros</option><option value="25">   Serviços de terceiros</option><option value="34">   Simples/DAS</option><option value="50">   Sistemas</option><option value="59">   Tarifas bancárias</option><option value="57">   Taxa de maquininha</option><option value="37">   Taxas e licenças</option><option value="47">   Telefone/internet</option><option value="1">   Transferência entre contas</option><option value="44">Utilidades</option><option value="63">Veículos</option><option value="46">   Água/saneamento</option><option value="13">   Aporte de sócio</option><option value="9">   Boleto</option><option value="7">   Cartão de crédito</option><option value="8">   Cartão de débito</option><option value="10">   Crediário</option><option value="11">Depósitos</option><option value="19">   Estornos recebidos</option><option value="16">   Juros recebidos</option><option value="17">Outras receitas</option><option value="14">   Outros</option><option value="4">   Pix</option><option value="15">Receitas financeiras</option><option value="18">   Reembolsos</option><option value="3">   Rendimentos</option><option value="12">   Venda</option><option value="6">Vendas</option></select>                        </div>
                         <div data-filtro="sinal" class="field">
 <label>Movimento</label><select name="sinal" class="input"><option value="todas" selected>Entradas e saídas</option><option value="entradas">Só entradas</option><option value="saidas">Só saídas</option></select>                        </div>
                         <div data-filtro="a_revisar" class="field full">
@@ -280,30 +277,16 @@
     caixa.textContent = t; caixa.classList.add('on');
     clearTimeout(relogio); relogio = setTimeout(function () { caixa.classList.remove('on'); }, 2600);
   }
-  function tema(t) {
-    d.setAttribute('data-theme', t);
-    try { if (!d.classList.contains('mk-embed')) localStorage.setItem('mk-tema', t); } catch (e) {}
-    document.querySelectorAll('.theme-switch button[name=tema]').forEach(function (b) {
-      b.classList.toggle('on', (b.value === 'claro') === (t === 'light'));
-    });
-  }
-  tema(d.getAttribute('data-theme'));
-  // dentro do site, o tema acompanha o alternador do site
-  if (d.classList.contains('mk-embed')) try {
-    new MutationObserver(function () { tema(parent.document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'); })
-      .observe(parent.document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-  } catch (e) {}
+  // sem tema claro: a linha "Tema" do menu do usuário não tem o que escolher
+  document.querySelectorAll('.theme-switch').forEach(function (f) { if (f.parentElement) f.parentElement.remove(); });
   document.addEventListener('click', function (e) {
     var a = e.target.closest('a[data-mk-fora]');
     if (a) { e.preventDefault(); avisar('Esta tela fica só no app. O mockup mostra as principais.'); return; }
-    var b = e.target.closest('.theme-switch button[name=tema]');
-    if (b) { e.preventDefault(); tema(b.value === 'claro' ? 'light' : 'dark'); }
   }, true);
   document.addEventListener('submit', function (e) {
     var f = e.target.closest('form[data-mk-form]');
     if (!f) return;
     e.preventDefault();
-    if (f.querySelector('button[name=tema]')) return;
     if (f.querySelector('input[name=senha]')) { location.href = 'index.html'; return; }
     avisar(f.method === 'get' ? 'No mockup os filtros não mudam os dados. No app, a tela recalcula na hora.' : 'Mockup: nada é gravado. No app, isto salva e fica na auditoria.');
   }, true);

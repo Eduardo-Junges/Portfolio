@@ -5,19 +5,13 @@
 <meta name="robots" content="noindex">
 <script>
 /* Mockup estático do Nexus & PJ (dados fictícios). Antes do primeiro paint:
-   ?embed = dentro do site (iframe), o tema acompanha o site; fora dele vale o
-   tema escolhido no próprio mockup. */
+   ?embed = dentro do site (iframe). O tema é sempre o escuro. */
 (function () {
   var d = document.documentElement, t = 'dark';
   var embed = /[?&]embed\b/.test(location.search);
   try { embed = embed || sessionStorage.getItem('mk-embed') === '1'; if (embed) sessionStorage.setItem('mk-embed', '1'); } catch (e) {}
-  if (embed) {
-    d.classList.add('mk-embed');
-    try { if (parent.document.documentElement.dataset.theme === 'light') t = 'light'; } catch (e) {}
-  } else {
-    try { if (localStorage.getItem('mk-tema') === 'light') t = 'light'; } catch (e) {}
-  }
-  d.setAttribute('data-theme', t);
+  if (embed) d.classList.add('mk-embed');
+  d.setAttribute('data-theme', t);   // o site só tem tema escuro
   // dentro do site o Dashboard aparece direto, sem a janela de boas-vindas por cima
   if (embed) {
     var abrir = HTMLDialogElement.prototype.showModal;
@@ -43,6 +37,9 @@
   .mk-selo{position:fixed;right:14px;bottom:14px;z-index:9999;padding:6px 10px;border-radius:999px;font:600 11px/1 system-ui,sans-serif;
     letter-spacing:.04em;background:rgba(17,24,39,.85);color:#e5e7eb;border:1px solid rgba(255,255,255,.14)}
   .mk-embed .mk-selo{display:none}
+  /* no card do site a janela é estreita: a busca encolhe para o nome do usuário caber */
+  .mk-embed .busca-wrap{min-width:0;flex:1 1 8rem;max-width:16rem}
+  .mk-embed .busca-wrap input{min-width:0;width:100%;text-overflow:ellipsis}
 </style>
 
     <title>Nexus &amp; PJ — mockup (/dashboard/fluxo-caixa)</title>
@@ -77,7 +74,7 @@
 .subabas{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .subaba{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;font-size:12.5px;font-weight:600;
   color:var(--text-200);background:var(--surface-1);border:1px solid var(--border-1);text-decoration:none;white-space:nowrap;
-  transition:background var(--dur-fast) ease,color var(--dur-fast) ease,border-color var(--dur-fast) ease}
+  transition:background 150ms ease,color 150ms ease,border-color 150ms ease,transform 150ms ease,box-shadow 150ms ease}
 .subaba .sa-ic{font-size:13px;line-height:1;color:var(--tom-tx,var(--text-200))}
 .subaba:hover{color:var(--text-100);border-color:var(--line-strong)}
 .subaba:focus-visible{outline:2px solid var(--text-200);outline-offset:2px}
@@ -93,7 +90,7 @@
   </head>
   <body>
     <div id="appShell" class="shell">
-      
+<script>(function(){var s=document.currentScript&&document.currentScript.parentNode;try{if(s&&localStorage.getItem('nx-menu-1')==='1')s.classList.add('sidebar-collapsed');}catch(e){}})();</script>      
       <div id="appSidebar" class="sidebar">
         <div class="brand">
 <a href="index.html" class="brand-btn" title="Ir para o Dashboard"><img src="static/branding/icone-dark.png" alt="" class="brand-icon"><span class="brand-name">Nexus &amp; PJ</span></a>        </div>
@@ -112,7 +109,7 @@
             <div class="title">Fluxo de caixa</div>
 <a href="index.html" class="voltar-cfg">← Dashboard</a>          </div>
           <div class="actions">
-<span class="mod-periodo">📅 <span>01/11/2026 a 03/11/2026</span></span>            <div class="busca-wrap">
+<span class="mod-periodo">📅 <span>01/11/2026 a 09/11/2026</span></span>            <div class="busca-wrap">
 <label class="topbar-ia"><span class="ia-emoji">🔎</span>                <input type="text" name="q" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="buscaPainel" aria-autocomplete="list" data-ia="1" placeholder="Pesquise um valor, nome ou data… ex.: 1200, pix fabricio — ou pergunte à IA" aria-label="Pesquisar no painel ou perguntar à IA" id="buscaInput">
 <kbd>/</kbd></label>              <div role="listbox" aria-label="Resultados da busca" hidden id="buscaPainel" class="busca-painel"></div>
             </div>
@@ -139,18 +136,24 @@
         </div>
         <div class="body">
           <div>
-            <div class="painel-topo" style="">
-              <div role="navigation" aria-label="Painéis do Dashboard" class="subabas">
-<a href="fluxo-caixa.html" aria-current="page" class="subaba on"><span aria-hidden="true" class="sa-ic">◧</span>Fluxo de caixa</a><a href="vendas.html" class="subaba"><span aria-hidden="true" class="sa-ic">▲</span>Vendas</a><a href="despesas.html" class="subaba"><span aria-hidden="true" class="sa-ic">▼</span>Despesas</a><a href="lojas-painel.html" class="subaba"><span aria-hidden="true" class="sa-ic">▦</span>Lojas</a><a href="resultado.html" class="subaba"><span aria-hidden="true" class="sa-ic">∑</span>Resultado (DRE)</a><a href="projecao.html" class="subaba"><span aria-hidden="true" class="sa-ic">◐</span>Projeções</a>              </div>
-<form enctype="multipart/form-data" method="get" action="#" data-mk-form class="painel-filtros">                <input type="date" name="data_de" value="2026-11-01" aria-label="De" class="input painel-filtro" title="De">
-                <input type="date" name="data_ate" value="2026-11-03" aria-label="Até" class="input painel-filtro" title="Até">
-<select name="loja" aria-label="Loja" class="input painel-filtro"><option value="">Todas as lojas</option><option value="1">Loja Centro (fictícia)</option><option value="2">Loja Norte (fictícia)</option><option value="3">Loja Sul (fictícia)</option><option value="sem">Sem loja</option></select><button type="submit" class="btn btn--secondary btn--sm">Filtrar</button><select aria-label="Período rápido" onchange="if(this.value){window.location.href=this.value}" class="input painel-filtro"><option value="" selected disabled>Período</option><option value="/dashboard/fluxo-caixa?data_de=2026-11-01&amp;data_ate=2026-11-03">Mês atual</option><option value="/dashboard/fluxo-caixa?data_de=2026-10-01&amp;data_ate=2026-10-31">Mês passado</option><option value="/dashboard/fluxo-caixa?data_de=2026-08-01&amp;data_ate=2026-11-03">Últimos 3 meses</option><option value="/dashboard/fluxo-caixa?data_de=2026-01-01&amp;data_ate=2026-11-03">Ano</option></select></form>            </div>
+            <div class="barra">
+              <div class="barra-esq">
+                <div role="navigation" aria-label="Painéis do Dashboard" class="subabas">
+<a href="fluxo-caixa.html" aria-current="page" class="subaba on"><span aria-hidden="true" class="sa-ic">◧</span>Fluxo de caixa</a><a href="vendas.html" class="subaba"><span aria-hidden="true" class="sa-ic">▲</span>Vendas</a><a href="despesas.html" class="subaba"><span aria-hidden="true" class="sa-ic">▼</span>Despesas</a><a href="lojas-painel.html" class="subaba"><span aria-hidden="true" class="sa-ic">▦</span>Lojas</a><a href="resultado.html" class="subaba"><span aria-hidden="true" class="sa-ic">∑</span>Resultado (DRE)</a><a href="projecao.html" class="subaba"><span aria-hidden="true" class="sa-ic">◐</span>Projeções</a>                </div>
+              </div>
+              <div class="barra-dir">
+<form enctype="multipart/form-data" method="get" action="#" data-mk-form class="painel-filtros">                  <input type="date" name="data_de" value="2026-11-01" aria-label="De" class="input painel-filtro" title="De">
+                  <input type="date" name="data_ate" value="2026-11-09" aria-label="Até" class="input painel-filtro" title="Até">
+<select name="loja" aria-label="Loja" class="input painel-filtro"><option value="">Todas as lojas</option><option value="1">Loja Centro (fictícia)</option><option value="2">Loja Norte (fictícia)</option><option value="3">Loja Sul (fictícia)</option><option value="sem">Sem loja</option></select><select aria-label="Período rápido" onchange="if(this.value){window.location.href=this.value}" class="input painel-filtro"><option value="" selected disabled>Período</option><option value="/dashboard/fluxo-caixa?data_de=2026-11-01&amp;data_ate=2026-11-09">Mês atual</option><option value="/dashboard/fluxo-caixa?data_de=2026-10-01&amp;data_ate=2026-10-31">Mês passado</option><option value="/dashboard/fluxo-caixa?data_de=2026-08-01&amp;data_ate=2026-11-09">Últimos 3 meses</option><option value="/dashboard/fluxo-caixa?data_de=2026-01-01&amp;data_ate=2026-11-09">Ano</option></select>                  <div class="filtros-botoes">
+<button type="submit" class="btn btn--secondary btn--sm">Filtrar</button><a href="fluxo-caixa.html" role="button" class="btn btn--secondary btn--sm">Limpar</a>                  </div>
+</form>              </div>
+            </div>
             <div class="kpi-grid">
               <div class="card ind-card tom-azul">
                 <div aria-hidden="true" class="ind-ic">⛁</div>
                 <div class="ind-txt">
                   <div class="ind-rotulo">Saldo atual</div>
-                  <div class="ind-valor">R$ 753.080,57</div>
+                  <div class="ind-valor">R$ 753.528,92</div>
                   <div class="ind-nota">3 conta(s) ativa(s)</div>
                 </div>
               </div>
@@ -158,37 +161,37 @@
                 <div aria-hidden="true" class="ind-ic">▲</div>
                 <div class="ind-txt">
                   <div class="ind-rotulo">Entradas do período</div>
-                  <div class="ind-valor">R$ 19.002,12</div>
+                  <div class="ind-valor">R$ 75.827,08</div>
                   <div class="ind-var">
-<span class="chip chip--ruim">↘ −36,2%</span><span>vs período anterior</span>                  </div>
-                  <div class="ind-nota">01/11 a 03/11</div>
+<span class="chip chip--ruim">↘ −8,2%</span><span>vs período anterior</span>                  </div>
+                  <div class="ind-nota">01/11 a 09/11</div>
                 </div>
               </div>
               <div class="card ind-card tom-rosa">
                 <div aria-hidden="true" class="ind-ic">▼</div>
                 <div class="ind-txt">
                   <div class="ind-rotulo">Saídas do período</div>
-                  <div class="ind-valor">R$ 7.150,77</div>
+                  <div class="ind-valor">R$ 49.512,26</div>
                   <div class="ind-var">
-<span class="chip chip--bom">↘ −70,6%</span><span>vs período anterior</span>                  </div>
-                  <div class="ind-nota">01/11 a 03/11</div>
+<span class="chip chip--bom">↘ −42,4%</span><span>vs período anterior</span>                  </div>
+                  <div class="ind-nota">01/11 a 09/11</div>
                 </div>
               </div>
               <div class="card ind-card tom-ciano">
                 <div aria-hidden="true" class="ind-ic">◈</div>
                 <div class="ind-txt">
                   <div class="ind-rotulo">Resultado do período</div>
-                  <div class="ind-valor">+ R$ 11.851,35</div>
+                  <div class="ind-valor">+ R$ 26.314,82</div>
                   <div class="ind-var">
-<span class="chip chip--bom">↗ +119,4%</span><span>vs período anterior</span>                  </div>
-                  <div class="ind-nota">01/11 a 03/11</div>
+<span class="chip chip--bom">↗ +884,9%</span><span>vs período anterior</span>                  </div>
+                  <div class="ind-nota">01/11 a 09/11</div>
                 </div>
               </div>
               <div class="card ind-card tom-laranja">
                 <div aria-hidden="true" class="ind-ic">%</div>
                 <div class="ind-txt">
                   <div class="ind-rotulo">Margem do período</div>
-                  <div class="ind-valor">62,4%</div>
+                  <div class="ind-valor">34,7%</div>
                   <div class="ind-nota">resultado ÷ entradas</div>
                 </div>
               </div>
@@ -196,7 +199,7 @@
                 <div aria-hidden="true" class="ind-ic">◐</div>
                 <div class="ind-txt">
                   <div class="ind-rotulo">Dias de caixa</div>
-                  <div class="ind-valor">109,4</div>
+                  <div class="ind-valor">107,3</div>
                   <div class="ind-nota">saldo ÷ saída média diária (90 dias)</div>
                 </div>
               </div>
@@ -206,22 +209,22 @@
 <span aria-hidden="true" class="faixa-ic">✦</span><span class="faixa-titulo">Ritmo do caixa</span><span class="faixa-nota">11/2026</span>              </div>
               <div class="bloco-corpo">
                 <div>
-                  <p class="text-mute" style="font-size:12.5px;margin-bottom:10px;">Dia 3 de 30 — 10% do mês já passou (marca na barra),</p>
+                  <p class="text-mute" style="font-size:12.5px;margin-bottom:10px;">Dia 9 de 30 — 30% do mês já passou (marca na barra),</p>
                   <div class="ritmo-linha">
                     <div class="ritmo-topo">
-<b>Entradas</b><span class="text-mute" style="font-size:12.5px;">R$ 19.002,12 de R$ 267.622,67 esperados no mês</span><span class="ritmo-pct">7%</span>                    </div>
-                    <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="7" aria-label="Entradas: 7% do esperado no mês" class="ritmo-barra">
-                      <div class="ritmo-fill" style="width:7.1%;"></div>
-                      <div class="ritmo-mes" title="10% do mês já passou" style="left:10.0%;"></div>
+<b>Entradas</b><span class="text-mute" style="font-size:12.5px;">R$ 75.827,08 de R$ 275.802,84 esperados no mês</span><span class="ritmo-pct">27%</span>                    </div>
+                    <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="27" aria-label="Entradas: 27% do esperado no mês" class="ritmo-barra">
+                      <div class="ritmo-fill" style="width:27.5%;"></div>
+                      <div class="ritmo-mes" title="30% do mês já passou" style="left:30.0%;"></div>
                     </div>
                     <div class="text-mute" style="font-size:12px;margin-top:4px;">Nesse ritmo, fica abaixo do esperado para o dia</div>
                   </div>
                   <div class="ritmo-linha">
                     <div class="ritmo-topo">
-<b>Saídas</b><span class="text-mute" style="font-size:12.5px;">R$ 7.150,77 de R$ 311.751,48 esperados no mês</span><span class="ritmo-pct">2%</span>                    </div>
-                    <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="2" aria-label="Saídas: 2% do esperado no mês" class="ritmo-barra">
-                      <div class="ritmo-fill" style="width:2.3%;"></div>
-                      <div class="ritmo-mes" title="10% do mês já passou" style="left:10.0%;"></div>
+<b>Saídas</b><span class="text-mute" style="font-size:12.5px;">R$ 49.512,26 de R$ 274.996,58 esperados no mês</span><span class="ritmo-pct">18%</span>                    </div>
+                    <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="18" aria-label="Saídas: 18% do esperado no mês" class="ritmo-barra">
+                      <div class="ritmo-fill" style="width:18.0%;"></div>
+                      <div class="ritmo-mes" title="30% do mês já passou" style="left:30.0%;"></div>
                     </div>
                     <div class="text-mute" style="font-size:12px;margin-top:4px;">Nesse ritmo, fecha dentro do esperado</div>
                   </div>
@@ -236,6 +239,45 @@
               <div class="bloco-corpo">
                 <div class="chart-box">
 <canvas id="chart-fluxo-diario"></canvas>                </div>
+              </div>
+            </div>
+            <div class="card bloco" style="margin-top:20px;">
+              <div class="faixa tom-azul">
+<span aria-hidden="true" class="faixa-ic">▦</span><span class="faixa-titulo">Calendário de movimento</span><span class="faixa-nota">um quadrado por dia · a cor cresce com o valor</span>              </div>
+              <div class="bloco-corpo">
+                <div class="cal">
+                  <input type="radio" name="cal-visao" checked id="cal-v-saidas" class="cal-radio">
+<label for="cal-v-saidas" class="cal-aba">Saídas</label>                  <input type="radio" name="cal-visao" id="cal-v-entradas" class="cal-radio">
+<label for="cal-v-entradas" class="cal-aba">Entradas</label>                  <input type="radio" name="cal-visao" id="cal-v-resultado" class="cal-radio">
+<label for="cal-v-resultado" class="cal-aba">Resultado do dia</label>                  <div class="cal-quebra"></div>
+                  <div class="cal-grade cal-grade--saidas">
+                    <div aria-hidden="true" class="cal-semana cal-cab">
+<span></span><span class="cal-dsem" title="dom">D</span><span class="cal-dsem" title="seg">S</span><span class="cal-dsem" title="ter">T</span><span class="cal-dsem" title="qua">Q</span><span class="cal-dsem" title="qui">Q</span><span class="cal-dsem" title="sex">S</span><span class="cal-dsem" title="sáb">S</span>                    </div>
+                    <div class="cal-semana">
+<span class="cal-mes">nov/26</span><span role="img" aria-label="01/11 (dom): sem movimento" class="cal-c cal-c--neg cal-c--vazio" title="01/11 (dom): sem movimento" style="--i:0.0;--col:0;">1</span><span role="img" aria-label="02/11 (seg): entradas R$ 10.064,45 · saídas R$ 334,20 · resultado + R$ 9.730,25" class="cal-c cal-c--neg" title="02/11 (seg): entradas R$ 10.064,45 · saídas R$ 334,20 · resultado + R$ 9.730,25" style="--i:0.191;--col:1;">2</span><span role="img" aria-label="03/11 (ter): entradas R$ 10.223,46 · saídas R$ 6.488,96 · resultado + R$ 3.734,50" class="cal-c cal-c--neg" title="03/11 (ter): entradas R$ 10.223,46 · saídas R$ 6.488,96 · resultado + R$ 3.734,50" style="--i:0.386;--col:2;">3</span><span role="img" aria-label="04/11 (qua): entradas R$ 10.549,06 · saídas R$ 86,08 · resultado + R$ 10.462,98" class="cal-c cal-c--neg" title="04/11 (qua): entradas R$ 10.549,06 · saídas R$ 86,08 · resultado + R$ 10.462,98" style="--i:0.183;--col:3;">4</span><span role="img" aria-label="05/11 (qui): entradas R$ 10.715,62 · saídas R$ 12.949,47 · resultado − R$ 2.233,85" class="cal-c cal-c--neg" title="05/11 (qui): entradas R$ 10.715,62 · saídas R$ 12.949,47 · resultado − R$ 2.233,85" style="--i:0.591;--col:4;">5</span><span role="img" aria-label="06/11 (sex): entradas R$ 9.391,57 · saídas R$ 25.805,17 · resultado − R$ 16.413,60" class="cal-c cal-c--neg" title="06/11 (sex): entradas R$ 9.391,57 · saídas R$ 25.805,17 · resultado − R$ 16.413,60" style="--i:1.0;--col:5;">6</span><span role="img" aria-label="07/11 (sáb): entradas R$ 15.235,21 · saídas R$ 773,59 · resultado + R$ 14.461,62" class="cal-c cal-c--neg" title="07/11 (sáb): entradas R$ 15.235,21 · saídas R$ 773,59 · resultado + R$ 14.461,62" style="--i:0.205;--col:6;">7</span>                    </div>
+                    <div class="cal-semana">
+<span class="cal-mes"></span><span role="img" aria-label="08/11 (dom): entradas R$ 0,00 · saídas R$ 2.008,16 · resultado − R$ 2.008,16" class="cal-c cal-c--neg" title="08/11 (dom): entradas R$ 0,00 · saídas R$ 2.008,16 · resultado − R$ 2.008,16" style="--i:0.244;--col:0;">8</span><span role="img" aria-label="09/11 (seg): entradas R$ 9.647,71 · saídas R$ 1.066,63 · resultado + R$ 8.581,08" class="cal-c cal-c--neg" title="09/11 (seg): entradas R$ 9.647,71 · saídas R$ 1.066,63 · resultado + R$ 8.581,08" style="--i:0.214;--col:1;">9</span><span class="cal-c cal-c--fora"></span><span class="cal-c cal-c--fora"></span><span class="cal-c cal-c--fora"></span><span class="cal-c cal-c--fora"></span><span class="cal-c cal-c--fora"></span>                    </div>
+                    <div class="cal-nota">Tom máximo a partir de R$ 25.805,17 (percentil 95 do período)</div>
+                  </div>
+                  <div class="cal-grade cal-grade--entradas">
+                    <div aria-hidden="true" class="cal-semana cal-cab">
+<span></span><span class="cal-dsem" title="dom">D</span><span class="cal-dsem" title="seg">S</span><span class="cal-dsem" title="ter">T</span><span class="cal-dsem" title="qua">Q</span><span class="cal-dsem" title="qui">Q</span><span class="cal-dsem" title="sex">S</span><span class="cal-dsem" title="sáb">S</span>                    </div>
+                    <div class="cal-semana">
+<span class="cal-mes">nov/26</span><span role="img" aria-label="01/11 (dom): sem movimento" class="cal-c cal-c--pos cal-c--vazio" title="01/11 (dom): sem movimento" style="--i:0.0;--col:0;">1</span><span role="img" aria-label="02/11 (seg): entradas R$ 10.064,45 · saídas R$ 334,20 · resultado + R$ 9.730,25" class="cal-c cal-c--pos" title="02/11 (seg): entradas R$ 10.064,45 · saídas R$ 334,20 · resultado + R$ 9.730,25" style="--i:0.722;--col:1;">2</span><span role="img" aria-label="03/11 (ter): entradas R$ 10.223,46 · saídas R$ 6.488,96 · resultado + R$ 3.734,50" class="cal-c cal-c--pos" title="03/11 (ter): entradas R$ 10.223,46 · saídas R$ 6.488,96 · resultado + R$ 3.734,50" style="--i:0.73;--col:2;">3</span><span role="img" aria-label="04/11 (qua): entradas R$ 10.549,06 · saídas R$ 86,08 · resultado + R$ 10.462,98" class="cal-c cal-c--pos" title="04/11 (qua): entradas R$ 10.549,06 · saídas R$ 86,08 · resultado + R$ 10.462,98" style="--i:0.748;--col:3;">4</span><span role="img" aria-label="05/11 (qui): entradas R$ 10.715,62 · saídas R$ 12.949,47 · resultado − R$ 2.233,85" class="cal-c cal-c--pos" title="05/11 (qui): entradas R$ 10.715,62 · saídas R$ 12.949,47 · resultado − R$ 2.233,85" style="--i:0.757;--col:4;">5</span><span role="img" aria-label="06/11 (sex): entradas R$ 9.391,57 · saídas R$ 25.805,17 · resultado − R$ 16.413,60" class="cal-c cal-c--pos" title="06/11 (sex): entradas R$ 9.391,57 · saídas R$ 25.805,17 · resultado − R$ 16.413,60" style="--i:0.685;--col:5;">6</span><span role="img" aria-label="07/11 (sáb): entradas R$ 15.235,21 · saídas R$ 773,59 · resultado + R$ 14.461,62" class="cal-c cal-c--pos" title="07/11 (sáb): entradas R$ 15.235,21 · saídas R$ 773,59 · resultado + R$ 14.461,62" style="--i:1.0;--col:6;">7</span>                    </div>
+                    <div class="cal-semana">
+<span class="cal-mes"></span><span role="img" aria-label="08/11 (dom): entradas R$ 0,00 · saídas R$ 2.008,16 · resultado − R$ 2.008,16" class="cal-c cal-c--pos cal-c--vazio" title="08/11 (dom): entradas R$ 0,00 · saídas R$ 2.008,16 · resultado − R$ 2.008,16" style="--i:0.0;--col:0;">8</span><span role="img" aria-label="09/11 (seg): entradas R$ 9.647,71 · saídas R$ 1.066,63 · resultado + R$ 8.581,08" class="cal-c cal-c--pos" title="09/11 (seg): entradas R$ 9.647,71 · saídas R$ 1.066,63 · resultado + R$ 8.581,08" style="--i:0.699;--col:1;">9</span><span class="cal-c cal-c--fora"></span><span class="cal-c cal-c--fora"></span><span class="cal-c cal-c--fora"></span><span class="cal-c cal-c--fora"></span><span class="cal-c cal-c--fora"></span>                    </div>
+                    <div class="cal-nota">Tom máximo a partir de R$ 15.235,21 (percentil 95 do período)</div>
+                  </div>
+                  <div class="cal-grade cal-grade--resultado">
+                    <div aria-hidden="true" class="cal-semana cal-cab">
+<span></span><span class="cal-dsem" title="dom">D</span><span class="cal-dsem" title="seg">S</span><span class="cal-dsem" title="ter">T</span><span class="cal-dsem" title="qua">Q</span><span class="cal-dsem" title="qui">Q</span><span class="cal-dsem" title="sex">S</span><span class="cal-dsem" title="sáb">S</span>                    </div>
+                    <div class="cal-semana">
+<span class="cal-mes">nov/26</span><span role="img" aria-label="01/11 (dom): sem movimento" class="cal-c cal-c--pos cal-c--vazio" title="01/11 (dom): sem movimento" style="--i:0.0;--col:0;">1</span><span role="img" aria-label="02/11 (seg): entradas R$ 10.064,45 · saídas R$ 334,20 · resultado + R$ 9.730,25" class="cal-c cal-c--pos" title="02/11 (seg): entradas R$ 10.064,45 · saídas R$ 334,20 · resultado + R$ 9.730,25" style="--i:0.666;--col:1;">2</span><span role="img" aria-label="03/11 (ter): entradas R$ 10.223,46 · saídas R$ 6.488,96 · resultado + R$ 3.734,50" class="cal-c cal-c--pos" title="03/11 (ter): entradas R$ 10.223,46 · saídas R$ 6.488,96 · resultado + R$ 3.734,50" style="--i:0.367;--col:2;">3</span><span role="img" aria-label="04/11 (qua): entradas R$ 10.549,06 · saídas R$ 86,08 · resultado + R$ 10.462,98" class="cal-c cal-c--pos" title="04/11 (qua): entradas R$ 10.549,06 · saídas R$ 86,08 · resultado + R$ 10.462,98" style="--i:0.703;--col:3;">4</span><span role="img" aria-label="05/11 (qui): entradas R$ 10.715,62 · saídas R$ 12.949,47 · resultado − R$ 2.233,85" class="cal-c cal-c--neg" title="05/11 (qui): entradas R$ 10.715,62 · saídas R$ 12.949,47 · resultado − R$ 2.233,85" style="--i:0.292;--col:4;">5</span><span role="img" aria-label="06/11 (sex): entradas R$ 9.391,57 · saídas R$ 25.805,17 · resultado − R$ 16.413,60" class="cal-c cal-c--neg" title="06/11 (sex): entradas R$ 9.391,57 · saídas R$ 25.805,17 · resultado − R$ 16.413,60" style="--i:1.0;--col:5;">6</span><span role="img" aria-label="07/11 (sáb): entradas R$ 15.235,21 · saídas R$ 773,59 · resultado + R$ 14.461,62" class="cal-c cal-c--pos" title="07/11 (sáb): entradas R$ 15.235,21 · saídas R$ 773,59 · resultado + R$ 14.461,62" style="--i:0.902;--col:6;">7</span>                    </div>
+                    <div class="cal-semana">
+<span class="cal-mes"></span><span role="img" aria-label="08/11 (dom): entradas R$ 0,00 · saídas R$ 2.008,16 · resultado − R$ 2.008,16" class="cal-c cal-c--neg" title="08/11 (dom): entradas R$ 0,00 · saídas R$ 2.008,16 · resultado − R$ 2.008,16" style="--i:0.28;--col:0;">8</span><span role="img" aria-label="09/11 (seg): entradas R$ 9.647,71 · saídas R$ 1.066,63 · resultado + R$ 8.581,08" class="cal-c cal-c--pos" title="09/11 (seg): entradas R$ 9.647,71 · saídas R$ 1.066,63 · resultado + R$ 8.581,08" style="--i:0.609;--col:1;">9</span><span class="cal-c cal-c--fora"></span><span class="cal-c cal-c--fora"></span><span class="cal-c cal-c--fora"></span><span class="cal-c cal-c--fora"></span><span class="cal-c cal-c--fora"></span>                    </div>
+                    <div class="cal-nota">Tom máximo a partir de R$ 16.413,60 (percentil 95 do período)</div>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="grid gap-4 dash-2col" style="margin-top:20px;">
@@ -272,7 +314,7 @@
 <canvas id="chart-saldo-conta"></canvas>                </div>
               </div>
             </div>
-<script src="static/js/chart.umd.min.js"></script><script>window.NXDASH = {"saldo_por_conta": {"labels": ["Banco Alfa (fictício)", "Banco Beta (fictício)", "Banco Gama (fictício)"], "valores": [109475.72, 361479.27, 282125.58]}, "fluxo_diario": {"labels": ["01/11", "02/11", "03/11"], "entradas": [0.0, 9754.37, 9247.75], "saidas": [0.0, 376.74, 6774.03], "saldo": [741229.22, 750606.85, 753080.57]}, "evolucao_margem": {"labels": ["jun/26", "jul/26", "ago/26", "set/26", "out/26", "nov/26"], "valores": [9.639148637640606, 4.021521593476321, 20.684174436912706, 17.409979120008504, 11.222006456122042, 62.368567296701634]}, "saldo_mensal": {"labels": ["12/2025", "01/2026", "02/2026", "03/2026", "04/2026", "05/2026 (parcial)", "06/2026", "07/2026", "08/2026", "09/2026", "10/2026", "11/2026"], "series": [{"nome": "Saldo final do mês", "valores": [479939.68, 478688.12, 481691.24, 505448.48, 545168.57, 587072.62, 600473.88, 618032.86, 669464.37, 702579.62, 741229.22, 753080.57]}]}, "evolucao_mensal": {"labels": ["dez/25", "jan/26", "fev/26", "mar/26", "abr/26", "mai/26", "jun/26", "jul/26", "ago/26", "set/26", "out/26", "nov/26"], "receita": [300574.17, 205754.25, 183601.13, 221843.5, 237467.37, 270466.86, 222024.38, 230235.74, 248651.5, 236159.1, 270447.18, 19002.12], "despesa": [231685.15, 215305.81, 180598.01, 190086.26, 206047.28, 228562.81, 200623.12, 220976.76, 197219.99, 195043.85, 240097.58, 7150.77]}};</script><script src="static/js/dashboard.js"></script>          </div>
+<script src="static/js/chart.umd.min.js"></script><script>window.NXDASH = {"saldo_por_conta": {"labels": ["Banco Alfa (fictício)", "Banco Beta (fictício)", "Banco Gama (fictício)"], "valores": [94773.35, 370364.55, 288391.02]}, "fluxo_diario": {"labels": ["01/11", "02/11", "03/11", "04/11", "05/11", "06/11", "07/11", "08/11", "09/11"], "entradas": [0.0, 10064.45, 10223.46, 10549.06, 10715.62, 9391.57, 15235.21, 0.0, 9647.71], "saidas": [0.0, 334.2, 6488.96, 86.08, 12949.47, 25805.17, 773.59, 2008.16, 1066.63], "saldo": [727214.1, 736944.35, 740678.85, 751141.83, 748907.98, 732494.38, 746956.0, 744947.84, 753528.92]}, "evolucao_margem": {"labels": ["jun/26", "jul/26", "ago/26", "set/26", "out/26", "nov/26"], "valores": [11.256375934820428, 2.465783755995629, 19.332001922750848, 17.735282236103046, 13.572164624759825, 34.703723260871975]}, "saldo_mensal": {"labels": ["12/2025", "01/2026", "02/2026", "03/2026", "04/2026", "05/2026 (parcial)", "06/2026", "07/2026", "08/2026", "09/2026", "10/2026", "11/2026"], "series": [{"nome": "Saldo final do mês", "valores": [476675.82, 473060.37, 470375.64, 497973.85, 530861.7, 569061.73, 585735.84, 599583.94, 647104.8, 681567.01, 727214.1, 753528.92]}]}, "evolucao_mensal": {"labels": ["dez/25", "jan/26", "fev/26", "mar/26", "abr/26", "mai/26", "jun/26", "jul/26", "ago/26", "set/26", "out/26", "nov/26"], "receita": [290579.88, 204849.69, 177461.26, 221776.97, 225800.68, 265568.2, 219201.19, 225003.51, 245814.48, 239422.24, 275174.16, 75827.08], "despesa": [225673.74, 216765.14, 180145.99, 186178.76, 201212.83, 227368.17, 194527.08, 219455.41, 198293.62, 196960.03, 237827.07, 49512.26]}};</script><script src="static/js/dashboard.js"></script>          </div>
         </div>
       </div>
       <div id="navTooltip"></div>
@@ -287,30 +329,16 @@
     caixa.textContent = t; caixa.classList.add('on');
     clearTimeout(relogio); relogio = setTimeout(function () { caixa.classList.remove('on'); }, 2600);
   }
-  function tema(t) {
-    d.setAttribute('data-theme', t);
-    try { if (!d.classList.contains('mk-embed')) localStorage.setItem('mk-tema', t); } catch (e) {}
-    document.querySelectorAll('.theme-switch button[name=tema]').forEach(function (b) {
-      b.classList.toggle('on', (b.value === 'claro') === (t === 'light'));
-    });
-  }
-  tema(d.getAttribute('data-theme'));
-  // dentro do site, o tema acompanha o alternador do site
-  if (d.classList.contains('mk-embed')) try {
-    new MutationObserver(function () { tema(parent.document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'); })
-      .observe(parent.document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-  } catch (e) {}
+  // sem tema claro: a linha "Tema" do menu do usuário não tem o que escolher
+  document.querySelectorAll('.theme-switch').forEach(function (f) { if (f.parentElement) f.parentElement.remove(); });
   document.addEventListener('click', function (e) {
     var a = e.target.closest('a[data-mk-fora]');
     if (a) { e.preventDefault(); avisar('Esta tela fica só no app. O mockup mostra as principais.'); return; }
-    var b = e.target.closest('.theme-switch button[name=tema]');
-    if (b) { e.preventDefault(); tema(b.value === 'claro' ? 'light' : 'dark'); }
   }, true);
   document.addEventListener('submit', function (e) {
     var f = e.target.closest('form[data-mk-form]');
     if (!f) return;
     e.preventDefault();
-    if (f.querySelector('button[name=tema]')) return;
     if (f.querySelector('input[name=senha]')) { location.href = 'index.html'; return; }
     avisar(f.method === 'get' ? 'No mockup os filtros não mudam os dados. No app, a tela recalcula na hora.' : 'Mockup: nada é gravado. No app, isto salva e fica na auditoria.');
   }, true);
