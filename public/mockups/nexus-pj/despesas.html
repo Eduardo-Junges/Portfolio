@@ -5,19 +5,13 @@
 <meta name="robots" content="noindex">
 <script>
 /* Mockup estático do Nexus & PJ (dados fictícios). Antes do primeiro paint:
-   ?embed = dentro do site (iframe), o tema acompanha o site; fora dele vale o
-   tema escolhido no próprio mockup. */
+   ?embed = dentro do site (iframe). O tema é sempre o escuro. */
 (function () {
   var d = document.documentElement, t = 'dark';
   var embed = /[?&]embed\b/.test(location.search);
   try { embed = embed || sessionStorage.getItem('mk-embed') === '1'; if (embed) sessionStorage.setItem('mk-embed', '1'); } catch (e) {}
-  if (embed) {
-    d.classList.add('mk-embed');
-    try { if (parent.document.documentElement.dataset.theme === 'light') t = 'light'; } catch (e) {}
-  } else {
-    try { if (localStorage.getItem('mk-tema') === 'light') t = 'light'; } catch (e) {}
-  }
-  d.setAttribute('data-theme', t);
+  if (embed) d.classList.add('mk-embed');
+  d.setAttribute('data-theme', t);   // o site só tem tema escuro
   // dentro do site o Dashboard aparece direto, sem a janela de boas-vindas por cima
   if (embed) {
     var abrir = HTMLDialogElement.prototype.showModal;
@@ -43,6 +37,9 @@
   .mk-selo{position:fixed;right:14px;bottom:14px;z-index:9999;padding:6px 10px;border-radius:999px;font:600 11px/1 system-ui,sans-serif;
     letter-spacing:.04em;background:rgba(17,24,39,.85);color:#e5e7eb;border:1px solid rgba(255,255,255,.14)}
   .mk-embed .mk-selo{display:none}
+  /* no card do site a janela é estreita: a busca encolhe para o nome do usuário caber */
+  .mk-embed .busca-wrap{min-width:0;flex:1 1 8rem;max-width:16rem}
+  .mk-embed .busca-wrap input{min-width:0;width:100%;text-overflow:ellipsis}
 </style>
 
     <title>Nexus &amp; PJ — mockup (/dashboard/despesas)</title>
@@ -77,7 +74,7 @@
 .subabas{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .subaba{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;font-size:12.5px;font-weight:600;
   color:var(--text-200);background:var(--surface-1);border:1px solid var(--border-1);text-decoration:none;white-space:nowrap;
-  transition:background var(--dur-fast) ease,color var(--dur-fast) ease,border-color var(--dur-fast) ease}
+  transition:background 150ms ease,color 150ms ease,border-color 150ms ease,transform 150ms ease,box-shadow 150ms ease}
 .subaba .sa-ic{font-size:13px;line-height:1;color:var(--tom-tx,var(--text-200))}
 .subaba:hover{color:var(--text-100);border-color:var(--line-strong)}
 .subaba:focus-visible{outline:2px solid var(--text-200);outline-offset:2px}
@@ -93,7 +90,7 @@
   </head>
   <body>
     <div id="appShell" class="shell">
-      
+<script>(function(){var s=document.currentScript&&document.currentScript.parentNode;try{if(s&&localStorage.getItem('nx-menu-1')==='1')s.classList.add('sidebar-collapsed');}catch(e){}})();</script>      
       <div id="appSidebar" class="sidebar">
         <div class="brand">
 <a href="index.html" class="brand-btn" title="Ir para o Dashboard"><img src="static/branding/icone-dark.png" alt="" class="brand-icon"><span class="brand-name">Nexus &amp; PJ</span></a>        </div>
@@ -112,7 +109,7 @@
             <div class="title">Despesas</div>
 <a href="index.html" class="voltar-cfg">← Dashboard</a>          </div>
           <div class="actions">
-<span class="mod-periodo">📅 <span>01/11/2026 a 03/11/2026</span></span>            <div class="busca-wrap">
+<span class="mod-periodo">📅 <span>01/11/2026 a 09/11/2026</span></span>            <div class="busca-wrap">
 <label class="topbar-ia"><span class="ia-emoji">🔎</span>                <input type="text" name="q" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="buscaPainel" aria-autocomplete="list" data-ia="1" placeholder="Pesquise um valor, nome ou data… ex.: 1200, pix fabricio — ou pergunte à IA" aria-label="Pesquisar no painel ou perguntar à IA" id="buscaInput">
 <kbd>/</kbd></label>              <div role="listbox" aria-label="Resultados da busca" hidden id="buscaPainel" class="busca-painel"></div>
             </div>
@@ -139,41 +136,47 @@
         </div>
         <div class="body">
           <div>
-            <div class="painel-topo" style="">
-              <div role="navigation" aria-label="Painéis do Dashboard" class="subabas">
-<a href="fluxo-caixa.html" class="subaba"><span aria-hidden="true" class="sa-ic">◧</span>Fluxo de caixa</a><a href="vendas.html" class="subaba"><span aria-hidden="true" class="sa-ic">▲</span>Vendas</a><a href="despesas.html" aria-current="page" class="subaba on"><span aria-hidden="true" class="sa-ic">▼</span>Despesas</a><a href="lojas-painel.html" class="subaba"><span aria-hidden="true" class="sa-ic">▦</span>Lojas</a><a href="resultado.html" class="subaba"><span aria-hidden="true" class="sa-ic">∑</span>Resultado (DRE)</a><a href="projecao.html" class="subaba"><span aria-hidden="true" class="sa-ic">◐</span>Projeções</a>              </div>
-<form enctype="multipart/form-data" method="get" action="#" data-mk-form class="painel-filtros">                <input type="date" name="data_de" value="2026-11-01" aria-label="De" class="input painel-filtro" title="De">
-                <input type="date" name="data_ate" value="2026-11-03" aria-label="Até" class="input painel-filtro" title="Até">
-<select name="loja" aria-label="Loja" class="input painel-filtro"><option value="">Todas as lojas</option><option value="1">Loja Centro (fictícia)</option><option value="2">Loja Norte (fictícia)</option><option value="3">Loja Sul (fictícia)</option><option value="sem">Sem loja</option></select><button type="submit" class="btn btn--secondary btn--sm">Filtrar</button><select aria-label="Período rápido" onchange="if(this.value){window.location.href=this.value}" class="input painel-filtro"><option value="" selected disabled>Período</option><option value="/dashboard/despesas?data_de=2026-11-01&amp;data_ate=2026-11-03">Mês atual</option><option value="/dashboard/despesas?data_de=2026-10-01&amp;data_ate=2026-10-31">Mês passado</option><option value="/dashboard/despesas?data_de=2026-08-01&amp;data_ate=2026-11-03">Últimos 3 meses</option><option value="/dashboard/despesas?data_de=2026-01-01&amp;data_ate=2026-11-03">Ano</option></select></form>            </div>
+            <div class="barra">
+              <div class="barra-esq">
+                <div role="navigation" aria-label="Painéis do Dashboard" class="subabas">
+<a href="fluxo-caixa.html" class="subaba"><span aria-hidden="true" class="sa-ic">◧</span>Fluxo de caixa</a><a href="vendas.html" class="subaba"><span aria-hidden="true" class="sa-ic">▲</span>Vendas</a><a href="despesas.html" aria-current="page" class="subaba on"><span aria-hidden="true" class="sa-ic">▼</span>Despesas</a><a href="lojas-painel.html" class="subaba"><span aria-hidden="true" class="sa-ic">▦</span>Lojas</a><a href="resultado.html" class="subaba"><span aria-hidden="true" class="sa-ic">∑</span>Resultado (DRE)</a><a href="projecao.html" class="subaba"><span aria-hidden="true" class="sa-ic">◐</span>Projeções</a>                </div>
+              </div>
+              <div class="barra-dir">
+<form enctype="multipart/form-data" method="get" action="#" data-mk-form class="painel-filtros">                  <input type="date" name="data_de" value="2026-11-01" aria-label="De" class="input painel-filtro" title="De">
+                  <input type="date" name="data_ate" value="2026-11-09" aria-label="Até" class="input painel-filtro" title="Até">
+<select name="loja" aria-label="Loja" class="input painel-filtro"><option value="">Todas as lojas</option><option value="1">Loja Centro (fictícia)</option><option value="2">Loja Norte (fictícia)</option><option value="3">Loja Sul (fictícia)</option><option value="sem">Sem loja</option></select><select aria-label="Período rápido" onchange="if(this.value){window.location.href=this.value}" class="input painel-filtro"><option value="" selected disabled>Período</option><option value="/dashboard/despesas?data_de=2026-11-01&amp;data_ate=2026-11-09">Mês atual</option><option value="/dashboard/despesas?data_de=2026-10-01&amp;data_ate=2026-10-31">Mês passado</option><option value="/dashboard/despesas?data_de=2026-08-01&amp;data_ate=2026-11-09">Últimos 3 meses</option><option value="/dashboard/despesas?data_de=2026-01-01&amp;data_ate=2026-11-09">Ano</option></select>                  <div class="filtros-botoes">
+<button type="submit" class="btn btn--secondary btn--sm">Filtrar</button><a href="despesas.html" role="button" class="btn btn--secondary btn--sm">Limpar</a>                  </div>
+</form>              </div>
+            </div>
             <div class="kpi-grid">
               <div class="card kpi-card red">
                 <div class="kpi-label">Despesa do período</div>
-                <div class="kpi-value">R$ 7.150,77</div>
-                <div class="kpi-delta" style="color:var(--text-200);">01/11 a 03/11</div>
+                <div class="kpi-value">R$ 49.512,26</div>
+                <div class="kpi-delta" style="color:var(--text-200);">01/11 a 09/11</div>
               </div>
               <div class="card kpi-card">
                 <div class="kpi-label">Média mensal</div>
-                <div class="kpi-value">R$ 147.430,73</div>
+                <div class="kpi-value">R$ 161.433,12</div>
                 <div class="kpi-delta" style="color:var(--text-200);">3 meses até o fim do período</div>
               </div>
               <div class="card kpi-card">
                 <div class="kpi-label">Despesa fixa</div>
-                <div class="kpi-value">R$ 6.600,00</div>
-                <div class="kpi-delta" style="color:var(--text-200);">92,3% da despesa</div>
+                <div class="kpi-value">R$ 22.451,68</div>
+                <div class="kpi-delta" style="color:var(--text-200);">45,3% da despesa</div>
               </div>
               <div class="card kpi-card">
                 <div class="kpi-label">Despesa variável</div>
-                <div class="kpi-value">R$ 550,77</div>
-                <div class="kpi-delta" style="color:var(--text-200);">7,7% da despesa</div>
+                <div class="kpi-value">R$ 23.949,74</div>
+                <div class="kpi-delta" style="color:var(--text-200);">48,4% da despesa</div>
               </div>
               <div class="card kpi-card">
                 <div class="kpi-label">Ponto de equilíbrio</div>
-                <div class="kpi-value">R$ 6.797,01</div>
+                <div class="kpi-value">R$ 32.816,74</div>
                 <div class="kpi-delta" style="color:var(--text-200);">quanto precisa entrar no período pra empatar</div>
               </div>
               <div class="card kpi-card green">
                 <div class="kpi-label">Equilíbrio atingido</div>
-                <div class="kpi-value">279,6%</div>
+                <div class="kpi-value">231,1%</div>
                 <div class="kpi-delta" style="color:var(--text-200);">entradas ÷ ponto de equilíbrio</div>
               </div>
               <div class="card kpi-card green">
@@ -182,6 +185,7 @@
                 <div class="kpi-delta" style="color:var(--text-200);">grupos acima de 30% da média · nov/26</div>
               </div>
             </div>
+            <p class="nota">R$ 3.110,84 de despesa sem natureza (fixa/variável) — inclui "A revisar" e categorias sem marcação; fica fora do ponto de equilíbrio. Marque em Configurações → Categorias.</p>
             <div class="card bloco" style="">
               <div class="faixa tom-rosa">
 <span aria-hidden="true" class="faixa-ic">▼</span><span class="faixa-titulo">Despesa por grupo</span>              </div>
@@ -191,7 +195,7 @@
 <canvas id="chart-despesa-categoria"></canvas>                  </div>
                   <p style="color:var(--text-mute);font-size:12.5px;margin-top:10px;">Abrir um grupo:</p>
                   <div class="flex gap-2" style="flex-wrap:wrap;margin-top:10px;">
-<a href="despesas.html" class="btn btn--ghost btn--sm">Pessoal</a><a href="despesas.html" class="btn btn--ghost btn--sm">Veículos</a><a href="despesas.html" class="btn btn--ghost btn--sm">Comerciais</a>                  </div>
+<a href="despesas.html" class="btn btn--ghost btn--sm">Fornecedores</a><a href="despesas.html" class="btn btn--ghost btn--sm">Ocupação</a><a href="despesas.html" class="btn btn--ghost btn--sm">Pessoal</a><a href="despesas.html" class="btn btn--ghost btn--sm">Retiradas</a><a href="despesas.html" class="btn btn--ghost btn--sm">Utilidades</a><a href="despesas.html" class="btn btn--ghost btn--sm">Comerciais</a><a href="despesas.html" class="btn btn--ghost btn--sm">Veículos</a>                  </div>
                 </div>
               </div>
             </div>
@@ -203,8 +207,16 @@
 <canvas id="chart-evolucao-grupo"></canvas>                </div>
               </div>
             </div>
+            <div class="card bloco" style="margin-top:20px;">
+              <div class="faixa tom-rosa">
+<span aria-hidden="true" class="faixa-ic">▼</span><span class="faixa-titulo">Composição da despesa, mês a mês</span><span class="faixa-nota">cada grupo na sua fatia dos 100% do mês</span>              </div>
+              <div class="bloco-corpo">
+                <div class="chart-box">
+<canvas id="chart-despesa-proporcao"></canvas>                </div>
+              </div>
+            </div>
             <div class="grid gap-4 dash-2col" style="margin-top:20px;">
-              <div class="card bloco" style="">
+              <div class="card bloco contorno tom-rosa" style="">
                 <div class="faixa tom-rosa">
 <span aria-hidden="true" class="faixa-ic">▼</span><span class="faixa-titulo">10 maiores despesas</span>                </div>
                 <div class="bloco-corpo">
@@ -220,74 +232,74 @@
                       </thead>
                       <tbody>
                         <tr>
+                          <td>06/11/2026</td>
+                          <td>
+<a href="#" data-mk-fora style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--overlay-3);">PAGTO INDUSTRIA DELTA SA COMPRA CENTRO</a>                          </td>
+                          <td>Banco Alfa (fictício)</td>
+                          <td class="num neg">R$ 9.236,71</td>
+                        </tr>
+                        <tr>
+                          <td>06/11/2026</td>
+                          <td>
+<a href="#" data-mk-fora style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--overlay-3);">PAGTO INDUSTRIA DELTA SA COMPRA NORTE</a>                          </td>
+                          <td>Banco Beta (fictício)</td>
+                          <td class="num neg">R$ 7.778,33</td>
+                        </tr>
+                        <tr>
                           <td>03/11/2026</td>
                           <td>
 <a href="#" data-mk-fora style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--overlay-3);">PRO-LABORE SOCIOS</a>                          </td>
                           <td>Banco Alfa (fictício)</td>
-                          <td class="num neg">R$ 6.600,00</td>
+                          <td class="num neg">R$ 6.300,00</td>
                         </tr>
                         <tr>
-                          <td>02/11/2026</td>
+                          <td>05/11/2026</td>
                           <td>
-<a href="#" data-mk-fora style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--overlay-3);">POSTO COMBUSTIVEL ABASTECIMENTO FROTA</a>                          </td>
+<a href="#" data-mk-fora style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--overlay-3);">ALUGUEL IMOBILIARIA SILVA CENTRO</a>                          </td>
                           <td>Banco Alfa (fictício)</td>
-                          <td class="num neg">R$ 282,42</td>
+                          <td class="num neg">R$ 5.616,00</td>
                         </tr>
                         <tr>
-                          <td>03/11/2026</td>
+                          <td>06/11/2026</td>
                           <td>
-<a href="#" data-mk-fora style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--overlay-3);">COMISSAO VENDEDORES CENTRO</a>                          </td>
-                          <td>Banco Alfa (fictício)</td>
-                          <td class="num neg">R$ 61,28</td>
-                        </tr>
-                        <tr>
-                          <td>02/11/2026</td>
-                          <td>
-<a href="#" data-mk-fora style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--overlay-3);">TARIFA MAQUININHA ADQUIRENTE CENTRO 02/11</a>                          </td>
-                          <td>Banco Alfa (fictício)</td>
-                          <td class="num neg">R$ 41,84</td>
-                        </tr>
-                        <tr>
-                          <td>03/11/2026</td>
-                          <td>
-<a href="#" data-mk-fora style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--overlay-3);">TARIFA MAQUININHA ADQUIRENTE CENTRO 03/11</a>                          </td>
-                          <td>Banco Alfa (fictício)</td>
-                          <td class="num neg">R$ 37,87</td>
-                        </tr>
-                        <tr>
-                          <td>02/11/2026</td>
-                          <td>
-<a href="#" data-mk-fora style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--overlay-3);">TARIFA MAQUININHA ADQUIRENTE NORTE 02/11</a>                          </td>
-                          <td>Banco Beta (fictício)</td>
-                          <td class="num neg">R$ 32,34</td>
-                        </tr>
-                        <tr>
-                          <td>03/11/2026</td>
-                          <td>
-<a href="#" data-mk-fora style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--overlay-3);">TARIFA MAQUININHA ADQUIRENTE NORTE 03/11</a>                          </td>
-                          <td>Banco Beta (fictício)</td>
-                          <td class="num neg">R$ 25,89</td>
-                        </tr>
-                        <tr>
-                          <td>03/11/2026</td>
-                          <td>
-<a href="#" data-mk-fora style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--overlay-3);">TARIFA MAQUININHA ADQUIRENTE SUL 03/11</a>                          </td>
+<a href="#" data-mk-fora style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--overlay-3);">PAGTO INDUSTRIA DELTA SA COMPRA SUL</a>                          </td>
                           <td>Banco Gama (fictício)</td>
-                          <td class="num neg">R$ 21,62</td>
+                          <td class="num neg">R$ 5.473,21</td>
                         </tr>
                         <tr>
-                          <td>02/11/2026</td>
+                          <td>05/11/2026</td>
                           <td>
-<a href="#" data-mk-fora style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--overlay-3);">TARIFA MAQUININHA ADQUIRENTE SUL 02/11</a>                          </td>
-                          <td>Banco Gama (fictício)</td>
-                          <td class="num neg">R$ 20,14</td>
-                        </tr>
-                        <tr>
-                          <td>03/11/2026</td>
-                          <td>
-<a href="#" data-mk-fora style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--overlay-3);">COMISSAO VENDEDORES NORTE</a>                          </td>
+<a href="#" data-mk-fora style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--overlay-3);">ALUGUEL IMOBILIARIA SILVA NORTE</a>                          </td>
                           <td>Banco Beta (fictício)</td>
-                          <td class="num neg">R$ 14,23</td>
+                          <td class="num neg">R$ 3.888,00</td>
+                        </tr>
+                        <tr>
+                          <td>05/11/2026</td>
+                          <td>
+<a href="#" data-mk-fora style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--overlay-3);">ALUGUEL IMOBILIARIA SILVA SUL</a>                          </td>
+                          <td>Banco Gama (fictício)</td>
+                          <td class="num neg">R$ 3.348,00</td>
+                        </tr>
+                        <tr>
+                          <td>06/11/2026</td>
+                          <td>
+<a href="#" data-mk-fora style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--overlay-3);">RETIRADA PESSOAL SOCIO</a>                          </td>
+                          <td>Banco Alfa (fictício)</td>
+                          <td class="num neg">R$ 3.110,84</td>
+                        </tr>
+                        <tr>
+                          <td>08/11/2026</td>
+                          <td>
+<a href="#" data-mk-fora style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--overlay-3);">ENERGIA ELETRICA CONCESSIONARIA CENTRO</a>                          </td>
+                          <td>Banco Alfa (fictício)</td>
+                          <td class="num neg">R$ 868,41</td>
+                        </tr>
+                        <tr>
+                          <td>07/11/2026</td>
+                          <td>
+<a href="#" data-mk-fora style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--overlay-3);">CONDOMINIO EDIFICIO CENTRAL</a>                          </td>
+                          <td>Banco Alfa (fictício)</td>
+                          <td class="num neg">R$ 650,00</td>
                         </tr>
                       </tbody>
                     </table>
@@ -312,7 +324,7 @@
                 </div>
               </div>
             </div>
-<script src="static/js/chart.umd.min.js"></script><script>window.NXDASH = {"despesa_por_categoria": {"labels": ["Pessoal", "Veículos", "Comerciais"], "valores": [6600.0, 282.42, 268.35]}, "despesa_sub": {"labels": [], "valores": []}, "fixa_variavel": {"labels": ["Fixa", "Variável", "Sem natureza"], "valores": [6600.0, 550.77, 0.0]}, "evolucao_grupo": {"labels": ["jun/26", "jul/26", "ago/26", "set/26", "out/26", "nov/26"], "series": [{"nome": "Fornecedores", "valores": [90759.15, 103557.84, 94099.09, 89080.11, 124918.34, 0.0]}, {"nome": "Pessoal", "valores": [55182.61, 59464.3, 55027.1, 55039.76, 54841.66, 6600.0]}, {"nome": "Impostos", "valores": [18837.68, 15514.85, 16103.83, 17384.88, 16466.37, 0.0]}, {"nome": "Ocupação", "valores": [13912.0, 13912.0, 13912.0, 13912.0, 15397.82, 0.0]}, {"nome": "Retiradas", "valores": [3451.57, 12454.78, 2766.63, 3300.75, 12165.08, 0.0]}, {"nome": "Comerciais", "valores": [5981.94, 5071.17, 5332.44, 5382.42, 5478.3, 268.35]}, {"nome": "Outros", "valores": [12498.17, 11001.82, 9978.9, 10943.93, 10830.01, 282.42]}]}};</script><script src="static/js/dashboard.js"></script>          </div>
+<script src="static/js/chart.umd.min.js"></script><script>window.NXDASH = {"despesa_por_categoria": {"labels": ["Fornecedores", "Ocupação", "Pessoal", "Retiradas", "Utilidades", "Comerciais", "Veículos"], "valores": [22488.25, 13502.0, 6300.0, 3110.84, 2649.68, 962.72, 498.77]}, "despesa_sub": {"labels": [], "valores": []}, "fixa_variavel": {"labels": ["Fixa", "Variável", "Sem natureza"], "valores": [22451.68, 23949.74, 3110.84]}, "evolucao_grupo": {"labels": ["jun/26", "jul/26", "ago/26", "set/26", "out/26", "nov/26"], "series": [{"nome": "Fornecedores", "valores": [86310.95, 102035.0, 92937.05, 89173.47, 123102.83, 22488.25]}, {"nome": "Pessoal", "valores": [54559.21, 59759.93, 54987.77, 54339.04, 54508.53, 6300.0]}, {"nome": "Ocupação", "valores": [13912.0, 14903.86, 15346.33, 15431.11, 13912.0, 13502.0]}, {"nome": "Impostos", "valores": [18568.21, 15328.69, 15735.16, 17179.58, 16731.47, 0.0]}, {"nome": "Retiradas", "valores": [3044.3, 12008.54, 3185.7, 3010.08, 12454.57, 3110.84]}, {"nome": "Comerciais", "valores": [5591.94, 5648.68, 4869.81, 6212.45, 6422.16, 962.72]}, {"nome": "Outros", "valores": [12540.47, 9770.71, 11231.8, 11614.3, 10695.51, 3148.45]}]}};</script><script src="static/js/dashboard.js"></script>          </div>
         </div>
       </div>
       <div id="navTooltip"></div>
@@ -327,30 +339,16 @@
     caixa.textContent = t; caixa.classList.add('on');
     clearTimeout(relogio); relogio = setTimeout(function () { caixa.classList.remove('on'); }, 2600);
   }
-  function tema(t) {
-    d.setAttribute('data-theme', t);
-    try { if (!d.classList.contains('mk-embed')) localStorage.setItem('mk-tema', t); } catch (e) {}
-    document.querySelectorAll('.theme-switch button[name=tema]').forEach(function (b) {
-      b.classList.toggle('on', (b.value === 'claro') === (t === 'light'));
-    });
-  }
-  tema(d.getAttribute('data-theme'));
-  // dentro do site, o tema acompanha o alternador do site
-  if (d.classList.contains('mk-embed')) try {
-    new MutationObserver(function () { tema(parent.document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'); })
-      .observe(parent.document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-  } catch (e) {}
+  // sem tema claro: a linha "Tema" do menu do usuário não tem o que escolher
+  document.querySelectorAll('.theme-switch').forEach(function (f) { if (f.parentElement) f.parentElement.remove(); });
   document.addEventListener('click', function (e) {
     var a = e.target.closest('a[data-mk-fora]');
     if (a) { e.preventDefault(); avisar('Esta tela fica só no app. O mockup mostra as principais.'); return; }
-    var b = e.target.closest('.theme-switch button[name=tema]');
-    if (b) { e.preventDefault(); tema(b.value === 'claro' ? 'light' : 'dark'); }
   }, true);
   document.addEventListener('submit', function (e) {
     var f = e.target.closest('form[data-mk-form]');
     if (!f) return;
     e.preventDefault();
-    if (f.querySelector('button[name=tema]')) return;
     if (f.querySelector('input[name=senha]')) { location.href = 'index.html'; return; }
     avisar(f.method === 'get' ? 'No mockup os filtros não mudam os dados. No app, a tela recalcula na hora.' : 'Mockup: nada é gravado. No app, isto salva e fica na auditoria.');
   }, true);

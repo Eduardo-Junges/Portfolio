@@ -4,7 +4,7 @@
  *
  * Premissa que sustenta o texto: o sistema é instalado no servidor da própria
  * empresa (nada roda em nuvem do desenvolvedor). Cada fato aqui foi conferido no
- * código do repositório nexus-pj (versão 2.5.1): campos guardados, retenção do
+ * código do repositório nexus-pj (versão 2.6.0): campos guardados, retenção do
  * Vigia (90 dias), backups (30 no servidor, 60 na cópia externa), sessão de 30 min,
  * cookie de aparelho de 400 dias, o que pode sair da rede e só se a empresa ligar.
  * Mudou o sistema nesses pontos, muda esta página — junto com os termos.
@@ -17,7 +17,7 @@ import { EMAIL } from '../data/redes';
   titulo="Política de Privacidade"
   subtitulo="Nexus & PJ"
   descricao="Como o Nexus & PJ trata os dados: instalado no servidor da própria empresa, com o que sai da rede desligado por padrão."
-  atualizado="27 de outubro de 2026"
+  atualizado="9 de novembro de 2026"
   voltarHref="/projetos/nexus-pj"
   voltarRotulo="Voltar para Nexus & PJ"
   irmaoHref="/termos-nexus-pj"
@@ -43,9 +43,10 @@ import { EMAIL } from '../data/redes';
   <h2>Quais dados o sistema trata</h2>
   <ul>
     <li>
-      <strong>Usuários:</strong> nome, e-mail, perfil de acesso, cargo e telefone (opcionais),
-      preferências de tela e a data da última troca de senha. A senha é guardada só como hash, o
-      segredo da verificação em duas etapas fica cifrado e os códigos de recuperação, só como hash.
+      <strong>Usuários:</strong> nome, e-mail (e se já foi verificado), perfil de acesso, cargo e
+      telefone (opcionais), preferências de tela e a data da última troca de senha. A senha é
+      guardada só como hash, o segredo da verificação em duas etapas fica cifrado e os códigos de
+      recuperação e de segurança por e-mail, só como assinatura: o código em si não fica guardado.
     </li>
     <li>
       <strong>Aparelhos aprovados:</strong> um nome para o aparelho, o endereço IP de origem e as
@@ -59,7 +60,13 @@ import { EMAIL } from '../data/redes';
     </li>
     <li>
       <strong>Cadastros:</strong> contas bancárias (com titular, CPF ou CNPJ do titular, gerente e
-      telefone), lojas, a empresa e as contas a pagar e a receber (com o favorecido).
+      telefone), lojas, a empresa, o regime tributário informado e as contas a pagar e a receber
+      (com o favorecido).
+    </li>
+    <li>
+      <strong>Recebíveis de cartão e Pix:</strong> o arquivo que a maquininha fornece, com data,
+      meio de pagamento, valores e identificador de cada recebível, e a ligação de cada um ao
+      crédito do extrato.
     </li>
     <li>
       <strong>Conversas com o assistente:</strong> as perguntas e respostas de cada usuário. O
@@ -86,8 +93,8 @@ import { EMAIL } from '../data/redes';
 
   <h2>O que pode sair da rede</h2>
   <p>
-    Por padrão, nada. Três recursos trocam informação com o exterior, todos desligados até a
-    empresa ligá-los:
+    Por padrão, só a conferência do domínio do e-mail, descrita abaixo. Os demais recursos trocam
+    informação com o exterior e ficam desligados até a empresa ligá-los:
   </p>
   <ul>
     <li>
@@ -97,6 +104,17 @@ import { EMAIL } from '../data/redes';
       guardados cifrados. As respostas levam o mínimo de dado: valores agregados, e sequências
       longas de dígitos (como número de conta ou documento) saem mascaradas. Extratos não passam
       por esse canal.
+    </li>
+    <li>
+      <strong>E-mail de segurança:</strong> convite, recuperação de senha e código de login por
+      e-mail, pelo serviço de e-mail que a empresa contratar. Desligado por padrão. Ligado, saem da
+      máquina só o endereço, um assunto fixo e o código, e o conteúdo é apagado da fila assim que o
+      e-mail é enviado.
+    </li>
+    <li>
+      <strong>Conferência do e-mail:</strong> ao cadastrar um e-mail, o sistema consulta o DNS para
+      saber se o domínio recebe e-mail. Só o nome do domínio sai da máquina, e, sem internet, o
+      endereço é aceito.
     </li>
     <li>
       <strong>Aviso de atualização:</strong> consulta só o número da versão mais recente do

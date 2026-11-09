@@ -59,53 +59,6 @@
   --sombra-card-hover: inset 0 1px 0 rgb(255 255 255 / 0.08), 0 22px 48px -18px rgb(0 0 0 / 0.62);
 }
 
-/*
- * Tema claro — declarado uma única vez.
- * A preferência do sistema é resolvida pelo script inline em Base.astro,
- * que carimba data-theme antes do primeiro paint. Sem JS, cai no dark,
- * que é o tema principal do site.
- *
- * Fundo "papel" (identidade do site), acento e cores de dado do tema claro do
- * Nexus. Todo texto passa 4,5:1 — scripts/contraste.mjs reprova o que não passar.
- */
-[data-theme='light'] {
-  color-scheme: light;
-
-  --c-bg: 245 243 238; /* papel */
-  --c-bg-raised: 255 254 251;
-
-  --c-ink: 19 26 36;
-  --c-ink-dim: 62 76 94;
-  --c-ink-mute: 72 84 101;
-  --c-ink-faint: 86 98 114;
-
-  --c-rule: 19 26 36 / 0.12;
-  --c-rule-2: 19 26 36 / 0.2;
-  --c-rule-3: 19 26 36 / 0.34;
-
-  --c-surface: 19 26 36 / 0.03;
-  --c-surface-2: 19 26 36 / 0.06;
-  --c-surface-3: 19 26 36 / 0.09;
-
-  --c-accent: 24 88 196;
-  --c-accent-soft: 24 88 196 / 0.1;
-
-  --c-signal: 138 78 4;
-  --c-signal-soft: 138 78 4 / 0.12;
-
-  --c-cat-automacao: 166 96 6;
-  --c-cat-ia: 110 64 214;
-  --c-cat-dados: 29 99 214;
-  --c-cat-financas: 5 128 90;
-  --c-cat-processos: 189 39 39;
-  --c-cat-sistemas: 8 122 146;
-  --c-cat-desenvolvimento: 13 120 108;
-  --c-cat-produto: 146 104 6;
-
-  --sombra-card: inset 0 1px 0 rgb(255 255 255 / 0.7), 0 10px 24px -16px rgb(0 0 0 / 0.16);
-  --sombra-card-hover: inset 0 1px 0 rgb(255 255 255 / 0.8), 0 16px 32px -14px rgb(0 0 0 / 0.2);
-}
-
 /* ============================================================
    TOKENS — camada 2: consumo semântico pelo Tailwind
    `inline` porque os valores referenciam outras custom
@@ -549,21 +502,6 @@ html[data-cena-viva] #nx-cena-veu {
   opacity: 1;
 }
 
-/* Tema claro: o espaço continua escuro, como é. O papel cobre só a coluna de
-   texto e some depois dela, sem lavar a cena de cinza. */
-[data-theme='light'] #nx-cena-veu {
-  background: linear-gradient(
-    90deg,
-    rgb(var(--c-bg) / 0.95) 0,
-    rgb(var(--c-bg) / 0.95) calc(var(--fim-texto) - 4rem),
-    rgb(var(--c-bg) / 0.8) var(--fim-texto),
-    rgb(var(--c-bg) / 0.46) calc(var(--fim-texto) + 7rem),
-    rgb(var(--c-bg) / 0.24) calc(var(--fim-texto) + 15rem),
-    rgb(var(--c-bg) / 0.1) calc(var(--fim-texto) + 24rem),
-    rgb(var(--c-bg) / 0.04) calc(var(--fim-texto) + 34rem),
-    rgb(var(--c-bg) / 0) calc(var(--fim-texto) + 44rem)
-  );
-}
 
 html[data-cena-viva] body {
   background: transparent;
@@ -600,9 +538,6 @@ html[data-cena-viva] body > header button {
     background: rgb(var(--c-bg) / 0.9);
   }
 
-  [data-theme='light'] #nx-cena-veu {
-    background: rgb(var(--c-bg) / 0.95);
-  }
 }
 
 /* ============================================================

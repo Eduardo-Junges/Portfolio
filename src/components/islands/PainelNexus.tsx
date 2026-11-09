@@ -42,23 +42,23 @@ const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'o
 
 /**
  * Paleta de IDENTIDADE do app (utils/tons.py): um tom por assunto, que nunca é o
- * verde nem o vermelho de significado. `tx` e `txClaro` são a cor do texto sobre a
- * faixa nos temas escuro e claro, calculadas no app para passar AA.
+ * verde nem o vermelho de significado. `tx` é a cor do texto sobre a
+ * faixa, calculada no app para passar AA.
  */
 const TONS = {
-  azul: { base: '59,130,246', tx: '133,178,249', txClaro: '42,94,177', glifo: '⬡' },
-  rosa: { base: '236,72,153', tx: '243,142,192', txClaro: '165,50,107', glifo: '▼' },
-  indigo: { base: '99,102,241', tx: '165,166,247', txClaro: '77,80,188', glifo: '▲' },
-  roxo: { base: '139,92,246', tx: '188,160,250', txClaro: '106,70,187', glifo: '▤' },
-  ambar: { base: '245,158,11', tx: '247,175,55', txClaro: '137,88,6', glifo: '◐' },
-  ciano: { base: '6,182,212', tx: '76,202,224', txClaro: '3,106,123', glifo: '◈' },
-  laranja: { base: '249,115,22', tx: '251,160,97', txClaro: '154,71,14', glifo: '✦' },
-  ardosia: { base: '100,116,139', tx: '165,174,188', txClaro: '82,95,114', glifo: '▦' },
+  azul: { base: '59,130,246', tx: '133,178,249', glifo: '⬡' },
+  rosa: { base: '236,72,153', tx: '243,142,192', glifo: '▼' },
+  indigo: { base: '99,102,241', tx: '165,166,247', glifo: '▲' },
+  roxo: { base: '139,92,246', tx: '188,160,250', glifo: '▤' },
+  ambar: { base: '245,158,11', tx: '247,175,55', glifo: '◐' },
+  ciano: { base: '6,182,212', tx: '76,202,224', glifo: '◈' },
+  laranja: { base: '249,115,22', tx: '251,160,97', glifo: '✦' },
+  ardosia: { base: '100,116,139', tx: '165,174,188', glifo: '▦' },
 } as const;
 type Tom = keyof typeof TONS;
 
 const varsDoTom = (t: Tom) =>
-  ({ '--tom': TONS[t].base, '--tom-txe': `rgb(${TONS[t].tx})`, '--tom-txc': `rgb(${TONS[t].txClaro})`,
+  ({ '--tom': TONS[t].base, '--tom-txe': `rgb(${TONS[t].tx})`,
     '--tom-glifo': `'${TONS[t].glifo}'` }) as CSSProperties;
 
 // NAV do app real: a barra lateral recolhida mostra só os ícones
@@ -1255,7 +1255,7 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
         .nx-prog i { display:block; height:100%; border-radius:99px; background:linear-gradient(90deg,rgb(249,115,22),rgb(251,160,97)); }
         .nx-calc { display:flex; align-items:center; gap:7px; margin-top:8px; font-size:9.5px; color:var(--nx-text3); }
         .nx-calc input { font-family:inherit; font-size:9.5px; color:var(--nx-text); background:var(--nx-trilho);
-          border:1px solid var(--nx-line2); border-radius:6px; padding:2px 5px; color-scheme:var(--nx-esquema,dark); }
+          border:1px solid var(--nx-line2); border-radius:6px; padding:2px 5px; color-scheme:dark; }
         .nx-lg { display:flex; gap:10px; margin-bottom:5px; flex-wrap:wrap; }
         .nx-lg span { display:inline-flex; align-items:center; gap:4px; font-size:8.5px; color:var(--nx-text3); }
         .nx-lg i { width:6px; height:6px; border-radius:50%; display:inline-block; }
@@ -1328,16 +1328,6 @@ export default function PainelNexus({ className = '', compacto = false }: Props)
         .hub-carts { display:flex; flex-direction:column; gap:6px; margin-top:auto; margin-bottom:auto; }
         .hub-pos { color:var(--nx-green); } .hub-neg { color:var(--nx-red); }
         .nx [style] { --tom-tx:var(--tom-txe); }
-        /* tema claro do site: o tema "claro" do app (utils/layout.py) */
-        :root[data-theme='light'] .nx {
-          --lm-bg:232,236,243; --lm-text:23,32,46; --lm-text2:95,106,121; --lm-text3:60,72,90;
-          --lm-blue:29,99,214; --lm-green:5,140,98; --lm-purple:110,64,214;
-          --lm-red:206,42,42; --lm-cyan:8,140,166; --lm-amber:176,106,6;
-          --nx-surface:#fff; --nx-line:rgba(19,28,44,.12); --nx-line2:rgba(19,28,44,.18);
-          --nx-trilho:rgba(19,28,44,.08); --nx-flut:#f3f6fa; --nx-grade:rgba(19,28,44,.12);
-          --nx-pilula:#1e293b; --nx-pilula-tx:#fff; --nx-faixa-a:.16; --nx-esquema:light;
-        }
-        :root[data-theme='light'] .nx [style] { --tom-tx:var(--tom-txc); }
         @media (prefers-reduced-motion: reduce) { .nx * { transition:none !important; } }
       `}</style>
 

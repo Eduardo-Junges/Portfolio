@@ -5,19 +5,13 @@
 <meta name="robots" content="noindex">
 <script>
 /* Mockup estático do Nexus & PJ (dados fictícios). Antes do primeiro paint:
-   ?embed = dentro do site (iframe), o tema acompanha o site; fora dele vale o
-   tema escolhido no próprio mockup. */
+   ?embed = dentro do site (iframe). O tema é sempre o escuro. */
 (function () {
   var d = document.documentElement, t = 'dark';
   var embed = /[?&]embed\b/.test(location.search);
   try { embed = embed || sessionStorage.getItem('mk-embed') === '1'; if (embed) sessionStorage.setItem('mk-embed', '1'); } catch (e) {}
-  if (embed) {
-    d.classList.add('mk-embed');
-    try { if (parent.document.documentElement.dataset.theme === 'light') t = 'light'; } catch (e) {}
-  } else {
-    try { if (localStorage.getItem('mk-tema') === 'light') t = 'light'; } catch (e) {}
-  }
-  d.setAttribute('data-theme', t);
+  if (embed) d.classList.add('mk-embed');
+  d.setAttribute('data-theme', t);   // o site só tem tema escuro
   // dentro do site o Dashboard aparece direto, sem a janela de boas-vindas por cima
   if (embed) {
     var abrir = HTMLDialogElement.prototype.showModal;
@@ -43,6 +37,9 @@
   .mk-selo{position:fixed;right:14px;bottom:14px;z-index:9999;padding:6px 10px;border-radius:999px;font:600 11px/1 system-ui,sans-serif;
     letter-spacing:.04em;background:rgba(17,24,39,.85);color:#e5e7eb;border:1px solid rgba(255,255,255,.14)}
   .mk-embed .mk-selo{display:none}
+  /* no card do site a janela é estreita: a busca encolhe para o nome do usuário caber */
+  .mk-embed .busca-wrap{min-width:0;flex:1 1 8rem;max-width:16rem}
+  .mk-embed .busca-wrap input{min-width:0;width:100%;text-overflow:ellipsis}
 </style>
 
     <title>Nexus &amp; PJ — mockup (/dashboard/projecao)</title>
@@ -77,7 +74,7 @@
 .subabas{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .subaba{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;font-size:12.5px;font-weight:600;
   color:var(--text-200);background:var(--surface-1);border:1px solid var(--border-1);text-decoration:none;white-space:nowrap;
-  transition:background var(--dur-fast) ease,color var(--dur-fast) ease,border-color var(--dur-fast) ease}
+  transition:background 150ms ease,color 150ms ease,border-color 150ms ease,transform 150ms ease,box-shadow 150ms ease}
 .subaba .sa-ic{font-size:13px;line-height:1;color:var(--tom-tx,var(--text-200))}
 .subaba:hover{color:var(--text-100);border-color:var(--line-strong)}
 .subaba:focus-visible{outline:2px solid var(--text-200);outline-offset:2px}
@@ -93,7 +90,7 @@
   </head>
   <body>
     <div id="appShell" class="shell">
-      
+<script>(function(){var s=document.currentScript&&document.currentScript.parentNode;try{if(s&&localStorage.getItem('nx-menu-1')==='1')s.classList.add('sidebar-collapsed');}catch(e){}})();</script>      
       <div id="appSidebar" class="sidebar">
         <div class="brand">
 <a href="index.html" class="brand-btn" title="Ir para o Dashboard"><img src="static/branding/icone-dark.png" alt="" class="brand-icon"><span class="brand-name">Nexus &amp; PJ</span></a>        </div>
@@ -146,18 +143,18 @@
             <div class="kpi-grid">
               <div class="card kpi-card">
                 <div class="kpi-label">Saldo hoje</div>
-                <div class="kpi-value">R$ 753.080,57</div>
+                <div class="kpi-value">R$ 753.528,92</div>
                 <div class="kpi-delta" style="color:var(--text-200);">soma das contas ativas</div>
               </div>
               <div class="card kpi-card">
                 <div class="kpi-label">Saldo previsto em 13 semanas</div>
-                <div class="kpi-value">R$ 615.510,55</div>
-                <div class="kpi-delta" style="color:var(--text-200);">até 01/02/2027</div>
+                <div class="kpi-value">R$ 729.560,97</div>
+                <div class="kpi-delta" style="color:var(--text-200);">até 07/02/2027</div>
               </div>
               <div class="card kpi-card green">
                 <div class="kpi-label">Menor saldo previsto</div>
-                <div class="kpi-value">R$ 591.822,00</div>
-                <div class="kpi-delta" style="color:var(--text-200);">na semana de 19/01</div>
+                <div class="kpi-value">R$ 694.294,38</div>
+                <div class="kpi-delta" style="color:var(--text-200);">na semana de 18/01</div>
               </div>
               <div class="card kpi-card green">
                 <div class="kpi-label">Semanas abaixo do colchão</div>
@@ -170,22 +167,22 @@
 <span aria-hidden="true" class="faixa-ic">✦</span><span class="faixa-titulo">Ritmo do caixa</span><span class="faixa-nota">11/2026</span>              </div>
               <div class="bloco-corpo">
                 <div>
-                  <p class="text-mute" style="font-size:12.5px;margin-bottom:10px;">Dia 3 de 30 — 10% do mês já passou (marca na barra),</p>
+                  <p class="text-mute" style="font-size:12.5px;margin-bottom:10px;">Dia 9 de 30 — 30% do mês já passou (marca na barra),</p>
                   <div class="ritmo-linha">
                     <div class="ritmo-topo">
-<b>Entradas</b><span class="text-mute" style="font-size:12.5px;">R$ 19.002,12 de R$ 267.622,67 esperados no mês</span><span class="ritmo-pct">7%</span>                    </div>
-                    <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="7" aria-label="Entradas: 7% do esperado no mês" class="ritmo-barra">
-                      <div class="ritmo-fill" style="width:7.1%;"></div>
-                      <div class="ritmo-mes" title="10% do mês já passou" style="left:10.0%;"></div>
+<b>Entradas</b><span class="text-mute" style="font-size:12.5px;">R$ 75.827,08 de R$ 275.802,84 esperados no mês</span><span class="ritmo-pct">27%</span>                    </div>
+                    <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="27" aria-label="Entradas: 27% do esperado no mês" class="ritmo-barra">
+                      <div class="ritmo-fill" style="width:27.5%;"></div>
+                      <div class="ritmo-mes" title="30% do mês já passou" style="left:30.0%;"></div>
                     </div>
                     <div class="text-mute" style="font-size:12px;margin-top:4px;">Nesse ritmo, fica abaixo do esperado para o dia</div>
                   </div>
                   <div class="ritmo-linha">
                     <div class="ritmo-topo">
-<b>Saídas</b><span class="text-mute" style="font-size:12.5px;">R$ 7.150,77 de R$ 311.751,48 esperados no mês</span><span class="ritmo-pct">2%</span>                    </div>
-                    <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="2" aria-label="Saídas: 2% do esperado no mês" class="ritmo-barra">
-                      <div class="ritmo-fill" style="width:2.3%;"></div>
-                      <div class="ritmo-mes" title="10% do mês já passou" style="left:10.0%;"></div>
+<b>Saídas</b><span class="text-mute" style="font-size:12.5px;">R$ 49.512,26 de R$ 274.996,58 esperados no mês</span><span class="ritmo-pct">18%</span>                    </div>
+                    <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="18" aria-label="Saídas: 18% do esperado no mês" class="ritmo-barra">
+                      <div class="ritmo-fill" style="width:18.0%;"></div>
+                      <div class="ritmo-mes" title="30% do mês já passou" style="left:30.0%;"></div>
                     </div>
                     <div class="text-mute" style="font-size:12px;margin-top:4px;">Nesse ritmo, fecha dentro do esperado</div>
                   </div>
@@ -202,7 +199,7 @@
 <canvas id="chart-projecao"></canvas>                </div>
               </div>
             </div>
-            <div class="card bloco" style="margin-top:20px;">
+            <div class="card bloco contorno tom-ambar" style="margin-top:20px;">
               <div class="faixa tom-ambar">
 <span aria-hidden="true" class="faixa-ic">◐</span><span class="faixa-titulo">Semana a semana</span>              </div>
               <div class="bloco-corpo">
@@ -219,95 +216,95 @@
                     </thead>
                     <tbody>
                       <tr>
-                        <td>03/11 a 09/11</td>
-                        <td class="num">R$ 82.620,61</td>
-                        <td class="num">R$ 67.697,02</td>
-                        <td class="num">R$ 768.004,15</td>
-                        <td class="text-mute">Cartão a liquidar Centro +R$ 8.400,00; Encargos INSS/FGTS −R$ 7.300,00; labore socios −R$ 6.300,00</td>
+                        <td>09/11 a 15/11</td>
+                        <td class="num">R$ 82.380,49</td>
+                        <td class="num">R$ 60.931,01</td>
+                        <td class="num">R$ 774.978,41</td>
+                        <td class="text-mute">Cartão a liquidar Centro +R$ 8.400,00; Encargos INSS/FGTS −R$ 7.300,00; Cartão a liquidar Norte +R$ 5.900,00</td>
                       </tr>
                       <tr>
-                        <td>10/11 a 16/11</td>
-                        <td class="num">R$ 63.320,96</td>
-                        <td class="num">R$ 124.585,96</td>
-                        <td class="num">R$ 706.739,16</td>
+                        <td>16/11 a 22/11</td>
+                        <td class="num">R$ 63.380,49</td>
+                        <td class="num">R$ 121.519,78</td>
+                        <td class="num">R$ 716.839,13</td>
                         <td class="text-mute">Compra mercadoria Distribuidora Beta −R$ 18.400,00; Folha de pagamento Centro −R$ 17.000,00; DAS Simples Nacional −R$ 15.800,00</td>
                       </tr>
                       <tr>
-                        <td>17/11 a 23/11</td>
-                        <td class="num">R$ 57.820,96</td>
-                        <td class="num">R$ 45.196,32</td>
-                        <td class="num">R$ 719.363,80</td>
+                        <td>23/11 a 29/11</td>
+                        <td class="num">R$ 57.880,49</td>
+                        <td class="num">R$ 44.956,89</td>
+                        <td class="num">R$ 729.762,73</td>
                         <td class="text-mute">Compra mercadoria Indústria Delta −R$ 9.800,00; Embalagens −R$ 1.900,00; Crediário lojas +R$ 1.800,00</td>
                       </tr>
                       <tr>
-                        <td>24/11 a 30/11</td>
-                        <td class="num">R$ 56.660,96</td>
-                        <td class="num">R$ 76.792,41</td>
-                        <td class="num">R$ 699.232,35</td>
-                        <td class="text-mute">folha centro −R$ 16.960,00; folha norte −R$ 11.660,00; folha −R$ 9.540,00</td>
+                        <td>30/11 a 06/12</td>
+                        <td class="num">R$ 56.720,49</td>
+                        <td class="num">R$ 47.467,51</td>
+                        <td class="num">R$ 739.015,72</td>
+                        <td class="text-mute">labore socios −R$ 6.300,00; Seguro empresarial −R$ 3.300,00; retirada pessoal −R$ 3.007,32</td>
                       </tr>
                       <tr>
-                        <td>01/12 a 07/12</td>
-                        <td class="num">R$ 70.620,61</td>
-                        <td class="num">R$ 71.682,02</td>
-                        <td class="num">R$ 698.170,93</td>
+                        <td>07/12 a 13/12</td>
+                        <td class="num">R$ 70.380,49</td>
+                        <td class="num">R$ 63.984,51</td>
+                        <td class="num">R$ 745.411,70</td>
                         <td class="text-mute">Distribuição de lucros −R$ 9.500,00; Cartão a liquidar Centro +R$ 8.400,00; Encargos INSS/FGTS −R$ 7.300,00</td>
                       </tr>
                       <tr>
-                        <td>08/12 a 14/12</td>
-                        <td class="num">R$ 65.720,96</td>
-                        <td class="num">R$ 111.722,42</td>
-                        <td class="num">R$ 652.169,48</td>
+                        <td>14/12 a 20/12</td>
+                        <td class="num">R$ 65.780,49</td>
+                        <td class="num">R$ 112.875,60</td>
+                        <td class="num">R$ 698.316,60</td>
                         <td class="text-mute">Compra mercadoria Distribuidora Beta −R$ 18.400,00; Folha de pagamento Centro −R$ 17.000,00; DAS Simples Nacional −R$ 15.800,00</td>
                       </tr>
                       <tr>
-                        <td>15/12 a 21/12</td>
-                        <td class="num">R$ 60.120,96</td>
-                        <td class="num">R$ 49.199,86</td>
-                        <td class="num">R$ 663.090,58</td>
+                        <td>21/12 a 27/12</td>
+                        <td class="num">R$ 60.180,49</td>
+                        <td class="num">R$ 47.640,18</td>
+                        <td class="num">R$ 710.856,91</td>
                         <td class="text-mute">Compra mercadoria Atacado Gama −R$ 12.600,00; Venda a prazo Cliente Gama +R$ 2.300,00; Embalagens −R$ 1.900,00</td>
                       </tr>
                       <tr>
-                        <td>22/12 a 28/12</td>
-                        <td class="num">R$ 56.020,96</td>
-                        <td class="num">R$ 83.292,41</td>
-                        <td class="num">R$ 635.819,13</td>
-                        <td class="text-mute">folha centro −R$ 16.960,00; folha norte −R$ 11.660,00; Compra mercadoria Indústria Delta −R$ 9.800,00</td>
+                        <td>28/12 a 03/01</td>
+                        <td class="num">R$ 56.080,49</td>
+                        <td class="num">R$ 51.076,89</td>
+                        <td class="num">R$ 715.860,51</td>
+                        <td class="text-mute">Compra mercadoria Indústria Delta −R$ 9.800,00; labore socios −R$ 6.300,00; Campanha de marketing −R$ 3.000,00</td>
                       </tr>
                       <tr>
-                        <td>29/12 a 04/01</td>
-                        <td class="num">R$ 56.320,61</td>
-                        <td class="num">R$ 38.516,32</td>
-                        <td class="num">R$ 653.623,42</td>
-                        <td class="text-mute">labore socios −R$ 6.300,00; rendimento conta +R$ 299,64</td>
+                        <td>04/01 a 10/01</td>
+                        <td class="num">R$ 56.080,49</td>
+                        <td class="num">R$ 35.927,51</td>
+                        <td class="num">R$ 736.013,50</td>
+                        <td class="text-mute">retirada pessoal −R$ 3.007,32; condominio edificio −R$ 650,00; iptu cota −R$ 410,00</td>
                       </tr>
                       <tr>
-                        <td>05/01 a 11/01</td>
-                        <td class="num">R$ 80.020,96</td>
-                        <td class="num">R$ 113.932,02</td>
-                        <td class="num">R$ 619.712,35</td>
+                        <td>11/01 a 17/01</td>
+                        <td class="num">R$ 80.080,49</td>
+                        <td class="num">R$ 115.239,93</td>
+                        <td class="num">R$ 700.854,07</td>
                         <td class="text-mute">Compra mercadoria Distribuidora Beta −R$ 18.400,00; Folha de pagamento Centro −R$ 17.000,00; Folha de pagamento Norte −R$ 11.700,00</td>
                       </tr>
                       <tr>
-                        <td>12/01 a 18/01</td>
-                        <td class="num">R$ 58.320,96</td>
-                        <td class="num">R$ 68.755,96</td>
-                        <td class="num">R$ 609.277,36</td>
+                        <td>18/01 a 24/01</td>
+                        <td class="num">R$ 58.380,49</td>
+                        <td class="num">R$ 64.940,18</td>
+                        <td class="num">R$ 694.294,38</td>
                         <td class="text-mute">DAS Simples Nacional −R$ 15.800,00; Compra mercadoria Atacado Gama −R$ 12.600,00; Venda a prazo Cliente Gama +R$ 2.300,00</td>
                       </tr>
                       <tr>
-                        <td>19/01 a 25/01</td>
-                        <td class="num">R$ 57.820,96</td>
-                        <td class="num">R$ 75.276,32</td>
-                        <td class="num">R$ 591.822,00</td>
-                        <td class="text-mute">folha centro −R$ 16.960,00; folha norte −R$ 11.660,00; folha −R$ 9.540,00</td>
+                        <td>25/01 a 31/01</td>
+                        <td class="num">R$ 57.880,49</td>
+                        <td class="num">R$ 33.876,89</td>
+                        <td class="num">R$ 718.297,98</td>
+                        <td class="text-mute">Embalagens −R$ 1.900,00; Crediário lojas +R$ 1.800,00; tarifa pacote −R$ 116,71</td>
                       </tr>
                       <tr>
-                        <td>26/01 a 01/02</td>
-                        <td class="num">R$ 56.020,96</td>
-                        <td class="num">R$ 32.332,41</td>
-                        <td class="num">R$ 615.510,55</td>
-                        <td class="text-mute">tarifa pacote −R$ 116,09</td>
+                        <td>01/02 a 07/02</td>
+                        <td class="num">R$ 56.080,49</td>
+                        <td class="num">R$ 44.817,51</td>
+                        <td class="num">R$ 729.560,97</td>
+                        <td class="text-mute">labore socios −R$ 6.300,00; retirada pessoal −R$ 3.007,32; Campanha de marketing −R$ 3.000,00</td>
                       </tr>
                     </tbody>
                   </table>
@@ -321,16 +318,42 @@
                 <div>
                   <ul>
                     <li>Base: 4 meses completos (07/2026 a 10/2026); transferências entre contas ficam fora.</li>
-                    <li>Entradas e saídas fixas: só o que se repete com valor estável (1 entrada(s), 14 saída(s)).</li>
-                    <li>Entradas variáveis (vendas do dia a dia): média de R$ 56.021 por semana.</li>
-                    <li>Saídas variáveis: média de R$ 32.216 por semana.</li>
+                    <li>Entradas e saídas fixas: só o que se repete com valor estável (0 entrada(s), 15 saída(s)).</li>
+                    <li>Entradas variáveis (vendas do dia a dia): média de R$ 56.080 por semana.</li>
+                    <li>Saídas variáveis: média de R$ 31.860 por semana.</li>
                   </ul>
 <form enctype="multipart/form-data" method="post" action="#" data-mk-form class="painel-filtros">                    
 <label for="colchao">Colchão mínimo (R$)</label>                    <input type="text" inputmode="decimal" name="colchao" value="0,00" id="colchao" class="input" style="max-width:140px;">
 <button type="submit" class="btn btn--secondary btn--sm">Salvar</button></form>                </div>
               </div>
             </div>
-<script src="static/js/chart.umd.min.js"></script><script>window.NXDASH = {"projecao": {"labels": ["03/11", "10/11", "17/11", "24/11", "01/12", "08/12", "15/12", "22/12", "29/12", "05/01", "12/01", "19/01", "26/01"], "saldo": [768004.15, 706739.16, 719363.8, 699232.35, 698170.93, 652169.48, 663090.58, 635819.13, 653623.42, 619712.35, 609277.36, 591822.0, 615510.55], "colchao": 0.0}};</script><script src="static/js/dashboard.js"></script>          </div>
+            <div class="card bloco" style="margin-top:20px;">
+              <div class="faixa tom-ambar">
+<span aria-hidden="true" class="faixa-ic">◐</span><span class="faixa-titulo">Cenário com split payment</span>              </div>
+              <div class="bloco-corpo">
+                <div>
+                  <p class="text-mute" style="font-size:13px;">Cenário opcional: o que muda no caixa se uma parte das vendas chegar sem o tributo (split payment). Você digita as premissas; o sistema não tem alíquota guardada nem prevê a lei. Confira os números com o contador.</p>
+<form enctype="multipart/form-data" method="post" action="#" data-mk-form>                    
+                    <div class="cad-grade">
+                      <div class="field">
+<label>Parte das entradas com split (%)</label>                        <input name="participacao" inputmode="decimal" value="" placeholder="ex.: 60" class="input">
+                      </div>
+                      <div class="field">
+<label>Tributo estimado sobre elas (%)</label>                        <input name="aliquota" inputmode="decimal" value="" placeholder="digite o seu" class="input">
+                      </div>
+                      <div class="field">
+<label>A partir de</label>                        <input type="date" name="inicio" value="" class="input">
+                      </div>
+                      <div class="field cad-cheio">
+<label>                          <input type="checkbox" name="sem_guias" value="1">
+ As guias de impostos sobre vendas deixam de sair</label>                      </div>
+                    </div>
+                    <div style="display:flex;gap:8px;margin-top:10px;">
+<button type="submit" name="acao" value="salvar" class="btn btn--secondary btn--sm">Salvar cenário</button>                    </div>
+</form>                </div>
+              </div>
+            </div>
+<script src="static/js/chart.umd.min.js"></script><script>window.NXDASH = {"projecao": {"labels": ["09/11", "16/11", "23/11", "30/11", "07/12", "14/12", "21/12", "28/12", "04/01", "11/01", "18/01", "25/01", "01/02"], "saldo": [774978.41, 716839.13, 729762.73, 739015.72, 745411.7, 698316.6, 710856.91, 715860.51, 736013.5, 700854.07, 694294.38, 718297.98, 729560.97], "colchao": 0.0}};</script><script src="static/js/dashboard.js"></script>          </div>
         </div>
       </div>
       <div id="navTooltip"></div>
@@ -345,30 +368,16 @@
     caixa.textContent = t; caixa.classList.add('on');
     clearTimeout(relogio); relogio = setTimeout(function () { caixa.classList.remove('on'); }, 2600);
   }
-  function tema(t) {
-    d.setAttribute('data-theme', t);
-    try { if (!d.classList.contains('mk-embed')) localStorage.setItem('mk-tema', t); } catch (e) {}
-    document.querySelectorAll('.theme-switch button[name=tema]').forEach(function (b) {
-      b.classList.toggle('on', (b.value === 'claro') === (t === 'light'));
-    });
-  }
-  tema(d.getAttribute('data-theme'));
-  // dentro do site, o tema acompanha o alternador do site
-  if (d.classList.contains('mk-embed')) try {
-    new MutationObserver(function () { tema(parent.document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'); })
-      .observe(parent.document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-  } catch (e) {}
+  // sem tema claro: a linha "Tema" do menu do usuário não tem o que escolher
+  document.querySelectorAll('.theme-switch').forEach(function (f) { if (f.parentElement) f.parentElement.remove(); });
   document.addEventListener('click', function (e) {
     var a = e.target.closest('a[data-mk-fora]');
     if (a) { e.preventDefault(); avisar('Esta tela fica só no app. O mockup mostra as principais.'); return; }
-    var b = e.target.closest('.theme-switch button[name=tema]');
-    if (b) { e.preventDefault(); tema(b.value === 'claro' ? 'light' : 'dark'); }
   }, true);
   document.addEventListener('submit', function (e) {
     var f = e.target.closest('form[data-mk-form]');
     if (!f) return;
     e.preventDefault();
-    if (f.querySelector('button[name=tema]')) return;
     if (f.querySelector('input[name=senha]')) { location.href = 'index.html'; return; }
     avisar(f.method === 'get' ? 'No mockup os filtros não mudam os dados. No app, a tela recalcula na hora.' : 'Mockup: nada é gravado. No app, isto salva e fica na auditoria.');
   }, true);

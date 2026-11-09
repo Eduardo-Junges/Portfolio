@@ -5,19 +5,13 @@
 <meta name="robots" content="noindex">
 <script>
 /* Mockup estático do Nexus & PJ (dados fictícios). Antes do primeiro paint:
-   ?embed = dentro do site (iframe), o tema acompanha o site; fora dele vale o
-   tema escolhido no próprio mockup. */
+   ?embed = dentro do site (iframe). O tema é sempre o escuro. */
 (function () {
   var d = document.documentElement, t = 'dark';
   var embed = /[?&]embed\b/.test(location.search);
   try { embed = embed || sessionStorage.getItem('mk-embed') === '1'; if (embed) sessionStorage.setItem('mk-embed', '1'); } catch (e) {}
-  if (embed) {
-    d.classList.add('mk-embed');
-    try { if (parent.document.documentElement.dataset.theme === 'light') t = 'light'; } catch (e) {}
-  } else {
-    try { if (localStorage.getItem('mk-tema') === 'light') t = 'light'; } catch (e) {}
-  }
-  d.setAttribute('data-theme', t);
+  if (embed) d.classList.add('mk-embed');
+  d.setAttribute('data-theme', t);   // o site só tem tema escuro
   // dentro do site o Dashboard aparece direto, sem a janela de boas-vindas por cima
   if (embed) {
     var abrir = HTMLDialogElement.prototype.showModal;
@@ -43,6 +37,9 @@
   .mk-selo{position:fixed;right:14px;bottom:14px;z-index:9999;padding:6px 10px;border-radius:999px;font:600 11px/1 system-ui,sans-serif;
     letter-spacing:.04em;background:rgba(17,24,39,.85);color:#e5e7eb;border:1px solid rgba(255,255,255,.14)}
   .mk-embed .mk-selo{display:none}
+  /* no card do site a janela é estreita: a busca encolhe para o nome do usuário caber */
+  .mk-embed .busca-wrap{min-width:0;flex:1 1 8rem;max-width:16rem}
+  .mk-embed .busca-wrap input{min-width:0;width:100%;text-overflow:ellipsis}
 </style>
 
     <title>Nexus &amp; PJ — mockup (/orcamento)</title>
@@ -77,7 +74,7 @@
 .subabas{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .subaba{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;font-size:12.5px;font-weight:600;
   color:var(--text-200);background:var(--surface-1);border:1px solid var(--border-1);text-decoration:none;white-space:nowrap;
-  transition:background var(--dur-fast) ease,color var(--dur-fast) ease,border-color var(--dur-fast) ease}
+  transition:background 150ms ease,color 150ms ease,border-color 150ms ease,transform 150ms ease,box-shadow 150ms ease}
 .subaba .sa-ic{font-size:13px;line-height:1;color:var(--tom-tx,var(--text-200))}
 .subaba:hover{color:var(--text-100);border-color:var(--line-strong)}
 .subaba:focus-visible{outline:2px solid var(--text-200);outline-offset:2px}
@@ -93,7 +90,7 @@
   </head>
   <body>
     <div id="appShell" class="shell">
-      
+<script>(function(){var s=document.currentScript&&document.currentScript.parentNode;try{if(s&&localStorage.getItem('nx-menu-1')==='1')s.classList.add('sidebar-collapsed');}catch(e){}})();</script>      
       <div id="appSidebar" class="sidebar">
         <div class="brand">
 <a href="index.html" class="brand-btn" title="Ir para o Dashboard"><img src="static/branding/icone-dark.png" alt="" class="brand-icon"><span class="brand-name">Nexus &amp; PJ</span></a>        </div>
@@ -139,255 +136,414 @@
         </div>
         <div class="body">
           <div>
-            <div class="card bloco" style="">
+            <div class="barra">
+              <div class="barra-esq"></div>
+              <div class="barra-dir">
+<form enctype="multipart/form-data" method="get" action="#" data-mk-form class="painel-filtros"><select name="mes" onchange="this.form.submit()" class="input"><option value="2026-03">Março de 2026</option><option value="2026-04">Abril de 2026</option><option value="2026-05">Maio de 2026</option><option value="2026-06">Junho de 2026</option><option value="2026-07">Julho de 2026</option><option value="2026-08">Agosto de 2026</option><option value="2026-09">Setembro de 2026</option><option value="2026-10">Outubro de 2026</option><option value="2026-11" selected>Novembro de 2026</option><option value="2026-12">Dezembro de 2026</option><option value="2027-01">Janeiro de 2027</option><option value="2027-02">Fevereiro de 2027</option></select><select name="loja" class="input"><option value="">Empresa toda</option><option value="1">Loja Centro (fictícia)</option><option value="2">Loja Norte (fictícia)</option><option value="3">Loja Sul (fictícia)</option></select>                  <div class="filtros-botoes">
+<button type="submit" class="btn btn--secondary btn--sm">Filtrar</button><a href="orcamento.html" role="button" class="btn btn--secondary btn--sm">Limpar</a>                  </div>
+</form>              </div>
+            </div>
+            <div class="card bloco contorno tom-laranja" style="">
               <div class="faixa tom-laranja">
-<span aria-hidden="true" class="faixa-ic">🎯</span><span class="faixa-titulo">Orçamento × realizado — novembro de 2026</span><span class="faixa-nota">despesa: até o valor · receita: atingir o valor</span>              </div>
+<span aria-hidden="true" class="faixa-ic">⏱</span><span class="faixa-titulo">Ritmo do mês</span><span class="faixa-nota">TRAÇO GROSSO: ORÇADO · TRAÇO FINO: ONDE DEVERIA ESTAR HOJE · PONTA TRACEJADA: PROJEÇÃO</span>              </div>
               <div class="bloco-corpo">
                 <div>
-<form enctype="multipart/form-data" method="get" action="#" data-mk-form class="painel-filtros"><select name="mes" onchange="this.form.submit()" class="input"><option value="2026-03">Março de 2026</option><option value="2026-04">Abril de 2026</option><option value="2026-05">Maio de 2026</option><option value="2026-06">Junho de 2026</option><option value="2026-07">Julho de 2026</option><option value="2026-08">Agosto de 2026</option><option value="2026-09">Setembro de 2026</option><option value="2026-10">Outubro de 2026</option><option value="2026-11" selected>Novembro de 2026</option><option value="2026-12">Dezembro de 2026</option><option value="2027-01">Janeiro de 2027</option><option value="2027-02">Fevereiro de 2027</option></select><select name="loja" class="input"><option value="">Empresa toda</option><option value="1">Loja Centro (fictícia)</option><option value="2">Loja Norte (fictícia)</option><option value="3">Loja Sul (fictícia)</option></select><button type="submit" class="btn btn--secondary btn--sm">Ver</button></form>                  <div class="tbl-wrap">
-                    <table class="tbl">
-                      <thead>
-                        <tr>
-                          <th>Categoria</th>
-                          <th class="num">Orçado</th>
-                          <th class="num">Realizado</th>
-                          <th>Consumo</th>
-                          <th>Situação</th>
-                          <th></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>
-<b>Veículos</b>                            <div class="text-mute" style="font-size:11.5px;">Despesa</div>
-                          </td>
-                          <td class="num">R$ 2.200,00</td>
-                          <td class="num">R$ 282,42</td>
-                          <td style="min-width:200px;">
-                            <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="13" aria-label="Veículos: 13% do orçamento" class="orc-barra">
-                              <div class="orc-fill" style="width:12.8%;background:var(--green);"></div>
-                            </div>
-<span class="orc-pct">13%</span>                          </td>
-                          <td>
-<span class="badge badge--green">Dentro do limite</span>                          </td>
-                          <td>
-<details class="motivo-detalhe" style="display:inline-block;"><summary class="btn btn--ghost btn--sm">Remover</summary><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="form-motivo">                                
-                                <input type="hidden" name="id" value="287">
-                                <input type="hidden" name="mes" value="2026-11">
-<label class="motivo-rotulo">Motivo (até 15 linhas)</label><textarea name="motivo" rows="4" maxlength="1500" required placeholder="Por que está fazendo isto? Fica registrado na auditoria." class="input motivo-texto"></textarea><button type="submit" class="btn btn--secondary btn--sm">Confirmar</button></form></details>                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-<b>Pessoal</b>                            <div class="text-mute" style="font-size:11.5px;">Despesa</div>
-                          </td>
-                          <td class="num">R$ 52.000,00</td>
-                          <td class="num">R$ 6.600,00</td>
-                          <td style="min-width:200px;">
-                            <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="13" aria-label="Pessoal: 13% do orçamento" class="orc-barra">
-                              <div class="orc-fill" style="width:12.7%;background:var(--green);"></div>
-                            </div>
-<span class="orc-pct">13%</span>                          </td>
-                          <td>
-<span class="badge badge--green">Dentro do limite</span>                          </td>
-                          <td>
-<details class="motivo-detalhe" style="display:inline-block;"><summary class="btn btn--ghost btn--sm">Remover</summary><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="form-motivo">                                
-                                <input type="hidden" name="id" value="203">
-                                <input type="hidden" name="mes" value="2026-11">
-<label class="motivo-rotulo">Motivo (até 15 linhas)</label><textarea name="motivo" rows="4" maxlength="1500" required placeholder="Por que está fazendo isto? Fica registrado na auditoria." class="input motivo-texto"></textarea><button type="submit" class="btn btn--secondary btn--sm">Confirmar</button></form></details>                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-<b>Comerciais</b>                            <div class="text-mute" style="font-size:11.5px;">Despesa</div>
-                          </td>
-                          <td class="num">R$ 9.000,00</td>
-                          <td class="num">R$ 268,35</td>
-                          <td style="min-width:200px;">
-                            <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="3" aria-label="Comerciais: 3% do orçamento" class="orc-barra">
-                              <div class="orc-fill" style="width:3.0%;background:var(--green);"></div>
-                            </div>
-<span class="orc-pct">3%</span>                          </td>
-                          <td>
-<span class="badge badge--green">Dentro do limite</span>                          </td>
-                          <td>
-<details class="motivo-detalhe" style="display:inline-block;"><summary class="btn btn--ghost btn--sm">Remover</summary><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="form-motivo">                                
-                                <input type="hidden" name="id" value="251">
-                                <input type="hidden" name="mes" value="2026-11">
-<label class="motivo-rotulo">Motivo (até 15 linhas)</label><textarea name="motivo" rows="4" maxlength="1500" required placeholder="Por que está fazendo isto? Fica registrado na auditoria." class="input motivo-texto"></textarea><button type="submit" class="btn btn--secondary btn--sm">Confirmar</button></form></details>                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-<b>Fornecedores</b>                            <div class="text-mute" style="font-size:11.5px;">Despesa</div>
-                          </td>
-                          <td class="num">R$ 80.000,00</td>
-                          <td class="num">R$ 0,00</td>
-                          <td style="min-width:200px;">
-                            <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Fornecedores: 0% do orçamento" class="orc-barra">
-                              <div class="orc-fill" style="width:0.0%;background:var(--green);"></div>
-                            </div>
-<span class="orc-pct">0%</span>                          </td>
-                          <td>
-<span class="badge badge--green">Dentro do limite</span>                          </td>
-                          <td>
-<details class="motivo-detalhe" style="display:inline-block;"><summary class="btn btn--ghost btn--sm">Remover</summary><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="form-motivo">                                
-                                <input type="hidden" name="id" value="191">
-                                <input type="hidden" name="mes" value="2026-11">
-<label class="motivo-rotulo">Motivo (até 15 linhas)</label><textarea name="motivo" rows="4" maxlength="1500" required placeholder="Por que está fazendo isto? Fica registrado na auditoria." class="input motivo-texto"></textarea><button type="submit" class="btn btn--secondary btn--sm">Confirmar</button></form></details>                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-<b>Ocupação</b>                            <div class="text-mute" style="font-size:11.5px;">Despesa</div>
-                          </td>
-                          <td class="num">R$ 15.000,00</td>
-                          <td class="num">R$ 0,00</td>
-                          <td style="min-width:200px;">
-                            <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Ocupação: 0% do orçamento" class="orc-barra">
-                              <div class="orc-fill" style="width:0.0%;background:var(--green);"></div>
-                            </div>
-<span class="orc-pct">0%</span>                          </td>
-                          <td>
-<span class="badge badge--green">Dentro do limite</span>                          </td>
-                          <td>
-<details class="motivo-detalhe" style="display:inline-block;"><summary class="btn btn--ghost btn--sm">Remover</summary><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="form-motivo">                                
-                                <input type="hidden" name="id" value="215">
-                                <input type="hidden" name="mes" value="2026-11">
-<label class="motivo-rotulo">Motivo (até 15 linhas)</label><textarea name="motivo" rows="4" maxlength="1500" required placeholder="Por que está fazendo isto? Fica registrado na auditoria." class="input motivo-texto"></textarea><button type="submit" class="btn btn--secondary btn--sm">Confirmar</button></form></details>                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-<b>Utilidades</b>                            <div class="text-mute" style="font-size:11.5px;">Despesa</div>
-                          </td>
-                          <td class="num">R$ 6.500,00</td>
-                          <td class="num">R$ 0,00</td>
-                          <td style="min-width:200px;">
-                            <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Utilidades: 0% do orçamento" class="orc-barra">
-                              <div class="orc-fill" style="width:0.0%;background:var(--green);"></div>
-                            </div>
-<span class="orc-pct">0%</span>                          </td>
-                          <td>
-<span class="badge badge--green">Dentro do limite</span>                          </td>
-                          <td>
-<details class="motivo-detalhe" style="display:inline-block;"><summary class="btn btn--ghost btn--sm">Remover</summary><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="form-motivo">                                
-                                <input type="hidden" name="id" value="227">
-                                <input type="hidden" name="mes" value="2026-11">
-<label class="motivo-rotulo">Motivo (até 15 linhas)</label><textarea name="motivo" rows="4" maxlength="1500" required placeholder="Por que está fazendo isto? Fica registrado na auditoria." class="input motivo-texto"></textarea><button type="submit" class="btn btn--secondary btn--sm">Confirmar</button></form></details>                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-<b>Administrativas</b>                            <div class="text-mute" style="font-size:11.5px;">Despesa</div>
-                          </td>
-                          <td class="num">R$ 5.500,00</td>
-                          <td class="num">R$ 0,00</td>
-                          <td style="min-width:200px;">
-                            <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Administrativas: 0% do orçamento" class="orc-barra">
-                              <div class="orc-fill" style="width:0.0%;background:var(--green);"></div>
-                            </div>
-<span class="orc-pct">0%</span>                          </td>
-                          <td>
-<span class="badge badge--green">Dentro do limite</span>                          </td>
-                          <td>
-<details class="motivo-detalhe" style="display:inline-block;"><summary class="btn btn--ghost btn--sm">Remover</summary><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="form-motivo">                                
-                                <input type="hidden" name="id" value="239">
-                                <input type="hidden" name="mes" value="2026-11">
-<label class="motivo-rotulo">Motivo (até 15 linhas)</label><textarea name="motivo" rows="4" maxlength="1500" required placeholder="Por que está fazendo isto? Fica registrado na auditoria." class="input motivo-texto"></textarea><button type="submit" class="btn btn--secondary btn--sm">Confirmar</button></form></details>                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-<b>Impostos</b>                            <div class="text-mute" style="font-size:11.5px;">Despesa</div>
-                          </td>
-                          <td class="num">R$ 14.500,00</td>
-                          <td class="num">R$ 0,00</td>
-                          <td style="min-width:200px;">
-                            <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Impostos: 0% do orçamento" class="orc-barra">
-                              <div class="orc-fill" style="width:0.0%;background:var(--green);"></div>
-                            </div>
-<span class="orc-pct">0%</span>                          </td>
-                          <td>
-<span class="badge badge--green">Dentro do limite</span>                          </td>
-                          <td>
-<details class="motivo-detalhe" style="display:inline-block;"><summary class="btn btn--ghost btn--sm">Remover</summary><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="form-motivo">                                
-                                <input type="hidden" name="id" value="263">
-                                <input type="hidden" name="mes" value="2026-11">
-<label class="motivo-rotulo">Motivo (até 15 linhas)</label><textarea name="motivo" rows="4" maxlength="1500" required placeholder="Por que está fazendo isto? Fica registrado na auditoria." class="input motivo-texto"></textarea><button type="submit" class="btn btn--secondary btn--sm">Confirmar</button></form></details>                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-<b>Financeiras</b>                            <div class="text-mute" style="font-size:11.5px;">Despesa</div>
-                          </td>
-                          <td class="num">R$ 3.500,00</td>
-                          <td class="num">R$ 0,00</td>
-                          <td style="min-width:200px;">
-                            <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Financeiras: 0% do orçamento" class="orc-barra">
-                              <div class="orc-fill" style="width:0.0%;background:var(--green);"></div>
-                            </div>
-<span class="orc-pct">0%</span>                          </td>
-                          <td>
-<span class="badge badge--green">Dentro do limite</span>                          </td>
-                          <td>
-<details class="motivo-detalhe" style="display:inline-block;"><summary class="btn btn--ghost btn--sm">Remover</summary><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="form-motivo">                                
-                                <input type="hidden" name="id" value="275">
-                                <input type="hidden" name="mes" value="2026-11">
-<label class="motivo-rotulo">Motivo (até 15 linhas)</label><textarea name="motivo" rows="4" maxlength="1500" required placeholder="Por que está fazendo isto? Fica registrado na auditoria." class="input motivo-texto"></textarea><button type="submit" class="btn btn--secondary btn--sm">Confirmar</button></form></details>                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-<b>Retiradas</b>                            <div class="text-mute" style="font-size:11.5px;">Despesa</div>
-                          </td>
-                          <td class="num">R$ 6.500,00</td>
-                          <td class="num">R$ 0,00</td>
-                          <td style="min-width:200px;">
-                            <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Retiradas: 0% do orçamento" class="orc-barra">
-                              <div class="orc-fill" style="width:0.0%;background:var(--green);"></div>
-                            </div>
-<span class="orc-pct">0%</span>                          </td>
-                          <td>
-<span class="badge badge--green">Dentro do limite</span>                          </td>
-                          <td>
-<details class="motivo-detalhe" style="display:inline-block;"><summary class="btn btn--ghost btn--sm">Remover</summary><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="form-motivo">                                
-                                <input type="hidden" name="id" value="299">
-                                <input type="hidden" name="mes" value="2026-11">
-<label class="motivo-rotulo">Motivo (até 15 linhas)</label><textarea name="motivo" rows="4" maxlength="1500" required placeholder="Por que está fazendo isto? Fica registrado na auditoria." class="input motivo-texto"></textarea><button type="submit" class="btn btn--secondary btn--sm">Confirmar</button></form></details>                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-<b>Comerciais › Marketing</b>                            <div class="text-mute" style="font-size:11.5px;">Despesa</div>
-                          </td>
-                          <td class="num">R$ 3.000,00</td>
-                          <td class="num">R$ 0,00</td>
-                          <td style="min-width:200px;">
-                            <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Comerciais › Marketing: 0% do orçamento" class="orc-barra">
-                              <div class="orc-fill" style="width:0.0%;background:var(--green);"></div>
-                            </div>
-<span class="orc-pct">0%</span>                          </td>
-                          <td>
-<span class="badge badge--green">Dentro do limite</span>                          </td>
-                          <td>
-<details class="motivo-detalhe" style="display:inline-block;"><summary class="btn btn--ghost btn--sm">Remover</summary><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="form-motivo">                                
-                                <input type="hidden" name="id" value="323">
-                                <input type="hidden" name="mes" value="2026-11">
-<label class="motivo-rotulo">Motivo (até 15 linhas)</label><textarea name="motivo" rows="4" maxlength="1500" required placeholder="Por que está fazendo isto? Fica registrado na auditoria." class="input motivo-texto"></textarea><button type="submit" class="btn btn--secondary btn--sm">Confirmar</button></form></details>                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-<b>Vendas</b>                            <div class="text-mute" style="font-size:11.5px;">Receita</div>
-                          </td>
-                          <td class="num">R$ 190.000,00</td>
-                          <td class="num">R$ 18.833,83</td>
-                          <td style="min-width:200px;">
-                            <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="10" aria-label="Vendas: 10% do orçamento" class="orc-barra">
-                              <div class="orc-fill" style="width:9.9%;background:var(--blue);"></div>
-                            </div>
-<span class="orc-pct">10%</span>                          </td>
-                          <td>
-<span class="badge badge--neutral">Em andamento</span>                          </td>
-                          <td>
-<details class="motivo-detalhe" style="display:inline-block;"><summary class="btn btn--ghost btn--sm">Remover</summary><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="form-motivo">                                
-                                <input type="hidden" name="id" value="179">
-                                <input type="hidden" name="mes" value="2026-11">
-<label class="motivo-rotulo">Motivo (até 15 linhas)</label><textarea name="motivo" rows="4" maxlength="1500" required placeholder="Por que está fazendo isto? Fica registrado na auditoria." class="input motivo-texto"></textarea><button type="submit" class="btn btn--secondary btn--sm">Confirmar</button></form></details>                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                  <div class="orc-kpis">
+                    <div class="orc-kpi">
+                      <div class="text-mute" style="font-size:12px;">Despesa orçada</div>
+                      <div class="orc-kpi-val">R$ 197.700,00</div>
+                    </div>
+                    <div class="orc-kpi">
+                      <div class="text-mute" style="font-size:12px;">Despesa realizada</div>
+                      <div class="orc-kpi-val">R$ 49.512,26</div>
+                    </div>
+                    <div class="orc-kpi">
+                      <div class="text-mute" style="font-size:12px;">Projeção no ritmo atual</div>
+                      <div class="orc-kpi-val">R$ 165.040,88</div>
+                    </div>
+                    <div class="orc-kpi orc-kpi--alerta">
+                      <div class="text-mute" style="font-size:12px;">Categorias a estourar</div>
+                      <div class="orc-kpi-val">3</div>
+                    </div>
                   </div>
+                  <div class="orc-b">
+                    <div class="orc-b-topo">
+<b>Ocupação</b><span class="text-mute orc-b-val">R$ 13.502,00 de R$ 15.000,00</span>                    </div>
+                    <div role="img" aria-label="Ocupação: 90% do orçado; no ritmo atual fecha em R$ 45.006,67" class="orc-bullet">
+                      <div class="orc-b-fill" style="width:30.00%;background:var(--amber);"></div>
+                      <div class="orc-b-proj orc-b-proj--alerta" style="left:30.00%;width:70.00%;"></div>
+                      <div class="orc-b-meta" title="Orçado" style="left:33.33%;"></div>
+                      <div class="orc-b-hoje" title="Onde deveria estar hoje" style="left:10.00%;"></div>
+                    </div>
+                    <div class="orc-b-nota orc-b-nota--alerta">No ritmo atual: R$ 45.006,67 (300%)</div>
+                  </div>
+                  <div class="orc-b">
+                    <div class="orc-b-topo">
+<b>Retiradas</b><span class="text-mute orc-b-val">R$ 3.110,84 de R$ 6.500,00</span>                    </div>
+                    <div role="img" aria-label="Retiradas: 48% do orçado; no ritmo atual fecha em R$ 10.369,47" class="orc-bullet">
+                      <div class="orc-b-fill" style="width:30.00%;background:var(--green);"></div>
+                      <div class="orc-b-proj orc-b-proj--alerta" style="left:30.00%;width:70.00%;"></div>
+                      <div class="orc-b-meta" title="Orçado" style="left:62.68%;"></div>
+                      <div class="orc-b-hoje" title="Onde deveria estar hoje" style="left:18.81%;"></div>
+                    </div>
+                    <div class="orc-b-nota orc-b-nota--alerta">No ritmo atual: R$ 10.369,47 (160%)</div>
+                  </div>
+                  <div class="orc-b">
+                    <div class="orc-b-topo">
+<b>Utilidades</b><span class="text-mute orc-b-val">R$ 2.649,68 de R$ 6.500,00</span>                    </div>
+                    <div role="img" aria-label="Utilidades: 41% do orçado; no ritmo atual fecha em R$ 8.832,27" class="orc-bullet">
+                      <div class="orc-b-fill" style="width:30.00%;background:var(--green);"></div>
+                      <div class="orc-b-proj orc-b-proj--alerta" style="left:30.00%;width:70.00%;"></div>
+                      <div class="orc-b-meta" title="Orçado" style="left:73.59%;"></div>
+                      <div class="orc-b-hoje" title="Onde deveria estar hoje" style="left:22.08%;"></div>
+                    </div>
+                    <div class="orc-b-nota orc-b-nota--alerta">No ritmo atual: R$ 8.832,27 (136%)</div>
+                  </div>
+                  <div class="orc-b">
+                    <div class="orc-b-topo">
+<b>Fornecedores</b><span class="text-mute orc-b-val">R$ 22.488,25 de R$ 80.000,00</span>                    </div>
+                    <div role="img" aria-label="Fornecedores: 28% do orçado; no ritmo atual fecha em R$ 74.960,83" class="orc-bullet">
+                      <div class="orc-b-fill" style="width:28.11%;background:var(--green);"></div>
+                      <div class="orc-b-proj" style="left:28.11%;width:65.59%;"></div>
+                      <div class="orc-b-meta" title="Orçado" style="left:100.00%;"></div>
+                      <div class="orc-b-hoje" title="Onde deveria estar hoje" style="left:30.00%;"></div>
+                    </div>
+                    <div class="orc-b-nota">No ritmo atual: R$ 74.960,83 (94%)</div>
+                  </div>
+                  <div class="orc-b">
+                    <div class="orc-b-topo">
+<b>Veículos</b><span class="text-mute orc-b-val">R$ 498,77 de R$ 2.200,00</span>                    </div>
+                    <div role="img" aria-label="Veículos: 23% do orçado; no ritmo atual fecha em R$ 1.662,57" class="orc-bullet">
+                      <div class="orc-b-fill" style="width:22.67%;background:var(--green);"></div>
+                      <div class="orc-b-proj" style="left:22.67%;width:52.90%;"></div>
+                      <div class="orc-b-meta" title="Orçado" style="left:100.00%;"></div>
+                      <div class="orc-b-hoje" title="Onde deveria estar hoje" style="left:30.00%;"></div>
+                    </div>
+                    <div class="orc-b-nota">No ritmo atual: R$ 1.662,57 (76%)</div>
+                  </div>
+                  <div class="orc-b">
+                    <div class="orc-b-topo">
+<b>Pessoal</b><span class="text-mute orc-b-val">R$ 6.300,00 de R$ 52.000,00</span>                    </div>
+                    <div role="img" aria-label="Pessoal: 12% do orçado; no ritmo atual fecha em R$ 21.000,00" class="orc-bullet">
+                      <div class="orc-b-fill" style="width:12.12%;background:var(--green);"></div>
+                      <div class="orc-b-proj" style="left:12.12%;width:28.27%;"></div>
+                      <div class="orc-b-meta" title="Orçado" style="left:100.00%;"></div>
+                      <div class="orc-b-hoje" title="Onde deveria estar hoje" style="left:30.00%;"></div>
+                    </div>
+                    <div class="orc-b-nota">No ritmo atual: R$ 21.000,00 (40%)</div>
+                  </div>
+                  <div class="orc-b">
+                    <div class="orc-b-topo">
+<b>Comerciais</b><span class="text-mute orc-b-val">R$ 962,72 de R$ 9.000,00</span>                    </div>
+                    <div role="img" aria-label="Comerciais: 11% do orçado; no ritmo atual fecha em R$ 3.209,07" class="orc-bullet">
+                      <div class="orc-b-fill" style="width:10.70%;background:var(--green);"></div>
+                      <div class="orc-b-proj" style="left:10.70%;width:24.96%;"></div>
+                      <div class="orc-b-meta" title="Orçado" style="left:100.00%;"></div>
+                      <div class="orc-b-hoje" title="Onde deveria estar hoje" style="left:30.00%;"></div>
+                    </div>
+                    <div class="orc-b-nota">No ritmo atual: R$ 3.209,07 (36%)</div>
+                  </div>
+                  <div class="orc-b">
+                    <div class="orc-b-topo">
+<b>Administrativas</b><span class="text-mute orc-b-val">R$ 0,00 de R$ 5.500,00</span>                    </div>
+                    <div role="img" aria-label="Administrativas: 0% do orçado; no ritmo atual fecha em R$ 0,00" class="orc-bullet">
+                      <div class="orc-b-fill" style="width:0.00%;background:var(--green);"></div>
+                      <div class="orc-b-meta" title="Orçado" style="left:100.00%;"></div>
+                      <div class="orc-b-hoje" title="Onde deveria estar hoje" style="left:30.00%;"></div>
+                    </div>
+                    <div class="orc-b-nota">No ritmo atual: R$ 0,00 (0%)</div>
+                  </div>
+                  <div class="orc-b">
+                    <div class="orc-b-topo">
+<b>Impostos</b><span class="text-mute orc-b-val">R$ 0,00 de R$ 14.500,00</span>                    </div>
+                    <div role="img" aria-label="Impostos: 0% do orçado; no ritmo atual fecha em R$ 0,00" class="orc-bullet">
+                      <div class="orc-b-fill" style="width:0.00%;background:var(--green);"></div>
+                      <div class="orc-b-meta" title="Orçado" style="left:100.00%;"></div>
+                      <div class="orc-b-hoje" title="Onde deveria estar hoje" style="left:30.00%;"></div>
+                    </div>
+                    <div class="orc-b-nota">No ritmo atual: R$ 0,00 (0%)</div>
+                  </div>
+                  <div class="orc-b">
+                    <div class="orc-b-topo">
+<b>Financeiras</b><span class="text-mute orc-b-val">R$ 0,00 de R$ 3.500,00</span>                    </div>
+                    <div role="img" aria-label="Financeiras: 0% do orçado; no ritmo atual fecha em R$ 0,00" class="orc-bullet">
+                      <div class="orc-b-fill" style="width:0.00%;background:var(--green);"></div>
+                      <div class="orc-b-meta" title="Orçado" style="left:100.00%;"></div>
+                      <div class="orc-b-hoje" title="Onde deveria estar hoje" style="left:30.00%;"></div>
+                    </div>
+                    <div class="orc-b-nota">No ritmo atual: R$ 0,00 (0%)</div>
+                  </div>
+                  <div class="orc-b">
+                    <div class="orc-b-topo">
+<b>Comerciais › Marketing</b><span class="text-mute orc-b-val">R$ 0,00 de R$ 3.000,00</span>                    </div>
+                    <div role="img" aria-label="Comerciais › Marketing: 0% do orçado; no ritmo atual fecha em R$ 0,00" class="orc-bullet">
+                      <div class="orc-b-fill" style="width:0.00%;background:var(--green);"></div>
+                      <div class="orc-b-meta" title="Orçado" style="left:100.00%;"></div>
+                      <div class="orc-b-hoje" title="Onde deveria estar hoje" style="left:30.00%;"></div>
+                    </div>
+                    <div class="orc-b-nota">No ritmo atual: R$ 0,00 (0%)</div>
+                  </div>
+                  <div class="orc-b">
+                    <div class="orc-b-topo">
+<b>Vendas</b><span class="text-mute orc-b-val">R$ 75.432,27 de R$ 190.000,00</span>                    </div>
+                    <div role="img" aria-label="Vendas: 40% do orçado; no ritmo atual fecha em R$ 251.440,90" class="orc-bullet">
+                      <div class="orc-b-fill" style="width:30.00%;background:var(--blue);"></div>
+                      <div class="orc-b-proj" style="left:30.00%;width:70.00%;"></div>
+                      <div class="orc-b-meta" title="Orçado" style="left:75.56%;"></div>
+                      <div class="orc-b-hoje" title="Onde deveria estar hoje" style="left:22.67%;"></div>
+                    </div>
+                    <div class="orc-b-nota">No ritmo atual: R$ 251.440,90 (132%)</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card bloco contorno tom-laranja" style="">
+              <div class="faixa tom-laranja">
+<span aria-hidden="true" class="faixa-ic">🎯</span><span class="faixa-titulo">Orçamento × realizado — novembro de 2026</span><span class="faixa-nota">DESPESA: ATÉ O VALOR · RECEITA: ATINGIR O VALOR</span>              </div>
+              <div class="bloco-corpo">
+                <div class="tbl-wrap">
+                  <table class="tbl">
+                    <thead>
+                      <tr>
+                        <th>Categoria</th>
+                        <th class="num">Orçado</th>
+                        <th class="num">Realizado</th>
+                        <th>Consumo</th>
+                        <th>Situação</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>
+<b>Ocupação</b>                          <div class="text-mute" style="font-size:11.5px;">Despesa</div>
+                        </td>
+                        <td class="num">R$ 15.000,00</td>
+                        <td class="num">R$ 13.502,00</td>
+                        <td style="min-width:200px;">
+                          <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="90" aria-label="Ocupação: 90% do orçamento" class="orc-barra">
+                            <div class="orc-fill" style="width:90.0%;background:var(--amber);"></div>
+                          </div>
+<span class="orc-pct">90%</span>                        </td>
+                        <td>
+<span class="badge badge--amber">Perto do limite</span>                        </td>
+                        <td>
+<details class="motivo-detalhe" style="display:inline-block;"><summary class="btn btn--ghost btn--sm">Remover</summary><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="form-motivo">                              
+                              <input type="hidden" name="id" value="215">
+                              <input type="hidden" name="mes" value="2026-11">
+<label class="motivo-rotulo">Motivo (até 15 linhas)</label><textarea name="motivo" rows="4" maxlength="1500" required placeholder="Por que está fazendo isto? Fica registrado na auditoria." class="input motivo-texto"></textarea><button type="submit" class="btn btn--secondary btn--sm">Confirmar</button></form></details>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<b>Retiradas</b>                          <div class="text-mute" style="font-size:11.5px;">Despesa</div>
+                        </td>
+                        <td class="num">R$ 6.500,00</td>
+                        <td class="num">R$ 3.110,84</td>
+                        <td style="min-width:200px;">
+                          <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="48" aria-label="Retiradas: 48% do orçamento" class="orc-barra">
+                            <div class="orc-fill" style="width:47.9%;background:var(--green);"></div>
+                          </div>
+<span class="orc-pct">48%</span>                        </td>
+                        <td>
+<span class="badge badge--green">Dentro do limite</span>                        </td>
+                        <td>
+<details class="motivo-detalhe" style="display:inline-block;"><summary class="btn btn--ghost btn--sm">Remover</summary><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="form-motivo">                              
+                              <input type="hidden" name="id" value="299">
+                              <input type="hidden" name="mes" value="2026-11">
+<label class="motivo-rotulo">Motivo (até 15 linhas)</label><textarea name="motivo" rows="4" maxlength="1500" required placeholder="Por que está fazendo isto? Fica registrado na auditoria." class="input motivo-texto"></textarea><button type="submit" class="btn btn--secondary btn--sm">Confirmar</button></form></details>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<b>Utilidades</b>                          <div class="text-mute" style="font-size:11.5px;">Despesa</div>
+                        </td>
+                        <td class="num">R$ 6.500,00</td>
+                        <td class="num">R$ 2.649,68</td>
+                        <td style="min-width:200px;">
+                          <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="41" aria-label="Utilidades: 41% do orçamento" class="orc-barra">
+                            <div class="orc-fill" style="width:40.8%;background:var(--green);"></div>
+                          </div>
+<span class="orc-pct">41%</span>                        </td>
+                        <td>
+<span class="badge badge--green">Dentro do limite</span>                        </td>
+                        <td>
+<details class="motivo-detalhe" style="display:inline-block;"><summary class="btn btn--ghost btn--sm">Remover</summary><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="form-motivo">                              
+                              <input type="hidden" name="id" value="227">
+                              <input type="hidden" name="mes" value="2026-11">
+<label class="motivo-rotulo">Motivo (até 15 linhas)</label><textarea name="motivo" rows="4" maxlength="1500" required placeholder="Por que está fazendo isto? Fica registrado na auditoria." class="input motivo-texto"></textarea><button type="submit" class="btn btn--secondary btn--sm">Confirmar</button></form></details>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<b>Fornecedores</b>                          <div class="text-mute" style="font-size:11.5px;">Despesa</div>
+                        </td>
+                        <td class="num">R$ 80.000,00</td>
+                        <td class="num">R$ 22.488,25</td>
+                        <td style="min-width:200px;">
+                          <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="28" aria-label="Fornecedores: 28% do orçamento" class="orc-barra">
+                            <div class="orc-fill" style="width:28.1%;background:var(--green);"></div>
+                          </div>
+<span class="orc-pct">28%</span>                        </td>
+                        <td>
+<span class="badge badge--green">Dentro do limite</span>                        </td>
+                        <td>
+<details class="motivo-detalhe" style="display:inline-block;"><summary class="btn btn--ghost btn--sm">Remover</summary><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="form-motivo">                              
+                              <input type="hidden" name="id" value="191">
+                              <input type="hidden" name="mes" value="2026-11">
+<label class="motivo-rotulo">Motivo (até 15 linhas)</label><textarea name="motivo" rows="4" maxlength="1500" required placeholder="Por que está fazendo isto? Fica registrado na auditoria." class="input motivo-texto"></textarea><button type="submit" class="btn btn--secondary btn--sm">Confirmar</button></form></details>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<b>Veículos</b>                          <div class="text-mute" style="font-size:11.5px;">Despesa</div>
+                        </td>
+                        <td class="num">R$ 2.200,00</td>
+                        <td class="num">R$ 498,77</td>
+                        <td style="min-width:200px;">
+                          <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="23" aria-label="Veículos: 23% do orçamento" class="orc-barra">
+                            <div class="orc-fill" style="width:22.7%;background:var(--green);"></div>
+                          </div>
+<span class="orc-pct">23%</span>                        </td>
+                        <td>
+<span class="badge badge--green">Dentro do limite</span>                        </td>
+                        <td>
+<details class="motivo-detalhe" style="display:inline-block;"><summary class="btn btn--ghost btn--sm">Remover</summary><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="form-motivo">                              
+                              <input type="hidden" name="id" value="287">
+                              <input type="hidden" name="mes" value="2026-11">
+<label class="motivo-rotulo">Motivo (até 15 linhas)</label><textarea name="motivo" rows="4" maxlength="1500" required placeholder="Por que está fazendo isto? Fica registrado na auditoria." class="input motivo-texto"></textarea><button type="submit" class="btn btn--secondary btn--sm">Confirmar</button></form></details>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<b>Pessoal</b>                          <div class="text-mute" style="font-size:11.5px;">Despesa</div>
+                        </td>
+                        <td class="num">R$ 52.000,00</td>
+                        <td class="num">R$ 6.300,00</td>
+                        <td style="min-width:200px;">
+                          <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="12" aria-label="Pessoal: 12% do orçamento" class="orc-barra">
+                            <div class="orc-fill" style="width:12.1%;background:var(--green);"></div>
+                          </div>
+<span class="orc-pct">12%</span>                        </td>
+                        <td>
+<span class="badge badge--green">Dentro do limite</span>                        </td>
+                        <td>
+<details class="motivo-detalhe" style="display:inline-block;"><summary class="btn btn--ghost btn--sm">Remover</summary><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="form-motivo">                              
+                              <input type="hidden" name="id" value="203">
+                              <input type="hidden" name="mes" value="2026-11">
+<label class="motivo-rotulo">Motivo (até 15 linhas)</label><textarea name="motivo" rows="4" maxlength="1500" required placeholder="Por que está fazendo isto? Fica registrado na auditoria." class="input motivo-texto"></textarea><button type="submit" class="btn btn--secondary btn--sm">Confirmar</button></form></details>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<b>Comerciais</b>                          <div class="text-mute" style="font-size:11.5px;">Despesa</div>
+                        </td>
+                        <td class="num">R$ 9.000,00</td>
+                        <td class="num">R$ 962,72</td>
+                        <td style="min-width:200px;">
+                          <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="11" aria-label="Comerciais: 11% do orçamento" class="orc-barra">
+                            <div class="orc-fill" style="width:10.7%;background:var(--green);"></div>
+                          </div>
+<span class="orc-pct">11%</span>                        </td>
+                        <td>
+<span class="badge badge--green">Dentro do limite</span>                        </td>
+                        <td>
+<details class="motivo-detalhe" style="display:inline-block;"><summary class="btn btn--ghost btn--sm">Remover</summary><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="form-motivo">                              
+                              <input type="hidden" name="id" value="251">
+                              <input type="hidden" name="mes" value="2026-11">
+<label class="motivo-rotulo">Motivo (até 15 linhas)</label><textarea name="motivo" rows="4" maxlength="1500" required placeholder="Por que está fazendo isto? Fica registrado na auditoria." class="input motivo-texto"></textarea><button type="submit" class="btn btn--secondary btn--sm">Confirmar</button></form></details>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<b>Administrativas</b>                          <div class="text-mute" style="font-size:11.5px;">Despesa</div>
+                        </td>
+                        <td class="num">R$ 5.500,00</td>
+                        <td class="num">R$ 0,00</td>
+                        <td style="min-width:200px;">
+                          <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Administrativas: 0% do orçamento" class="orc-barra">
+                            <div class="orc-fill" style="width:0.0%;background:var(--green);"></div>
+                          </div>
+<span class="orc-pct">0%</span>                        </td>
+                        <td>
+<span class="badge badge--green">Dentro do limite</span>                        </td>
+                        <td>
+<details class="motivo-detalhe" style="display:inline-block;"><summary class="btn btn--ghost btn--sm">Remover</summary><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="form-motivo">                              
+                              <input type="hidden" name="id" value="239">
+                              <input type="hidden" name="mes" value="2026-11">
+<label class="motivo-rotulo">Motivo (até 15 linhas)</label><textarea name="motivo" rows="4" maxlength="1500" required placeholder="Por que está fazendo isto? Fica registrado na auditoria." class="input motivo-texto"></textarea><button type="submit" class="btn btn--secondary btn--sm">Confirmar</button></form></details>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<b>Impostos</b>                          <div class="text-mute" style="font-size:11.5px;">Despesa</div>
+                        </td>
+                        <td class="num">R$ 14.500,00</td>
+                        <td class="num">R$ 0,00</td>
+                        <td style="min-width:200px;">
+                          <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Impostos: 0% do orçamento" class="orc-barra">
+                            <div class="orc-fill" style="width:0.0%;background:var(--green);"></div>
+                          </div>
+<span class="orc-pct">0%</span>                        </td>
+                        <td>
+<span class="badge badge--green">Dentro do limite</span>                        </td>
+                        <td>
+<details class="motivo-detalhe" style="display:inline-block;"><summary class="btn btn--ghost btn--sm">Remover</summary><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="form-motivo">                              
+                              <input type="hidden" name="id" value="263">
+                              <input type="hidden" name="mes" value="2026-11">
+<label class="motivo-rotulo">Motivo (até 15 linhas)</label><textarea name="motivo" rows="4" maxlength="1500" required placeholder="Por que está fazendo isto? Fica registrado na auditoria." class="input motivo-texto"></textarea><button type="submit" class="btn btn--secondary btn--sm">Confirmar</button></form></details>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<b>Financeiras</b>                          <div class="text-mute" style="font-size:11.5px;">Despesa</div>
+                        </td>
+                        <td class="num">R$ 3.500,00</td>
+                        <td class="num">R$ 0,00</td>
+                        <td style="min-width:200px;">
+                          <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Financeiras: 0% do orçamento" class="orc-barra">
+                            <div class="orc-fill" style="width:0.0%;background:var(--green);"></div>
+                          </div>
+<span class="orc-pct">0%</span>                        </td>
+                        <td>
+<span class="badge badge--green">Dentro do limite</span>                        </td>
+                        <td>
+<details class="motivo-detalhe" style="display:inline-block;"><summary class="btn btn--ghost btn--sm">Remover</summary><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="form-motivo">                              
+                              <input type="hidden" name="id" value="275">
+                              <input type="hidden" name="mes" value="2026-11">
+<label class="motivo-rotulo">Motivo (até 15 linhas)</label><textarea name="motivo" rows="4" maxlength="1500" required placeholder="Por que está fazendo isto? Fica registrado na auditoria." class="input motivo-texto"></textarea><button type="submit" class="btn btn--secondary btn--sm">Confirmar</button></form></details>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<b>Comerciais › Marketing</b>                          <div class="text-mute" style="font-size:11.5px;">Despesa</div>
+                        </td>
+                        <td class="num">R$ 3.000,00</td>
+                        <td class="num">R$ 0,00</td>
+                        <td style="min-width:200px;">
+                          <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Comerciais › Marketing: 0% do orçamento" class="orc-barra">
+                            <div class="orc-fill" style="width:0.0%;background:var(--green);"></div>
+                          </div>
+<span class="orc-pct">0%</span>                        </td>
+                        <td>
+<span class="badge badge--green">Dentro do limite</span>                        </td>
+                        <td>
+<details class="motivo-detalhe" style="display:inline-block;"><summary class="btn btn--ghost btn--sm">Remover</summary><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="form-motivo">                              
+                              <input type="hidden" name="id" value="323">
+                              <input type="hidden" name="mes" value="2026-11">
+<label class="motivo-rotulo">Motivo (até 15 linhas)</label><textarea name="motivo" rows="4" maxlength="1500" required placeholder="Por que está fazendo isto? Fica registrado na auditoria." class="input motivo-texto"></textarea><button type="submit" class="btn btn--secondary btn--sm">Confirmar</button></form></details>                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+<b>Vendas</b>                          <div class="text-mute" style="font-size:11.5px;">Receita</div>
+                        </td>
+                        <td class="num">R$ 190.000,00</td>
+                        <td class="num">R$ 75.432,27</td>
+                        <td style="min-width:200px;">
+                          <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="40" aria-label="Vendas: 40% do orçamento" class="orc-barra">
+                            <div class="orc-fill" style="width:39.7%;background:var(--blue);"></div>
+                          </div>
+<span class="orc-pct">40%</span>                        </td>
+                        <td>
+<span class="badge badge--neutral">Em andamento</span>                        </td>
+                        <td>
+<details class="motivo-detalhe" style="display:inline-block;"><summary class="btn btn--ghost btn--sm">Remover</summary><form enctype="multipart/form-data" method="post" action="#" data-mk-form class="form-motivo">                              
+                              <input type="hidden" name="id" value="179">
+                              <input type="hidden" name="mes" value="2026-11">
+<label class="motivo-rotulo">Motivo (até 15 linhas)</label><textarea name="motivo" rows="4" maxlength="1500" required placeholder="Por que está fazendo isto? Fica registrado na auditoria." class="input motivo-texto"></textarea><button type="submit" class="btn btn--secondary btn--sm">Confirmar</button></form></details>                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
@@ -398,7 +554,7 @@
 <form enctype="multipart/form-data" method="post" action="#" data-mk-form>                  
                   <div class="flex gap-3" style="flex-wrap:wrap;">
                     <div class="field" style="flex:2;min-width:260px;">
-<label>Categoria (grupo ou subcategoria)</label><select name="categoria_id" class="input"><option value="13">Depósitos › Aporte de sócio — receita</option><option value="9">Vendas › Boleto — receita</option><option value="7">Vendas › Cartão de crédito — receita</option><option value="8">Vendas › Cartão de débito — receita</option><option value="10">Vendas › Crediário — receita</option><option value="11">Depósitos — receita</option><option value="19">Outras receitas › Estornos recebidos — receita</option><option value="16">Receitas financeiras › Juros recebidos — receita</option><option value="17">Outras receitas — receita</option><option value="14">Depósitos › Outros — receita</option><option value="4">Vendas › Pix — receita</option><option value="15">Receitas financeiras — receita</option><option value="18">Outras receitas › Reembolsos — receita</option><option value="3">Receitas financeiras › Rendimentos — receita</option><option value="12">Depósitos › Venda — receita</option><option value="6">Vendas — receita</option><option value="48">Administrativas</option><option value="40">Ocupação › Aluguel</option><option value="31">Pessoal › Benefícios</option><option value="64">Veículos › Combustível</option><option value="54">Comerciais</option><option value="56">Comerciais › Comissões</option><option value="41">Ocupação › Condomínio</option><option value="49">Administrativas › Contabilidade</option><option value="5">Devolução Pix</option><option value="67">Retiradas › Distribuição de lucros</option><option value="23">Fornecedores › Embalagens</option><option value="30">Pessoal › Encargos (INSS/FGTS)</option><option value="45">Utilidades › Energia</option><option value="58">Financeiras</option><option value="20">Fornecedores</option><option value="24">Fornecedores › Fretes</option><option value="29">Pessoal › Férias/13º</option><option value="35">Impostos › ICMS</option><option value="60">Financeiras › IOF</option><option value="42">Ocupação › IPTU</option><option value="36">Impostos › ISS</option><option value="33">Impostos</option><option value="22">Fornecedores › Insumos</option><option value="61">Financeiras › Juros/multas</option><option value="53">Administrativas › Jurídico</option><option value="43">Ocupação › Manutenção</option><option value="65">Veículos › Manutenção</option><option value="55">Comerciais › Marketing</option><option value="51">Administrativas › Material de escritório</option><option value="21">Fornecedores › Mercadoria p/ revenda</option><option value="39">Ocupação</option><option value="62">Financeiras › Parcela de empréstimo</option><option value="38">Impostos › Parcelamentos</option><option value="26">Pessoal</option><option value="28">Pessoal › Pró-labore</option><option value="32">Pessoal › Rescisões</option><option value="68">Retiradas › Retirada pessoal</option><option value="66">Retiradas</option><option value="27">Pessoal › Salários</option><option value="52">Administrativas › Seguros</option><option value="25">Fornecedores › Serviços de terceiros</option><option value="34">Impostos › Simples/DAS</option><option value="50">Administrativas › Sistemas</option><option value="59">Financeiras › Tarifas bancárias</option><option value="57">Comerciais › Taxa de maquininha</option><option value="37">Impostos › Taxas e licenças</option><option value="47">Utilidades › Telefone/internet</option><option value="44">Utilidades</option><option value="63">Veículos</option><option value="46">Utilidades › Água/saneamento</option></select>                    </div>
+<label>Categoria (grupo ou subcategoria)</label><select name="categoria_id" class="input"><option value="13">Depósitos › Aporte de sócio — receita</option><option value="9">Vendas › Boleto — receita</option><option value="7">Vendas › Cartão de crédito — receita</option><option value="8">Vendas › Cartão de débito — receita</option><option value="10">Vendas › Crediário — receita</option><option value="11">Depósitos — receita</option><option value="19">Outras receitas › Estornos recebidos — receita</option><option value="16">Receitas financeiras › Juros recebidos — receita</option><option value="17">Outras receitas — receita</option><option value="14">Depósitos › Outros — receita</option><option value="4">Vendas › Pix — receita</option><option value="15">Receitas financeiras — receita</option><option value="18">Outras receitas › Reembolsos — receita</option><option value="3">Receitas financeiras › Rendimentos — receita</option><option value="12">Depósitos › Venda — receita</option><option value="6">Vendas — receita</option><option value="48">Administrativas</option><option value="40">Ocupação › Aluguel</option><option value="31">Pessoal › Benefícios</option><option value="71">Impostos › CBS</option><option value="64">Veículos › Combustível</option><option value="54">Comerciais</option><option value="56">Comerciais › Comissões</option><option value="41">Ocupação › Condomínio</option><option value="49">Administrativas › Contabilidade</option><option value="5">Devolução Pix</option><option value="67">Retiradas › Distribuição de lucros</option><option value="23">Fornecedores › Embalagens</option><option value="30">Pessoal › Encargos (INSS/FGTS)</option><option value="45">Utilidades › Energia</option><option value="58">Financeiras</option><option value="20">Fornecedores</option><option value="24">Fornecedores › Fretes</option><option value="29">Pessoal › Férias/13º</option><option value="72">Impostos › IBS</option><option value="35">Impostos › ICMS</option><option value="60">Financeiras › IOF</option><option value="42">Ocupação › IPTU</option><option value="36">Impostos › ISS</option><option value="73">Impostos › Imposto Seletivo</option><option value="33">Impostos</option><option value="22">Fornecedores › Insumos</option><option value="61">Financeiras › Juros/multas</option><option value="53">Administrativas › Jurídico</option><option value="43">Ocupação › Manutenção</option><option value="65">Veículos › Manutenção</option><option value="55">Comerciais › Marketing</option><option value="51">Administrativas › Material de escritório</option><option value="21">Fornecedores › Mercadoria p/ revenda</option><option value="39">Ocupação</option><option value="74">Impostos › PIS/Cofins</option><option value="62">Financeiras › Parcela de empréstimo</option><option value="38">Impostos › Parcelamentos</option><option value="26">Pessoal</option><option value="28">Pessoal › Pró-labore</option><option value="32">Pessoal › Rescisões</option><option value="68">Retiradas › Retirada pessoal</option><option value="66">Retiradas</option><option value="27">Pessoal › Salários</option><option value="52">Administrativas › Seguros</option><option value="25">Fornecedores › Serviços de terceiros</option><option value="34">Impostos › Simples/DAS</option><option value="50">Administrativas › Sistemas</option><option value="59">Financeiras › Tarifas bancárias</option><option value="57">Comerciais › Taxa de maquininha</option><option value="37">Impostos › Taxas e licenças</option><option value="47">Utilidades › Telefone/internet</option><option value="44">Utilidades</option><option value="63">Veículos</option><option value="46">Utilidades › Água/saneamento</option></select>                    </div>
                     <div class="field" style="min-width:140px;">
 <label>Valor do mês (R$)</label>                      <input name="valor" required inputmode="decimal" placeholder="0,00" class="input">
                     </div>
@@ -426,30 +582,16 @@
     caixa.textContent = t; caixa.classList.add('on');
     clearTimeout(relogio); relogio = setTimeout(function () { caixa.classList.remove('on'); }, 2600);
   }
-  function tema(t) {
-    d.setAttribute('data-theme', t);
-    try { if (!d.classList.contains('mk-embed')) localStorage.setItem('mk-tema', t); } catch (e) {}
-    document.querySelectorAll('.theme-switch button[name=tema]').forEach(function (b) {
-      b.classList.toggle('on', (b.value === 'claro') === (t === 'light'));
-    });
-  }
-  tema(d.getAttribute('data-theme'));
-  // dentro do site, o tema acompanha o alternador do site
-  if (d.classList.contains('mk-embed')) try {
-    new MutationObserver(function () { tema(parent.document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'); })
-      .observe(parent.document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-  } catch (e) {}
+  // sem tema claro: a linha "Tema" do menu do usuário não tem o que escolher
+  document.querySelectorAll('.theme-switch').forEach(function (f) { if (f.parentElement) f.parentElement.remove(); });
   document.addEventListener('click', function (e) {
     var a = e.target.closest('a[data-mk-fora]');
     if (a) { e.preventDefault(); avisar('Esta tela fica só no app. O mockup mostra as principais.'); return; }
-    var b = e.target.closest('.theme-switch button[name=tema]');
-    if (b) { e.preventDefault(); tema(b.value === 'claro' ? 'light' : 'dark'); }
   }, true);
   document.addEventListener('submit', function (e) {
     var f = e.target.closest('form[data-mk-form]');
     if (!f) return;
     e.preventDefault();
-    if (f.querySelector('button[name=tema]')) return;
     if (f.querySelector('input[name=senha]')) { location.href = 'index.html'; return; }
     avisar(f.method === 'get' ? 'No mockup os filtros não mudam os dados. No app, a tela recalcula na hora.' : 'Mockup: nada é gravado. No app, isto salva e fica na auditoria.');
   }, true);

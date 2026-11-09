@@ -5,19 +5,13 @@
 <meta name="robots" content="noindex">
 <script>
 /* Mockup estático do Nexus & PJ (dados fictícios). Antes do primeiro paint:
-   ?embed = dentro do site (iframe), o tema acompanha o site; fora dele vale o
-   tema escolhido no próprio mockup. */
+   ?embed = dentro do site (iframe). O tema é sempre o escuro. */
 (function () {
   var d = document.documentElement, t = 'dark';
   var embed = /[?&]embed\b/.test(location.search);
   try { embed = embed || sessionStorage.getItem('mk-embed') === '1'; if (embed) sessionStorage.setItem('mk-embed', '1'); } catch (e) {}
-  if (embed) {
-    d.classList.add('mk-embed');
-    try { if (parent.document.documentElement.dataset.theme === 'light') t = 'light'; } catch (e) {}
-  } else {
-    try { if (localStorage.getItem('mk-tema') === 'light') t = 'light'; } catch (e) {}
-  }
-  d.setAttribute('data-theme', t);
+  if (embed) d.classList.add('mk-embed');
+  d.setAttribute('data-theme', t);   // o site só tem tema escuro
   // dentro do site o Dashboard aparece direto, sem a janela de boas-vindas por cima
   if (embed) {
     var abrir = HTMLDialogElement.prototype.showModal;
@@ -43,6 +37,9 @@
   .mk-selo{position:fixed;right:14px;bottom:14px;z-index:9999;padding:6px 10px;border-radius:999px;font:600 11px/1 system-ui,sans-serif;
     letter-spacing:.04em;background:rgba(17,24,39,.85);color:#e5e7eb;border:1px solid rgba(255,255,255,.14)}
   .mk-embed .mk-selo{display:none}
+  /* no card do site a janela é estreita: a busca encolhe para o nome do usuário caber */
+  .mk-embed .busca-wrap{min-width:0;flex:1 1 8rem;max-width:16rem}
+  .mk-embed .busca-wrap input{min-width:0;width:100%;text-overflow:ellipsis}
 </style>
 
     <title>Nexus &amp; PJ — mockup (/)</title>
@@ -77,7 +74,7 @@
 .subabas{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .subaba{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;font-size:12.5px;font-weight:600;
   color:var(--text-200);background:var(--surface-1);border:1px solid var(--border-1);text-decoration:none;white-space:nowrap;
-  transition:background var(--dur-fast) ease,color var(--dur-fast) ease,border-color var(--dur-fast) ease}
+  transition:background 150ms ease,color 150ms ease,border-color 150ms ease,transform 150ms ease,box-shadow 150ms ease}
 .subaba .sa-ic{font-size:13px;line-height:1;color:var(--tom-tx,var(--text-200))}
 .subaba:hover{color:var(--text-100);border-color:var(--line-strong)}
 .subaba:focus-visible{outline:2px solid var(--text-200);outline-offset:2px}
@@ -93,7 +90,7 @@
   </head>
   <body>
     <div id="appShell" class="shell">
-      
+<script>(function(){var s=document.currentScript&&document.currentScript.parentNode;try{if(s&&localStorage.getItem('nx-menu-1')==='1')s.classList.add('sidebar-collapsed');}catch(e){}})();</script>      
       <div id="appSidebar" class="sidebar">
         <div class="brand">
 <a href="index.html" class="brand-btn" title="Ir para o Dashboard"><img src="static/branding/icone-dark.png" alt="" class="brand-icon"><span class="brand-name">Nexus &amp; PJ</span></a>        </div>
@@ -140,21 +137,21 @@
         <div class="body">
           <div>
 <dialog aria-labelledby="hmOla" id="hmDlg" class="hm-dlg">              <div class="hm-in">
-<form enctype="multipart/form-data" method="dialog"><button value="fechar" type="submit" aria-label="Fechar" class="hm-x" title="Fechar">✕</button></form>                <div id="hmOla" class="hm-ola">Bom dia, Eduardo.</div>
+<form enctype="multipart/form-data" method="dialog"><button value="fechar" type="submit" aria-label="Fechar" class="hm-x" title="Fechar">✕</button></form>                <div id="hmOla" class="hm-ola">Boa tarde, Eduardo.</div>
                 <div class="hm-sub">
-Em <b>novembro/2026</b> entraram <b>R$ 19.002,12</b> e saíram <b>R$ 7.150,77</b> — <b style="color:var(--green-text)">sobrou R$ 11.851,35</b>.                </div>
+Em <b>novembro/2026</b> entraram <b>R$ 75.827,08</b> e saíram <b>R$ 49.512,26</b> — <b style="color:var(--green-text)">sobrou R$ 26.314,82</b>.                </div>
                 <div class="hm-tit">Precisa de você</div>
                 <div class="hm-pend">
 <a href="realizado.html" class="hm-cd"><span class="hm-n" style="color:var(--amber-text)">0</span><span class="hm-t">a revisar</span><span class="hm-d">lançamentos sem categoria</span></a><a href="transferencias.html" class="hm-cd"><span class="hm-n" style="color:var(--cyan-text)">0</span><span class="hm-t">sem par</span><span class="hm-d">transferência sem a outra perna</span></a>                </div>
                 <div class="hm-tit">Merece atenção</div>
-<a href="assistente.html" class="hm-nt"><span class="hm-pt" style="background:var(--red)"></span><span><span class="hm-nt-t">4 conta(s) a pagar vencida(s) (desde 13/10)</span><span class="hm-nt-x">5 conta(s) somam R$ 11.875,00; a mais antiga vence em 13/10. Algumas já venceram e seguem em aberto. Baixe no Planejado quando pagar.</span></span></a>              </div>
+<a href="assistente.html" class="hm-nt"><span class="hm-pt" style="background:var(--red)"></span><span><span class="hm-nt-t">4 conta(s) a pagar vencida(s) (desde 19/10)</span><span class="hm-nt-x">5 conta(s) somam R$ 11.875,00; a mais antiga vence em 19/10. Algumas já venceram e seguem em aberto. Baixe no Planejado quando pagar.</span></span></a><a href="assistente.html" class="hm-nt"><span class="hm-pt" style="background:var(--amber)"></span><span><span class="hm-nt-t">Orçamento perto do limite: Ocupação (11/2026)</span><span class="hm-nt-x">Ocupação: R$ 13.502,00 de R$ 15.000,00 orçados (90%).</span></span></a>              </div>
 </dialog><script>(function(){var hm=document.getElementById('hmDlg');if(!hm)return;hm.addEventListener('click',function(e){if(e.target===hm)hm.close();});var K='nexus_pj_home_aberta';var recarga=false;try{var nav=performance.getEntriesByType('navigation')[0];recarga=nav?nav.type==='reload':(performance.navigation&&performance.navigation.type===1);}catch(e){}var jaAbriu=false;try{jaAbriu=sessionStorage.getItem(K)==='1';}catch(e){}if(recarga||!jaAbriu){try{hm.showModal();}catch(e){}try{sessionStorage.setItem(K,'1');}catch(e){}}})();</script>            <div>
               <div class="kpi-grid">
                 <div class="card ind-card tom-azul">
                   <div aria-hidden="true" class="ind-ic">⛁</div>
                   <div class="ind-txt">
                     <div class="ind-rotulo">Saldo atual</div>
-                    <div class="ind-valor">R$ 753.080,57</div>
+                    <div class="ind-valor">R$ 753.528,92</div>
                     <div class="ind-nota">3 conta(s) ativa(s)</div>
                   </div>
                 </div>
@@ -162,27 +159,27 @@ Em <b>novembro/2026</b> entraram <b>R$ 19.002,12</b> e saíram <b>R$ 7.150,77</b
                   <div aria-hidden="true" class="ind-ic">▲</div>
                   <div class="ind-txt">
                     <div class="ind-rotulo">Entradas de novembro/2026</div>
-                    <div class="ind-valor">R$ 19.002,12</div>
+                    <div class="ind-valor">R$ 75.827,08</div>
                     <div class="ind-var">
-<span class="chip chip--ruim">↘ −40,7%</span><span>vs mês anterior</span>                    </div>
+<span class="chip chip--ruim">↘ −7,0%</span><span>vs mês anterior</span>                    </div>
                   </div>
                 </div>
                 <div class="card ind-card tom-rosa">
                   <div aria-hidden="true" class="ind-ic">▼</div>
                   <div class="ind-txt">
                     <div class="ind-rotulo">Saídas de novembro/2026</div>
-                    <div class="ind-valor">R$ 7.150,77</div>
+                    <div class="ind-valor">R$ 49.512,26</div>
                     <div class="ind-var">
-<span class="chip chip--bom">↘ −73,8%</span><span>vs mês anterior</span>                    </div>
+<span class="chip chip--bom">↘ −40,8%</span><span>vs mês anterior</span>                    </div>
                   </div>
                 </div>
                 <div class="card ind-card tom-ciano">
                   <div aria-hidden="true" class="ind-ic">◈</div>
                   <div class="ind-txt">
                     <div class="ind-rotulo">Resultado de novembro/2026</div>
-                    <div class="ind-valor">+ R$ 11.851,35</div>
+                    <div class="ind-valor">+ R$ 26.314,82</div>
                     <div class="ind-var">
-<span class="chip chip--bom">↗ +148,9%</span><span>vs mês anterior</span>                    </div>
+<span class="chip chip--bom">↗ +1305,7%</span><span>vs mês anterior</span>                    </div>
                   </div>
                 </div>
               </div>
@@ -202,62 +199,140 @@ Em <b>novembro/2026</b> entraram <b>R$ 19.002,12</b> e saíram <b>R$ 7.150,77</b
                 <div class="bloco-corpo">
                   <div class="hub-grid">
 <a href="fluxo-caixa.html" class="card card--interactive hub-card">                      <div class="hub-prev">
-                        <div class="mini-bar">
-<span>Banco Alfa (fictício)</span><i style="width:30%;"></i>                        </div>
-                        <div class="mini-bar">
-<span>Banco Beta (fictício)</span><i style="width:100%;"></i>                        </div>
-                        <div class="mini-bar">
-<span>Banco Gama (fictício)</span><i style="width:78%;"></i>                        </div>
+                        <div class="hub-num">
+                          <div class="hub-num-r">Saldo total</div>
+                          <div class="hub-num-v">R$ 753,5 mil</div>
+                        </div>
+                        <div class="hub-barras">
+                          <div class="mini-bar">
+<span title="Banco Alfa (fictício)">Banco Alfa (fictício)</span>                            <div class="mini-trilho">
+<i style="width:26%;--n:0;"></i>                            </div>
+<b class="">R$ 94,8 mil</b>                          </div>
+                          <div class="mini-bar">
+<span title="Banco Beta (fictício)">Banco Beta (fictício)</span>                            <div class="mini-trilho">
+<i style="width:100%;--n:1;"></i>                            </div>
+<b class="">R$ 370,4 mil</b>                          </div>
+                          <div class="mini-bar">
+<span title="Banco Gama (fictício)">Banco Gama (fictício)</span>                            <div class="mini-trilho">
+<i style="width:78%;--n:2;"></i>                            </div>
+<b class="">R$ 288,4 mil</b>                          </div>
+                        </div>
                       </div>
                       <div class="hub-info">
 <span class="nav-badge">◧</span>                        <div>
 <b>Fluxo de caixa</b><span>Saldo por conta · ao vivo</span>                        </div>
                       </div>
 </a><a href="vendas.html" class="card card--interactive hub-card">                      <div class="hub-prev">
-                        <div class="mini-bar">
-<span>Cartão de crédito</span><i style="width:100%;"></i>                        </div>
-                        <div class="mini-bar">
-<span>Pix</span><i style="width:68%;"></i>                        </div>
-                        <div class="mini-bar">
-<span>Cartão de débito</span><i style="width:36%;"></i>                        </div>
-                        <div class="mini-bar">
-<span>Rendimentos</span><i style="width:2%;"></i>                        </div>
+                        <div class="hub-num">
+                          <div class="hub-num-r">Receita de novembro/2026</div>
+                          <div class="hub-num-v">R$ 75,8 mil</div>
+                        </div>
+                        <div class="hub-barras">
+                          <div class="mini-bar">
+<span title="Cartão de crédito">Cartão de crédito</span>                            <div class="mini-trilho">
+<i style="width:100%;--n:0;"></i>                            </div>
+<b class="">R$ 35,5 mil</b>                          </div>
+                          <div class="mini-bar">
+<span title="Pix">Pix</span>                            <div class="mini-trilho">
+<i style="width:75%;--n:1;"></i>                            </div>
+<b class="">R$ 26,5 mil</b>                          </div>
+                          <div class="mini-bar">
+<span title="Cartão de débito">Cartão de débito</span>                            <div class="mini-trilho">
+<i style="width:32%;--n:2;"></i>                            </div>
+<b class="">R$ 11,4 mil</b>                          </div>
+                          <div class="mini-bar">
+<span title="Boleto">Boleto</span>                            <div class="mini-trilho">
+<i style="width:3%;--n:3;"></i>                            </div>
+<b class="">R$ 1,1 mil</b>                          </div>
+<span class="hub-mais" title="mais 2 item(ns) no painel">+2</span>                        </div>
                       </div>
                       <div class="hub-info">
 <span class="nav-badge">💳</span>                        <div>
 <b>Vendas e receitas</b><span>novembro/2026 · por origem</span>                        </div>
                       </div>
 </a><a href="despesas.html" class="card card--interactive hub-card">                      <div class="hub-prev">
-                        <div class="mini-bar">
-<span>Pessoal</span><i style="width:100%;background:var(--red);"></i>                        </div>
-                        <div class="mini-bar">
-<span>Veículos</span><i style="width:4%;background:var(--red);"></i>                        </div>
-                        <div class="mini-bar">
-<span>Comerciais</span><i style="width:4%;background:var(--red);"></i>                        </div>
+                        <div class="hub-num">
+                          <div class="hub-num-r">Despesa de novembro/2026</div>
+                          <div class="hub-num-v">R$ 49,5 mil</div>
+                        </div>
+                        <div class="hub-barras">
+                          <div class="mini-bar">
+<span title="Fornecedores">Fornecedores</span>                            <div class="mini-trilho">
+<i style="width:100%;--n:0;background:var(--red);"></i>                            </div>
+<b class="">R$ 22,5 mil</b>                          </div>
+                          <div class="mini-bar">
+<span title="Ocupação">Ocupação</span>                            <div class="mini-trilho">
+<i style="width:60%;--n:1;background:var(--red);"></i>                            </div>
+<b class="">R$ 13,5 mil</b>                          </div>
+                          <div class="mini-bar">
+<span title="Pessoal">Pessoal</span>                            <div class="mini-trilho">
+<i style="width:28%;--n:2;background:var(--red);"></i>                            </div>
+<b class="">R$ 6,3 mil</b>                          </div>
+                          <div class="mini-bar">
+<span title="Retiradas">Retiradas</span>                            <div class="mini-trilho">
+<i style="width:14%;--n:3;background:var(--red);"></i>                            </div>
+<b class="">R$ 3,1 mil</b>                          </div>
+<span class="hub-mais" title="mais 3 item(ns) no painel">+3</span>                        </div>
                       </div>
                       <div class="hub-info">
 <span class="nav-badge">▤</span>                        <div>
-<b>Despesas</b><span>novembro/2026 · 3 maiores grupos</span>                        </div>
+<b>Despesas</b><span>novembro/2026 · maiores grupos</span>                        </div>
                       </div>
 </a><a href="lojas-painel.html" class="card card--interactive hub-card">                      <div class="hub-prev">
-                        <div class="mini-bar">
-<span>Loja Centro (fictícia)</span><i style="width:100%;"></i>                        </div>
-                        <div class="mini-bar">
-<span>Loja Norte (fictícia)</span><i style="width:73%;"></i>                        </div>
-                        <div class="mini-bar">
-<span>Loja Sul (fictícia)</span><i style="width:53%;"></i>                        </div>
-                        <div class="mini-bar">
-<span>Sem loja</span><i style="width:79%;background:var(--red);"></i>                        </div>
+                        <div class="hub-num">
+                          <div class="hub-num-r">Resultado das lojas</div>
+                          <div class="hub-num-v">R$ 26,3 mil</div>
+                        </div>
+                        <div class="hub-barras">
+                          <div class="mini-bar">
+<span title="Loja Centro (fictícia)">Loja Centro (fictícia)</span>                            <div class="mini-trilho">
+<i style="width:100%;--n:0;"></i>                            </div>
+<b class="">R$ 14,4 mil</b>                          </div>
+                          <div class="mini-bar">
+<span title="Loja Norte (fictícia)">Loja Norte (fictícia)</span>                            <div class="mini-trilho">
+<i style="width:83%;--n:1;"></i>                            </div>
+<b class="">R$ 12,0 mil</b>                          </div>
+                          <div class="mini-bar">
+<span title="Loja Sul (fictícia)">Loja Sul (fictícia)</span>                            <div class="mini-trilho">
+<i style="width:62%;--n:2;"></i>                            </div>
+<b class="">R$ 8,9 mil</b>                          </div>
+                          <div class="mini-bar">
+<span title="Sem loja">Sem loja</span>                            <div class="mini-trilho">
+<i style="width:63%;--n:3;background:var(--red);"></i>                            </div>
+<b class="neg">− R$ 9,0 mil</b>                          </div>
+                        </div>
                       </div>
                       <div class="hub-info">
 <span class="nav-badge">🏬</span>                        <div>
 <b>Lojas</b><span>novembro/2026 · 4 loja(s) · 1 no vermelho</span>                        </div>
                       </div>
-</a><a href="resultado.html" class="card card--interactive hub-card">                      <div class="hub-prev" style="justify-content:center;gap:10px;font-size:13.5px;padding:0 18px;">
-                        <div class="flex" style="justify-content:space-between;">
-<span class="text-mute">Receita bruta</span><b>R$ 18.833,83</b>                        </div>
-                        <div class="flex" style="justify-content:space-between;">
-<span class="text-mute">Resultado do período</span><b>R$ 11.851,35</b>                        </div>
+</a><a href="resultado.html" class="card card--interactive hub-card">                      <div class="hub-prev">
+                        <div class="hub-num">
+                          <div class="hub-num-r">Resultado do período</div>
+                          <div class="hub-num-v">R$ 29,4 mil</div>
+                        </div>
+                        <div class="hub-barras">
+                          <div class="mini-bar">
+<span title="Receita bruta">Receita bruta</span>                            <div class="mini-trilho">
+<i style="width:100%;--n:0;"></i>                            </div>
+<b class="">R$ 75,4 mil</b>                          </div>
+                          <div class="mini-bar">
+<span title="Impostos">Impostos</span>                            <div class="mini-trilho">
+<i style="width:3%;--n:1;"></i>                            </div>
+<b class="">R$ 0</b>                          </div>
+                          <div class="mini-bar">
+<span title="Compras">Compras</span>                            <div class="mini-trilho">
+<i style="width:30%;--n:2;background:var(--red);"></i>                            </div>
+<b class="neg">− R$ 22,5 mil</b>                          </div>
+                          <div class="mini-bar">
+<span title="Despesas">Despesas</span>                            <div class="mini-trilho">
+<i style="width:32%;--n:3;background:var(--red);"></i>                            </div>
+<b class="neg">− R$ 23,9 mil</b>                          </div>
+                          <div class="mini-bar">
+<span title="Resultado">Resultado</span>                            <div class="mini-trilho">
+<i style="width:39%;--n:4;"></i>                            </div>
+<b class="">R$ 29,4 mil</b>                          </div>
+                        </div>
                       </div>
                       <div class="hub-info">
 <span class="nav-badge">∑</span>                        <div>
@@ -283,30 +358,16 @@ Em <b>novembro/2026</b> entraram <b>R$ 19.002,12</b> e saíram <b>R$ 7.150,77</b
     caixa.textContent = t; caixa.classList.add('on');
     clearTimeout(relogio); relogio = setTimeout(function () { caixa.classList.remove('on'); }, 2600);
   }
-  function tema(t) {
-    d.setAttribute('data-theme', t);
-    try { if (!d.classList.contains('mk-embed')) localStorage.setItem('mk-tema', t); } catch (e) {}
-    document.querySelectorAll('.theme-switch button[name=tema]').forEach(function (b) {
-      b.classList.toggle('on', (b.value === 'claro') === (t === 'light'));
-    });
-  }
-  tema(d.getAttribute('data-theme'));
-  // dentro do site, o tema acompanha o alternador do site
-  if (d.classList.contains('mk-embed')) try {
-    new MutationObserver(function () { tema(parent.document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'); })
-      .observe(parent.document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-  } catch (e) {}
+  // sem tema claro: a linha "Tema" do menu do usuário não tem o que escolher
+  document.querySelectorAll('.theme-switch').forEach(function (f) { if (f.parentElement) f.parentElement.remove(); });
   document.addEventListener('click', function (e) {
     var a = e.target.closest('a[data-mk-fora]');
     if (a) { e.preventDefault(); avisar('Esta tela fica só no app. O mockup mostra as principais.'); return; }
-    var b = e.target.closest('.theme-switch button[name=tema]');
-    if (b) { e.preventDefault(); tema(b.value === 'claro' ? 'light' : 'dark'); }
   }, true);
   document.addEventListener('submit', function (e) {
     var f = e.target.closest('form[data-mk-form]');
     if (!f) return;
     e.preventDefault();
-    if (f.querySelector('button[name=tema]')) return;
     if (f.querySelector('input[name=senha]')) { location.href = 'index.html'; return; }
     avisar(f.method === 'get' ? 'No mockup os filtros não mudam os dados. No app, a tela recalcula na hora.' : 'Mockup: nada é gravado. No app, isto salva e fica na auditoria.');
   }, true);

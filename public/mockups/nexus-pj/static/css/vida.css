@@ -33,6 +33,8 @@ html.nx-chegando::before {
   animation: nx-abre 650ms cubic-bezier(.4, 0, .2, 1) 120ms forwards;
 }
 html.nx-chegada-suave::before { animation: nx-esmaece 200ms ease-out forwards; }
+@keyframes nx-cresce { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+html[data-efeitos="completo"] .orc-b-fill { animation: nx-cresce .7s cubic-bezier(.2, .7, .2, 1) both; }
 @keyframes nx-abre { from { --nx-r: 0px; } to { --nx-r: 82vmax; } }
 @keyframes nx-esmaece { from { opacity: 1; } to { opacity: 0; } }
 
